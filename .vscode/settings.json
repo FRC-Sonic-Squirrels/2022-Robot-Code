@@ -1,6 +1,7 @@
 {
   "java.configuration.updateBuildConfiguration": "automatic",
   "java.server.launchMode": "Standard",
+  "java.format.settings.url": ".vscode/eclipse-java-google-style.xml",
   "files.exclude": {
     "**/.git": true,
     "**/.svn": true,
@@ -13,6 +14,22 @@
     "**/.settings": true,
     "**/.factorypath": true,
     "**/*~": true
+  },
+  "cSpell.words": [
+    "AHRS",
+    "CANID",
+    "deadband",
+    "drivetrains",
+    "Feedforward",
+    "holonomic",
+    "navx",
+    "odometry",
+    "teleop",
+    "teleoperated",
+    "TRACKWIDTH"
+  ],
+  "[java]": {
+    "editor.tabSize": 2
   },
   "java.test.config": [
     {
