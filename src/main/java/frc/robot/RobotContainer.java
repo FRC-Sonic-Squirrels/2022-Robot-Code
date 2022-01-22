@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.HubCentricCommand;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -57,6 +58,7 @@ public class RobotContainer {
     new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
             .whenPressed(m_drivetrain::zeroGyroscope);
+    new Button(m_controller::getXButton).whenPressed(new HubCentricCommand(m_drivetrain));
   }
 
   /**

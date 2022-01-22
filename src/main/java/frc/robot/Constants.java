@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.drive.Vector2d;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -52,4 +53,7 @@ public final class Constants {
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 13; 
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 23;
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(182.7 - 180);
+
+    // TODO: Get the actual coordinates of the hub center
+    public static final Vector2d HUB_CENTER = new Vector2d(5.0, 5.0);
 }
