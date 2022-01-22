@@ -18,15 +18,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.Relay;
 import static frc.robot.Constants.canId;
+import frc.robot.RobotContainer;
 
-
-public class intakeSubsystem extends SubsystemBase {
+public class IntakeSubsystem extends SubsystemBase {
 
   private WPI_TalonFX m_intake = new WPI_TalonFX(canId.canId18_intake);
   private TalonFXSensorCollection m_encoder;
   private Relay intakeRelay = new Relay(0);
 
-  private driveSubsystem m_drive;
+  
   private double circOfIntake_meters = (1.4725 * Math.PI) * 0.0254;
   private double minIntakeRPM = 2500;
   private double maxIntakeRPM = 6000;
@@ -35,8 +35,8 @@ public class intakeSubsystem extends SubsystemBase {
   private static int kPIDLoopIdx = 0;
   private static int kTimeoutMs = 30;
 
-  public intakeSubsystem(driveSubsystem drive) {
-    m_drive = drive;
+  public IntakeSubsystem() {
+    
     
     m_intake.configFactoryDefault();
     m_intake.setInverted(true);
@@ -72,7 +72,7 @@ public class intakeSubsystem extends SubsystemBase {
       }
     }
     SmartDashboard.putNumber("Intake Motor RPM", - m_encoder.getIntegratedSensorVelocity() * 600 / 2048);
-    SmartDashboard.putNumber("Robot Speed m per s", (m_drive.getLeftVelocity() + m_drive.getRightVelocity()) / 2.0);
+    //SmartDashboard.putNumber("Robot Speed m per s", (m_drive.getLeftVelocity() + m_drive.getRightVelocity()) / 2.0);
   }
   
   /**
@@ -95,18 +95,19 @@ public class intakeSubsystem extends SubsystemBase {
    * speed
    */
   public void setIntakeToSpeed() {
-    double robotMetersPerSec = (m_drive.getLeftVelocity() + m_drive.getRightVelocity()) / 2.0;
-    double intakeRotationsPerSec = robotMetersPerSec / circOfIntake_meters;
+    //double robotMetersPerSec = (m_drive.getLeftVelocity() + m_drive.getRightVelocity()) / 2.0;
+    //double intakeRotationsPerSec = robotMetersPerSec / circOfIntake_meters;
     // Going Twice as Fast as the Robot Speed
-    double _intakeRPM = intakeRotationsPerSec * 60 * 4.0;
-    double desiredMotorRPM = _intakeRPM * Constants.intakeConstants.intakeGearRatio;
-    if (desiredMotorRPM < minIntakeRPM) {
+    //double _intakeRPM = intakeRotationsPerSec * 60 * 4.0;
+    //double desiredMotorRPM = _intakeRPM * Constants.intakeConstants.intakeGearRatio;
+    /*if (desiredMotorRPM < minIntakeRPM) {
       desiredMotorRPM = minIntakeRPM;
     } else if (desiredMotorRPM > maxIntakeRPM) {
       desiredMotorRPM = maxIntakeRPM;
     }
 
     setIntakeMotorRPM(desiredMotorRPM);
+    */
   }
 
   /**
