@@ -188,16 +188,12 @@ public class Drivetrain extends SubsystemBase {
     m_chassisSpeeds = chassisSpeeds;
   }
 
-	private SwerveModuleState getModuleState(SwerveModule swerveModule) {
-
-		return new SwerveModuleState(swerveModule.getDriveVelocity(), Rotation2d.fromDegrees(Math.toDegrees(swerveModule.getSteerAngle())));
-
+  private SwerveModuleState getModuleState(SwerveModule swerveModule) {
+		return new SwerveModuleState(swerveModule.getDriveVelocity(), new Rotation2d(swerveModule.getSteerAngle()));
 	}
 
 	public Pose2d getCurrentPosition() {
-
 		return m_odometry.getPoseMeters();
-
 	}
 
   @Override
