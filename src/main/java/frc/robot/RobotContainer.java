@@ -43,6 +43,7 @@ public class RobotContainer {
       () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)
     ));
 
+    
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -58,9 +59,12 @@ public class RobotContainer {
     new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
             .whenPressed(m_drivetrain::zeroGyroscope);
-    new Button(m_controller::getXButton).whenPressed(new HubCentricCommand(m_drivetrain));
+
+    new Button(m_controller::getXButton)
+            .whenPressed(new HubCentricCommand(m_drivetrain, () -> -modifyAxis(m_controller.getLeftX()), () -> -modifyAxis(m_controller.getLeftY())));
   }
 
+  
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
