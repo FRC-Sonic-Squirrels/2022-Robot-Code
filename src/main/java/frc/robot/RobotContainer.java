@@ -31,11 +31,11 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem();
+  private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 
   private final XboxController controller = new XboxController(0);
 
-  public final IntakeSubsystem m_intake = new IntakeSubsystem();
-
+  
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
 
