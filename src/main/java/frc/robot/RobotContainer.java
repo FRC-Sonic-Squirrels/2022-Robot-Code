@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
@@ -32,6 +33,9 @@ public class RobotContainer {
   public final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem();
 
   private final XboxController controller = new XboxController(0);
+
+  public final IntakeSubsystem m_intake = new IntakeSubsystem();
+
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
 
@@ -70,6 +74,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
     new Button(controller::getBackButton)

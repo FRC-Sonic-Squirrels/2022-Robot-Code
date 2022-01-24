@@ -18,6 +18,7 @@ import frc.robot.subsystems.DrivetrainSubsystem;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
     /**
      * The left-to-right distance between the drivetrain wheels
      *
@@ -74,4 +75,40 @@ public final class Constants {
                         DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
                         DrivetrainSubsystem.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
     }
+
+    // Allocate CAN Ids from here. 
+    // This avoids accidentally assigning the same CAN id to two different devices.
+    public static final class canId {
+      // CAN Id 0 is off limits. Typically unconfigured devices default to CAN id zero. This will 
+      // create problems if you already have a device using CAN id 0 on the CAN bus.
+      public static final int DoNotUse_canId0 = 0;
+
+      // When assigning a CAN ID, rename the constant to something descriptive. Such as
+      // when assigning CAN 1 rename "canId1" to "driveLeftLead" or "pigeonIMU"
+      public static final int canId1_front_left_drive  = 1;
+      public static final int canId2_front_right_drive = 2; 
+      public static final int canId3_back_right_drive  = 3;
+      public static final int canId4_back_left_drive   = 4;
+      public static final int canId5 = 5;
+      public static final int canId6 = 6;
+      public static final int canId7 = 7;
+      public static final int canId8 = 8;
+      public static final int canId9 = 9;
+      public static final int canId10 = 10;
+      public static final int canId11_front_left_steer  = 11;
+      public static final int canId12_front_right_steer = 12;
+      public static final int canId13_back_right_steer  = 13;
+      public static final int canId14_back_left_steer   = 14;
+      public static final int canId15_pigeon_imu = 15;
+      public static final int canId16 = 16;
+      public static final int canId17 = 17;
+      public static final int canId18_intake = 18;
+      public static final int canId19 = 19;
+      public static final int canId20 = 20;
+      public static final int canId21_front_left_encoder  = 21;
+      public static final int canId22_front_right_encoder = 22;
+      public static final int canId23_back_left_encoder   = 23;
+      public static final int canId24_back_right_encoder  = 24;
+  }
+
 }
