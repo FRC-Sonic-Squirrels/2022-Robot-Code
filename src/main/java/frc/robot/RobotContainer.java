@@ -4,12 +4,23 @@
 
 package frc.robot;
 
+import java.util.List;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.Button;
+import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.DriveWithSetRotationCommand;
+import frc.robot.subsystems.DrivetrainSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -19,12 +30,40 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-  public final IntakeSubsystem m_intake = new IntakeSubsystem();
-  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
+  public final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem();
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  private final XboxController controller = new XboxController(0);
+
+  public final IntakeSubsystem m_intake = new IntakeSubsystem();
+
+
+  public final SendableChooser<Command> chooser = new SendableChooser<>();
+
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
+
+    SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrainSubsystem, true);
+    SmartDashboard.putData("Auto mode", chooser);
+
+    // Set up the default command for the drivetrain.
+    // The controls are for field-oriented driving:
+    // Left stick Y axis -> forward and backwards movement
+    // Left stick X axis -> left and right movement
+    // Right stick X axis -> rotation
+    // drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+    //         drivetrainSubsystem,
+    //         () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> -modifyAxis(controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+    // ));
+
+    drivetrainSubsystem.setDefaultCommand(new DriveWithSetRotationCommand(drivetrainSubsystem,
+        () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> controller.getPOV(), 0));
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -35,16 +74,84 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
-  //subsystems
-  
+
+  private void configureButtonBindings() {
+    // Back button zeros the gyroscope
+    new Button(controller::getBackButton)
+            // No requirements because we don't need to interrupt anything
+            .whenPressed(drivetrainSubsystem::zeroGyroscope);
+
+    // new Button(controller::getAButton)
+    //         .whenPressed(new DriveWithSetRotationCommand(
+    //           drivetrainSubsystem,
+    //           () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+    //           () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+    //           () -> controller.getPOV(),
+    //           0));
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
+   * DEPRECATED. Get directly from chooser.
+   * 
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    // Example from WPILib:
+    // https://github.com/wpilibsuite/allwpilib/blob/main/wpilibjExamples/src/main/java/edu/wpi/first/wpilibj/examples/swervecontrollercommand/RobotContainer.java
+
+    // Create config for trajectory
+    TrajectoryConfig config = new TrajectoryConfig(
+        DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+        DrivetrainSubsystem.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED)
+            // Add kinematics to ensure max speed is actually obeyed
+            .setKinematics(drivetrainSubsystem.kinematics());
+
+    drivetrainSubsystem.setPose(new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
+        drivetrainSubsystem.getGyroscopeRotation());
+
+
+    // An example trajectory to follow. All units in meters.
+    // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+    //     // Start at the origin facing the +X direction
+    //     new Pose2d(0, 0, new Rotation2d(0)),
+    //     // Pass through these two interior waypoints, making an 's' curve path
+    //     List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+    //     // End 3 meters straight ahead of where we started, facing forward
+    //     new Pose2d(3, 0, new Rotation2d(0)), config);
+
+    // My first trajectory, drive 1 meter straight ahead
+    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(0, 0, new Rotation2d(0)),
+        List.of(new Translation2d(0.5, 0)),
+        // End 1 meter straight ahead of where we started, facing forward
+        new Pose2d(1.0, 0, new Rotation2d(0)), config);
+
+    return SwerveTrajectoryFollowCommandFactory.SwerveControllerCommand(exampleTrajectory, drivetrainSubsystem, true);
+
+  }
+
+  private static double deadband(double value, double deadband) {
+    if (Math.abs(value) > deadband) {
+      if (value > 0.0) {
+        return (value - deadband) / (1.0 - deadband);
+      } else {
+        return (value + deadband) / (1.0 - deadband);
+      }
+    } else {
+      return 0.0;
+    }
+  }
+
+  private static double modifyAxis(double value) {
+    // Deadband
+    value = deadband(value, 0.07);
+
+    // Square the axis
+    value = Math.copySign(value * value, value);
+
+    return value;
   }
 }
