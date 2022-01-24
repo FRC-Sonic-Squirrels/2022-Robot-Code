@@ -42,7 +42,7 @@ public class HubCentricCommand extends CommandBase {
   @Override
   public void execute() {
     Rotation2d currentHeading = m_drivetrain.getGyroscopeRotation();
-    Pose2d robotPosition = m_drivetrain.getCurrentPosition();
+    Pose2d robotPosition = m_drivetrain.getCurrentPose();
     Vector2d robotVector = new Vector2d(robotPosition.getX(), robotPosition.getY());
 
     Rotation2d targetHeading = getTargetHeading(robotVector, m_hubCenter);
@@ -51,11 +51,20 @@ public class HubCentricCommand extends CommandBase {
     double rotationCorrection = rotationalController.calculate(currentHeading.getRadians(), targetHeading.getRadians());
 
     // TODO: Check if controller needs to be multiplied by max velocity
+    // TODO: figure out how to move forward and back, sideways is a scaling factor 
+    //       not a directional factor thus both strafeX and Y need to use sidewaysSupplier
+    //       this means robot cant move forwards/change radius
+    // 
+    //       Possible solution: use robot centric to generate swervemodule states for moving forward 
+    //       average both states (arc strafe & forward movement) to get a forward motion and a arc? 
+    //       as for rn robot should be able to maintain heading towards center and translate in a arc successfully 
+    //       but not change radius/move forward & back. 
     double strafeX = findStrafeX(radius, targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), 0.04);
-    double strafeY = findStrafeY(radius, targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_forwardSupplier.get(), 0.04);
+    double strafeY = findStrafeY(radius, targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), 0.04);
 
     m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(strafeY, strafeX, rotationCorrection, currentHeading));
 
+    //TODO: check if need to flip order of cordinates from x,y to y,x
     SmartDashboard.putNumber("currentHeading", currentHeading.getDegrees());
     SmartDashboard.putNumber("targetHeading", targetHeading.getDegrees());
     SmartDashboard.putNumberArray("robotPosition", new double[] {robotPosition.getX(), robotPosition.getY()});

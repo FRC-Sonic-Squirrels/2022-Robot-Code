@@ -65,8 +65,9 @@ public class Drivetrain extends SubsystemBase {
           new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0)
   );
 
-	private final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
+  private final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation()); 
 
+  
   // By default we use a Pigeon for our gyroscope. But if you use another gyroscope, like a NavX, you can change this.
   // The important thing about how you configure your gyroscope is that rotating the robot counter-clockwise should
   // cause the angle reading to increase until it wraps back over to zero.
@@ -83,6 +84,7 @@ public class Drivetrain extends SubsystemBase {
 
   private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
+  // TODO: Change to fast motor config 
   public Drivetrain() {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
@@ -188,13 +190,14 @@ public class Drivetrain extends SubsystemBase {
     m_chassisSpeeds = chassisSpeeds;
   }
 
-  private SwerveModuleState getModuleState(SwerveModule swerveModule) {
-		return new SwerveModuleState(swerveModule.getDriveVelocity(), new Rotation2d(swerveModule.getSteerAngle()));
-	}
-
-	public Pose2d getCurrentPosition() {
+	public Pose2d getCurrentPose(){
 		return m_odometry.getPoseMeters();
 	}
+
+  //TODO: check if moduel.getSteerAngle is in degrees 
+  private SwerveModuleState getSwerveModuleState(SwerveModule module){
+     return new SwerveModuleState(module.getDriveVelocity(), Rotation2d.fromDegrees(Math.toDegrees(module.getSteerAngle())));
+  }
 
   @Override
   public void periodic() {
@@ -207,12 +210,9 @@ public class Drivetrain extends SubsystemBase {
     m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians());
 
 		m_odometry.update(getGyroscopeRotation(), 
-			getModuleState(m_frontLeftModule),
-			getModuleState(m_frontRightModule), 
-			getModuleState(m_backLeftModule), 
-			getModuleState(m_backRightModule));
-
+											getSwerveModuleState(m_frontLeftModule),
+											getSwerveModuleState(m_frontRightModule),
+											getSwerveModuleState(m_backLeftModule),
+											getSwerveModuleState(m_backRightModule));
   }
-
-	
 }
