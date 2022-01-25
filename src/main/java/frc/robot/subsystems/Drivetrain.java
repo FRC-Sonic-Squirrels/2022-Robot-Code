@@ -186,12 +186,16 @@ public class Drivetrain extends SubsystemBase {
 //    return Rotation2d.fromDegrees(360.0 - m_navx.getYaw());
   }
 
+	public SwerveDriveKinematics getKinematics(){
+		return m_kinematics;
+	}
+	
   public void drive(ChassisSpeeds chassisSpeeds) {
     m_chassisSpeeds = chassisSpeeds;
   }
 
 	public Pose2d getCurrentPose(){
-		return m_odometry.getPoseMeters();
+	  return m_odometry.getPoseMeters();
 	}
 
   //TODO: check if moduel.getSteerAngle is in degrees 

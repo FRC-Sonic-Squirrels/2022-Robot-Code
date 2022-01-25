@@ -9,6 +9,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -17,6 +19,8 @@ import frc.robot.subsystems.Drivetrain;
 
 public class HubCentricCommand extends CommandBase {
   Drivetrain m_drivetrain;
+  SwerveDriveKinematics m_kinematics;
+
   Supplier<Double> m_sidewaysSupplier;
   Supplier<Double> m_forwardSupplier;
 
@@ -29,6 +33,7 @@ public class HubCentricCommand extends CommandBase {
     m_sidewaysSupplier = sidewaysSupplier;
     m_forwardSupplier = forwardSupplier;
     m_drivetrain = drivetrain;
+    m_kinematics = m_drivetrain.getKinematics();
 
     addRequirements(drivetrain);
   }
@@ -59,10 +64,25 @@ public class HubCentricCommand extends CommandBase {
     //       average both states (arc strafe & forward movement) to get a forward motion and a arc? 
     //       as for rn robot should be able to maintain heading towards center and translate in a arc successfully 
     //       but not change radius/move forward & back. 
-    double strafeX = findStrafeX(radius, targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), 0.04);
-    double strafeY = findStrafeY(radius, targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), 0.04);
 
-    m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(strafeY, strafeX, rotationCorrection, currentHeading));
+    var arcChassisSpeeds = new ChassisSpeeds();
+    var forwardCHassisSpeeds = new ChassisSpeeds();
+
+    if(m_forwardSupplier.get() != 0.0){
+      forwardCHassisSpeeds.vxMetersPerSecond = m_forwardSupplier.get() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND;
+    }
+    if(m_sidewaysSupplier.get() != 0.0){
+      double strafeX = findStrafeX(radius, targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), 0.04);
+      double strafeY = findStrafeY(radius, targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), 0.04);
+
+      arcChassisSpeeds.vxMetersPerSecond = strafeY;
+      arcChassisSpeeds.vyMetersPerSecond = strafeX;
+    }
+    
+    ChassisSpeeds finalChassisSpeeds = averageChassisSpeeds(arcChassisSpeeds, forwardCHassisSpeeds);
+
+    m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(finalChassisSpeeds.vxMetersPerSecond
+    , finalChassisSpeeds.vyMetersPerSecond, rotationCorrection, currentHeading));
 
     //TODO: check if need to flip order of cordinates from x,y to y,x
     SmartDashboard.putNumber("currentHeading", currentHeading.getDegrees());
@@ -70,7 +90,8 @@ public class HubCentricCommand extends CommandBase {
     SmartDashboard.putNumberArray("robotPosition", new double[] {robotPosition.getX(), robotPosition.getY()});
     
     SmartDashboard.putNumber("rotationCorrection", rotationCorrection);
-    SmartDashboard.putNumberArray("strafe values", new double[] {strafeX, strafeY});
+    SmartDashboard.putNumberArray("strafe values", new double[] {
+      finalChassisSpeeds.vxMetersPerSecond, finalChassisSpeeds.vyMetersPerSecond});
 
     SmartDashboard.putNumber("sidewaysInput", m_sidewaysSupplier.get());
     SmartDashboard.putNumber("forwardInput", m_forwardSupplier.get());
@@ -102,5 +123,29 @@ public class HubCentricCommand extends CommandBase {
 
   private double findStrafeY(double radius, double targetAngle, double max_velocity, double joystickInput, double constant) {
     return max_velocity * radius * joystickInput * constant * Math.cos(targetAngle);
+  }
+
+  private ChassisSpeeds averageChassisSpeeds(ChassisSpeeds arcChassisSpeeds, ChassisSpeeds forwardChassisSpeeds){
+    SwerveModuleState[] arcStates = m_kinematics.toSwerveModuleStates(arcChassisSpeeds);
+    SwerveModuleState[] forwardStates = m_kinematics.toSwerveModuleStates(forwardChassisSpeeds);
+    SwerveModuleState[] finalModuleStates = new SwerveModuleState[4]; 
+
+    for(int i=0; i<4; i++){
+      SwerveModuleState arcState = arcStates[i];
+      SwerveModuleState forwardState = forwardStates[i];
+      SwerveModuleState finalState = finalModuleStates[i];
+
+      Rotation2d arcStateRotation = arcState.angle;
+      Rotation2d forwardStateRotation = forwardState.angle;
+
+      //average of angles;
+      Rotation2d finalStateRotation = new Rotation2d(
+        (arcStateRotation.getRadians() + forwardStateRotation.getRadians()) /2);
+
+      finalState.angle = finalStateRotation;
+      finalState.speedMetersPerSecond = (arcState.speedMetersPerSecond + forwardState.speedMetersPerSecond)/2;
+    }
+
+    return m_kinematics.toChassisSpeeds(finalModuleStates);
   }
 }
