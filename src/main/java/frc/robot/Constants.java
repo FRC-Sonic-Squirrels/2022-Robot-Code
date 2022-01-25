@@ -111,4 +111,9 @@ public final class Constants {
       public static final int canId24_back_right_encoder  = 24;
   }
 
+  // TODO: change?
+  public static final class shooterConstants {
+    public static final int shooter1 = 16;
+    public static final int shooter2 = 17;
+}
 }
