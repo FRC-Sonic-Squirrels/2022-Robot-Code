@@ -65,7 +65,7 @@ public class shooterSubsystem extends SubsystemBase {
   };
 
   /**
-   * shooterSubsystem() - constructor for shooterSubsytem class
+   * shooterSubsystem() - constructor for shooterSubsystem class
    */
   public shooterSubsystem() {
 
@@ -76,7 +76,7 @@ public class shooterSubsystem extends SubsystemBase {
     talon_shooter2.configFactoryDefault();
 
     // set min time to go from neutral to full power
-    // NOTE: closedloop ramp rate interacts poorly with closed loop control sometimes.
+    // NOTE: closed loop ramp rate interacts poorly with closed loop control sometimes.
     // talon_shooter1.setClosedLoopRampRate(0.5);
     // talon_shooter2.setClosedLoopRampRate(0.5);
     
@@ -257,7 +257,7 @@ public class shooterSubsystem extends SubsystemBase {
   }
 
   /**
-   * getSetpoint() - return current target RPM
+   * getSetPoint() - return current target RPM
    */
   public double getSetPoint() {
     return m_desiredRPM;
