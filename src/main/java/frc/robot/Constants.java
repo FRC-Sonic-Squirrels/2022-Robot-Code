@@ -111,4 +111,12 @@ public final class Constants {
       public static final int canId24_back_right_encoder  = 24;
   }
 
+  public static final class elevatorConstants {
+    public static final int deploySolenoid1 = 0;
+    public static final int deploySolenoid2 = 2;
+    public static final int brakeSolenoid = 5;
+    public static final int elevatorWinch = 12;
+    public static final int elevatorPivotTimeout = 30;
+    public static final int elevatorSlotIdx = 1;
+}
 }
