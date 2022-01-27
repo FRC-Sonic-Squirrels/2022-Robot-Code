@@ -163,6 +163,10 @@ public class Drivetrain extends SubsystemBase {
    */
   public void zeroGyroscope() {
     setGyroscopeHeadingDegrees(0.0);
+
+    m_odometry.resetPosition(
+      new Pose2d(m_odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(0.0)),
+      getGyroscopeRotation());
   }
 
   public void setGyroscopeHeadingDegrees(double deg) {
@@ -173,7 +177,6 @@ public class Drivetrain extends SubsystemBase {
   public void setGyroscopeHeadingRadians(double rad) {
     setGyroscopeHeadingDegrees(Math.toDegrees(rad));
   }
-
 
   public Rotation2d getGyroscopeRotation() {
     // FIXME Remove if you are using a Pigeon
