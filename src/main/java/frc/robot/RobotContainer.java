@@ -6,6 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
@@ -25,6 +27,8 @@ public class RobotContainer {
 
   private final XboxController m_controller = new XboxController(0);
 
+  public final SendableChooser<Command> chooser = new SendableChooser<>();
+  
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -35,6 +39,8 @@ public class RobotContainer {
     drivetrain.setGyroscopeHeadingDegrees(0);
     drivetrain.setPose(Constants.ROBOT_1M_LEFT_OF_HUB, drivetrain.getGyroscopeRotation());
 
+    SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true);
+    SmartDashboard.putData("Auto mode", chooser);
 
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
