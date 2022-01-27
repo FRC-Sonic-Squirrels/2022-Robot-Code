@@ -54,6 +54,7 @@ public final class Constants {
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 23;
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(182.7 - 180);
 
-    // TODO: Get the actual coordinates of the hub center
-    public static final Vector2d HUB_CENTER = new Vector2d(5.0, 5.0);
+    // TODO: double check actual coordinates of the hub center 
+    // according to game manual field is  27 ft. (~823 cm) by 54 ft. (~1646 cm)
+    public static final Vector2d HUB_CENTER = new Vector2d(8.23, 4.11);
 }
