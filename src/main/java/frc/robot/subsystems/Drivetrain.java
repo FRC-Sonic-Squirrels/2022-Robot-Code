@@ -162,12 +162,18 @@ public class Drivetrain extends SubsystemBase {
    * 'forwards' direction.
    */
   public void zeroGyroscope() {
-    // FIXME Remove if you are using a Pigeon
-    m_pigeon.setFusedHeading(0.0);
-
-    // FIXME Uncomment if you are using a NavX
-//    m_navx.zeroYaw();
+    setGyroscopeHeadingDegrees(0.0);
   }
+
+  public void setGyroscopeHeadingDegrees(double deg) {
+    m_pigeon.setFusedHeading(deg);
+    m_pigeon.setAccumZAngle(deg);
+  }
+
+  public void setGyroscopeHeadingRadians(double rad) {
+    setGyroscopeHeadingDegrees(Math.toDegrees(rad));
+  }
+
 
   public Rotation2d getGyroscopeRotation() {
     // FIXME Remove if you are using a Pigeon
@@ -193,6 +199,16 @@ public class Drivetrain extends SubsystemBase {
 
   public Pose2d getCurrentPose() {
     return m_odometry.getPoseMeters();
+  }
+
+  /**
+   * Set the current odometry pose
+   * 
+   * @param pose
+   * @param rotation
+   */
+  public void setPose(Pose2d pose, Rotation2d rotation) {
+    m_odometry.resetPosition(pose, rotation);
   }
 
   //TODO: check if moduel.getSteerAngle is in degrees 
