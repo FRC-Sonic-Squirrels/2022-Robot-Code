@@ -33,7 +33,7 @@ public class HubCentricCommand extends CommandBase {
     m_sidewaysSupplier = sidewaysSupplier;
     m_forwardSupplier = forwardSupplier;
     m_drivetrain = drivetrain;
-    m_kinematics = m_drivetrain.getKinematics();
+    m_kinematics = m_drivetrain.kinematics();
 
     addRequirements(drivetrain);
   }
@@ -47,7 +47,7 @@ public class HubCentricCommand extends CommandBase {
   @Override
   public void execute() {
     Rotation2d currentHeading = m_drivetrain.getGyroscopeRotation();
-    Pose2d robotPosition = m_drivetrain.getCurrentPose();
+    Pose2d robotPosition = m_drivetrain.getPose();
     Vector2d robotVector = new Vector2d(robotPosition.getX(), robotPosition.getY());
 
     Rotation2d targetHeading = getTargetHeading(robotVector, m_hubCenter);
@@ -60,7 +60,7 @@ public class HubCentricCommand extends CommandBase {
     //       not a directional factor thus both strafeX and Y need to use sidewaysSupplier
     //       this means robot cant move forwards/change radius
     // 
-    //       Possible solution: use robot centric to generate swervemodule states for moving forward 
+    //       Possible solution: use robot centric to generate swerve module states for moving forward 
     //       average both states (arc strafe & forward movement) to get a forward motion and a arc? 
     //       as for rn robot should be able to maintain heading towards center and translate in a arc successfully 
     //       but not change radius/move forward & back. 
@@ -91,7 +91,7 @@ public class HubCentricCommand extends CommandBase {
     m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(finalChassisSpeeds.vxMetersPerSecond
     , finalChassisSpeeds.vyMetersPerSecond, rotationCorrection, currentHeading));
 
-    //TODO: check if need to flip order of cordinates from x,y to y,x
+    //TODO: check if need to flip order of coordinates from x,y to y,x
     SmartDashboard.putNumber("currentHeading", currentHeading.getDegrees());
     SmartDashboard.putNumber("targetHeading", targetHeading.getDegrees());
     SmartDashboard.putNumberArray("robotPosition", new double[] {robotPosition.getX(), robotPosition.getY()});
