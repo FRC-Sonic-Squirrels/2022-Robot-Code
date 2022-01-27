@@ -68,7 +68,7 @@ public class HubCentricCommand extends CommandBase {
     var arcChassisSpeeds = new ChassisSpeeds();
     var forwardCHassisSpeeds = new ChassisSpeeds();
 
-    if(m_forwardSupplier.get() != 0.0){
+    if(m_forwardSupplier.get() > 0.07){
       // forwardCHassisSpeeds.vxMetersPerSecond = m_forwardSupplier.get() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND;
 
       // forward/reverse is just orthogonal to tangent
@@ -78,7 +78,7 @@ public class HubCentricCommand extends CommandBase {
       forwardCHassisSpeeds.vyMetersPerSecond = findStrafeY(1.0, orthogonalHeading, Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_forwardSupplier.get(), 0.5);
 
     }
-    if(m_sidewaysSupplier.get() != 0.0){
+    if(m_sidewaysSupplier.get() > 0.07){
       double strafeX = findStrafeX(radius, targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), 0.3);
       double strafeY = findStrafeY(radius, targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), 0.3);
 
