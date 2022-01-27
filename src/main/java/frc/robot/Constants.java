@@ -5,6 +5,8 @@
 package frc.robot;
 
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 
@@ -57,4 +59,6 @@ public final class Constants {
     // TODO: double check actual coordinates of the hub center 
     // according to game manual field is  27 ft. (~823 cm) by 54 ft. (~1646 cm)
     public static final Vector2d HUB_CENTER = new Vector2d(8.23, 4.11);
-}
+    public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
+        new Pose2d(HUB_CENTER.x - 1, HUB_CENTER.y, new Rotation2d(0));
+  }
