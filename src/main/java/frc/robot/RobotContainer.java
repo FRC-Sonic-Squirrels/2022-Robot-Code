@@ -21,7 +21,7 @@ import frc.robot.subsystems.Drivetrain;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Drivetrain m_drivetrain = new Drivetrain();
+  private final Drivetrain drivetrain = new Drivetrain();
 
   private final XboxController m_controller = new XboxController(0);
 
@@ -29,6 +29,13 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
+    // set the starting position of the robot on the field
+    // TODO: need a chooser object to select starting position and angle
+    drivetrain.setGyroscopeHeadingDegrees(0);
+    drivetrain.setPose(Constants.ROBOT_1M_LEFT_OF_HUB, drivetrain.getGyroscopeRotation());
+
+
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
     // Left stick Y axis -> forward and backwards movement
@@ -36,8 +43,8 @@ public class RobotContainer {
 
     
     // Right stick X axis -> rotation
-    m_drivetrain.setDefaultCommand(new DefaultDriveCommand(
-      m_drivetrain,
+    drivetrain.setDefaultCommand(new DefaultDriveCommand(
+      drivetrain,
       () -> -modifyAxis(m_controller.getLeftY() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND),
       () -> -modifyAxis(m_controller.getLeftX()* Drivetrain.MAX_VELOCITY_METERS_PER_SECOND) ,
       () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)
@@ -58,11 +65,11 @@ public class RobotContainer {
     // Back button zeros the gyroscope
     new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
-            .whenPressed(m_drivetrain::zeroGyroscope);
+            .whenPressed(drivetrain::zeroGyroscope);
 
     
     new Button(m_controller::getXButton)
-            .whenPressed(new HubCentricCommand(m_drivetrain, 
+            .whenPressed(new HubCentricCommand(drivetrain, 
             () -> -modifyAxis(m_controller.getLeftX()), 
             () -> -modifyAxis(m_controller.getLeftY())));
   }
