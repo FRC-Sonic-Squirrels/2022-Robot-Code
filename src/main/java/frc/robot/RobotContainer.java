@@ -67,11 +67,18 @@ public class RobotContainer {
             // No requirements because we don't need to interrupt anything
             .whenPressed(drivetrain::zeroGyroscope);
 
-    
     new Button(m_controller::getXButton)
             .whenPressed(new HubCentricCommand(drivetrain, 
             () -> -modifyAxis(m_controller.getLeftX()), 
             () -> -modifyAxis(m_controller.getLeftY())));
+
+    new Button(m_controller::getYButton)
+            .whenPressed(new DefaultDriveCommand(drivetrain,
+              () -> -modifyAxis(m_controller.getLeftY() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND),
+              () -> -modifyAxis(m_controller.getLeftX() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND) ,
+              () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)
+            ));
+       
   }
 
   
