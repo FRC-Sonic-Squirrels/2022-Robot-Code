@@ -18,16 +18,16 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
 
 public class HubCentricCommand extends CommandBase {
-  Drivetrain m_drivetrain;
-  SwerveDriveKinematics m_kinematics;
+  private Drivetrain m_drivetrain;
+  private SwerveDriveKinematics m_kinematics;
 
-  Supplier<Double> m_sidewaysSupplier;
-  Supplier<Double> m_forwardSupplier;
+  private Supplier<Double> m_sidewaysSupplier;
+  private Supplier<Double> m_forwardSupplier;
 
   // copied values from Swerve Template Odometry
-  PIDController rotationalController = new PIDController(3.0, 0.0, 0.02);
+  private PIDController rotationalController = new PIDController(3.0, 0.0, 0.02);
 
-  Vector2d m_hubCenter = Constants.HUB_CENTER;
+  private Vector2d m_hubCenter = Constants.HUB_CENTER;
   
   public HubCentricCommand(Drivetrain drivetrain, Supplier<Double> sidewaysSupplier, Supplier<Double> forwardSupplier) {
     m_sidewaysSupplier = sidewaysSupplier;
@@ -69,11 +69,18 @@ public class HubCentricCommand extends CommandBase {
     var forwardCHassisSpeeds = new ChassisSpeeds();
 
     if(m_forwardSupplier.get() != 0.0){
-      forwardCHassisSpeeds.vxMetersPerSecond = m_forwardSupplier.get() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND;
+      // forwardCHassisSpeeds.vxMetersPerSecond = m_forwardSupplier.get() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND;
+
+      // forward/reverse is just orthogonal to tangent
+      double orthogonalHeading = targetHeading.getRadians() - (Math.PI / 4.0);
+
+      forwardCHassisSpeeds.vxMetersPerSecond = findStrafeX(1.0, orthogonalHeading, Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_forwardSupplier.get(), 0.5);
+      forwardCHassisSpeeds.vyMetersPerSecond = findStrafeY(1.0, orthogonalHeading, Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_forwardSupplier.get(), 0.5);
+
     }
     if(m_sidewaysSupplier.get() != 0.0){
-      double strafeX = findStrafeX(radius, targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), 0.04);
-      double strafeY = findStrafeY(radius, targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), 0.04);
+      double strafeX = findStrafeX(radius, targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), 0.3);
+      double strafeY = findStrafeY(radius, targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), 0.3);
 
       arcChassisSpeeds.vxMetersPerSecond = strafeY;
       arcChassisSpeeds.vyMetersPerSecond = strafeX;
@@ -118,11 +125,11 @@ public class HubCentricCommand extends CommandBase {
   }
 
   private double findStrafeX(double radius, double targetAngle, double max_velocity, double joystickInput, double constant) {
-    return max_velocity * radius * joystickInput * constant * -Math.sin(targetAngle);
+    return constant * max_velocity * joystickInput * -Math.sin(targetAngle);
   }
 
   private double findStrafeY(double radius, double targetAngle, double max_velocity, double joystickInput, double constant) {
-    return max_velocity * radius * joystickInput * constant * Math.cos(targetAngle);
+    return constant * max_velocity * joystickInput * Math.cos(targetAngle);
   }
 
   private ChassisSpeeds averageChassisSpeeds(ChassisSpeeds arcChassisSpeeds, ChassisSpeeds forwardChassisSpeeds){
