@@ -1,9 +1,6 @@
-
-
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
@@ -194,9 +191,9 @@ public class Drivetrain extends SubsystemBase {
     m_chassisSpeeds = chassisSpeeds;
   }
 
-	public Pose2d getCurrentPose(){
-	  return m_odometry.getPoseMeters();
-	}
+  public Pose2d getCurrentPose() {
+    return m_odometry.getPoseMeters();
+  }
 
   //TODO: check if moduel.getSteerAngle is in degrees 
   private SwerveModuleState getSwerveModuleState(SwerveModule module){
