@@ -23,9 +23,9 @@ import frc.robot.subsystems.Drivetrain;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Drivetrain drivetrain = new Drivetrain();
+  public final Drivetrain drivetrain = new Drivetrain();
 
-  private final XboxController m_controller = new XboxController(0);
+  public final XboxController m_controller = new XboxController(0);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
   
@@ -52,8 +52,8 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new DefaultDriveCommand(
       drivetrain,
       () -> -modifyAxis(m_controller.getLeftY() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND),
-      () -> -modifyAxis(m_controller.getLeftX()* Drivetrain.MAX_VELOCITY_METERS_PER_SECOND) ,
-      () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)
+      () -> -modifyAxis(m_controller.getLeftX() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND) ,
+      () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / 4)
     ));
 
     
@@ -75,14 +75,14 @@ public class RobotContainer {
 
     new Button(m_controller::getXButton)
             .whenPressed(new HubCentricCommand(drivetrain, 
-            () -> -modifyAxis(m_controller.getLeftX()), 
+            () -> -modifyAxis(m_controller.getRightX()), 
             () -> -modifyAxis(m_controller.getLeftY())));
 
     new Button(m_controller::getYButton)
             .whenPressed(new DefaultDriveCommand(drivetrain,
               () -> -modifyAxis(m_controller.getLeftY() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND),
               () -> -modifyAxis(m_controller.getLeftX() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND) ,
-              () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)
+              () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / 4)
             ));
        
   }
@@ -112,7 +112,7 @@ public class RobotContainer {
 
   private static double modifyAxis(double value) {
     // Deadband
-    value = deadband(value, 0.05);
+    value = deadband(value, 0.08);
 
     // Square the axis
     value = Math.copySign(value * value, value);
