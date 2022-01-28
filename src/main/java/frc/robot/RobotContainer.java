@@ -4,12 +4,12 @@
 
 package frc.robot;
 
+import java.util.List;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
@@ -47,8 +47,6 @@ public class RobotContainer {
     // The controls are for field-oriented driving:
     // Left stick Y axis -> forward and backwards movement
     // Left stick X axis -> left and right movement
-
-    
     // Right stick X axis -> rotation
     // drivetrain.setDefaultCommand(new DefaultDriveCommand(
     //   drivetrain,
@@ -72,9 +70,10 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
+
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
-    new Button(m_controller::getBackButton)
+    new Button(controller::getBackButton)
             // No requirements because we don't need to interrupt anything
             .whenPressed(drivetrain::zeroGyroscope);
 
@@ -95,11 +94,44 @@ public class RobotContainer {
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
+   * DEPRECATED. Get directly from chooser.
+   * 
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return new InstantCommand();
+    // Example from WPILib:
+    // https://github.com/wpilibsuite/allwpilib/blob/main/wpilibjExamples/src/main/java/edu/wpi/first/wpilibj/examples/swervecontrollercommand/RobotContainer.java
+
+    // Create config for trajectory
+    TrajectoryConfig config = new TrajectoryConfig(
+        DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+        DrivetrainSubsystem.MAX_ACCELERATION_METERS_PER_SECOND_SQUARED)
+            // Add kinematics to ensure max speed is actually obeyed
+            .setKinematics(drivetrainSubsystem.kinematics());
+
+    drivetrainSubsystem.setPose(new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
+        drivetrainSubsystem.getGyroscopeRotation());
+
+
+    // An example trajectory to follow. All units in meters.
+    // Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+    //     // Start at the origin facing the +X direction
+    //     new Pose2d(0, 0, new Rotation2d(0)),
+    //     // Pass through these two interior waypoints, making an 's' curve path
+    //     List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+    //     // End 3 meters straight ahead of where we started, facing forward
+    //     new Pose2d(3, 0, new Rotation2d(0)), config);
+
+    // My first trajectory, drive 1 meter straight ahead
+    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(0, 0, new Rotation2d(0)),
+        List.of(new Translation2d(0.5, 0)),
+        // End 1 meter straight ahead of where we started, facing forward
+        new Pose2d(1.0, 0, new Rotation2d(0)), config);
+
+    return SwerveTrajectoryFollowCommandFactory.SwerveControllerCommand(exampleTrajectory, drivetrainSubsystem, true);
+
   }
 
   private static double deadband(double value, double deadband) {
