@@ -9,18 +9,12 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
-import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.commands.HubCentricCommand;
+import frc.robot.subsystems.Drivetrain;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -30,21 +24,23 @@ import frc.robot.subsystems.DrivetrainSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  public final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem();
-  private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  public final Drivetrain drivetrain = new Drivetrain();
 
-  private final XboxController controller = new XboxController(0);
-
-  
+  public final XboxController m_controller = new XboxController(0);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
-
+  
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
 
-    SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrainSubsystem, true);
+    // set the starting position of the robot on the field
+    // TODO: need a chooser object to select starting position and angle
+    drivetrain.setGyroscopeHeadingDegrees(0);
+    drivetrain.setPose(Constants.ROBOT_1M_LEFT_OF_HUB, drivetrain.getGyroscopeRotation());
+
+    SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true);
     SmartDashboard.putData("Auto mode", chooser);
 
     // Set up the default command for the drivetrain.
@@ -52,17 +48,17 @@ public class RobotContainer {
     // Left stick Y axis -> forward and backwards movement
     // Left stick X axis -> left and right movement
     // Right stick X axis -> rotation
-    // drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-    //         drivetrainSubsystem,
-    //         () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-    //         () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-    //         () -> -modifyAxis(controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+    // drivetrain.setDefaultCommand(new DefaultDriveCommand(
+    //   drivetrain,
+    //   () -> -modifyAxis(m_controller.getLeftY() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND),
+    //   () -> -modifyAxis(m_controller.getLeftX() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND) ,
+    //   () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / 4)
     // ));
-
-    drivetrainSubsystem.setDefaultCommand(new DriveWithSetRotationCommand(drivetrainSubsystem,
-        () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-        () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-        () -> controller.getPOV(), 0));
+    
+    drivetrain.setDefaultCommand(new DriveWithSetRotationCommand(drivetrain,
+        () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> m_controller.getPOV(), 0.0));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -79,17 +75,22 @@ public class RobotContainer {
     // Back button zeros the gyroscope
     new Button(controller::getBackButton)
             // No requirements because we don't need to interrupt anything
-            .whenPressed(drivetrainSubsystem::zeroGyroscope);
+            .whenPressed(drivetrain::zeroGyroscope);
 
-    // new Button(controller::getAButton)
-    //         .whenPressed(new DriveWithSetRotationCommand(
-    //           drivetrainSubsystem,
-    //           () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-    //           () -> -modifyAxis(controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-    //           () -> controller.getPOV(),
-    //           0));
+    new Button(m_controller::getXButton)
+            .whenPressed(new HubCentricCommand(drivetrain, 
+            () -> -modifyAxis(m_controller.getRightX()), 
+            () -> -modifyAxis(m_controller.getLeftY())));
+
+    new Button(m_controller::getYButton)
+            .whenPressed(new DriveWithSetRotationCommand(drivetrain,
+            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> m_controller.getPOV(), 0.0));
+
   }
 
+  
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -147,7 +148,7 @@ public class RobotContainer {
 
   private static double modifyAxis(double value) {
     // Deadband
-    value = deadband(value, 0.07);
+    value = deadband(value, 0.08);
 
     // Square the axis
     value = Math.copySign(value * value, value);

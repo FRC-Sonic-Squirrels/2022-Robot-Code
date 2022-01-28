@@ -12,7 +12,9 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.constraint.SwerveDriveKinematicsConstraint;
-import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.Drivetrain;
+
+// TODO: change this class to not require drivetrain subsystem, then it will be more generic
 
 /**
  * This class is for generating trajectories. It includes several trajectories for calibrating
@@ -26,34 +28,34 @@ public class TestTrajectories {
   private double maxVelocity = 1.0;
   private double maxAcceleration = 0.75;
 
-  private DrivetrainSubsystem drivetrainSubsystem = null;
+  private Drivetrain drivetrain = null;
 
   /**
    * Constructor for Test Trajectory factory.
    * 
    * @param maxVelocity
    * @param maxAcceleration
-   * @param drivetrainSubsystem
+   * @param drivetrain
    * @param isSwerve
    */
   public TestTrajectories(double maxVelocity, double maxAcceleration,
-      DrivetrainSubsystem drivetrainSubsystem, boolean isSwerve) {
+      Drivetrain drivetrain, boolean isSwerve) {
     this.maxVelocity = maxVelocity;
     this.maxAcceleration = maxAcceleration;
-    this.drivetrainSubsystem = drivetrainSubsystem;
+    this.drivetrain = drivetrain;
     this.isSwerve = isSwerve;
   }
 
   public TrajectoryConfig getTrajectoryConfig() {
     TrajectoryConfig config = new TrajectoryConfig(maxVelocity, maxAcceleration)
         // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(drivetrainSubsystem.kinematics());
+        .setKinematics(drivetrain.kinematics());
 
     if (isSwerve) {
       // Limits the velocity of the robot around turns such that no wheel of a swerve-drive robot
       // goes over a specified maximum velocity.
       SwerveDriveKinematicsConstraint swerveConstraint = new SwerveDriveKinematicsConstraint(
-          drivetrainSubsystem.kinematics(), DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND);
+          drivetrain.kinematics(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND);
       config.addConstraint(swerveConstraint);
     }
     return config;

@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -30,6 +31,9 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    m_robotContainer.drivetrain.setGyroscopeHeadingDegrees(0);
+    m_robotContainer.drivetrain.setPose(Constants.ROBOT_1M_LEFT_OF_HUB, m_robotContainer.drivetrain.getGyroscopeRotation());
   }
 
   /**
@@ -46,6 +50,12 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    SmartDashboard.putNumber("jLeftY", m_robotContainer.m_controller.getLeftY());
+    SmartDashboard.putNumber("jLeftX", m_robotContainer.m_controller.getLeftX());
+    SmartDashboard.putNumber("jRightY", m_robotContainer.m_controller.getRightY());
+    SmartDashboard.putNumber("jRightX", m_robotContainer.m_controller.getRightX());
+
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

@@ -11,7 +11,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.Drivetrain;
 
 /**
  * This class implements field centric swerve drive, with fixed rotational control. The robot
@@ -23,7 +23,7 @@ import frc.robot.subsystems.DrivetrainSubsystem;
  */
 
 public class DriveWithSetRotationCommand extends CommandBase {
-  private final DrivetrainSubsystem m_drivetrainSubsystem;
+  private final Drivetrain m_drivetrainSubsystem;
 
   // input suppliers from joysticks
   private final DoubleSupplier m_translationXSupplier;
@@ -37,8 +37,8 @@ public class DriveWithSetRotationCommand extends CommandBase {
   // use a ProfiledPIDController w/ Trapezoidal Profile 
   // https://github.com/wpilibsuite/allwpilib/blob/2ad2d2ca9628ab4130135949c7cea3f71fd5d5b6/wpilibjExamples/src/main/java/edu/wpi/first/wpilibj/examples/swervecontrollercommand/subsystems/SwerveModule.java#L27-L34
   private ProfiledPIDController rotationController = new ProfiledPIDController(1.5, 0.0, 0.0,
-      new TrapezoidProfile.Constraints(DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
-          DrivetrainSubsystem.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED * 0.9));
+      new TrapezoidProfile.Constraints(Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+          Drivetrain.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED * 0.9));
 
   /**
    * 
@@ -49,7 +49,7 @@ public class DriveWithSetRotationCommand extends CommandBase {
    * @param translationYSupplier
    * @param rotationRadians
    */
-  public DriveWithSetRotationCommand(DrivetrainSubsystem drivetrainSubsystem,
+  public DriveWithSetRotationCommand(Drivetrain drivetrainSubsystem,
       DoubleSupplier translationXSupplier, DoubleSupplier translationYSupplier,
       DoubleSupplier rotationPOVSupplier, double rotationRadians) {
     m_drivetrainSubsystem = drivetrainSubsystem;
