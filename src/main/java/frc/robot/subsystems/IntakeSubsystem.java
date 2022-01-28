@@ -148,7 +148,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   /**
-   * Resets the Intake to origional PID Values
+   * Resets the Intake to original PID Values
    */
   public void resetIntake(){
     setDynamicSpeed(dynamicMode);
