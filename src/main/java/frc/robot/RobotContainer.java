@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.HubCentricCommand;
 import frc.robot.subsystems.Drivetrain;
 
@@ -49,14 +50,18 @@ public class RobotContainer {
 
     
     // Right stick X axis -> rotation
-    drivetrain.setDefaultCommand(new DefaultDriveCommand(
-      drivetrain,
-      () -> -modifyAxis(m_controller.getLeftY() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND),
-      () -> -modifyAxis(m_controller.getLeftX() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND) ,
-      () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / 4)
-    ));
-
+    // drivetrain.setDefaultCommand(new DefaultDriveCommand(
+    //   drivetrain,
+    //   () -> -modifyAxis(m_controller.getLeftY() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND),
+    //   () -> -modifyAxis(m_controller.getLeftX() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND) ,
+    //   () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / 4)
+    // ));
     
+    drivetrain.setDefaultCommand(new DriveWithSetRotationCommand(drivetrain,
+        () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> m_controller.getPOV(), 0.0));
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -79,12 +84,11 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getLeftY())));
 
     new Button(m_controller::getYButton)
-            .whenPressed(new DefaultDriveCommand(drivetrain,
-              () -> -modifyAxis(m_controller.getLeftY() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND),
-              () -> -modifyAxis(m_controller.getLeftX() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND) ,
-              () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / 4)
-            ));
-       
+            .whenPressed(new DriveWithSetRotationCommand(drivetrain,
+            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> m_controller.getPOV(), 0.0));
+
   }
 
   
