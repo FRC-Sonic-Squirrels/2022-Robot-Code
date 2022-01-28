@@ -20,6 +20,7 @@
     "CANID",
     "deadband",
     "drivetrains",
+    "EJECTPAUSE",
     "Feedforward",
     "holonomic",
     "navx",
