@@ -23,6 +23,8 @@ public class HubCentricCommand extends CommandBase {
   private Supplier<Double> m_sidewaysSupplier;
   private Supplier<Double> m_forwardSupplier;
 
+  
+
   // copied values from Swerve Template Odometry
   private PIDController rotationalController = new PIDController(3.0, 0.0, 0.02);
 
@@ -34,6 +36,7 @@ public class HubCentricCommand extends CommandBase {
     m_drivetrain = drivetrain;
     m_kinematics = m_drivetrain.kinematics();
 
+    
     addRequirements(drivetrain);
   }
 
@@ -45,11 +48,11 @@ public class HubCentricCommand extends CommandBase {
 
   @Override
   public void execute() {
-    Rotation2d currentHeading = m_drivetrain.getGyroscopeRotation();
+    Rotation2d currentHeading = m_drivetrain.getGyroscopeRotation(); 
     Pose2d robotPosition = m_drivetrain.getPose();
     Vector2d robotVector = new Vector2d(m_hubCenter.x - robotPosition.getX(), m_hubCenter.y - robotPosition.getY());
 
-    Rotation2d targetHeading = getTargetHeading(robotVector, new Vector2d(1,0));
+    Rotation2d targetHeading = getTargetHeading(robotVector, new Vector2d(1,0), Math.signum(m_hubCenter.x - robotPosition.getX()));
     double radius = Math.sqrt(Math.pow(m_hubCenter.x - robotPosition.getX(), 2) + Math.pow(m_hubCenter.y - robotPosition.getY(), 2));
 
     double rotationCorrection = rotationalController.calculate(currentHeading.getRadians(), targetHeading.getRadians());
@@ -109,12 +112,13 @@ public class HubCentricCommand extends CommandBase {
     return false;
   }
 
-  private Rotation2d getTargetHeading(Vector2d robotLocation, Vector2d hubLocation) {
+  private Rotation2d getTargetHeading(Vector2d robotLocation, Vector2d hubLocation, double sign) {
     double product = robotLocation.dot(hubLocation);
     double magnitudes = robotLocation.magnitude() * hubLocation.magnitude();
     double angle_rad = Math.acos(product / magnitudes);
 
-    return new Rotation2d(angle_rad);
+  
+    return new Rotation2d(angle_rad * sign);
   }
 
   private double findStrafeX(double radius, double targetAngle, double max_velocity, double joystickInput, double constant) {
