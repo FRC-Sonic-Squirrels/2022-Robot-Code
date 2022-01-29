@@ -52,7 +52,10 @@ public class HubCentricCommand extends CommandBase {
     Pose2d robotPosition = m_drivetrain.getPose();
     Vector2d robotVector = new Vector2d(m_hubCenter.x - robotPosition.getX(), m_hubCenter.y - robotPosition.getY());
 
-    Rotation2d targetHeading = getTargetHeading(robotVector, new Vector2d(1,0), Math.signum(m_hubCenter.x - robotPosition.getX()));
+    Rotation2d targetHeading = getTargetHeading(robotVector, new Vector2d(1,0)); 
+    //Flips for delta y is negative, otherwise left half of the circle doesnt work 
+    targetHeading.times(Math.signum(m_hubCenter.x - robotPosition.getX()));
+    
     double radius = Math.sqrt(Math.pow(m_hubCenter.x - robotPosition.getX(), 2) + Math.pow(m_hubCenter.y - robotPosition.getY(), 2));
 
     double rotationCorrection = rotationalController.calculate(currentHeading.getRadians(), targetHeading.getRadians());
@@ -112,13 +115,13 @@ public class HubCentricCommand extends CommandBase {
     return false;
   }
 
-  private Rotation2d getTargetHeading(Vector2d robotLocation, Vector2d hubLocation, double sign) {
+  private Rotation2d getTargetHeading(Vector2d robotLocation, Vector2d hubLocation) {
     double product = robotLocation.dot(hubLocation);
     double magnitudes = robotLocation.magnitude() * hubLocation.magnitude();
     double angle_rad = Math.acos(product / magnitudes);
 
   
-    return new Rotation2d(angle_rad * sign);
+    return new Rotation2d(angle_rad);
   }
 
   private double findStrafeX(double radius, double targetAngle, double max_velocity, double joystickInput, double constant) {
