@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.HubCentricCommand;
+import frc.robot.commands.RobotCentricDriving;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -86,6 +87,12 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
             () -> m_controller.getPOV(), 0.0));
+            
+    new Button(m_controller::getBButton)
+            .whenPressed(new RobotCentricDriving(drivetrain,
+            () -> -modifyAxis(m_controller.getLeftX()), 
+            () -> -modifyAxis(m_controller.getLeftY()),
+            () -> modifyAxis(m_controller.getRightX())));
 
   }
 
