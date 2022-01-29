@@ -90,9 +90,9 @@ public class RobotContainer {
             
     new Button(m_controller::getBButton)
             .whenPressed(new RobotCentricDriving(drivetrain,
-            () -> -modifyAxis(m_controller.getLeftX()), 
-            () -> -modifyAxis(m_controller.getLeftY()),
-            () -> modifyAxis(m_controller.getRightX())));
+            () -> -modifyAxis(m_controller.getLeftY()) * drivetrain.MAX_VELOCITY_METERS_PER_SECOND *0.8, 
+            () -> -modifyAxis(m_controller.getLeftX()) * drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8,
+            () -> -modifyAxis(m_controller.getRightX()) * drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND*0.5));
 
   }
 
