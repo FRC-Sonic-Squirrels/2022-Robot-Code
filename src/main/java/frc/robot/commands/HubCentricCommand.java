@@ -47,9 +47,9 @@ public class HubCentricCommand extends CommandBase {
   public void execute() {
     Rotation2d currentHeading = m_drivetrain.getGyroscopeRotation();
     Pose2d robotPosition = m_drivetrain.getPose();
-    Vector2d robotVector = new Vector2d(robotPosition.getX(), robotPosition.getY());
+    Vector2d robotVector = new Vector2d(m_hubCenter.x - robotPosition.getX(), m_hubCenter.y - robotPosition.getY());
 
-    Rotation2d targetHeading = getTargetHeading(robotVector, m_hubCenter);
+    Rotation2d targetHeading = getTargetHeading(robotVector, new Vector2d(1,0));
     double radius = Math.sqrt(Math.pow(m_hubCenter.x - robotPosition.getX(), 2) + Math.pow(m_hubCenter.y - robotPosition.getY(), 2));
 
     double rotationCorrection = rotationalController.calculate(currentHeading.getRadians(), targetHeading.getRadians());
