@@ -19,8 +19,8 @@ import frc.robot.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
-  private TalonFX winch_main_talon = new TalonFX(Constants.canId.canId9_main_talon);
-  private TalonFX winch_sub_talon = new TalonFX(Constants.canId.canId10_sub_talon);
+  private TalonFX winch_lead_talon = new TalonFX(Constants.canId.canId9_elevator_lead_talon);
+  private TalonFX winch_follow_talon = new TalonFX(Constants.canId.canId10_elevator_follow_talon);
   private Solenoid frictionBrakeSolenoid =
       new Solenoid(PneumaticsModuleType.REVPH, Constants.canId.canId11_friction_brake_solenoid);
   private final double gearRatio =  0.074;
@@ -34,6 +34,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     //elevatorWinchP.setIdleMode(CANSparkMax.IdleMode.kBrake);
     //elevatorWinchC.configFactoryDefault();
     //elevatorWinchC.setNeutralMode(NeutralMode.Brake);
+    winch_lead_talon.setNeutralMode(NeutralMode.Brake);
+    winch_follow_talon.follow(winch_lead_talon);
 
     // TODO: check if this is the right section to activate the default state of frictionBrakeSolenoid
     frictionBrakeSolenoid.set(true);
@@ -54,8 +56,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void setWinchPercentOutput(double percent) {
-    winch_main_talon.set(ControlMode.PercentOutput, percent);
-    winch_sub_talon.set(ControlMode.PercentOutput, percent);
+    winch_lead_talon.set(ControlMode.PercentOutput, percent);
+    winch_follow_talon.set(ControlMode.PercentOutput, percent);
   }
 
   public void stop() {
