@@ -52,10 +52,9 @@ public class HubCentricCommand extends CommandBase {
     Pose2d robotPosition = m_drivetrain.getPose();
     Vector2d robotVector = new Vector2d(m_hubCenter.x - robotPosition.getX(), m_hubCenter.y - robotPosition.getY());
 
-    Rotation2d targetHeading = getTargetHeading(robotVector, new Vector2d(1,0)); 
-    //Flips for delta y is negative, otherwise left half of the circle doesnt work 
-    targetHeading.times(Math.signum(m_hubCenter.x - robotPosition.getX()));
-    
+    Rotation2d targetHeading = getTargetHeading(robotVector, new Vector2d(1,0));
+    //to make it work on left side of circle 
+    targetHeading.times(Math.signum(m_hubCenter.y - robotPosition.getY()));
     double radius = Math.sqrt(Math.pow(m_hubCenter.x - robotPosition.getX(), 2) + Math.pow(m_hubCenter.y - robotPosition.getY(), 2));
 
     double rotationCorrection = rotationalController.calculate(currentHeading.getRadians(), targetHeading.getRadians());
@@ -84,7 +83,7 @@ public class HubCentricCommand extends CommandBase {
       strafeY += findStrafeY(radius, targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), 0.3);
     }
     
-    if (rotationCorrection < 0.05 && strafeX < 0.02 && strafeY < 0.02) {
+    if (rotationCorrection < 0.03 && strafeX < 0.01 && strafeY < 0.01) {
         // don't try to correct small turns if we aren't moving
         rotationCorrection = 0.0;
     }
