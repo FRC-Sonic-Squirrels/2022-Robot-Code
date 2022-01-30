@@ -39,8 +39,8 @@ public final class Constants {
      public static final int canId6_upper_belts       = 6;
      public static final int canId7_flywheel_left     = 7;
      public static final int canId8_flywheel_right    = 8;
-     public static final int canId9_main_talon = 9;
-     public static final int canId10_sub_talon = 10;
+     public static final int canId9_elevator_lead_talon = 9;
+     public static final int canId10_elevator_follow_talon = 10;
      public static final int canId11_friction_brake_solenoid  = 11;
      public static final int canId12_front_right_steer = 12;
      public static final int canId13_back_right_steer  = 13;
