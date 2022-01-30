@@ -25,7 +25,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       new Solenoid(PneumaticsModuleType.REVPH, Constants.canId.canId11_friction_brake_solenoid);
   private final double gearRatio =  0.074;
   private final double winchDiameter_inches = 1.25;
-
+  private boolean elevatorDeployed = false;
   
 
 
