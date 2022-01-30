@@ -22,7 +22,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private TalonFX winch_lead_talon = new TalonFX(Constants.canId.canId9_elevator_lead_talon);
   private TalonFX winch_follow_talon = new TalonFX(Constants.canId.canId10_elevator_follow_talon);
   private Solenoid frictionBrakeSolenoid =
-      new Solenoid(PneumaticsModuleType.REVPH, Constants.canId.canId11_friction_brake_solenoid);
+      new Solenoid(PneumaticsModuleType.REVPH, Constants.canId.CANID8_FRICTION_BRAKE_SOLENOID);
   private final double gearRatio =  0.074;
   private final double winchDiameter_inches = 1.25;
   private boolean elevatorDeployed = false;

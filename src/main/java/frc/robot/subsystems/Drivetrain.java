@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.canId;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import static frc.robot.Constants.*;
@@ -132,11 +133,11 @@ public class Drivetrain extends SubsystemBase {
         // This can either be STANDARD or FAST depending on your gear configuration
         Mk3SwerveModuleHelper.GearRatio.FAST,
         // This is the ID of the drive motor
-        FRONT_LEFT_MODULE_DRIVE_MOTOR,
+        canId.CANID1_FRONT_LEFT_MODULE_DRIVE_MOTOR,
         // This is the ID of the steer motor
-        FRONT_LEFT_MODULE_STEER_MOTOR,
+        canId.CANID11_FRONT_LEFT_MODULE_STEER_MOTOR,
         // This is the ID of the steer encoder
-        FRONT_LEFT_MODULE_STEER_ENCODER,
+        canId.CANID21_FRONT_LEFT_MODULE_STEER_ENCODER,
         // This is how much the steer encoder is offset from true zero (In our case, zero is facing
         // straight forward)
         FRONT_LEFT_MODULE_STEER_OFFSET);
@@ -146,24 +147,24 @@ public class Drivetrain extends SubsystemBase {
         Mk3SwerveModuleHelper.createFalcon500(
             tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2,
                 0),
-            Mk3SwerveModuleHelper.GearRatio.FAST, FRONT_RIGHT_MODULE_DRIVE_MOTOR,
-            FRONT_RIGHT_MODULE_STEER_MOTOR, FRONT_RIGHT_MODULE_STEER_ENCODER,
+            Mk3SwerveModuleHelper.GearRatio.FAST, canId.CANID2_FRONT_RIGHT_MODULE_DRIVE_MOTOR,
+            canId.CANID11_FRONT_LEFT_MODULE_STEER_MOTOR, canId.CANID22_FRONT_RIGHT_MODULE_STEER_ENCODER,
             FRONT_RIGHT_MODULE_STEER_OFFSET);
 
     m_backLeftModule =
         Mk3SwerveModuleHelper.createFalcon500(
             tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4,
                 0),
-            Mk3SwerveModuleHelper.GearRatio.FAST, BACK_LEFT_MODULE_DRIVE_MOTOR,
-            BACK_LEFT_MODULE_STEER_MOTOR, BACK_LEFT_MODULE_STEER_ENCODER,
+            Mk3SwerveModuleHelper.GearRatio.FAST, canId.CANID4_BACK_LEFT_MODULE_DRIVE_MOTOR,
+            canId.CANID14_BACK_LEFT_MODULE_STEER_MOTOR, canId.CANID24_BACK_LEFT_MODULE_STEER_ENCODER,
             BACK_LEFT_MODULE_STEER_OFFSET);
 
     m_backRightModule =
         Mk3SwerveModuleHelper.createFalcon500(
             tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6,
                 0),
-            Mk3SwerveModuleHelper.GearRatio.FAST, BACK_RIGHT_MODULE_DRIVE_MOTOR,
-            BACK_RIGHT_MODULE_STEER_MOTOR, BACK_RIGHT_MODULE_STEER_ENCODER,
+            Mk3SwerveModuleHelper.GearRatio.FAST, canId.CANID3_BACK_RIGHT_MODULE_DRIVE_MOTOR,
+            canId.CANID13_BACK_RIGHT_MODULE_STEER_MOTOR, canId.CANID23_BACK_RIGHT_MODULE_STEER_ENCODER,
             BACK_RIGHT_MODULE_STEER_OFFSET);
 
     m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
