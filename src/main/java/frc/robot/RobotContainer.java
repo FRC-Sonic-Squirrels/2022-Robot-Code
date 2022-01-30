@@ -4,11 +4,19 @@
 
 package frc.robot;
 
+import edu.wpi.first.cscore.CvSink;
+import edu.wpi.first.cscore.CvSource;
+import edu.wpi.first.cscore.MjpegServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
@@ -42,6 +50,21 @@ public class RobotContainer {
 
     SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true);
     SmartDashboard.putData("Auto mode", chooser);
+
+    // Creates UsbCamera and MjpegServer [1] and connects them
+    UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
+    MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
+    mjpegServer1.setSource(usbCamera);
+
+    // Creates the CvSink and connects it to the UsbCamera
+    CvSink cvSink = new CvSink("opencv_USB Camera 0");
+    cvSink.setSource(usbCamera);
+
+    // Creates the CvSource and MjpegServer [2] and connects them
+    CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
+    MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
+    mjpegServer2.setSource(outputStream);
+    
 
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
@@ -87,7 +110,7 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
             () -> m_controller.getPOV(), 0.0));
-            
+
     new Button(m_controller::getBButton)
             .whenPressed(new RobotCentricDriving(drivetrain,
             () -> -modifyAxis(m_controller.getLeftY()) * drivetrain.MAX_VELOCITY_METERS_PER_SECOND *0.8, 
@@ -118,3 +141,6 @@ public class RobotContainer {
     return value;
   }
 }
+
+
+
