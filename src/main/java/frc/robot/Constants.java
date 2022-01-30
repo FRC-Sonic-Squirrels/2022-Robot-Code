@@ -59,8 +59,8 @@ public final class Constants {
      public static final int canId16 = 16;
      public static final int canId17 = 17;
      public static final int CANID18_INTAKE = 18;
-     public static final int canId19 = 19;
-     public static final int canId20 = 20;
+     public static final int CANID19_ARM_LEAD_MOTOR = 19;
+     public static final int CANID20_ARM_FALLOW_MOTOR = 20;
   }
 
   public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(142.4 + 180);
