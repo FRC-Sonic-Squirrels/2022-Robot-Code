@@ -31,32 +31,42 @@ public final class Constants {
 
      // When assigning a CAN ID, rename the constant to something descriptive. Such as
      // when assigning CAN 1 rename "canId1" to "driveLeftLead" or "pigeonIMU"
-     public static final int canId1_front_left_drive  = 1;
-     public static final int canId2_front_right_drive = 2; 
-     public static final int canId3_back_right_drive  = 3;
-     public static final int canId4_back_left_drive   = 4;
-     public static final int canId5_lower_belts       = 5;
-     public static final int canId6_upper_belts       = 6;
-     public static final int canId7_flywheel_left     = 7;
-     public static final int canId8_flywheel_right    = 8;
+
+     //Swerve module cadId assignments 
+     public static final int CANID1_FRONT_LEFT_MODULE_DRIVE_MOTOR = 1;
+     public static final int CANID11_FRONT_LEFT_MODULE_STEER_MOTOR = 11;
+     public static final int CANID21_FRONT_LEFT_MODULE_STEER_ENCODER = 21;
+     
+     public static final int CANID2_FRONT_RIGHT_MODULE_DRIVE_MOTOR = 2;
+     public static final int CANID12_FRONT_RIGHT_MODULE_STEER_MOTOR = 12;
+     public static final int CANID22_FRONT_RIGHT_MODULE_STEER_ENCODER = 22;
+    
+     public static final int CANID4_BACK_LEFT_MODULE_DRIVE_MOTOR = 4;
+     public static final int CANID14_BACK_LEFT_MODULE_STEER_MOTOR = 14;
+     public static final int CANID24_BACK_LEFT_MODULE_STEER_ENCODER = 24;
+     
+     public static final int CANID3_BACK_RIGHT_MODULE_DRIVE_MOTOR = 3;
+     public static final int CANID13_BACK_RIGHT_MODULE_STEER_MOTOR = 13;
+     public static final int CANID23_BACK_RIGHT_MODULE_STEER_ENCODER = 23;
+
+     public static final int CANID5_LOWER_BELTS = 5;
+     public static final int CANID6_UPPER_BELTS = 6;
+     public static final int canId7 = 7;
+     public static final int CANID8_FRICTION_BRAKE_SOLENOID = 8;
      public static final int canId9_elevator_lead_talon = 9;
      public static final int canId10_elevator_follow_talon = 10;
-     public static final int canId11_friction_brake_solenoid  = 11;
-     public static final int canId12_front_right_steer = 12;
-     public static final int canId13_back_right_steer  = 13;
-     public static final int canId14_back_left_steer   = 14;
      public static final int canId15_pigeon_imu = 15;
      public static final int canId16 = 16;
      public static final int canId17 = 17;
-     public static final int canId18_intake = 18;
+     public static final int CANID18_INTAKE = 18;
      public static final int canId19 = 19;
      public static final int canId20 = 20;
-     public static final int canId21_front_left_encoder  = 21;
-     public static final int canId22_front_right_encoder = 22;
-     public static final int canId23_back_left_encoder   = 23;
-     public static final int canId24_back_right_encoder  = 24;
   }
 
+  public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(142.4 + 180);
+  public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(65.4 + 180);
+  public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(28.1 + 180);
+  public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(182.7 - 180);
   // Allocate Pneumatic channel constants from here
   // Prevents two pneumatic systems from sharing the same channel
   // public static final class Pneumatics {
@@ -68,10 +78,6 @@ public final class Constants {
 
   // }
 
-  public static final class indexConstants {
-    public static final int indexLowerBelts = canId.canId5_lower_belts;
-    public static final int indexUpperBelts = canId.canId6_upper_belts;
-  }
 
   public static final class digitalIOConstants {
     // assign digital IO (DIO) ports 0-9
@@ -101,26 +107,6 @@ public final class Constants {
   // Set pigeon ID to -1 to disable and use NAVX on SPI.Port.kMXP
   public static final int DRIVETRAIN_PIGEON_ID = 15;
 
-  public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1;
-  public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 11;
-  public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 21;
-  public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(142.4 + 180);
-
-  public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 2;
-  public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 12;
-  public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 22;
-  public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(65.4 + 180);
-
-  public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 4;
-  public static final int BACK_LEFT_MODULE_STEER_MOTOR = 14;
-  public static final int BACK_LEFT_MODULE_STEER_ENCODER = 24;
-  public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(28.1 + 180);
-
-  public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 3;
-  public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 13;
-  public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 23;
-  public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(182.7 - 180);
-
   public static final class AutoConstants {
     // This kP worked for the DriveWithSetRotation command
     public static final double kPThetaController = 3.0;
@@ -145,14 +131,5 @@ public final class Constants {
   public static final Vector2d HUB_CENTER = new Vector2d(8.23, 4.11);
   public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
       new Pose2d(HUB_CENTER.x - 1, HUB_CENTER.y, new Rotation2d(0));
-
-      public static final class elevatorConstants {
-        public static final int deploySolenoid1 = 0;
-        public static final int deploySolenoid2 = 2;
-        public static final int brakeSolenoid = 5;
-        public static final int elevatorWinch = 12;
-        public static final int elevatorPivotTimeout = 30;
-        public static final int elevatorSlotIdx = 1;
-    }
 
 }
