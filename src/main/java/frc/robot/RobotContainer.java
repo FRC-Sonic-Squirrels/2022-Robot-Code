@@ -18,10 +18,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
-import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
-import frc.robot.commands.HubCentricCommand;
-import frc.robot.commands.RobotCentricDriving;
+import frc.robot.commands.DriveHubCentricCommand;
+import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -101,7 +101,7 @@ public class RobotContainer {
             .whenPressed(drivetrain::zeroGyroscope);
 
     new Button(m_controller::getXButton)
-            .whenPressed(new HubCentricCommand(drivetrain, 
+            .whenPressed(new DriveHubCentricCommand(drivetrain, 
             () -> -modifyAxis(m_controller.getRightX()), 
             () -> -modifyAxis(m_controller.getLeftY())));
 
@@ -112,7 +112,7 @@ public class RobotContainer {
             () -> m_controller.getPOV(), 0.0));
 
     new Button(m_controller::getBButton)
-            .whenPressed(new RobotCentricDriving(drivetrain,
+            .whenPressed(new DriveRobotCentricCommand(drivetrain,
             () -> -modifyAxis(m_controller.getLeftY()) * drivetrain.MAX_VELOCITY_METERS_PER_SECOND *0.8, 
             () -> -modifyAxis(m_controller.getLeftX()) * drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8,
             () -> -modifyAxis(m_controller.getRightX()) * drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND*0.5));
