@@ -6,60 +6,60 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper.GearRatio;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.elevatorConstants;
+import frc.robot.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
-  //FIXME: Find actual module type 
-  private DoubleSolenoid elevatorDeploySolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM ,elevatorConstants.deploySolenoid1, elevatorConstants.deploySolenoid2);
- 
-  //FIXME: find actual module type
-  private Solenoid brakeSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, elevatorConstants.brakeSolenoid);
-  //private CANSparkMax elevatorWinchP = new CANSparkMax(elevatorConstants.elevatorWinch, MotorType.kBrushless);
-  private WPI_VictorSPX elevatorWinchC = new WPI_VictorSPX(elevatorConstants.elevatorWinch);
-  //private final CANEncoder elevatorEncoder = elevatorWinchP.getEncoder(EncoderType.kHallSensor, 2048);
-  private boolean elevatorDeployed = false;
+
+  private TalonFX winch_main_talon = new TalonFX(Constants.canId.canId9_main_talon);
+  private TalonFX winch_sub_talon = new TalonFX(Constants.canId.canId10_sub_talon);
+  private Solenoid frictionBrakeSolenoid =
+      new Solenoid(PneumaticsModuleType.REVPH, Constants.canId.canId11_friction_brake_solenoid);
+  private final double gearRatio =  0.074;
+  private final double winchDiameter_inches = 1.25;
+
+  
+
 
   public ElevatorSubsystem() {
-    elevatorDeploySolenoid.set(Value.kReverse);
     //elevatorWinchP.restoreFactoryDefaults();
     //elevatorWinchP.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    elevatorWinchC.configFactoryDefault();
-    elevatorWinchC.setNeutralMode(NeutralMode.Brake);
+    //elevatorWinchC.configFactoryDefault();
+    //elevatorWinchC.setNeutralMode(NeutralMode.Brake);
+
+    // TODO: check if this is the right section to activate the default state of frictionBrakeSolenoid
+    frictionBrakeSolenoid.set(true);
+
   }
 
   public void deployElevator() {
     setElevatorDeployed(true);
-    elevatorDeploySolenoid.set(Value.kForward);
+    frictionBrakeSolenoid.set(false);
     // RobotContainer.m_limelight.setCAMMode(1);
     // RobotContainer.m_limelight.setLEDMode(1);
   }
 
   public void retractElevator() {
     setElevatorDeployed(false);
-    elevatorDeploySolenoid.set(Value.kReverse);
+    frictionBrakeSolenoid.set(true);
     // RobotContainer.m_limelight.setCAMMode(0);
   }
 
-  public void brakeOff() {
-    brakeSolenoid.set(true);
-  }
-
-  public void brakeOn() {
-    brakeSolenoid.set(false);
-  }
-
-  public void setWinchPercentOutput(double Percent) {
-    elevatorWinchC.set(ControlMode.PercentOutput, Percent);
+  public void setWinchPercentOutput(double percent) {
+    winch_main_talon.set(ControlMode.PercentOutput, percent);
+    winch_sub_talon.set(ControlMode.PercentOutput, percent);
   }
 
   public void stop() {
-    brakeOn();
+    frictionBrakeSolenoid.set(true);
     setWinchPercentOutput(0.0);
   }
 

@@ -39,9 +39,9 @@ public final class Constants {
      public static final int canId6_upper_belts       = 6;
      public static final int canId7_flywheel_left     = 7;
      public static final int canId8_flywheel_right    = 8;
-     public static final int canId9 = 9;
-     public static final int canId10 = 10;
-     public static final int canId11_front_left_steer  = 11;
+     public static final int canId9_main_talon = 9;
+     public static final int canId10_sub_talon = 10;
+     public static final int canId11_friction_brake_solenoid  = 11;
      public static final int canId12_front_right_steer = 12;
      public static final int canId13_back_right_steer  = 13;
      public static final int canId14_back_left_steer   = 14;
@@ -56,6 +56,17 @@ public final class Constants {
      public static final int canId23_back_left_encoder   = 23;
      public static final int canId24_back_right_encoder  = 24;
   }
+
+  // Allocate Pneumatic channel constants from here
+  // Prevents two pneumatic systems from sharing the same channel
+  // public static final class Pneumatics {
+
+  //   // TODO: check if pneumatic channel 0 can be used
+
+  //   public static final int channel1_friction_brake_solenoid = 1;
+  //   public static final int channel2 = 2;
+
+  // }
 
   public static final class indexConstants {
     public static final int indexLowerBelts = canId.canId5_lower_belts;
