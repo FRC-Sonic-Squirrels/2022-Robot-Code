@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
 
-public class HubCentricCommand extends CommandBase {
+public class DriveHubCentricCommand extends CommandBase {
   private Drivetrain m_drivetrain;
   private SwerveDriveKinematics m_kinematics;
 
@@ -30,7 +30,7 @@ public class HubCentricCommand extends CommandBase {
 
   private Vector2d m_hubCenter = Constants.HUB_CENTER;
   
-  public HubCentricCommand(Drivetrain drivetrain, Supplier<Double> sidewaysSupplier, Supplier<Double> forwardSupplier) {
+  public DriveHubCentricCommand(Drivetrain drivetrain, Supplier<Double> sidewaysSupplier, Supplier<Double> forwardSupplier) {
     m_sidewaysSupplier = sidewaysSupplier;
     m_forwardSupplier = forwardSupplier;
     m_drivetrain = drivetrain;
