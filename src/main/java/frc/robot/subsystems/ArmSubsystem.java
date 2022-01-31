@@ -4,11 +4,17 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxAlternateEncoder;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.canId;
 
@@ -18,17 +24,27 @@ public class ArmSubsystem extends SubsystemBase {
 
   //check if this is canId
   CANSparkMax m_sparkMax = new CANSparkMax(1, MotorType.kBrushless);
+  SparkMaxAlternateEncoder.Type kAltEncType = SparkMaxAlternateEncoder.Type.kQuadrature;
   RelativeEncoder m_throughBoreEncoder;
-  
-  //TODO: Find actual values these are made up
-  PIDController armPID = new PIDController(3, 0.2, 0.03);
 
+  SparkMaxPIDController m_armPID;
+
+  //double m_rotations = 20;
   public ArmSubsystem() {
-    m_throughBoreEncoder = m_sparkMax.getEncoder();
+    m_armLeadMotor.setNeutralMode(NeutralMode.Brake);
+    m_armLeadMotor.setNeutralMode(NeutralMode.Brake);
+
+    m_throughBoreEncoder = m_sparkMax.getAlternateEncoder(kAltEncType, 8192);
     
-    //TODO: do we need this, if so what value do we use?
-    // 1 degree of wiggle room
-    armPID.setTolerance(Math.PI/180); 
+    // m_armPID = m_sparkMax.getPIDController();
+    // m_armPID.setFeedbackDevice(m_throughBoreEncoder);
+    // m_armPID.setOutputRange(-1, 1);
+
+    // m_armPID.setReference(m_rotations, CANSparkMax.ControlType.kPosition);
+  }
+
+  public void setArmPercentOutput(double percentage){
+    m_armLeadMotor.set(ControlMode.PercentOutput, percentage);
   }
 
   public void zeroEncoder(){
