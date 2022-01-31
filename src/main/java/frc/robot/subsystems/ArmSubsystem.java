@@ -14,7 +14,7 @@ import frc.robot.Constants.canId;
 
 public class ArmSubsystem extends SubsystemBase {
   TalonFX m_armLeadMotor = new TalonFX(canId.CANID19_ARM_LEAD_MOTOR);
-  TalonFX m_armFallowMotor = new TalonFX(canId.CANID20_ARM_FALLOW_MOTOR);
+  TalonFX m_armFollowMotor = new TalonFX(canId.CANID20_ARM_FOLLOW_MOTOR);
 
   //check if this is canId
   CANSparkMax m_sparkMax = new CANSparkMax(1, MotorType.kBrushless);
