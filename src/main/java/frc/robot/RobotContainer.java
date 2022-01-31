@@ -22,6 +22,7 @@ import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -33,8 +34,11 @@ import frc.robot.subsystems.Drivetrain;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final Drivetrain drivetrain = new Drivetrain();
+  public final ArmSubsystem m_armSubsystem = new ArmSubsystem();
+
 
   public final XboxController m_controller = new XboxController(0);
+  public final XboxController m_operatorController = new XboxController(1);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
   
@@ -83,6 +87,11 @@ public class RobotContainer {
         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
         () -> m_controller.getPOV(), 0.0));
 
+    //control winch with right joystick 
+    m_armSubsystem.setDefaultCommand(new InstantCommand(
+      () -> m_armSubsystem.setArmPercentOutput(modifyAxis(m_operatorController.getRightTriggerAxis())), 
+      m_armSubsystem));
+    
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -131,6 +140,7 @@ public class RobotContainer {
     }
   }
 
+  //TODO: check if deadband value needs to be changed  
   private static double modifyAxis(double value) {
     // Deadband
     value = deadband(value, 0.08);
