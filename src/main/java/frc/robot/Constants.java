@@ -128,8 +128,15 @@ public final class Constants {
   }
 
   // according to game manual field is 27 ft. (~823 cm) by 54 ft. (~1646 cm)
-  public static final Vector2d HUB_CENTER = new Vector2d(8.23, 4.11);
-  public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
-      new Pose2d(HUB_CENTER.x - 1, HUB_CENTER.y, new Rotation2d(0));
+  public static class HubCentricConstants{
+    public static final Vector2d HUB_CENTER = new Vector2d(8.23, 4.11);
+    public static final double FORWARD_MULTIPLIER = 0.5;
+    public static final double SIDEWAYS_MULTIPLER = 0.3;
 
+  }
+
+  public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
+      new Pose2d(HubCentricConstants.HUB_CENTER.x - 1,HubCentricConstants.HUB_CENTER.y , new Rotation2d(0));
+
+  
 }

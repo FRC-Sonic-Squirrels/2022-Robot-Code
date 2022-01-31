@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.Constants.HubCentricConstants;
 import frc.robot.subsystems.Drivetrain;
 
 public class DriveHubCentricCommand extends CommandBase {
@@ -28,7 +29,7 @@ public class DriveHubCentricCommand extends CommandBase {
   // copied values from Swerve Template Odometry
   private PIDController rotationalController = new PIDController(3.0, 0.0, 0.02);
 
-  private Vector2d m_hubCenter = Constants.HUB_CENTER;
+  private Vector2d m_hubCenter = Constants.HubCentricConstants.HUB_CENTER;
   
   public DriveHubCentricCommand(Drivetrain drivetrain, Supplier<Double> sidewaysSupplier, Supplier<Double> forwardSupplier) {
     m_sidewaysSupplier = sidewaysSupplier;
@@ -57,17 +58,8 @@ public class DriveHubCentricCommand extends CommandBase {
     targetHeading.times(Math.signum(m_hubCenter.y - robotPosition.getY()));
     double radius = Math.sqrt(Math.pow(m_hubCenter.x - robotPosition.getX(), 2) + Math.pow(m_hubCenter.y - robotPosition.getY(), 2));
 
-    double rotationCorrection = rotationalController.calculate(currentHeading.getRadians(), targetHeading.getRadians());
-
-    // TODO: Check if controller needs to be multiplied by max velocity
-    // TODO: figure out how to move forward and back, sideways is a scaling factor 
-    //       not a directional factor thus both strafeX and Y need to use sidewaysSupplier
-    //       this means robot cant move forwards/change radius
-    // 
-    //       Possible solution: use robot centric to generate swerve module states for moving forward 
-    //       average both states (arc strafe & forward movement) to get a forward motion and a arc? 
-    //       as for rn robot should be able to maintain heading towards center and translate in a arc successfully 
-    //       but not change radius/move forward & back. 
+    //Multiply by max velocity to hopefully speed up the rotation of the robot 
+    double rotationCorrection = rotationalController.calculate(currentHeading.getRadians(), targetHeading.getRadians()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
 
     double strafeX = 0.0;
     double strafeY = 0.0;
@@ -75,14 +67,17 @@ public class DriveHubCentricCommand extends CommandBase {
     if(m_forwardSupplier.get() != 0.0) {
       // forward/reverse is just orthogonal to tangent
       double orthogonalHeading = targetHeading.getRadians() - (Math.PI / 2.0);
-      strafeX += findStrafeX(1.0, orthogonalHeading, Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_forwardSupplier.get(), 0.5);
-      strafeY += findStrafeY(1.0, orthogonalHeading, Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_forwardSupplier.get(), 0.5);
+      //Not scaling by radius anymore
+      strafeX += findStrafeX(orthogonalHeading, Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_forwardSupplier.get(), HubCentricConstants.FORWARD_MULTIPLIER);
+      strafeY += findStrafeY(orthogonalHeading, Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_forwardSupplier.get(), HubCentricConstants.FORWARD_MULTIPLIER);
     }
     if(m_sidewaysSupplier.get() != 0.0) {
-      strafeX += findStrafeX(radius, targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), 0.3);
-      strafeY += findStrafeY(radius, targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), 0.3);
+       //Not scaling by radius anymore
+      strafeX += findStrafeX(targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), HubCentricConstants.SIDEWAYS_MULTIPLER);
+      strafeY += findStrafeY(targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), HubCentricConstants.SIDEWAYS_MULTIPLER);
     }
     
+    //TODO: might have to adjust rotationCorrection check since we are now multiplying by max angular speed 
     if (rotationCorrection < 0.03 && strafeX < 0.01 && strafeY < 0.01) {
         // don't try to correct small turns if we aren't moving
         rotationCorrection = 0.0;
@@ -123,11 +118,11 @@ public class DriveHubCentricCommand extends CommandBase {
     return new Rotation2d(angle_rad);
   }
 
-  private double findStrafeX(double radius, double targetAngle, double max_velocity, double joystickInput, double constant) {
+  private double findStrafeX(double targetAngle, double max_velocity, double joystickInput, double constant) {
     return constant * max_velocity * joystickInput * -Math.sin(targetAngle);
   }
 
-  private double findStrafeY(double radius, double targetAngle, double max_velocity, double joystickInput, double constant) {
+  private double findStrafeY(double targetAngle, double max_velocity, double joystickInput, double constant) {
     return constant * max_velocity * joystickInput * Math.cos(targetAngle);
   }
 }
