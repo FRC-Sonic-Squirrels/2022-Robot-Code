@@ -130,7 +130,7 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getRightX()) * drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND*0.5));
 
     new Button(m_controller::getAButton)
-      .whenPressed(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
+      .whileHeld(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
 
     new Button(m_controller::getRightBumper)
       .whenPressed(new VisionDriveToCargo(m_visionSubsystem, drivetrain));

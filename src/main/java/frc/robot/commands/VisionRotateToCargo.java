@@ -43,7 +43,8 @@ public class VisionRotateToCargo extends CommandBase {
     //negate because of how robot rotates 
     m_targetYaw = -Math.toRadians(m_targetYaw);
 
-    m_rotationCorrection = rotatController.calculate(0, m_targetYaw) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+    m_rotationCorrection = rotatController.calculate(0, m_targetYaw) 
+    * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
     //slow down rotation for testing/safety 
     m_rotationCorrection *= 0.5;
     
@@ -61,7 +62,7 @@ public class VisionRotateToCargo extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return  m_rotationCorrection == 0;
+    return  false;
   
     
   }
