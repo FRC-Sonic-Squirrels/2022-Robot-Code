@@ -10,7 +10,7 @@ import frc.robot.subsystems.Drivetrain;
 
 import java.util.function.DoubleSupplier;
 
-public class RobotCentricDriving extends CommandBase {
+public class DriveRobotCentricCommand extends CommandBase {
   /** Creates a new RobotCentricDriving. */
     private final Drivetrain m_drivetrainSubsystem;
 
@@ -20,7 +20,7 @@ public class RobotCentricDriving extends CommandBase {
 
   
 
-    public RobotCentricDriving(Drivetrain drivetrainSubsystem,
+    public DriveRobotCentricCommand(Drivetrain drivetrainSubsystem,
       DoubleSupplier translationXSupplier,
       DoubleSupplier translationYSupplier,
       DoubleSupplier rotationSupplier) {

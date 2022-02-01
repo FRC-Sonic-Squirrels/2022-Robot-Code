@@ -45,8 +45,8 @@ public class IndexerSubsystem extends SubsystemBase {
 
   public IndexerSubsystem() {
 
-    LowerBelts = new WPI_TalonFX(canId.canId5_lower_belts);
-    UpperBelts = new WPI_TalonFX(canId.canId6_upper_belts);
+    LowerBelts = new WPI_TalonFX(canId.CANID5_LOWER_BELTS);
+    UpperBelts = new WPI_TalonFX(canId.CANID6_UPPER_BELTS);
 
     LowerBelts.configFactoryDefault();
     UpperBelts.configFactoryDefault();

@@ -22,7 +22,7 @@ import frc.robot.RobotContainer;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-  private WPI_TalonFX m_intake = new WPI_TalonFX(canId.canId18_intake);
+  private WPI_TalonFX m_intake = new WPI_TalonFX(canId.CANID18_INTAKE);
   private TalonFXSensorCollection m_encoder;
   private Relay intakeRelay = new Relay(0);
 
