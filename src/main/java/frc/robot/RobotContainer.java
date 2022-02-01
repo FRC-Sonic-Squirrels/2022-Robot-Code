@@ -133,7 +133,7 @@ public class RobotContainer {
       .whileHeld(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
 
     new Button(m_controller::getRightBumper)
-      .whenPressed(new VisionDriveToCargo(m_visionSubsystem, drivetrain));
+      .whileHeld(new VisionDriveToCargo(m_visionSubsystem, drivetrain));
   }
 
   private static double deadband(double value, double deadband) {

@@ -43,10 +43,11 @@ public class VisionDriveToCargo extends CommandBase {
   public void initialize() {
     Pose2d pose = new Pose2d(
       m_transformationToCargo.getTranslation(),
-       m_transformationToCargo.getRotation());
+      m_transformationToCargo.getRotation());
 
     TrajectoryConfig config = new TrajectoryConfig(m_maxVelocity, m_maxAcceleration)
         .setKinematics(m_drivetrain.kinematics());
+
     SwerveDriveKinematicsConstraint swerveConstraint = new SwerveDriveKinematicsConstraint(
         m_drivetrain.kinematics(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND);
     config.addConstraint(swerveConstraint);
@@ -72,6 +73,6 @@ public class VisionDriveToCargo extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 }
