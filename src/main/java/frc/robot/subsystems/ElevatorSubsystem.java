@@ -19,8 +19,8 @@ import frc.robot.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
-  private TalonFX winch_lead_talon = new TalonFX(Constants.canId.canId9_elevator_lead_talon);
-  private TalonFX winch_follow_talon = new TalonFX(Constants.canId.canId10_elevator_follow_talon);
+  private TalonFX winch_lead_talon = new TalonFX(Constants.canId.CANID9_ELEVATOR_LEAD_TALON);
+  private TalonFX winch_follow_talon = new TalonFX(Constants.canId.CANID10_ELEVATOR_FOLLOW_TALON);
   private Solenoid frictionBrakeSolenoid =
       new Solenoid(PneumaticsModuleType.REVPH, Constants.canId.CANID8_FRICTION_BRAKE_SOLENOID);
   private final double gearRatio =  0.074;
