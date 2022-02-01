@@ -9,20 +9,29 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class VisionSubsystem extends SubsystemBase{
-  PhotonCamera m_camera;
-  PhotonPipelineResult m_result;
+  private PhotonCamera m_camera;
+  private PhotonPipelineResult m_result;
 
   PhotonTrackedTarget m_target;
-  double m_yaw;
+  private double m_yaw;
   double m_pitch;
   double m_area;
   double m_skew;
   Transform2d m_pose;
   List<TargetCorner> m_corners;
 
+  
   public VisionSubsystem(){
    m_camera = new PhotonCamera("Microsoft_LifeCam_HD-3000");
   
+  }
+
+  public PhotonTrackedTarget getTarget(){
+    return m_target;
+  }
+
+  public double getYaw(){
+    return m_yaw;
   }
 
   @Override
