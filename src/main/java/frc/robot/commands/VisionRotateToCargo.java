@@ -19,7 +19,7 @@ public class VisionRotateToCargo extends CommandBase {
   private double m_targetYaw;
   private PhotonTrackedTarget m_target;
   private double m_rotationCorrection; 
-  private PIDController rotatController = new PIDController(3.0, 0.0, 0.02);
+  private PIDController rotateController = new PIDController(3.0, 0.0, 0.02);
 
   public VisionRotateToCargo(VisionSubsystem visionSubsystem, Drivetrain drivetrain) {
     m_drivetrain = drivetrain;
@@ -32,25 +32,25 @@ public class VisionRotateToCargo extends CommandBase {
   @Override
   public void initialize() {
     //1 degree tolorence
-    rotatController.setTolerance(Math.PI/180);
+    rotateController.setTolerance(Math.PI/180);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_target = m_visionSubsystem.getTarget();
-    m_targetYaw = m_target.getYaw();
-    //negate because of how robot rotates 
-    m_targetYaw = -Math.toRadians(m_targetYaw);
-
-    m_rotationCorrection = rotatController.calculate(0, m_targetYaw) 
-    * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
-    //slow down rotation for testing/safety 
-    m_rotationCorrection *= 0.5;
+    if(m_visionSubsystem.getTarget()!=null){
+      m_target = m_visionSubsystem.getTarget();
+      //negate because of how robot rotates 
+      m_targetYaw = -Math.toRadians(m_target.getYaw());
+      
+      m_rotationCorrection = rotateController.calculate(0, m_targetYaw) 
+      * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+      //slow down rotation for testing/safety 
+      m_rotationCorrection *= 0.5;
     
-    m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
+      m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
       0, 0, m_rotationCorrection, m_drivetrain.getGyroscopeRotation()));
-
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -62,7 +62,7 @@ public class VisionRotateToCargo extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return  false;
+    return false;
   
     
   }

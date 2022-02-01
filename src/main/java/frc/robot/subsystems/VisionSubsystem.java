@@ -42,13 +42,24 @@ public class VisionSubsystem extends SubsystemBase{
   @Override
   public void periodic() {
     m_result = m_camera.getLatestResult();
-    m_target = m_result.getBestTarget();
 
-    m_yaw = m_target.getYaw();
-    m_pitch = m_target.getPitch();
-    m_area = m_target.getArea();
-    m_skew = m_target.getSkew();
-    m_pose = m_target.getCameraToTarget();
-    m_corners = m_target.getCorners();
+    if(m_result.hasTargets()){
+      m_target = m_result.getBestTarget();
+
+      m_yaw = m_target.getYaw();
+      m_pitch = m_target.getPitch();
+      m_area = m_target.getArea();
+      m_skew = m_target.getSkew();
+      m_pose = m_target.getCameraToTarget();
+      m_corners = m_target.getCorners();
+    } else {
+      m_target = null;
+      m_yaw = 0.0;
+      m_pitch = 0.0;
+      m_area = 0.0;
+      m_skew = 0.0;
+      m_pose = null;
+      m_corners = null;
+    }
   }
 }
