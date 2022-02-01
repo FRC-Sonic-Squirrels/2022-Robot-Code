@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
+import frc.robot.commands.VisionDriveToCargo;
 import frc.robot.commands.VisionRotateToCargo;
 import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
@@ -130,6 +131,9 @@ public class RobotContainer {
 
     new Button(m_controller::getAButton)
       .whenPressed(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
+
+    new Button(m_controller::getRightBumper)
+      .whenPressed(new VisionDriveToCargo(m_visionSubsystem, drivetrain));
   }
 
   private static double deadband(double value, double deadband) {
