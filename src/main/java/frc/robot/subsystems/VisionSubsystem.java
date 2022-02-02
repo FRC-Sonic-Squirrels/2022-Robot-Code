@@ -23,6 +23,7 @@ public class VisionSubsystem extends SubsystemBase{
   public VisionSubsystem(){
    m_camera = new PhotonCamera("Microsoft_LifeCam_HD-3000");
    //how do we know which index is which i.e red pipeline/blue pipeline 
+   // TODO: add Constants that denote RedCargo and BlueCargo pipelines
    m_camera.setPipelineIndex(0);
   }
 
