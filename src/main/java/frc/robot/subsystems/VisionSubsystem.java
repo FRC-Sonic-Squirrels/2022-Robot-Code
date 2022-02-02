@@ -46,7 +46,7 @@ public class VisionSubsystem extends SubsystemBase{
 
     if(m_result.hasTargets()){
       m_target = m_result.getBestTarget();
-
+      SmartDashboard.putNumber("yaw", m_target.getYaw());
       m_yaw = m_target.getYaw();
       m_pitch = m_target.getPitch();
       m_area = m_target.getArea();
@@ -61,9 +61,12 @@ public class VisionSubsystem extends SubsystemBase{
       m_skew = 0.0;
       m_pose = null;
       m_corners = null;
+
+      SmartDashboard.putNumber("yaw", -200);
     }
 
     SmartDashboard.putBoolean("has targets", m_result.hasTargets());
-    SmartDashboard.putNumber("yaw", m_target.getYaw());
+    
+    
   }
 }

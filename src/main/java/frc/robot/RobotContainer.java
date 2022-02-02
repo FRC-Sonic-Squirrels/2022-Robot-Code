@@ -37,11 +37,11 @@ import frc.robot.subsystems.VisionSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final Drivetrain drivetrain = new Drivetrain();
-  public final ArmSubsystem m_armSubsystem = new ArmSubsystem();
+  //public final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   public final VisionSubsystem m_visionSubsystem = new VisionSubsystem();
 
   public final XboxController m_controller = new XboxController(0);
-  public final XboxController m_operatorController = new XboxController(1);
+  //public final XboxController m_operatorController = new XboxController(1);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
   
@@ -59,18 +59,18 @@ public class RobotContainer {
     SmartDashboard.putData("Auto mode", chooser);
 
     // Creates UsbCamera and MjpegServer [1] and connects them
-    UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
-    MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
-    mjpegServer1.setSource(usbCamera);
+    // UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
+    // MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
+    // mjpegServer1.setSource(usbCamera);
 
-    // Creates the CvSink and connects it to the UsbCamera
-    CvSink cvSink = new CvSink("opencv_USB Camera 0");
-    cvSink.setSource(usbCamera);
+    // // Creates the CvSink and connects it to the UsbCamera
+    // CvSink cvSink = new CvSink("opencv_USB Camera 0");
+    // cvSink.setSource(usbCamera);
 
-    // Creates the CvSource and MjpegServer [2] and connects them
-    CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
-    MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
-    mjpegServer2.setSource(outputStream);
+    // // Creates the CvSource and MjpegServer [2] and connects them
+    // CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
+    // MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
+    // mjpegServer2.setSource(outputStream);
     
 
     // Set up the default command for the drivetrain.
@@ -91,9 +91,9 @@ public class RobotContainer {
         () -> m_controller.getPOV(), 0.0));
 
     //control winch with right joystick 
-    m_armSubsystem.setDefaultCommand(new InstantCommand(
-      () -> m_armSubsystem.setArmPercentOutput(modifyAxis(m_operatorController.getRightTriggerAxis())), 
-      m_armSubsystem));
+    // m_armSubsystem.setDefaultCommand(new InstantCommand(
+    //   () -> m_armSubsystem.setArmPercentOutput(modifyAxis(m_operatorController.getRightTriggerAxis())), 
+    //   m_armSubsystem));
     
     // Configure the button bindings
     configureButtonBindings();

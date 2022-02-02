@@ -47,7 +47,7 @@ public class VisionRotateToCargo extends CommandBase {
       m_rotationCorrection = rotateController.calculate(0, m_targetYaw) 
       * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
       //slow down rotation for testing/safety 
-      m_rotationCorrection *= 0.5;
+      m_rotationCorrection *= 0.3;
     
       m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
       0, 0, m_rotationCorrection, m_drivetrain.getGyroscopeRotation()));
