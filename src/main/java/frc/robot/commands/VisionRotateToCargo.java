@@ -51,10 +51,13 @@ public class VisionRotateToCargo extends CommandBase {
       * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
       //slow down rotation for testing/safety 
       m_rotationCorrection *= 0.3;
-    
-      m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
-      0, 0, m_rotationCorrection, m_drivetrain.getGyroscopeRotation()));
     }
+    else {
+      // stop rotating if we lose the target
+      m_rotationCorrection = 0.0;
+    }
+    m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
+      0, 0, m_rotationCorrection, m_drivetrain.getGyroscopeRotation()));
 
     SmartDashboard.putNumber("rotation correction", m_rotationCorrection);
   }
@@ -68,8 +71,6 @@ public class VisionRotateToCargo extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
-  
-    
+    return false; 
   }
 }
