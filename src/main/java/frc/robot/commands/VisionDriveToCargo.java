@@ -28,8 +28,8 @@ public class VisionDriveToCargo extends CommandBase {
   private Transform2d m_transformationToCargo;
 
   //max for the trajectory set to low for safety 
-  private double m_maxVelocity = 1.0;
-  private double m_maxAcceleration = 0.75;
+  private double m_maxVelocity = 0.5;
+  private double m_maxAcceleration = 0.25;
 
   public VisionDriveToCargo(VisionSubsystem visionSubsystem, Drivetrain drivetrain) {
     m_visionSubsystem = visionSubsystem;
@@ -48,7 +48,9 @@ public class VisionDriveToCargo extends CommandBase {
   @Override
   public void execute() {
     //now goes in execute since it is whileHeld not a one time when pressed 
+    
     if(m_visionSubsystem.getTarget()!= null){
+      m_transformationToCargo = m_visionSubsystem.getTarget().getCameraToTarget();
       Pose2d pose = new Pose2d(
         m_transformationToCargo.getTranslation(),
         m_transformationToCargo.getRotation());
