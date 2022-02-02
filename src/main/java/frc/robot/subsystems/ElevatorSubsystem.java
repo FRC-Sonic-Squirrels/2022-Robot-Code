@@ -37,6 +37,22 @@ public class ElevatorSubsystem extends SubsystemBase {
     winch_lead_talon.setNeutralMode(NeutralMode.Brake);
     winch_follow_talon.follow(winch_lead_talon);
 
+    // TODO: add 2 limit switches for full down and full up
+    // see https://docs.wpilib.org/en/stable/docs/software/hardware-apis/sensors/limit-switch.html
+
+    // NOTE: when we power up, we expect the elevator to be full down, triggering the lower limit switch.
+    // if not, we need to move the elevator down to the lower limit switch (VERY SLOWLY).
+    // hitting either limit switch must stop the elevator.
+    // details on elevator motors and gearing can be found here:
+    // https://docs.google.com/spreadsheets/d/1sOS_vM87iaKPZUFSJTqKqaFTxIl3Jj5OEwBgRxc-QGM/edit?usp=sharing
+    // this also has suggested kP, and trapezoidal velocity profile constants.
+
+    // See:
+    // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html
+    // Example code:
+    // https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/blob/master/Java%20Talon%20FX%20(Falcon%20500)/MotionMagic_ArbFeedForward/src/main/java/frc/robot/Robot.java
+
+
     // TODO: check if this is the right section to activate the default state of frictionBrakeSolenoid
     frictionBrakeSolenoid.set(true);
 
