@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -18,6 +19,7 @@ public class VisionRotateToCargo extends CommandBase {
   private VisionSubsystem m_visionSubsystem;
 
   private double m_targetYaw;
+  private PhotonPipelineResult m_result;
   private PhotonTrackedTarget m_target;
   private double m_rotationCorrection; 
   private PIDController rotateController = new PIDController(3.0, 0.0, 0.02);
@@ -39,8 +41,9 @@ public class VisionRotateToCargo extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_visionSubsystem.getTarget()!=null){
-      m_target = m_visionSubsystem.getTarget();
+    m_result = m_visionSubsystem.getResult();
+    if(m_result.hasTargets()){
+      m_target = m_result.getBestTarget();
       //negate because of how robot rotates 
       m_targetYaw = -Math.toRadians(m_target.getYaw());
       

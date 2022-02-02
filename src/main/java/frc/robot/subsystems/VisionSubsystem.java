@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.util.List;
+import org.opencv.photo.MergeRobertson;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -14,57 +15,30 @@ public class VisionSubsystem extends SubsystemBase{
   private PhotonCamera m_camera;
   private PhotonPipelineResult m_result;
 
-  PhotonTrackedTarget m_target;
-  private double m_yaw;
-  double m_pitch;
-  double m_area;
-  double m_skew;
-  Transform2d m_pose;
-  List<TargetCorner> m_corners;
-
-  
+  //if you want to get pitch, yaw etc. call the getResult method. This will return the lastest result 
+  //you can check if the result has targets result.hasTargets() 
+  //if it does you can do result.getBestTarget()
+  //you can now access pitch,yaw etc from that target object 
+  //this is to prevent null errors and pipeline d-sync 
   public VisionSubsystem(){
    m_camera = new PhotonCamera("Microsoft_LifeCam_HD-3000");
    //how do we know which index is which i.e red pipeline/blue pipeline 
    m_camera.setPipelineIndex(0);
   }
 
-  public PhotonTrackedTarget getTarget(){
-    return m_target;
+  public PhotonPipelineResult getResult(){
+    return m_result;
   }
-
-  public double getYaw(){
-    return m_yaw;
-  }
-
-  public Transform2d getPoseToCargo(){
-    return m_pose;
-  }
+  
   @Override
   public void periodic() {
     m_result = m_camera.getLatestResult();
 
     if(m_result.hasTargets()){
-      m_target = m_result.getBestTarget();
-      SmartDashboard.putNumber("yaw", m_target.getYaw());
-      m_yaw = m_target.getYaw();
-      m_pitch = m_target.getPitch();
-      m_area = m_target.getArea();
-      m_skew = m_target.getSkew();
-      m_pose = m_target.getCameraToTarget();
-      m_corners = m_target.getCorners();
+      SmartDashboard.putNumber("yaw", m_result.getBestTarget().getYaw());
     } else {
-      m_target = null;
-      m_yaw = 0.0;
-      m_pitch = 0.0;
-      m_area = 0.0;
-      m_skew = 0.0;
-      m_pose = null;
-      m_corners = null;
-
       SmartDashboard.putNumber("yaw", -200);
     }
-
     SmartDashboard.putBoolean("has targets", m_result.hasTargets());
     
     

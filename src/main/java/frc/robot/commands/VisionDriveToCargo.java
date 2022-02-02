@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import java.util.List;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -25,6 +26,7 @@ public class VisionDriveToCargo extends CommandBase {
   private VisionSubsystem m_visionSubsystem;
   private Drivetrain m_drivetrain;
 
+  private PhotonPipelineResult m_result;
   private Transform2d m_transformationToCargo;
 
   //max for the trajectory set to low for safety 
@@ -34,8 +36,6 @@ public class VisionDriveToCargo extends CommandBase {
   public VisionDriveToCargo(VisionSubsystem visionSubsystem, Drivetrain drivetrain) {
     m_visionSubsystem = visionSubsystem;
     m_drivetrain = drivetrain;
-
-    m_transformationToCargo = m_visionSubsystem.getPoseToCargo();
 
     addRequirements(visionSubsystem, drivetrain);
   }
@@ -47,10 +47,9 @@ public class VisionDriveToCargo extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //now goes in execute since it is whileHeld not a one time when pressed 
-    
-    if(m_visionSubsystem.getTarget()!= null){
-      m_transformationToCargo = m_visionSubsystem.getTarget().getCameraToTarget();
+    m_result = m_visionSubsystem.getResult();
+    if(m_result.hasTargets()){
+      m_transformationToCargo = m_result.getBestTarget().getCameraToTarget();
       Pose2d pose = new Pose2d(
         m_transformationToCargo.getTranslation(),
         m_transformationToCargo.getRotation());
@@ -82,7 +81,9 @@ public class VisionDriveToCargo extends CommandBase {
   public void end(boolean interrupted) {
     //gets the command using the drivetrain this should be the trajectory command 
     var command = CommandScheduler.getInstance().requiring(m_drivetrain);
-    //cancles the trajectory command so the drivetrain returns to its default command 
+    //cancles any command using the drive train probably the trajectory command at this time 
+    //so drivetrain doesnt have any command using it at this moment thus it will return to its 
+    //defualt driving command  
     if(command!=null){
       command.end(true);
     }
