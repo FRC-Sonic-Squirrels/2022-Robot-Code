@@ -6,6 +6,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -61,5 +62,8 @@ public class VisionSubsystem extends SubsystemBase{
       m_pose = null;
       m_corners = null;
     }
+
+    SmartDashboard.putBoolean("has targets", m_result.hasTargets());
+    SmartDashboard.putNumber("yaw", m_target.getYaw());
   }
 }

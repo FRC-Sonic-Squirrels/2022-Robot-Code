@@ -8,6 +8,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.VisionSubsystem;
@@ -51,6 +52,8 @@ public class VisionRotateToCargo extends CommandBase {
       m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
       0, 0, m_rotationCorrection, m_drivetrain.getGyroscopeRotation()));
     }
+
+    SmartDashboard.putNumber("rotation correction", m_rotationCorrection);
   }
 
   // Called once the command ends or is interrupted.
