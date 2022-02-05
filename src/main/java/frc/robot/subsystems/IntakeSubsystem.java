@@ -145,7 +145,8 @@ public class IntakeSubsystem extends SubsystemBase {
   public void toggleIntake() {
     if (!m_isDeployed) {
       deployIntake();
-    } else {
+    }
+    else {
       retractIntake();
     }
   }

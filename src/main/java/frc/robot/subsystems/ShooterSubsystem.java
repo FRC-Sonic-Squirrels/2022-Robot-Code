@@ -78,4 +78,12 @@ public class ShooterSubsystem extends SubsystemBase {
   public boolean isAtDesiredRPM() {
     return m_atSpeed;
   }
+
+  public double getDesiredRPM() {
+    return m_desiredRPM;
+  }
+
+  public double getIdleRPM() {
+    return m_idleRPM;
+  }
 }

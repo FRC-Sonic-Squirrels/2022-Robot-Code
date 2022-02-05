@@ -5,18 +5,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class ShootOneCargoCommand extends CommandBase {
-  /** Creates a new ShootOneCargoCommand. */
+public class ShootTwoCargoCommand extends CommandBase {
+  /** Creates a new ShootTwoCargoCommand. */
   private CargoSubsystem m_cargoSubsystem;
   private ShooterSubsystem m_shooterSubsystem;
   private IntakeSubsystem m_intakeSubsystem;
 
-  public ShootOneCargoCommand(CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem) {
+  public ShootTwoCargoCommand(CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
@@ -39,9 +38,8 @@ public class ShootOneCargoCommand extends CommandBase {
     // once upper ball has been released, go back to intake mode
 
     if (m_shooterSubsystem.isAtDesiredRPM()) {
-      m_cargoSubsystem.setUpperOnlyMode();
+      m_cargoSubsystem.setBothMode();
     }
-
   }
 
   // Called once the command ends or is interrupted.
@@ -60,6 +58,6 @@ public class ShootOneCargoCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return ! m_cargoSubsystem.cargoInUpperBelts();
+    return (! m_cargoSubsystem.cargoInUpperBelts()) && (! m_cargoSubsystem.cargoInLowerBelts());
   }
 }
