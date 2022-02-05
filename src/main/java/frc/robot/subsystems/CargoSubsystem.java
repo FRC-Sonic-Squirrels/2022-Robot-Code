@@ -26,7 +26,8 @@ public class CargoSubsystem extends SubsystemBase {
     INTAKE,
     LOWERONLY,
     UPPERONLY,
-    BOTH
+    BOTH,
+    REVERSE
   };
 
   private WPI_TalonFX UpperBelts;
@@ -128,7 +129,12 @@ public class CargoSubsystem extends SubsystemBase {
       // shoot mode releases the upper cargo, then moves the lower cargo to the top
       setUpperBeltPercentOutput(percentOutput);
       setLowerBeltPercentOutput(percentOutput);
-    } else {
+    } 
+    else if (mode == Mode.REVERSE) {
+      setUpperBeltPercentOutput(-percentOutput); //negate percent output to make belts go in reverse
+      setLowerBeltPercentOutput(-percentOutput);
+    }
+    else {
       stopIndexer();
     }
 
@@ -197,6 +203,10 @@ public class CargoSubsystem extends SubsystemBase {
    */
   public void setBothMode(){
     mode = Mode.BOTH;
+  }
+
+  public void setReverseMode(){
+    mode = Mode.REVERSE;
   }
 
   /** 
