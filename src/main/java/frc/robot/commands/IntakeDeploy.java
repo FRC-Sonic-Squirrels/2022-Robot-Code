@@ -25,6 +25,8 @@ public class IntakeDeploy extends CommandBase {
   @Override
   public void initialize() {
     m_intake.deployIntake();
+    m_intake.setDynamicMode(true);
+    m_intake.setDynamicMode();
     m_cargo.setIntakeMode();
   }
 
@@ -36,6 +38,7 @@ public class IntakeDeploy extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_intake.retractIntake();
+    m_intake.setStopMode();
     m_cargo.setStopMode();
   }
 

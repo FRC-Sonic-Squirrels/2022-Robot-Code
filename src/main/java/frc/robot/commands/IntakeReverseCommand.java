@@ -22,6 +22,7 @@ public class IntakeReverseCommand extends CommandBase {
     //TODO: check if intake subsystem periodic interferes
     m_intake.setIntakeMotorRPM(5000); //close to max speed
     m_intake.setDynamicMode(false);
+    m_intake.setReverseMode();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -32,6 +33,7 @@ public class IntakeReverseCommand extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_intake.setDynamicMode(true);
+    m_intake.setDynamicMode();
   }
 
   // Returns true when the command should end.

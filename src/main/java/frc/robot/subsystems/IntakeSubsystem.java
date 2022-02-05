@@ -26,7 +26,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   enum Mode {
     STOP,
-    FOWARD, 
+    FORWARD, 
     DYNAMIC,
     REVERSE
   };
@@ -85,10 +85,10 @@ public class IntakeSubsystem extends SubsystemBase {
     //}
     if(mode == Mode.STOP){
       setIntakeMotorRPM(minIntakeRPM);
-    } else if(mode == Mode.FOWARD){
+    } else if(mode == Mode.FORWARD){
         setIntakeMotorRPM(5000); //TODO: set RPM to actual value needed
     } else if(mode == Mode.DYNAMIC){
-        setIntakeMotorRPM(intakeRPM);
+        setIntakeToSpeed();
     } else if(mode == Mode.REVERSE){
         setIntakeMotorRPM(-5000); //TODO: what does the spped have to be for reverse?
     }
@@ -202,8 +202,8 @@ public class IntakeSubsystem extends SubsystemBase {
     mode = Mode.STOP;
   }
 
-  public void setFowardMode(){
-    mode = Mode.FOWARD;
+  public void setForwardMode(){
+    mode = Mode.FORWARD;
   }
 
   public void setDynamicMode(){
@@ -213,4 +213,5 @@ public class IntakeSubsystem extends SubsystemBase {
   public void setReverseMode(){
     mode = Mode.REVERSE;
   }
+
 }
