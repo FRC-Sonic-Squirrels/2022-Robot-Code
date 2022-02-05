@@ -142,6 +142,14 @@ public class IntakeSubsystem extends SubsystemBase {
     m_isDeployed = false;
   }
 
+  public void toggleIntake() {
+    if (!m_isDeployed) {
+      deployIntake();
+    } else {
+      retractIntake();
+    }
+  }
+
   /**
    * Coasts the Intake to zero using new PID
    */

@@ -44,7 +44,7 @@ public class ShooterSubsystem extends SubsystemBase {
     m_error = m_currentRPM - m_desiredRPM;
 
     //if (Math.abs(m_error) < m_max_RPM_error) {
-    if (((m_error >= 0) && (m_error < 50)) ||
+    if (((m_error >= 0) && (m_error < m_max_RPM_error)) ||
         ((m_error < 0) && (m_error > -m_max_RPM_error))) {
       m_atSpeed = true;
     }

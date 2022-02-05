@@ -7,19 +7,22 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.CargoSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class ShootOneCargoCommand extends CommandBase {
   /** Creates a new ShootOneCargoCommand. */
   private CargoSubsystem m_cargoSubsystem;
   private ShooterSubsystem m_shooterSubsystem;
+  private IntakeSubsystem m_intakeSubsystem;
 
-  public ShootOneCargoCommand(CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem) {
+  public ShootOneCargoCommand(CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
+    m_intakeSubsystem = intakeSubsystem;
 
-    addRequirements(cargoSubsystem, shooterSubsystem);
+    addRequirements(cargoSubsystem, shooterSubsystem, intakeSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -32,11 +35,24 @@ public class ShootOneCargoCommand extends CommandBase {
     // wait until flywheel is fully revved
     // once it is, turn on upper cargo belt
     // once upper ball has been released, go back to intake mode
+    m_shooterSubsystem.setFlywheelRPM(1000); //TODO: find shooting rpm of flywheel
+
+    if (m_shooterSubsystem.isAtDesiredRPM()) {
+      m_cargoSubsystem.setUpperOnlyMode();
+    }
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_shooterSubsystem.setFlywheelRPM(0);
+    if (m_intakeSubsystem.isDeployed()) {
+      m_cargoSubsystem.setIntakeMode();
+    } else {
+      m_cargoSubsystem.setStopMode();
+    }
+  }
 
   // Returns true when the command should end.
   @Override
