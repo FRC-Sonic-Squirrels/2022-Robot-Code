@@ -26,7 +26,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final double gearRatio =  0.074;
   private final double winchDiameter_inches = 1.25;
   private boolean elevatorDeployed = false;
-  
+  private boolean m_brakeOn = true;
+  private boolean m_brakeOff = false;
 
 
   public ElevatorSubsystem() {
@@ -54,20 +55,20 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 
     // TODO: check if this is the right section to activate the default state of frictionBrakeSolenoid
-    frictionBrakeSolenoid.set(true);
+    frictionBrakeSolenoid.set(m_brakeOn);
 
   }
 
   public void deployElevator() {
     setElevatorDeployed(true);
-    frictionBrakeSolenoid.set(false);
+    frictionBrakeSolenoid.set(m_brakeOff);
     // RobotContainer.m_limelight.setCAMMode(1);
     // RobotContainer.m_limelight.setLEDMode(1);
   }
 
   public void retractElevator() {
     setElevatorDeployed(false);
-    frictionBrakeSolenoid.set(true);
+    frictionBrakeSolenoid.set(m_brakeOff);
     // RobotContainer.m_limelight.setCAMMode(0);
   }
 
@@ -77,8 +78,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void stop() {
-    frictionBrakeSolenoid.set(true);
+    frictionBrakeSolenoid.set(m_brakeOn);
     setWinchPercentOutput(0.0);
+  }
+
+  public void turnBrakeOff(){
+    frictionBrakeSolenoid.set(m_brakeOff);
   }
 
   public void setElevatorDeployed(boolean state) {
