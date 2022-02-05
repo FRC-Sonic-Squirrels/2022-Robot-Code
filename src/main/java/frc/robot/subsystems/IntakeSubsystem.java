@@ -58,6 +58,7 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Intake Motor RPM", 0.0);
     SmartDashboard.putNumber("Robot Speed m per s", 0.0);
   }
+    // TODO: How does the motor stop when retracted?
 
   @Override
   public void periodic() {
@@ -96,7 +97,7 @@ public class IntakeSubsystem extends SubsystemBase {
    * speed
    */
   public void setIntakeToSpeed() {
-    double robotMetersPerSec = m_drivetrain.getVelocity();
+    double robotMetersPerSec = m_drivetrain.getVelocity(); //check if m/s 
     double intakeRotationsPerSec = robotMetersPerSec / circOfIntake_meters;
     //Going Twice as Fast as the Robot Speed
     double _intakeRPM = intakeRotationsPerSec * 60 * 4.0;
@@ -114,7 +115,7 @@ public class IntakeSubsystem extends SubsystemBase {
   /**
    * Sets Intake Speed to Match double robot speed at all times
    */
-  public void setDynamicSpeed(boolean dynamic) {
+  public void setDynamicMode(boolean dynamic) {
     dynamicMode = dynamic;
   }
 
@@ -155,7 +156,7 @@ public class IntakeSubsystem extends SubsystemBase {
    * Coasts the Intake to zero using new PID
    */
   public void coastToZero() {
-    setDynamicSpeed(false);
+    setDynamicMode(false);
     setIntakePercentOutput(0);
   }
 
@@ -163,11 +164,11 @@ public class IntakeSubsystem extends SubsystemBase {
    * Resets the Intake to original PID Values
    */
   public void resetIntake(){
-    setDynamicSpeed(dynamicMode);
+    setDynamicMode(dynamicMode);
   }
 
   public void stop() {
-    setDynamicSpeed(false);
+    setDynamicMode(false);
     m_intake.setVoltage(0.0);
     setIntakeMotorRPM(0.0);
     intakeRelay.set(Relay.Value.kForward);
@@ -175,5 +176,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public boolean isDeployed(){
     return m_isDeployed;
-  }
+  }  
+
 }
