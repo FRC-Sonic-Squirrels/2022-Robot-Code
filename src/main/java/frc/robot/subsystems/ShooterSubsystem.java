@@ -67,16 +67,15 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("isAtSpeed", m_atSpeed);
   }
 
-  //TODO: write the code
   public void setFlywheelRPM(double rpm) {
-
+    m_desiredRPM = rpm;
   }
 
   public double getCurrentRPM() {
-    return 0.0;
+    return m_currentRPM;
   }
 
-  public boolean isAtTargetRPM() {
+  public boolean isAtDesiredRPM() {
     return m_atSpeed;
   }
 }

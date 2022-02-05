@@ -29,7 +29,9 @@ public class ShootOneCargoCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
+    // wait until flywheel is fully revved
+    // once it is, turn on upper cargo belt
+    // once upper ball has been released, go back to intake mode
   }
 
   // Called once the command ends or is interrupted.
