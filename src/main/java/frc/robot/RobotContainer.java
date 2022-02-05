@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
+import frc.robot.commands.IntakeDeploy;
 import frc.robot.commands.VisionDriveToCargo;
 import frc.robot.commands.VisionRotateToCargo;
 import frc.robot.commands.DriveHubCentricCommand;
@@ -138,22 +139,11 @@ public class RobotContainer {
       .whileHeld(new VisionDriveToCargo(m_visionSubsystem, drivetrain));
 
     
-      //while held deploys the intake if not pressed intake is retracted
     new Button(m_operatorController::getXButton)
-      .whileActiveContinuous(
-        new InstantCommand(() -> {
-          if(!m_intake.isDeployed()){
-            m_intake.deployIntake();
-          }
-        }, m_intake))
-      .whenInactive(
-        new InstantCommand(() -> {
-          if(m_intake.isDeployed()){
-            m_intake.retractIntake();
-          }
-        }, m_intake));
-  }
+      .whileHeld(new IntakeDeploy(m_intake));
 
+  }
+  
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) > deadband) {
       if (value > 0.0) {
