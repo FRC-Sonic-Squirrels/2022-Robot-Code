@@ -53,7 +53,8 @@ public class DriveHubCentricCommand extends CommandBase {
     Pose2d robotPosition = m_drivetrain.getPose();
     Vector2d robotVector = new Vector2d(m_hubCenter.x - robotPosition.getX(), m_hubCenter.y - robotPosition.getY());
 
-    Rotation2d targetHeading = getTargetHeading(robotVector, new Vector2d(1,0));
+    //add pi to make the back face the hub (shooter is on the back of the robot)
+    Rotation2d targetHeading = getTargetHeading(robotVector, new Vector2d(1,0)).plus(new Rotation2d(Math.PI));
     //to make it work on left side of circle 
     targetHeading.times(Math.signum(m_hubCenter.y - robotPosition.getY()));
     double radius = Math.sqrt(Math.pow(m_hubCenter.x - robotPosition.getX(), 2) + Math.pow(m_hubCenter.y - robotPosition.getY(), 2));

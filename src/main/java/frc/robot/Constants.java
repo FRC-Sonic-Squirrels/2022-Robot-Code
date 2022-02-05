@@ -22,63 +22,72 @@ import frc.robot.subsystems.Drivetrain;
  */
 public final class Constants {
 
-  // Allocate CAN Ids from here. 
-    // This avoids accidentally assigning the same CAN id to two different devices.
-    public static final class canId {
-      // CAN Id 0 is off limits. Typically unconfigured devices default to CAN id zero. This will 
-      // create problems if you already have a device using CAN id 0 on the CAN bus.
-      public static final int DoNotUse_canId0 = 0;
+  // Allocate CAN Ids from here.
+  // This avoids accidentally assigning the same CAN id to two different devices.
+  public static final class canId {
+    // CAN Id 0 is off limits. Typically unconfigured devices default to CAN id zero. This will
+    // create problems if you already have a device using CAN id 0 on the CAN bus.
+    public static final int DoNotUse_canId0 = 0;
 
-     // When assigning a CAN ID, rename the constant to something descriptive. Such as
-     // when assigning CAN 1 rename "canId1" to "driveLeftLead" or "pigeonIMU"
+    // When assigning a CAN ID, rename the constant to something descriptive. Such as
+    // when assigning CAN 1 rename "canId1" to "driveLeftLead" or "pigeonIMU"
 
-     //Swerve module cadId assignments 
-     public static final int CANID1_FRONT_LEFT_MODULE_DRIVE_MOTOR = 1;
-     public static final int CANID11_FRONT_LEFT_MODULE_STEER_MOTOR = 11;
-     public static final int CANID21_FRONT_LEFT_MODULE_STEER_ENCODER = 21;
-     
-     public static final int CANID2_FRONT_RIGHT_MODULE_DRIVE_MOTOR = 2;
-     public static final int CANID12_FRONT_RIGHT_MODULE_STEER_MOTOR = 12;
-     public static final int CANID22_FRONT_RIGHT_MODULE_STEER_ENCODER = 22;
-    
-     public static final int CANID4_BACK_LEFT_MODULE_DRIVE_MOTOR = 4;
-     public static final int CANID14_BACK_LEFT_MODULE_STEER_MOTOR = 14;
-     public static final int CANID24_BACK_LEFT_MODULE_STEER_ENCODER = 24;
-     
-     public static final int CANID3_BACK_RIGHT_MODULE_DRIVE_MOTOR = 3;
-     public static final int CANID13_BACK_RIGHT_MODULE_STEER_MOTOR = 13;
-     public static final int CANID23_BACK_RIGHT_MODULE_STEER_ENCODER = 23;
+    // Swerve module cadId assignments
+    public static final int CANID1_FRONT_LEFT_MODULE_DRIVE_MOTOR = 1;
+    public static final int CANID11_FRONT_LEFT_MODULE_STEER_MOTOR = 11;
+    public static final int CANID21_FRONT_LEFT_MODULE_STEER_ENCODER = 21;
 
-     public static final int CANID5_LOWER_BELTS = 5;
-     public static final int CANID6_UPPER_BELTS = 6;
-     public static final int canId7 = 7;
-     public static final int CANID8_FRICTION_BRAKE_SOLENOID = 8;
-     public static final int CANID9_ELEVATOR_LEAD_TALON = 9;
-     public static final int CANID10_ELEVATOR_FOLLOW_TALON = 10;
-     public static final int canId15_pigeon_imu = 15;
-     public static final int canId16 = 16;
-     public static final int canId17 = 17;
-     public static final int CANID18_INTAKE = 18;
-     public static final int CANID19_ARM_LEAD_MOTOR = 19;
-     public static final int CANID20_ARM_FOLLOW_MOTOR = 20;
+    public static final int CANID2_FRONT_RIGHT_MODULE_DRIVE_MOTOR = 2;
+    public static final int CANID12_FRONT_RIGHT_MODULE_STEER_MOTOR = 12;
+    public static final int CANID22_FRONT_RIGHT_MODULE_STEER_ENCODER = 22;
+
+    public static final int CANID4_BACK_LEFT_MODULE_DRIVE_MOTOR = 4;
+    public static final int CANID14_BACK_LEFT_MODULE_STEER_MOTOR = 14;
+    public static final int CANID24_BACK_LEFT_MODULE_STEER_ENCODER = 24;
+
+    public static final int CANID3_BACK_RIGHT_MODULE_DRIVE_MOTOR = 3;
+    public static final int CANID13_BACK_RIGHT_MODULE_STEER_MOTOR = 13;
+    public static final int CANID23_BACK_RIGHT_MODULE_STEER_ENCODER = 23;
+
+    public static final int CANID5_LOWER_BELTS = 5;
+    public static final int CANID6_UPPER_BELTS = 6;
+    public static final int canId7 = 7;
+    public static final int CANID8_FRICTION_BRAKE_SOLENOID = 8;
+    public static final int CANID9_ELEVATOR_LEAD_TALON = 9;
+    public static final int CANID10_ELEVATOR_FOLLOW_TALON = 10;
+    public static final int canId15_pigeon_imu = 15;
+    public static final int canId16 = 16;
+    public static final int canId17 = 17;
+    public static final int CANID18_INTAKE = 18;
+    public static final int CANID19_ARM_LEAD_MOTOR = 19;
+    public static final int CANID20_ARM_FOLLOW_MOTOR = 20;
   }
 
   public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(142.4 + 180);
   public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(65.4 + 180);
   public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(28.1 + 180);
   public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(182.7 - 180);
+
   // Allocate Pneumatic channel constants from here
   // Prevents two pneumatic systems from sharing the same channel
-  // public static final class Pneumatics {
-
-  //   // TODO: check if pneumatic channel 0 can be used
-
-  //   public static final int channel1_friction_brake_solenoid = 1;
-  //   public static final int channel2 = 2;
-
-  // }
-
-
+  public static final class pneumatics {
+    public static final int channel_0_friction_brake_solenoid = 0;
+    public static final int channel_1 = 1;
+    public static final int channel_2 = 2;
+    public static final int channel_3 = 3;
+    public static final int channel_4 = 4;
+    public static final int channel_5 = 5;
+    public static final int channel_6 = 6;
+    public static final int channel_7 = 7;
+    public static final int channel_8 = 8;
+    public static final int channel_9 = 9;
+    public static final int channel_10 = 10;
+    public static final int channel_11 = 11;
+    public static final int channel_12 = 12;
+    public static final int channel_13 = 13;
+    public static final int channel_14 = 14;
+    public static final int channel_15 = 15;  
+  }
   public static final class digitalIOConstants {
     // assign digital IO (DIO) ports 0-9
     public static final int dio0_indexerSensor1 = 0;
