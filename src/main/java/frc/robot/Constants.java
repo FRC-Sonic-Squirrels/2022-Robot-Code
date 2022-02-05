@@ -51,7 +51,7 @@ public final class Constants {
 
     public static final int CANID5_LOWER_BELTS = 5;
     public static final int CANID6_UPPER_BELTS = 6;
-    public static final int canId7 = 7;
+    public static final int CANID7_FLYWHEEL = 7;
     public static final int CANID8_FRICTION_BRAKE_SOLENOID = 8;
     public static final int CANID9_ELEVATOR_LEAD_TALON = 9;
     public static final int CANID10_ELEVATOR_FOLLOW_TALON = 10;

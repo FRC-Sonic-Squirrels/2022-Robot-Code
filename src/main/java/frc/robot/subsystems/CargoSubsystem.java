@@ -24,9 +24,9 @@ public class CargoSubsystem extends SubsystemBase {
   enum Mode {
     STOP,
     INTAKE,
-    ONECARGO,
-    TWOCARGO,
-    SHOOT
+    LOWERONLY,
+    UPPERONLY,
+    BOTH
   };
 
   private WPI_TalonFX UpperBelts;
@@ -36,6 +36,7 @@ public class CargoSubsystem extends SubsystemBase {
   private DigitalInput upperSensor = new DigitalInput(digitalIOConstants.dio1_indexerSensor2);
   private Mode mode = Mode.STOP;
   private int ballCount = 0;
+  private double percentOutput = 0.7;
 
   public CargoSubsystem() {
 
@@ -97,42 +98,53 @@ public class CargoSubsystem extends SubsystemBase {
     // TODO: check the real percent outputs of the conveyor belts
     if (mode == Mode.STOP) {
       stopIndexer();
-    }
-    if (mode == Mode.INTAKE) {
-      setLowerBeltPercentOutput(0.5);
-      setUpperBeltPercentOutput(0.5);
-    }
-    if (mode == Mode.ONECARGO) {
-      stopUpperBelts();
-      setLowerBeltPercentOutput(0.5);
     } 
-    else if (mode == Mode.TWOCARGO) {
+    else if (mode == Mode.INTAKE) {
+      if (cargoInUpperBelts()) {
+        stopUpperBelts();
+        if (cargoInLowerBelts()) {
+          stopLowerBelts();
+        } else {
+          setLowerBeltPercentOutput(percentOutput);
+        }
+      } else {
+        setLowerBeltPercentOutput(percentOutput);
+        setUpperBeltPercentOutput(percentOutput);
+      }
+      
+    } 
+    else if (mode == Mode.LOWERONLY) {
+      stopUpperBelts();
+      setLowerBeltPercentOutput(percentOutput);
+    } 
+    else if (mode == Mode.UPPERONLY) {
       stopLowerBelts();
-      stopUpperBelts();
+      setUpperBeltPercentOutput(percentOutput);
     } 
-    else if (mode == Mode.SHOOT) {
+    else if (mode == Mode.BOTH) {
       // Normal, non-eject mode
       SmartDashboard.putNumber("Eject State", 0);
 
       // shoot mode releases the upper cargo, then moves the lower cargo to the top
-      setUpperBeltPercentOutput(0.8);
-      setLowerBeltPercentOutput(0.8);
-    
+      setUpperBeltPercentOutput(percentOutput);
+      setLowerBeltPercentOutput(percentOutput);
+    } else {
+      stopIndexer();
     }
 
-    if (cargoInLowerBelts() && cargoInUpperBelts()) {
-      setTwoCargoMode();
-    } else if (cargoInLowerBelts() ^ cargoInUpperBelts()) {
-      setOneCargoMode();
-    } else if (/*no cargo, but gates are down*/) {
-      setIntakeMode();
-    } else if (/* cargo gates are up */) {
-      setStopMode();
-    }
+    // if (cargoInLowerBelts() && cargoInUpperBelts()) {
+    //   setUpperOnlyMode();
+    // } else if (cargoInLowerBelts() ^ cargoInUpperBelts()) {
+    //   setLowerOnlyMode();
+    // } else if (/*no cargo, but gates are down TODO: make intake command that gives the gate status to cargo*/) {
+    //   setIntakeMode();
+    // } else if (/* cargo gates are up */) {
+    //   setStopMode();
+    // }
 
-    if (/* shoot button is pressed */) {
-      setShootMode();
-    }
+    // if (/* shoot button is pressed */) {
+    //   setBothMode();
+    // }
 
   }
 
@@ -167,24 +179,24 @@ public class CargoSubsystem extends SubsystemBase {
   }
 
   /**
-   * enable OneCargo mode, one cargo loaded (in the top belt)
+   * enable LowerOnly mode, one cargo loaded (in the top belt)
    */
-  public void setOneCargoMode(){
-    mode = Mode.ONECARGO;
+  public void setLowerOnlyMode(){
+    mode = Mode.LOWERONLY;
   }
 
   /**
-   * enable TwoCargo mode - two cargo loaded
+   * enable UpperOnly mode - two cargo loaded
    */
-  public void setTwoCargoMode(){
-    mode = Mode.TWOCARGO;
+  public void setUpperOnlyMode(){
+    mode = Mode.UPPERONLY;
   }
 
   /**
-   * enable Shoot mode - release one cargo from the conveyor belts
+   * enable Both mode - release one cargo from the conveyor belts
    */
-  public void setShootMode(){
-    mode = Mode.SHOOT;
+  public void setBothMode(){
+    mode = Mode.BOTH;
   }
 
   /** 
@@ -226,6 +238,11 @@ public class CargoSubsystem extends SubsystemBase {
    */
   private void stopUpperBelts() {
     setUpperBeltPercentOutput(0);
+  }
+
+  public void coastMode() {
+    LowerBelts.setNeutralMode(NeutralMode.Coast);
+    UpperBelts.setNeutralMode(NeutralMode.Coast);
   }
 
 }
