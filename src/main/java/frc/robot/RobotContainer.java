@@ -20,12 +20,19 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
+import frc.robot.commands.ShootOneCargoCommand;
+import frc.robot.commands.ShootTwoCargoCommand;
+import frc.robot.commands.IntakeDeploy;
+import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.VisionDriveToCargo;
 import frc.robot.commands.VisionRotateToCargo;
 import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
 /**
@@ -37,8 +44,11 @@ import frc.robot.subsystems.VisionSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final Drivetrain drivetrain = new Drivetrain();
-  public final ArmSubsystem m_armSubsystem = new ArmSubsystem();
+  //public final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   public final VisionSubsystem m_visionSubsystem = new VisionSubsystem();
+  public final CargoSubsystem m_cargoSubsystem = new CargoSubsystem();
+  public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
+  public final IntakeSubsystem m_intake = new IntakeSubsystem(drivetrain);
 
   public final XboxController m_controller = new XboxController(0);
   public final XboxController m_operatorController = new XboxController(1);
@@ -59,18 +69,18 @@ public class RobotContainer {
     SmartDashboard.putData("Auto mode", chooser);
 
     // Creates UsbCamera and MjpegServer [1] and connects them
-    UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
-    MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
-    mjpegServer1.setSource(usbCamera);
+    // UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
+    // MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
+    // mjpegServer1.setSource(usbCamera);
 
-    // Creates the CvSink and connects it to the UsbCamera
-    CvSink cvSink = new CvSink("opencv_USB Camera 0");
-    cvSink.setSource(usbCamera);
+    // // Creates the CvSink and connects it to the UsbCamera
+    // CvSink cvSink = new CvSink("opencv_USB Camera 0");
+    // cvSink.setSource(usbCamera);
 
-    // Creates the CvSource and MjpegServer [2] and connects them
-    CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
-    MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
-    mjpegServer2.setSource(outputStream);
+    // // Creates the CvSource and MjpegServer [2] and connects them
+    // CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
+    // MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
+    // mjpegServer2.setSource(outputStream);
     
 
     // Set up the default command for the drivetrain.
@@ -91,9 +101,9 @@ public class RobotContainer {
         () -> m_controller.getPOV(), 0.0));
 
     //control winch with right joystick 
-    m_armSubsystem.setDefaultCommand(new InstantCommand(
-      () -> m_armSubsystem.setArmPercentOutput(modifyAxis(m_operatorController.getRightTriggerAxis())), 
-      m_armSubsystem));
+    // m_armSubsystem.setDefaultCommand(new InstantCommand(
+    //   () -> m_armSubsystem.setArmPercentOutput(modifyAxis(m_operatorController.getRightTriggerAxis())), 
+    //   m_armSubsystem));
     
     // Configure the button bindings
     configureButtonBindings();
@@ -125,17 +135,30 @@ public class RobotContainer {
 
     new Button(m_controller::getBButton)
             .whenPressed(new DriveRobotCentricCommand(drivetrain,
-            () -> -modifyAxis(m_controller.getLeftY()) * drivetrain.MAX_VELOCITY_METERS_PER_SECOND *0.8, 
-            () -> -modifyAxis(m_controller.getLeftX()) * drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8,
-            () -> -modifyAxis(m_controller.getRightX()) * drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND*0.5));
+            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8, 
+            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8,
+            () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 0.5));
 
     new Button(m_controller::getAButton)
-      .whenPressed(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
+      .whileHeld(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
 
     new Button(m_controller::getRightBumper)
-      .whenPressed(new VisionDriveToCargo(m_visionSubsystem, drivetrain));
-  }
+      .whileHeld(new VisionDriveToCargo(m_visionSubsystem, drivetrain));
 
+    new Button(m_operatorController::getAButton)
+      .whileHeld(new ShootOneCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake));
+
+    new Button(m_operatorController::getBButton)
+      .whileHeld(new ShootTwoCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake));
+    
+    new Button(m_operatorController::getXButton)
+      .whileHeld(new IntakeDeploy(m_intake, m_cargoSubsystem));
+
+    new Button(m_operatorController::getYButton)
+      .whileHeld(new IntakeReverseCommand(m_intake));
+
+  }
+  
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) > deadband) {
       if (value > 0.0) {

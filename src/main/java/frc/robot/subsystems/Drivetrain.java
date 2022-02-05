@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.canId;
 import edu.wpi.first.wpilibj.DriverStation;
-
+import edu.wpi.first.wpilibj.drive.Vector2d;
 import static frc.robot.Constants.*;
 
 public class Drivetrain extends SubsystemBase {
@@ -237,6 +237,12 @@ public class Drivetrain extends SubsystemBase {
     return m_odometry.getPoseMeters();
   }
 
+  public double getVelocity(){
+    ChassisSpeeds cs = m_kinematics.toChassisSpeeds(m_desiredStates);
+    Vector2d vector =  new Vector2d(cs.vxMetersPerSecond, cs.vyMetersPerSecond);
+      
+    return vector.magnitude(); 
+  }
   /**
    * Sets the swerve ModuleStates.
    *
