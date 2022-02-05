@@ -20,7 +20,16 @@ import edu.wpi.first.wpilibj.Relay;
 import static frc.robot.Constants.canId;
 import frc.robot.RobotContainer;
 
+
+
 public class IntakeSubsystem extends SubsystemBase {
+
+  enum Mode {
+    STOP,
+    FOWARD, 
+    DYNAMIC,
+    REVERSE
+  };
 
   private WPI_TalonFX m_intake = new WPI_TalonFX(canId.CANID18_INTAKE);
   private TalonFXSensorCollection m_encoder;
@@ -35,6 +44,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private boolean m_isDeployed = false;
   private static int kPIDLoopIdx = 0;
   private static int kTimeoutMs = 30;
+  private Mode mode = Mode.STOP;
 
   public IntakeSubsystem(Drivetrain drivetrain) {
     
@@ -62,17 +72,27 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    boolean dynamic = SmartDashboard.getBoolean("Dynamic Mode", dynamicMode);
-    dynamicMode = dynamic;
-    if (dynamicMode) {
-      setIntakeToSpeed();
-    } else {
-      double ir = SmartDashboard.getNumber("Set Intake Motor RPM", 0.0);
-      if (ir != intakeRPM) {
-        intakeRPM = ir;
+    // boolean dynamic = SmartDashboard.getBoolean("Dynamic Mode", dynamicMode);
+    // dynamicMode = dynamic;
+    // if (dynamicMode) {
+    //   setIntakeToSpeed();
+    // } else {
+    //   double ir = SmartDashboard.getNumber("Set Intake Motor RPM", 0.0);
+    //   if (ir != intakeRPM) {
+    //     intakeRPM = ir;
+    //     setIntakeMotorRPM(intakeRPM);
+    //   }
+    //}
+    if(mode == Mode.STOP){
+      setIntakeMotorRPM(minIntakeRPM);
+    } else if(mode == Mode.FOWARD){
+        setIntakeMotorRPM(5000); //TODO: set RPM to actual value needed
+    } else if(mode == Mode.DYNAMIC){
         setIntakeMotorRPM(intakeRPM);
-      }
+    } else if(mode == Mode.REVERSE){
+        setIntakeMotorRPM(-5000); //TODO: what does the spped have to be for reverse?
     }
+
     SmartDashboard.putNumber("Intake Motor RPM", - m_encoder.getIntegratedSensorVelocity() * 600 / 2048);
     //SmartDashboard.putNumber("Robot Speed m per s", (m_drive.getLeftVelocity() + m_drive.getRightVelocity()) / 2.0);
   }
@@ -178,4 +198,19 @@ public class IntakeSubsystem extends SubsystemBase {
     return m_isDeployed;
   }  
 
+  public void setStopMode(){
+    mode = Mode.STOP;
+  }
+
+  public void setFowardMode(){
+    mode = Mode.FOWARD;
+  }
+
+  public void setDynamicMode(){
+    mode = Mode.DYNAMIC;
+  }
+
+  public void setReverseMode(){
+    mode = Mode.REVERSE;
+  }
 }
