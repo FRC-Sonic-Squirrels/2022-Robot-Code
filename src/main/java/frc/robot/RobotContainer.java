@@ -26,6 +26,7 @@ import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
 /**
@@ -39,9 +40,10 @@ public class RobotContainer {
   public final Drivetrain drivetrain = new Drivetrain();
   //public final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   public final VisionSubsystem m_visionSubsystem = new VisionSubsystem();
+  public final IntakeSubsystem m_intake = new IntakeSubsystem(drivetrain);
 
   public final XboxController m_controller = new XboxController(0);
-  //public final XboxController m_operatorController = new XboxController(1);
+  public final XboxController m_operatorController = new XboxController(1);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
   
@@ -134,6 +136,22 @@ public class RobotContainer {
 
     new Button(m_controller::getRightBumper)
       .whileHeld(new VisionDriveToCargo(m_visionSubsystem, drivetrain));
+
+    
+      //while held deploys the intake if not pressed intake is retracted
+    new Button(m_operatorController::getXButton)
+      .whileActiveContinuous(
+        new InstantCommand(() -> {
+          if(!m_intake.isDeployed()){
+            m_intake.deployIntake();
+          }
+        }, m_intake))
+      .whenInactive(
+        new InstantCommand(() -> {
+          if(m_intake.isDeployed()){
+            m_intake.retractIntake();
+          }
+        }, m_intake));
   }
 
   private static double deadband(double value, double deadband) {
