@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.ShootOneCargoCommand;
+import frc.robot.commands.IntakeDeploy;
 import frc.robot.commands.VisionDriveToCargo;
 import frc.robot.commands.VisionRotateToCargo;
 import frc.robot.commands.DriveHubCentricCommand;
@@ -29,6 +30,7 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
 /**
@@ -44,9 +46,10 @@ public class RobotContainer {
   public final VisionSubsystem m_visionSubsystem = new VisionSubsystem();
   public final CargoSubsystem m_cargoSubsystem = new CargoSubsystem();
   public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
+  public final IntakeSubsystem m_intake = new IntakeSubsystem(drivetrain);
 
   public final XboxController m_controller = new XboxController(0);
-  //public final XboxController m_operatorController = new XboxController(1);
+  public final XboxController m_operatorController = new XboxController(1);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
   
@@ -130,9 +133,9 @@ public class RobotContainer {
 
     new Button(m_controller::getBButton)
             .whenPressed(new DriveRobotCentricCommand(drivetrain,
-            () -> -modifyAxis(m_controller.getLeftY()) * drivetrain.MAX_VELOCITY_METERS_PER_SECOND *0.8, 
-            () -> -modifyAxis(m_controller.getLeftX()) * drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8,
-            () -> -modifyAxis(m_controller.getRightX()) * drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND*0.5));
+            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8, 
+            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8,
+            () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 0.5));
 
     new Button(m_controller::getAButton)
       .whileHeld(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
@@ -142,8 +145,12 @@ public class RobotContainer {
 
     new Button(m_controller::getLeftBumper)
       .whileHeld(new ShootOneCargoCommand(m_cargoSubsystem, m_shooterSubsystem));
-  }
+    
+    new Button(m_operatorController::getXButton)
+      .whileHeld(new IntakeDeploy(m_intake));
 
+  }
+  
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) > deadband) {
       if (value > 0.0) {

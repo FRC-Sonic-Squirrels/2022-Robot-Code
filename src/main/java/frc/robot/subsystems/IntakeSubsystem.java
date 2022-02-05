@@ -25,19 +25,20 @@ public class IntakeSubsystem extends SubsystemBase {
   private WPI_TalonFX m_intake = new WPI_TalonFX(canId.CANID18_INTAKE);
   private TalonFXSensorCollection m_encoder;
   private Relay intakeRelay = new Relay(0);
-
+  private Drivetrain m_drivetrain;
   
   private double circOfIntake_meters = (1.4725 * Math.PI) * 0.0254;
   private double minIntakeRPM = 2500;
   private double maxIntakeRPM = 6000;
   private double intakeRPM = 0.0;
   private boolean dynamicMode = false;
+  private boolean m_isDeployed = false;
   private static int kPIDLoopIdx = 0;
   private static int kTimeoutMs = 30;
 
-  public IntakeSubsystem() {
+  public IntakeSubsystem(Drivetrain drivetrain) {
     
-    
+    m_drivetrain = drivetrain;
     m_intake.configFactoryDefault();
     m_intake.setInverted(true);
     m_intake.setNeutralMode(NeutralMode.Coast); 
@@ -95,19 +96,19 @@ public class IntakeSubsystem extends SubsystemBase {
    * speed
    */
   public void setIntakeToSpeed() {
-    //double robotMetersPerSec = (m_drive.getLeftVelocity() + m_drive.getRightVelocity()) / 2.0;
-    //double intakeRotationsPerSec = robotMetersPerSec / circOfIntake_meters;
-    // Going Twice as Fast as the Robot Speed
-    //double _intakeRPM = intakeRotationsPerSec * 60 * 4.0;
-    //double desiredMotorRPM = _intakeRPM * Constants.intakeConstants.intakeGearRatio;
-    /*if (desiredMotorRPM < minIntakeRPM) {
+    double robotMetersPerSec = m_drivetrain.getVelocity();
+    double intakeRotationsPerSec = robotMetersPerSec / circOfIntake_meters;
+    //Going Twice as Fast as the Robot Speed
+    double _intakeRPM = intakeRotationsPerSec * 60 * 4.0;
+    double desiredMotorRPM = _intakeRPM * Constants.IntakeConstants.gearRatio;
+    if (desiredMotorRPM < minIntakeRPM) {
       desiredMotorRPM = minIntakeRPM;
     } else if (desiredMotorRPM > maxIntakeRPM) {
       desiredMotorRPM = maxIntakeRPM;
     }
 
     setIntakeMotorRPM(desiredMotorRPM);
-    */
+    
   }
 
   /**
@@ -129,6 +130,7 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public void deployIntake() {
     intakeRelay.set(Relay.Value.kReverse);
+    m_isDeployed = true;
   }
 
   /**
@@ -137,6 +139,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public void retractIntake() {
     // There is no retract on this robot. Just reset solenoids
     intakeRelay.set(Relay.Value.kForward);
+    m_isDeployed = false;
   }
 
   /**
@@ -161,4 +164,7 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeRelay.set(Relay.Value.kForward);
   }
 
+  public boolean isDeployed(){
+    return m_isDeployed;
+  }
 }

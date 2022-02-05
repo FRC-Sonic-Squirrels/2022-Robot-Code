@@ -236,7 +236,10 @@ public class Drivetrain extends SubsystemBase {
   public Pose2d getPose() {
     return m_odometry.getPoseMeters();
   }
-
+  //TODO: figure out how to calculate this???
+  public double getVelocity(){
+    return 0.0;
+  };
   /**
    * Sets the swerve ModuleStates.
    *
