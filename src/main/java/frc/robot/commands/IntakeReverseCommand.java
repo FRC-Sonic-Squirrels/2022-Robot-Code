@@ -19,9 +19,7 @@ public class IntakeReverseCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //TODO: check if intake subsystem periodic interferes
-    m_intake.setIntakeMotorRPM(5000); //close to max speed
-    m_intake.setDynamicMode(false);
+    m_intake.deployIntake();
     m_intake.setReverseMode();
   }
 
@@ -30,10 +28,11 @@ public class IntakeReverseCommand extends CommandBase {
   public void execute() {}
 
   // Called once the command ends or is interrupted.
+  //TODO: have this command deploy, set intake to reverse, then stop
   @Override
   public void end(boolean interrupted) {
-    m_intake.setDynamicMode(true);
-    m_intake.setDynamicMode();
+    m_intake.setStopMode();
+    m_intake.retractIntake();
   }
 
   // Returns true when the command should end.

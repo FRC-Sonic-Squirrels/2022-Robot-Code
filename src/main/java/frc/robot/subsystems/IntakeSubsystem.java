@@ -40,7 +40,6 @@ public class IntakeSubsystem extends SubsystemBase {
   private double minIntakeRPM = 2500;
   private double maxIntakeRPM = 6000;
   private double intakeRPM = 0.0;
-  private boolean dynamicMode = false;
   private boolean m_isDeployed = false;
   private static int kPIDLoopIdx = 0;
   private static int kTimeoutMs = 30;
@@ -86,11 +85,11 @@ public class IntakeSubsystem extends SubsystemBase {
     if(mode == Mode.STOP){
       setIntakeMotorRPM(minIntakeRPM);
     } else if(mode == Mode.FORWARD){
-        setIntakeMotorRPM(5000); //TODO: set RPM to actual value needed
+      setIntakeMotorRPM(5000); //TODO: set RPM to actual value needed
     } else if(mode == Mode.DYNAMIC){
-        setIntakeToSpeed();
+      setIntakeToSpeed();
     } else if(mode == Mode.REVERSE){
-        setIntakeMotorRPM(-5000); //TODO: what does the spped have to be for reverse?
+      setIntakeMotorRPM(-5000); //TODO: what does the spped have to be for reverse?
     }
 
     SmartDashboard.putNumber("Intake Motor RPM", - m_encoder.getIntegratedSensorVelocity() * 600 / 2048);
@@ -133,20 +132,6 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   /**
-   * Sets Intake Speed to Match double robot speed at all times
-   */
-  public void setDynamicMode(boolean dynamic) {
-    dynamicMode = dynamic;
-  }
-
- /**
-   * Toggle on/off intake dynamic speed mode
-   */
-  public void toggleDynamicMode() {
-    dynamicMode = ! dynamicMode;
-  }
-
-  /**
    * release and deploy the intake
    */
   public void deployIntake() {
@@ -176,19 +161,13 @@ public class IntakeSubsystem extends SubsystemBase {
    * Coasts the Intake to zero using new PID
    */
   public void coastToZero() {
-    setDynamicMode(false);
+    setStopMode();
     setIntakePercentOutput(0);
   }
 
-  /**
-   * Resets the Intake to original PID Values
-   */
-  public void resetIntake(){
-    setDynamicMode(dynamicMode);
-  }
 
   public void stop() {
-    setDynamicMode(false);
+    setStopMode();
     m_intake.setVoltage(0.0);
     setIntakeMotorRPM(0.0);
     intakeRelay.set(Relay.Value.kForward);
