@@ -1,5 +1,5 @@
-//TODO: #6 figure out why the file is untracked
-package com.fearxzombie;
+//TODO: figure out the angle for shooting in the hub- about 33.1 degrees for high hub
+package com.team2930.lib;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -14,7 +14,7 @@ public class Limelight {
 /**
  * An object that creates an interface with the Limelight series of vision cameras over the NetworkTables protocol.
  */
-  public limelight() {
+  public Limelight() {
     limelightName = "limelight";
     limelightNT = getNT.getTable(limelightName);
   }
