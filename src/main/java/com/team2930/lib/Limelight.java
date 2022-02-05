@@ -1,4 +1,3 @@
-
 package com.team2930.lib;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -15,7 +14,7 @@ public class Limelight {
  * An object that creates an interface with the Limelight series of vision cameras over the NetworkTables protocol.
  * @return 
  */
-  public void limelight() {
+  public Limelight() {
     limelightName = "limelight";
     limelightNT = getNT.getTable(limelightName);
   }
