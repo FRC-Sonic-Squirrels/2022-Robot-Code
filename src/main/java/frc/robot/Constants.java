@@ -140,6 +140,10 @@ public final class Constants {
   public static class IntakeConstants{
     public static final double gearRatio = 1;
   }
+
+  public static class ElevatorConstants{
+    public static final double elevatorSpeedMultiplier = 0.2;
+  }
   // according to game manual field is 27 ft. (~823 cm) by 54 ft. (~1646 cm)
   public static class HubCentricConstants{
     public static final Vector2d HUB_CENTER = new Vector2d(8.23, 4.11);
