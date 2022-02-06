@@ -15,6 +15,7 @@ public class ShootOneCargoCommand extends CommandBase {
   private CargoSubsystem m_cargoSubsystem;
   private ShooterSubsystem m_shooterSubsystem;
   private IntakeSubsystem m_intakeSubsystem;
+  private boolean cargoOnlyAtLower = false;
 
   public ShootOneCargoCommand(CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -29,6 +30,9 @@ public class ShootOneCargoCommand extends CommandBase {
   @Override
   public void initialize() {
     m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getDesiredRPM());
+    if (m_cargoSubsystem.cargoInLowerBelts() && ! m_cargoSubsystem.cargoInUpperBelts()) {
+      cargoOnlyAtLower = true;
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,7 +43,12 @@ public class ShootOneCargoCommand extends CommandBase {
     // once upper ball has been released, go back to intake mode
 
     if (m_shooterSubsystem.isAtDesiredRPM()) {
-      m_cargoSubsystem.setUpperOnlyMode();
+      if (cargoOnlyAtLower) {
+        m_cargoSubsystem.setBothMode();
+      }
+      else {
+        m_cargoSubsystem.setUpperOnlyMode();
+      }
     }
 
   }
@@ -60,6 +69,11 @@ public class ShootOneCargoCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return ! m_cargoSubsystem.cargoInUpperBelts();
+    //TODO: check if ball is not sensed by either beam break sensors when it is between both of them
+    if (cargoOnlyAtLower) {
+      return ! m_cargoSubsystem.cargoInLowerBelts() && ! m_cargoSubsystem.cargoInUpperBelts();
+    } else {
+      return ! m_cargoSubsystem.cargoInUpperBelts();
+    }
   }
 }

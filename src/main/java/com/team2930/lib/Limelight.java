@@ -72,6 +72,15 @@ public class Limelight {
   }
 
   /**
+   * seesTarget() - return true if we see target, otherwise false
+   * 
+   * @return true if we see target
+   */
+  public boolean seesTarget() {
+    return (limelightNT.getEntry("TV").getDouble(0) == 1);
+  }
+
+  /**
    * getTA() - Target Area (0% of image to 100% of image)
    * 
    * @return (0-100)
