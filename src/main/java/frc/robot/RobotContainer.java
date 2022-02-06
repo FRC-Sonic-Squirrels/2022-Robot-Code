@@ -22,9 +22,9 @@ import frc.robot.commands.CargoReverseCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.ShootOneCargoCommand;
-import frc.robot.commands.ShootTwoCargoCommand;
 import frc.robot.commands.IntakeDeploy;
 import frc.robot.commands.IntakeReverseCommand;
+import frc.robot.commands.ShootCargoCommand;
 import frc.robot.commands.VisionDriveToCargo;
 import frc.robot.commands.VisionRotateToCargo;
 import frc.robot.commands.DriveHubCentricCommand;
@@ -150,7 +150,7 @@ public class RobotContainer {
       .whileHeld(new ShootOneCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake));
 
     new Button(m_operatorController::getBButton)
-      .whileHeld(new ShootTwoCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake));
+      .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake));
     
     new Button(m_operatorController::getXButton)
       .whileHeld(new IntakeDeploy(m_intake, m_cargoSubsystem));
