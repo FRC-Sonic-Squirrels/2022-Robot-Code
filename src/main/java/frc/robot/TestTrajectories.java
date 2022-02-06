@@ -73,7 +73,8 @@ public class TestTrajectories {
 
     // setReversed(true) if we are traveling backwards
 
-    return TrajectoryGenerator.generateTrajectory(new Pose2d(0.0, 0.0, new Rotation2d(0)),
+    return TrajectoryGenerator.generateTrajectory(
+        new Pose2d(0.0, 0.0, new Rotation2d(0)),
         List.of(), new Pose2d(distanceInMeters, 0.0, new Rotation2d(0)),
         getTrajectoryConfig().setReversed(distanceInMeters < 0.0));
 
