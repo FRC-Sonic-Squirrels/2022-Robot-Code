@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import frc.robot.commands.CargoReverseCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.ShootOneCargoCommand;
@@ -156,6 +157,9 @@ public class RobotContainer {
 
     new Button(m_operatorController::getYButton)
       .whileHeld(new IntakeReverseCommand(m_intake));
+
+    new Button(m_operatorController::getRightBumper)
+      .whileHeld(new CargoReverseCommand(m_cargoSubsystem));
 
   }
   
