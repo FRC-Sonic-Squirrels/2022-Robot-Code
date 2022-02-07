@@ -28,6 +28,7 @@
     "navx",
     "odometry",
     "opencv",
+    "Setpoint",
     "teleop",
     "teleoperated",
     "TRACKWIDTH",
