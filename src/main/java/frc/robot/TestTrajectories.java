@@ -176,4 +176,22 @@ public class TestTrajectories {
               new Translation2d(-movement/2, -Math.sin(Math.PI/3)*movement)),
       new Pose2d(0, 0, new Rotation2d()), getTrajectoryConfig());
   }
+
+  public Trajectory straightUp(double distance) {
+    return TrajectoryGenerator.generateTrajectory(
+    new Pose2d(0.0, 0.0, new Rotation2d(0)),
+    List.of(),
+    new Pose2d(distance, 0.0, new Rotation2d(0)), 
+    getTrajectoryConfig());
+  } //testing
+
+  public Trajectory drawSquare(double length) {
+    return TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)),
+    List.of(new Translation2d(length, 0),
+        new Translation2d(0, length),
+        new Translation2d(-length, 0)),
+    new Pose2d(0, 0, new Rotation2d(0)), 
+    getTrajectoryConfig());
+  } //testing
+  
 }
