@@ -159,7 +159,7 @@ public class RobotContainer {
       .whileHeld(new IntakeReverseCommand(m_intake));
 
     new Button(m_operatorController::getRightBumper)
-      .whileHeld(new CargoReverseCommand(m_cargoSubsystem));
+      .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
 
   }
   

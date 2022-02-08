@@ -34,7 +34,7 @@ public class VisionRotateToCargo extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //1 degree tolorence
+    //1 degree tolerance
     rotateController.setTolerance(Math.PI/180);
   }
 

@@ -60,7 +60,6 @@ public class ShootOneCargoCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //TODO: check if ball is not sensed by either beam break sensors when it is between both of them
       return ! m_cargoSubsystem.cargoInUpperBelts();
   }
 }
