@@ -156,6 +156,6 @@ public final class Constants {
       new Pose2d(HubCentricConstants.HUB_CENTER.x - 1,HubCentricConstants.HUB_CENTER.y , new Rotation2d(0));
 
   public static class FieldConstants{
-    
+    public int test;
   } 
 }
