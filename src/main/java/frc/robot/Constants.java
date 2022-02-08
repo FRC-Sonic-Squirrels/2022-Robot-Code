@@ -155,5 +155,7 @@ public final class Constants {
   public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
       new Pose2d(HubCentricConstants.HUB_CENTER.x - 1,HubCentricConstants.HUB_CENTER.y , new Rotation2d(0));
 
-  
+  public static class FieldConstants{
+    
+  } 
 }
