@@ -9,8 +9,10 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -22,13 +24,16 @@ public class ElevatorSubsystem extends SubsystemBase {
       new Solenoid(PneumaticsModuleType.REVPH, Constants.canId.CANID8_FRICTION_BRAKE_SOLENOID);
   private final double gearRatio =  0.074;
   private final double winchDiameter_inches = 1.25;
+  private final double winchCircumference = Math.PI * winchDiameter_inches;
   private double heightSetpointInches = 0.0;
   private double toleranceInches = 0.2;;
-
+  private double StartingTicks = 0;
+  private final double ticks2distance = gearRatio * winchCircumference / 4096;
+  
   public ElevatorSubsystem() {
     winch_lead_talon.configFactoryDefault();
     winch_follow_talon.configFactoryDefault();
-
+    
     winch_lead_talon.setNeutralMode(NeutralMode.Brake);
     winch_follow_talon.setNeutralMode(NeutralMode.Brake);
 
@@ -52,6 +57,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 
     // TODO: check if this is the right section to activate the default state of frictionBrakeSolenoid
+    StartingTicks = winch_lead_talon.getSelectedSensorPosition();
     brakeOn();
   }
 
@@ -80,15 +86,15 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return height of the elevator in inches
    */
   public double getHeightInches() {
-    // TODO: calculate height of elevator from encoder
-    return 0.0;
+    return (winch_lead_talon.getSelectedSensorPosition()-StartingTicks)*ticks2distance;
+
   }
 
   public void zeroHeight() {
-    // TODO: zero the height of the elevator. Call this when resetting encoder.
     // This is called when the elevator triggers the lower limit switch.
     // This needs to be done by a command, that runs the elevator to the lower limit switch. VERY
     // SLOWLY.
+    StartingTicks = winch_lead_talon.getSelectedSensorPosition();
   }
 
   /**
