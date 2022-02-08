@@ -110,7 +110,7 @@ public class TestTrajectories {
 
   /**
    * 
-   * Return an trajectory that drives forward and to the left/right for a given distances in meters.
+   * Return a trajectory that drives forward and to the left/right for a given distances in meters.
    * 
    * @param forwardInMeters
    * @param leftInMeters
@@ -134,7 +134,7 @@ public class TestTrajectories {
 
   /**
    * 
-   * Return an trajectory that drives a figure eight pattern. Define the radius of curves in meters.
+   * Return a trajectory that drives a figure eight pattern. Define the radius of curves in meters.
    * 
    * @param radiusInMeters
    * @return trajectory
@@ -149,4 +149,31 @@ public class TestTrajectories {
         new Pose2d(0.0, 0.0, new Rotation2d(0)), getTrajectoryConfig());
   }
 
+  // These three triangle trajectories were just practice and are not used in the robot
+  public Trajectory isoscelesTriangle(double movement) {
+
+    return TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)),
+      List.of(new Translation2d(movement, 0),
+              new Translation2d(-movement/2, movement),
+              new Translation2d(-movement/2, -movement)),
+      new Pose2d(0, 0, new Rotation2d(0)), getTrajectoryConfig());
+  }
+
+  public Trajectory rightTriangle(double movement) {
+
+    return TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)),
+      List.of(new Translation2d(movement, 0),
+              new Translation2d(0, movement),
+              new Translation2d(-movement, -movement)),
+      new Pose2d(0, 0, new Rotation2d(0)), getTrajectoryConfig());
+  }
+
+  public Trajectory equilateralTriangle(double movement) {
+
+    return TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)),
+      List.of(new Translation2d(movement, 0),
+              new Translation2d(-movement/2, Math.sin(Math.PI/3)*movement),
+              new Translation2d(-movement/2, -Math.sin(Math.PI/3)*movement)),
+      new Pose2d(0, 0, new Rotation2d()), getTrajectoryConfig());
+  }
 }
