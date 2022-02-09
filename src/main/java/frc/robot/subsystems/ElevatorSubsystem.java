@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+
+
 public class ElevatorSubsystem extends SubsystemBase {
 
   private TalonFX winch_lead_talon = new TalonFX(Constants.canId.CANID9_ELEVATOR_LEAD_TALON);
@@ -81,7 +83,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html
     // Example code:
     // https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/blob/master/Java%20Talon%20FX%20(Falcon%20500)/PositionClosedLoop_AuxFeedForward/src/main/java/frc/robot/Robot.java
-
 
     // TODO: check if this is the right section to activate the default state of frictionBrakeSolenoid
     StartingTicks = winch_lead_talon.getSelectedSensorPosition();
@@ -153,7 +154,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // SmartDashboard.putNumber("Winch_RPM", elevatorEncoder.getVelocity());
-    // TODO: put elevator distance traveled on SmartDashboard
+    SmartDashboard.putNumber("ElevatorDistance (inches)", getHeightInches());
     // TODO: put limit switch status on SmartDashboard
   }
 }
