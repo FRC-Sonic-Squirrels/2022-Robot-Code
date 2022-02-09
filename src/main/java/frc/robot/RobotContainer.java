@@ -53,7 +53,7 @@ public class RobotContainer {
   public final XboxController m_operatorController = new XboxController(1);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
-  public final DriverStation.Alliance m_alliance = DriverStation.getAlliance();
+  public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.

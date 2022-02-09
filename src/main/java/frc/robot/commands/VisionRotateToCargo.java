@@ -9,8 +9,11 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 
@@ -27,6 +30,13 @@ public class VisionRotateToCargo extends CommandBase {
   public VisionRotateToCargo(VisionSubsystem visionSubsystem, Drivetrain drivetrain) {
     m_drivetrain = drivetrain;
     m_visionSubsystem = visionSubsystem;
+
+    // TODO: pick red or blue pipeline based on alliance color
+    if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
+      // m_visionSubsystem.setPipeline(Constants.VisionPipeline.RED_PIPELINE);
+    } else {
+      // m_visionSubsystem.setPipeline(Constants.VisionPipeline.BLUE_PIPELINE);
+    }
 
     addRequirements(m_drivetrain, m_visionSubsystem);
   }
