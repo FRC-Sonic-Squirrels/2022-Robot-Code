@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+
+
 public class ElevatorSubsystem extends SubsystemBase {
 
   private TalonFX winch_lead_talon = new TalonFX(Constants.canId.CANID9_ELEVATOR_LEAD_TALON);
@@ -38,9 +40,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     winch_follow_talon.setNeutralMode(NeutralMode.Brake);
 
     winch_follow_talon.follow(winch_lead_talon);
-    // TODO: check to see if follow motor is reversed from lead motor
+    // lead and follow motors are not reversed
 
-    // TODO: add 2 limit switches for full down and full up
+    // TODO: add limit switch for full down
+    // TODO: add software limit for maximum height
     // see https://docs.wpilib.org/en/stable/docs/software/hardware-apis/sensors/limit-switch.html
 
     // NOTE: when we power up, we expect the elevator to be full down, triggering the lower limit switch.
@@ -54,7 +57,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html
     // Example code:
     // https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/blob/master/Java%20Talon%20FX%20(Falcon%20500)/MotionMagic_ArbFeedForward/src/main/java/frc/robot/Robot.java
-
 
     // TODO: check if this is the right section to activate the default state of frictionBrakeSolenoid
     StartingTicks = winch_lead_talon.getSelectedSensorPosition();
@@ -126,7 +128,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // SmartDashboard.putNumber("Winch_RPM", elevatorEncoder.getVelocity());
-    // TODO: put elevator distance traveled on SmartDashboard
+    SmartDashboard.putNumber("ElevatorDistance (inches)", getHeightInches());
     // TODO: put limit switch status on SmartDashboard
   }
 }
