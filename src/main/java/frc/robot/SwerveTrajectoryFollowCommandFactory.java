@@ -177,7 +177,8 @@ public class SwerveTrajectoryFollowCommandFactory {
       double rpm = 0;
 
 
-      
+      // FIXME: return do nothing command to eliminate build error
+      return new InstantCommand();
 
     }
 }
