@@ -194,4 +194,10 @@ public class TestTrajectories {
     getTrajectoryConfig());
   } //testing
   
+  public Trajectory test(Pose2d start, Pose2d end, Translation2d[] trajectories){
+
+  
+
+    return null;
+  }
 }

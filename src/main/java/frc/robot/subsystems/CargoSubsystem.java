@@ -32,11 +32,10 @@ public class CargoSubsystem extends SubsystemBase {
 
   private WPI_TalonFX UpperBelts;
   private WPI_TalonFX LowerBelts;
-  // TODO: add color sensor for cargo in upper belts
   private DigitalInput lowerSensor = new DigitalInput(digitalIOConstants.dio0_indexerSensor1);
   private DigitalInput upperSensor = new DigitalInput(digitalIOConstants.dio1_indexerSensor2);
   private Mode mode = Mode.STOP;
-  private int ballCount = 0;
+  // TODO: check the real percent outputs of the conveyor belts
   private double percentOutput = 0.7;
 
   public CargoSubsystem() {
@@ -95,8 +94,6 @@ public class CargoSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    // TODO: logic on running and stopping belts must completely change for 2022
-    // TODO: check the real percent outputs of the conveyor belts
     if (mode == Mode.STOP) {
       stopIndexer();
     } 
@@ -138,20 +135,6 @@ public class CargoSubsystem extends SubsystemBase {
       stopIndexer();
     }
 
-    // if (cargoInLowerBelts() && cargoInUpperBelts()) {
-    //   setUpperOnlyMode();
-    // } else if (cargoInLowerBelts() ^ cargoInUpperBelts()) {
-    //   setLowerOnlyMode();
-    // } else if (/*no cargo, but gates are down TODO: make intake command that gives the gate status to cargo*/) {
-    //   setIntakeMode();
-    // } else if (/* cargo gates are up */) {
-    //   setStopMode();
-    // }
-
-    // if (/* shoot button is pressed */) {
-    //   setBothMode();
-    // }
-
   }
 
   public void setLowerBeltPercentOutput(double percent) {
@@ -168,6 +151,11 @@ public class CargoSubsystem extends SubsystemBase {
 
   public void setUpperBeltRPM(double rpm) {
     UpperBelts.set(ControlMode.Velocity, rpm * 2048 / 600);
+  }
+
+  public void setBothBeltsPercentOutput(double percent) {
+    LowerBelts.set(ControlMode.PercentOutput, percent);
+    UpperBelts.set(ControlMode.PercentOutput, percent);
   }
 
   /**
