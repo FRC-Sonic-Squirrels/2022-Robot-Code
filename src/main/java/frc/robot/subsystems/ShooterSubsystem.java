@@ -15,7 +15,7 @@ import frc.robot.Constants;
 public class ShooterSubsystem extends SubsystemBase {
 
   private double targetRPM;
-  private WPI_TalonFX flywheel = new WPI_TalonFX(Constants.canId.CANID7_FLYWHEEL);
+  private WPI_TalonFX m_flywheel = new WPI_TalonFX(Constants.canId.CANID7_FLYWHEEL);
   private TalonFXSensorCollection m_encoder;
   private double kMaxOutput, kMinOutput;
   private double m_desiredRPM = 0;
@@ -67,7 +67,7 @@ public class ShooterSubsystem extends SubsystemBase {
       setPoint = m_desiredRPM;
     }
 
-    flywheel.set(ControlMode.Velocity, setPoint * RPMtoTicks);
+    m_flywheel.set(ControlMode.Velocity, setPoint * RPMtoTicks);
 
     SmartDashboard.putNumber("RPM", m_currentRPM);
     SmartDashboard.putNumber("RPM set point", setPoint);
@@ -115,10 +115,10 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   private void adjustPID(){
-    flywheel.config_kP(0, m_configP);
-    flywheel.config_kI(0, m_configI);
-    flywheel.config_kD(0, m_configD);
-    flywheel.config_kF(0, m_configF);
-    flywheel.config_IntegralZone(0, m_configIZ);
+    m_flywheel.config_kP(0, m_configP);
+    m_flywheel.config_kI(0, m_configI);
+    m_flywheel.config_kD(0, m_configD);
+    m_flywheel.config_kF(0, m_configF);
+    m_flywheel.config_IntegralZone(0, m_configIZ);
   }
 }
