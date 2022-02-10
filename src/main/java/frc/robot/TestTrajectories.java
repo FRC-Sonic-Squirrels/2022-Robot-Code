@@ -7,6 +7,7 @@ package frc.robot;
 import java.util.List;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -130,6 +131,23 @@ public class TestTrajectories {
     return TrajectoryGenerator.generateTrajectory(new Pose2d(0.0, 0.0, new Rotation2d(0)),
         List.of(), new Pose2d(forwardInMeters, leftInMeters, new Rotation2d(rotation)),
         getTrajectoryConfig());
+  }
+  /**
+   * easily create a trajectory between two positions, makes auton commands easier to read. 
+   * YOU STILL HAVE TO TRANSFORM THE TRAJECTORY TO MAKE IT FIELD CENTRIC! 
+   * 
+   * @param currentPos
+   * @param targetPos
+   * @return trajectory between two poses 
+   */
+  public Trajectory driveToPose(Pose2d currentPos, Pose2d targetPos){
+    var translation = new Transform2d(currentPos, targetPos);
+
+    return TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0.0, 0.0, new Rotation2d()), 
+      List.of(),
+      new Pose2d(translation.getTranslation(), targetPos.getRotation()),
+      getTrajectoryConfig());
   }
 
   /**

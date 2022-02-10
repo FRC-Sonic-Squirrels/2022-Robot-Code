@@ -148,7 +148,7 @@ public class SwerveTrajectoryFollowCommandFactory {
       double rpm = 0;
       
       //var TrajectoryToShootPos = testTrajectories.simpleCurve(shootPos.getX() - startPos.getX(), shootPos.getY() - startPos.getY());
-      var trajectoryToOutOfTarmac = testTrajectories.simpleCurve(outOfTarmac.getX() - startPos.getX(), outOfTarmac.getY() - startPos.getY());
+      var trajectoryToOutOfTarmac = testTrajectories.driveToPose(startPos, outOfTarmac);
 
       return new SequentialCommandGroup(
         new ParallelCommandGroup(
