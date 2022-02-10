@@ -28,17 +28,26 @@ public class ShooterSubsystem extends SubsystemBase {
   private double m_max_RPM_error = 15;
   private final double RPMtoTicks = 2048 / 600;
 
+  private double m_configP = 0;
+  private double m_configI = 0;
+  private double m_configD = 0;
+  private double m_configF = 0;
+  private double m_configIZ = 0;
+
   // lower number here, slows the rate of change and decreases the power spike 
   private double m_rate_RPMpersecond = 2500;
   private SlewRateLimiter m_rateLimiter;
 
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
-
+    adjustPID();
   }
 
   @Override
   public void periodic() {
+    //this is for testing and tuning the pid
+    setPIDFromSmartDashboard();
+
     // This method will be called once per scheduler run
     m_currentRPM = m_encoder.getIntegratedSensorVelocity() / RPMtoTicks;
     m_error = m_currentRPM - m_desiredRPM;
@@ -57,7 +66,6 @@ public class ShooterSubsystem extends SubsystemBase {
       // we don't rate reduce slowing the robot
       setPoint = m_desiredRPM;
     }
-
 
     flywheel.set(ControlMode.Velocity, setPoint * RPMtoTicks);
 
@@ -85,5 +93,32 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public double getIdleRPM() {
     return m_idleRPM;
+  }
+
+  private void setPIDFromSmartDashboard(){
+    double P = SmartDashboard.getNumber("Shooter_K", 0);
+    double I = SmartDashboard.getNumber("Shooter_I", 0);
+    double D = SmartDashboard.getNumber("Shooter_D", 0);
+    double F = SmartDashboard.getNumber("Shooter_F", 0);
+    double IZ = SmartDashboard.getNumber("Shooter_IZ", 0);
+
+    boolean hasChanged = false;
+    if(m_configP != P) {m_configP = P; hasChanged = true;}
+    if(m_configI != I) {m_configI = I; hasChanged = true;}
+    if(m_configD != D) {m_configD = D; hasChanged = true;}
+    if(m_configF != F) {m_configF = F; hasChanged = true;}
+    if(m_configIZ != IZ) {m_configIZ = IZ; hasChanged = true;}
+
+    if(hasChanged){
+      adjustPID();
+    }
+  }
+
+  private void adjustPID(){
+    flywheel.config_kP(0, m_configP);
+    flywheel.config_kI(0, m_configI);
+    flywheel.config_kD(0, m_configD);
+    flywheel.config_kF(0, m_configF);
+    flywheel.config_IntegralZone(0, m_configIZ);
   }
 }
