@@ -36,7 +36,7 @@ public class CargoSubsystem extends SubsystemBase {
   private DigitalInput upperSensor = new DigitalInput(digitalIOConstants.dio1_indexerSensor2);
   private Mode mode = Mode.STOP;
   // TODO: check the real percent outputs of the conveyor belts
-  private double percentOutput = 0.7;
+  private double m_percentOutput = 0.7;
 
   public CargoSubsystem() {
 
@@ -103,33 +103,33 @@ public class CargoSubsystem extends SubsystemBase {
         if (cargoInLowerBelts()) {
           stopLowerBelts();
         } else {
-          setLowerBeltPercentOutput(percentOutput);
+          setLowerBeltPercentOutput(m_percentOutput);
         }
       } else {
-        setLowerBeltPercentOutput(percentOutput);
-        setUpperBeltPercentOutput(percentOutput);
+        setLowerBeltPercentOutput(m_percentOutput);
+        setUpperBeltPercentOutput(m_percentOutput);
       }
       
     } 
     else if (mode == Mode.LOWERONLY) {
       stopUpperBelts();
-      setLowerBeltPercentOutput(percentOutput);
+      setLowerBeltPercentOutput(m_percentOutput);
     } 
     else if (mode == Mode.UPPERONLY) {
       stopLowerBelts();
-      setUpperBeltPercentOutput(percentOutput);
+      setUpperBeltPercentOutput(m_percentOutput);
     } 
     else if (mode == Mode.BOTH) {
       // Normal, non-eject mode
       SmartDashboard.putNumber("Eject State", 0);
 
       // shoot mode releases the upper cargo, then moves the lower cargo to the top
-      setUpperBeltPercentOutput(percentOutput);
-      setLowerBeltPercentOutput(percentOutput);
+      setUpperBeltPercentOutput(m_percentOutput);
+      setLowerBeltPercentOutput(m_percentOutput);
     } 
     else if (mode == Mode.REVERSE) {
-      setUpperBeltPercentOutput(-percentOutput); //negate percent output to make belts go in reverse
-      setLowerBeltPercentOutput(-percentOutput);
+      setUpperBeltPercentOutput(-m_percentOutput); //negate percent output to make belts go in reverse
+      setLowerBeltPercentOutput(-m_percentOutput);
     }
     else {
       stopIndexer();
