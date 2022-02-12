@@ -28,12 +28,13 @@ public class ElevatorControlCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    
     if(m_controllerSupplier.get() >= 0.1){
       m_elevator.brakeOff();
       m_elevator.setWinchPercentOutput(m_controllerSupplier.get()*ElevatorConstants.elevatorSpeedMultiplier);
     } else if(m_controllerSupplier.get() <= -0.1){
       m_elevator.brakeOff();
-      m_elevator.setWinchPercentOutput(-m_controllerSupplier.get()*ElevatorConstants.elevatorSpeedMultiplier);
+      m_elevator.setWinchPercentOutput(m_controllerSupplier.get()*ElevatorConstants.elevatorSpeedMultiplier);
     } else {
       m_elevator.stop();
     }

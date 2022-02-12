@@ -9,17 +9,21 @@ import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoMode.PixelFormat;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.CargoReverseCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
+import frc.robot.commands.ElevatorAutoControlCommand;
+import frc.robot.commands.ElevatorControlCommand;
 import frc.robot.commands.ShootOneCargoCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
@@ -31,6 +35,7 @@ import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -49,6 +54,7 @@ public class RobotContainer {
   public final CargoSubsystem m_cargoSubsystem = new CargoSubsystem();
   public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
   public final IntakeSubsystem m_intake = new IntakeSubsystem(drivetrain);
+  public  final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
 
   public final XboxController m_controller = new XboxController(0);
   public final XboxController m_operatorController = new XboxController(1);
@@ -103,6 +109,8 @@ public class RobotContainer {
     
     m_arm.setDefaultCommand(new ArmManualControlCommand(() -> m_operatorController.getRightY(), m_arm));
 
+
+    m_elevator.setDefaultCommand(new InstantCommand());
     //control winch with right joystick 
     // m_armSubsystem.setDefaultCommand(new InstantCommand(
     //   () -> m_armSubsystem.setArmPercentOutput(modifyAxis(m_operatorController.getRightTriggerAxis())), 
@@ -160,11 +168,12 @@ public class RobotContainer {
     new Button(m_operatorController::getYButton)
       .whileHeld(new IntakeReverseCommand(m_intake));
 
-    new Button(m_operatorController::getRightBumper)
-      .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
-    
-    new Button(m_operatorController::getRightJoystick)
-      .whileHeld(new ArmManualControlCommand(m_, arm))
+      //TODO: find better button binding
+    // new Button(m_operatorController::getRightBumper)
+    //   .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
+ 
+    new Button(m_operatorController::getLeftBumper)
+      .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);
 
   }
   

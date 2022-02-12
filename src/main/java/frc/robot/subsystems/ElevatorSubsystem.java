@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.ArmSubsystem.Mode;
 
 // Details on the TalonFX motion profile control can be found here:
 // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html
@@ -50,7 +51,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     leadConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
 
-
+    
     // Details on elevator motors, gearing and calculated kP and kFF are here
     // https://docs.google.com/spreadsheets/d/1sOS_vM87iaKPZUFSJTqKqaFTxIl3Jj5OEwBgRxc-QGM/edit?usp=sharing
     // this also has suggest trapezoidal velocity profile constants.
@@ -194,7 +195,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     if(atLowerLimit()){
       zeroHeight();
     }
-
     SmartDashboard.putNumber("Elev Height (inches)", getHeightInches());
     SmartDashboard.putNumber("Elev Vel (inches/s)", ticks2distance * winch_lead_talon.getSelectedSensorVelocity() / 10.0);
     SmartDashboard.putNumber("Elev SetPoint", heightSetpointInches);
