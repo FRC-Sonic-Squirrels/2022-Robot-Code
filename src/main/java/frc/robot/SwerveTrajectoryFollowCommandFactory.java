@@ -223,8 +223,10 @@ public class SwerveTrajectoryFollowCommandFactory {
     );
   }
 
-  public static Command moveToPoseCommand(TestTrajectories testTrajectories, Drivetrain drivetrain, Pose2d pos1, Pose2d pos2) {
+  public static Command moveToPoseCommand(TestTrajectories testTrajectories, Drivetrain drivetrain, Pose2d target) {
 
-    return SwerveControllerCommand(testTrajectories.driveToPose(pos1, pos2), drivetrain, true);
+    Pose2d current = drivetrain.getPose();
+    target = new Pose2d(Units.inchesToMeters(target.getX()), Units.inchesToMeters(target.getY()), target.getRotation());
+    return SwerveControllerCommand(testTrajectories.driveToPose(current, target), drivetrain, true);
   }
 }
