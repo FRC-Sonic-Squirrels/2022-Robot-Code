@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.CargoMoveToUpperBeltsCommand;
+import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.ShootOneCargoCommand;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
@@ -101,7 +102,7 @@ public class SwerveTrajectoryFollowCommandFactory {
   }
 
   public static Command doNothingCommand(Drivetrain drivetrain) {
-      return new InstantCommand(() -> drivetrain.drive(new ChassisSpeeds(0, 0, 0)));
+    return new InstantCommand(() -> drivetrain.drive(new ChassisSpeeds(0, 0, 0)));
   }
 
   /**
@@ -113,7 +114,8 @@ public class SwerveTrajectoryFollowCommandFactory {
    * 
    * @param chooser
    */
-  public static void addTestTrajectoriesToChooser(SendableChooser<Command> chooser, double maxVelocity, double maxAcceleration, Drivetrain drivetrain, boolean isSwerve) {
+  public static void addTestTrajectoriesToChooser(SendableChooser<Command> chooser, double maxVelocity,
+      double maxAcceleration, Drivetrain drivetrain, boolean isSwerve) {
 
     TestTrajectories tt = new TestTrajectories(maxVelocity, maxAcceleration, drivetrain, isSwerve);
 
@@ -138,46 +140,58 @@ public class SwerveTrajectoryFollowCommandFactory {
     return new SequentialCommandGroup( SwerveControllerCommand(trajectory, drivetrain, true) );
   }
 
+  // command for shooting directly from the tarmac in autonomous mode
   public static Command shootFromTarmacAutonomousCommand(TestTrajectories testTrajectories,
-    Drivetrain drivetrain, CargoSubsystem cargo,
-    ShooterSubsystem shooter, IntakeSubsystem intake) {
-      Pose2d startPos = new Pose2d(0, 0, new Rotation2d(0));
-      //Pose2d shootPos = new Pose2d(0, 0, new Rotation2d(0));
-      Pose2d outOfTarmac = new Pose2d(10, 10, new Rotation2d(0));
+      Drivetrain drivetrain, CargoSubsystem cargo,
+  ShooterSubsystem shooter, IntakeSubsystem intake) {
+    Pose2d startPos = new Pose2d(0, 0, new Rotation2d(0));
+    //Pose2d shootPos = new Pose2d(0, 0, new Rotation2d(0));
+    Pose2d outOfTarmac = new Pose2d(10, 10, new Rotation2d(0));
 
-      double rpm = 0;
-      
-      //var TrajectoryToShootPos = testTrajectories.simpleCurve(shootPos.getX() - startPos.getX(), shootPos.getY() - startPos.getY());
-      var trajectoryToOutOfTarmac = testTrajectories.simpleCurve(outOfTarmac.getX() - startPos.getX(), outOfTarmac.getY() - startPos.getY());
+    double rpm = 0;
+    
+    //var TrajectoryToShootPos = testTrajectories.simpleCurve(shootPos.getX() - startPos.getX(), shootPos.getY() - startPos.getY());
+    var trajectoryToOutOfTarmac = testTrajectories.simpleCurve(outOfTarmac.getX() - startPos.getX(), outOfTarmac.getY() - startPos.getY());
 
-      return new SequentialCommandGroup(
-        new ParallelCommandGroup(
-          new CargoMoveToUpperBeltsCommand(cargo),
-          new WaitUntilCommand(() -> cargo.cargoInUpperBelts()),
-          new InstantCommand(() -> shooter.setFlywheelRPM(rpm)),
-          new WaitUntilCommand(() -> shooter.isAtDesiredRPM())
-          //SwerveControllerCommand(TrajectoryToShootPos, drivetrain, true)
-        ),
-        new ShootOneCargoCommand(cargo, shooter, intake),
-        new WaitCommand(0.1),
-        SwerveControllerCommand(trajectoryToOutOfTarmac, drivetrain, true)
-      );
+    return new SequentialCommandGroup(
+      new ParallelCommandGroup(
+        new CargoMoveToUpperBeltsCommand(cargo),
+        new WaitUntilCommand(() -> cargo.cargoInUpperBelts()),
+        new InstantCommand(() -> shooter.setFlywheelRPM(rpm)),
+        new WaitUntilCommand(() -> shooter.isAtDesiredRPM())
+        //SwerveControllerCommand(TrajectoryToShootPos, drivetrain, true)
+      ),
+      new ShootOneCargoCommand(cargo, shooter, intake),
+      new WaitCommand(0.1),
+      SwerveControllerCommand(trajectoryToOutOfTarmac, drivetrain, true)
+    );
   }
 
-  public static Command shootAndMoveToCargo(TestTrajectories testTrajectories,
-    Drivetrain drivetrain, ShooterSubsystem shooterSubsystem, CargoSubsystem cargo, IntakeSubsystem intake) {
+  // command for autonomously shooting and then moving to the next set cargo coordinates
+  public static Command shootAndMoveToCargoCommand(TestTrajectories testTrajectories,
+      Drivetrain drivetrain, ShooterSubsystem shooter, CargoSubsystem cargo, IntakeSubsystem intake) {
 
-      // get actual coordinates of the cargo
-      Pose2d startPos = drivetrain.getPose();
-      Pose2d midPos = new Pose2d(10, 10, new Rotation2d(0));
-      Pose2d cargoPos = new Pose2d(10, 12, new Rotation2d(0));
+    // TODO: get actual coordinates of the cargo
+    Pose2d startPos = drivetrain.getPose();
+    Pose2d midPos = new Pose2d(10, 10, new Rotation2d(0)); // position right in front of the cargo, about to load it
+    Pose2d cargoPos = new Pose2d(10, 12, new Rotation2d(0));  // ^^^ (this means facing the cargo as well)
 
-      Transform2d startToMid = new Transform2d(startPos, midPos);
+    Trajectory startToMidTrajectory = testTrajectories.simpleCurve(midPos.getX() - startPos.getX(), midPos.getY() - startPos.getY());
+    Trajectory midToCargoTrajectory = testTrajectories.simpleCurve(cargoPos.getX() - midPos.getX(), cargoPos.getY() - midPos.getY());
 
-      double rpm = 0;
+    double rpm = 0;
 
-
-      
-
-    }
+    return new SequentialCommandGroup(
+      new ParallelCommandGroup(
+        new CargoMoveToUpperBeltsCommand(cargo),
+        new WaitUntilCommand(() -> cargo.cargoInUpperBelts()),
+        new InstantCommand(() -> shooter.setFlywheelRPM(rpm)),
+        new WaitUntilCommand(() -> shooter.isAtDesiredRPM()),
+        SwerveControllerCommand(startToMidTrajectory, drivetrain, true)
+      ),
+      new IntakeDeployCommand(intake, cargo),
+      new WaitUntilCommand(() -> intake.intakeAtDesiredRPM()),
+      SwerveControllerCommand(midToCargoTrajectory, drivetrain, true)
+    );
+  }
 }
