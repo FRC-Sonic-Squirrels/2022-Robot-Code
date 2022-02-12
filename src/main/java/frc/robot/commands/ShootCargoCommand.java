@@ -58,6 +58,7 @@ public class ShootCargoCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    // TODO: I suggest we make this return false, and have the command end when the operator takes thier finger off the button
     return (! m_cargoSubsystem.cargoInUpperBelts()) && (! m_cargoSubsystem.cargoInLowerBelts());
   }
 }

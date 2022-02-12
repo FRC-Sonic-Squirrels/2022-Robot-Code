@@ -32,12 +32,11 @@ public class CargoSubsystem extends SubsystemBase {
 
   private WPI_TalonFX UpperBelts;
   private WPI_TalonFX LowerBelts;
-  // TODO: add color sensor for cargo in upper belts
   private DigitalInput lowerSensor = new DigitalInput(digitalIOConstants.dio0_indexerSensor1);
   private DigitalInput upperSensor = new DigitalInput(digitalIOConstants.dio1_indexerSensor2);
   private Mode mode = Mode.STOP;
-  private int ballCount = 0;
-  private double percentOutput = 0.7;
+  // TODO: check the real percent outputs of the conveyor belts
+  private double m_percentOutput = 0.7;
 
   public CargoSubsystem() {
 
@@ -95,8 +94,6 @@ public class CargoSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    // TODO: logic on running and stopping belts must completely change for 2022
-    // TODO: check the real percent outputs of the conveyor belts
     if (mode == Mode.STOP) {
       stopIndexer();
     } 
@@ -106,51 +103,37 @@ public class CargoSubsystem extends SubsystemBase {
         if (cargoInLowerBelts()) {
           stopLowerBelts();
         } else {
-          setLowerBeltPercentOutput(percentOutput);
+          setLowerBeltPercentOutput(m_percentOutput);
         }
       } else {
-        setLowerBeltPercentOutput(percentOutput);
-        setUpperBeltPercentOutput(percentOutput);
+        setLowerBeltPercentOutput(m_percentOutput);
+        setUpperBeltPercentOutput(m_percentOutput);
       }
       
     } 
     else if (mode == Mode.LOWERONLY) {
       stopUpperBelts();
-      setLowerBeltPercentOutput(percentOutput);
+      setLowerBeltPercentOutput(m_percentOutput);
     } 
     else if (mode == Mode.UPPERONLY) {
       stopLowerBelts();
-      setUpperBeltPercentOutput(percentOutput);
+      setUpperBeltPercentOutput(m_percentOutput);
     } 
     else if (mode == Mode.BOTH) {
       // Normal, non-eject mode
       SmartDashboard.putNumber("Eject State", 0);
 
       // shoot mode releases the upper cargo, then moves the lower cargo to the top
-      setUpperBeltPercentOutput(percentOutput);
-      setLowerBeltPercentOutput(percentOutput);
+      setUpperBeltPercentOutput(m_percentOutput);
+      setLowerBeltPercentOutput(m_percentOutput);
     } 
     else if (mode == Mode.REVERSE) {
-      setUpperBeltPercentOutput(-percentOutput); //negate percent output to make belts go in reverse
-      setLowerBeltPercentOutput(-percentOutput);
+      setUpperBeltPercentOutput(-m_percentOutput); //negate percent output to make belts go in reverse
+      setLowerBeltPercentOutput(-m_percentOutput);
     }
     else {
       stopIndexer();
     }
-
-    // if (cargoInLowerBelts() && cargoInUpperBelts()) {
-    //   setUpperOnlyMode();
-    // } else if (cargoInLowerBelts() ^ cargoInUpperBelts()) {
-    //   setLowerOnlyMode();
-    // } else if (/*no cargo, but gates are down TODO: make intake command that gives the gate status to cargo*/) {
-    //   setIntakeMode();
-    // } else if (/* cargo gates are up */) {
-    //   setStopMode();
-    // }
-
-    // if (/* shoot button is pressed */) {
-    //   setBothMode();
-    // }
 
   }
 
@@ -168,6 +151,11 @@ public class CargoSubsystem extends SubsystemBase {
 
   public void setUpperBeltRPM(double rpm) {
     UpperBelts.set(ControlMode.Velocity, rpm * 2048 / 600);
+  }
+
+  public void setBothBeltsPercentOutput(double percent) {
+    LowerBelts.set(ControlMode.PercentOutput, percent);
+    UpperBelts.set(ControlMode.PercentOutput, percent);
   }
 
   /**

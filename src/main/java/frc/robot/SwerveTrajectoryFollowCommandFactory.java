@@ -7,15 +7,27 @@ package frc.robot;
 import javax.sound.midi.Track;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.commands.CargoMoveToUpperBeltsCommand;
+import frc.robot.commands.ShootOneCargoCommand;
+import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 /**
  * This is a Swerve Trajectory Follow Command Factory, a helper class to create a command to follow
@@ -133,4 +145,57 @@ public class SwerveTrajectoryFollowCommandFactory {
     }
     chooser.setDefaultOption("Do Nothing", doNothingCommand(drivetrain));
   }
+
+  public static Command getOutOfTarmacAutonomousCommand(TestTrajectories testTrajectories, Drivetrain drivetrain) {
+    //TODO: figure out actual positions (add into constants)
+    Pose2d startPos = new Pose2d(0, 0, new Rotation2d(0));
+    Pose2d outOfTarmac = new Pose2d(10, 10, new Rotation2d(0));
+    var trajectory = testTrajectories.simpleCurve(outOfTarmac.getX() - startPos.getX(), outOfTarmac.getY() - startPos.getY());
+    // if you want to add more commands, add to this sequential command group
+    return new SequentialCommandGroup( SwerveControllerCommand(trajectory, drivetrain, true) );
+  }
+
+  public static Command shootFromTarmacAutonomousCommand(TestTrajectories testTrajectories,
+    Drivetrain drivetrain, CargoSubsystem cargo,
+    ShooterSubsystem shooter, IntakeSubsystem intake) {
+      Pose2d startPos = new Pose2d(0, 0, new Rotation2d(0));
+      //Pose2d shootPos = new Pose2d(0, 0, new Rotation2d(0));
+      Pose2d outOfTarmac = new Pose2d(10, 10, new Rotation2d(0));
+
+      double rpm = 0;
+      
+      //var TrajectoryToShootPos = testTrajectories.simpleCurve(shootPos.getX() - startPos.getX(), shootPos.getY() - startPos.getY());
+      var trajectoryToOutOfTarmac = testTrajectories.driveToPose(startPos, outOfTarmac);
+
+      return new SequentialCommandGroup(
+        new ParallelCommandGroup(
+          new CargoMoveToUpperBeltsCommand(cargo),
+          new WaitUntilCommand(() -> cargo.cargoInUpperBelts()),
+          new InstantCommand(() -> shooter.setFlywheelRPM(rpm)),
+          new WaitUntilCommand(() -> shooter.isAtDesiredRPM())
+          //SwerveControllerCommand(TrajectoryToShootPos, drivetrain, true)
+        ),
+        new ShootOneCargoCommand(cargo, shooter, intake),
+        new WaitCommand(0.1),
+        SwerveControllerCommand(trajectoryToOutOfTarmac, drivetrain, true)
+      );
+  }
+
+  public static Command shootAndMoveToCargo(TestTrajectories testTrajectories,
+    Drivetrain drivetrain, ShooterSubsystem shooterSubsystem, CargoSubsystem cargo, IntakeSubsystem intake) {
+
+      // get actual coordinates of the cargo
+      Pose2d startPos = drivetrain.getPose();
+      Pose2d midPos = new Pose2d(10, 10, new Rotation2d(0));
+      Pose2d cargoPos = new Pose2d(10, 12, new Rotation2d(0));
+
+      Transform2d startToMid = new Transform2d(startPos, midPos);
+
+      double rpm = 0;
+
+
+      // FIXME: return do nothing command to eliminate build error
+      return new InstantCommand();
+
+    }
 }
