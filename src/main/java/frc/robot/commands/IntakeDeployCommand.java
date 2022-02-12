@@ -8,12 +8,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class IntakeDeploy extends CommandBase {
+public class IntakeDeployCommand extends CommandBase {
   /** Creates a new IntakeDeploy. */
   IntakeSubsystem m_intake;
   CargoSubsystem m_cargo;
 
-  public IntakeDeploy(IntakeSubsystem intakeSubsystem, CargoSubsystem cargoSubsystem) {
+  public IntakeDeployCommand(IntakeSubsystem intakeSubsystem, CargoSubsystem cargoSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_intake = intakeSubsystem;
     m_cargo = cargoSubsystem;
