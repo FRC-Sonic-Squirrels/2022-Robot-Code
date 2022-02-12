@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import javax.sound.midi.Track;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -105,6 +106,22 @@ public class SwerveTrajectoryFollowCommandFactory {
     return new InstantCommand(() -> drivetrain.drive(new ChassisSpeeds(0, 0, 0)));
   }
 
+  public static Command testAutonCommand(TestTrajectories testTrajectories, Drivetrain drivetrain){
+    Trajectory path1 = testTrajectories.simpleCurve(10, -20);
+    Trajectory path2 = testTrajectories.straightForward(10);
+    Trajectory path3 = testTrajectories.simpleCurve(-10, 20);
+    Trajectory path4 = testTrajectories.straightForward(-10);
+
+    Command finalCOmmand = new SequentialCommandGroup(
+      SwerveControllerCommand(path1, drivetrain, false),
+      SwerveControllerCommand(path2, drivetrain, false),
+      SwerveControllerCommand(path3, drivetrain, false),
+      SwerveControllerCommand(path4, drivetrain, false)
+    );
+
+    return finalCOmmand;
+
+  }
   /**
    * Adds Test Trajectories to chooser. The user still needs to add this chooser to smart dashboard:
    * 
