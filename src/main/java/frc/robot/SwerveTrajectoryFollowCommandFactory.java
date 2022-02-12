@@ -168,16 +168,13 @@ public class SwerveTrajectoryFollowCommandFactory {
   }
 
   // command for autonomously shooting and then moving to the next set cargo coordinates
-  public static Command shootAndMoveToCargoCommand(TestTrajectories testTrajectories,
-      Drivetrain drivetrain, ShooterSubsystem shooter, CargoSubsystem cargo, IntakeSubsystem intake) {
+  public static Command shootAndMoveToCargoCommand(TestTrajectories testTrajectories, Drivetrain drivetrain,
+      ShooterSubsystem shooter, CargoSubsystem cargo, IntakeSubsystem intake, Pose2d cargoPose2d) {
 
     // TODO: get actual coordinates of the cargo
     Pose2d startPos = drivetrain.getPose();
     Pose2d midPos = new Pose2d(10, 10, new Rotation2d(0)); // position right in front of the cargo, about to load it
-    Pose2d cargoPos = new Pose2d(10, 12, new Rotation2d(0));  // ^^^ (this means facing the cargo as well)
-
-    Trajectory startToMidTrajectory = testTrajectories.simpleCurve(midPos.getX() - startPos.getX(), midPos.getY() - startPos.getY());
-    Trajectory midToCargoTrajectory = testTrajectories.simpleCurve(cargoPos.getX() - midPos.getX(), cargoPos.getY() - midPos.getY());
+    Pose2d cargoPos = cargoPose2d;                         // ^^^ (this means facing the cargo as well)
 
     double rpm = 0;
 
@@ -187,11 +184,11 @@ public class SwerveTrajectoryFollowCommandFactory {
         new WaitUntilCommand(() -> cargo.cargoInUpperBelts()),
         new InstantCommand(() -> shooter.setFlywheelRPM(rpm)),
         new WaitUntilCommand(() -> shooter.isAtDesiredRPM()),
-        SwerveControllerCommand(startToMidTrajectory, drivetrain, true)
+        SwerveControllerCommand(testTrajectories.driveToPose(startPos, midPos), drivetrain, true)
       ),
       new IntakeDeployCommand(intake, cargo),
       new WaitUntilCommand(() -> intake.intakeAtDesiredRPM()),
-      SwerveControllerCommand(midToCargoTrajectory, drivetrain, true)
+      SwerveControllerCommand(testTrajectories.driveToPose(midPos, cargoPos), drivetrain, true)
     );
   }
 }
