@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -184,14 +185,27 @@ public class SwerveTrajectoryFollowCommandFactory {
     );
   }
 
-  // command for autonomously shooting and then moving to the next set cargo coordinates
+  /**
+   * command for autonomously shooting and then moving to the next set cargo coordinates.
+   * this will most likely be used for the autonomous phase of the competition
+   * @param testTrajectories the TestTrajectories class
+   * @param drivetrain the drivetrain class
+   * @param shooter the shooter class
+   * @param cargo the cargo class
+   * @param intake the intake class
+   * @param cargoPose2d the position of the wanted cargo (coordinates are in units of inches)
+   * @return a set of actions with the robot shooting its current cargo, then moving and picking up the next cargo
+   */
+
   public static Command shootAndMoveToCargoCommand(TestTrajectories testTrajectories, Drivetrain drivetrain,
       ShooterSubsystem shooter, CargoSubsystem cargo, IntakeSubsystem intake, Pose2d cargoPose2d) {
 
-    // TODO: get actual coordinates of the cargo
     Pose2d startPos = drivetrain.getPose();
-    Pose2d midPos = new Pose2d(10, 10, new Rotation2d(0)); // position right in front of the cargo, about to load it
-    Pose2d cargoPos = cargoPose2d;                         // ^^^ (this means facing the cargo as well)
+    // TODO: find the true starting rotation of the drivetrain
+    // positioned to be about to load the cargo (this means facing the cargo as well)
+    Pose2d midPos = new Pose2d(startPos.getX() - 1, startPos.getY(), new Rotation2d(0)); 
+    Pose2d cargoPos = new Pose2d(Units.inchesToMeters(cargoPose2d.getX()), Units.inchesToMeters(cargoPose2d.getY()),
+        cargoPose2d.getRotation());
 
     double rpm = 0;
 
@@ -207,5 +221,10 @@ public class SwerveTrajectoryFollowCommandFactory {
       new WaitUntilCommand(() -> intake.intakeAtDesiredRPM()),
       SwerveControllerCommand(testTrajectories.driveToPose(midPos, cargoPos), drivetrain, true)
     );
+  }
+
+  public static Command moveToPoseCommand(TestTrajectories testTrajectories, Drivetrain drivetrain, Pose2d pos1, Pose2d pos2) {
+
+    return SwerveControllerCommand(testTrajectories.driveToPose(pos1, pos2), drivetrain, true);
   }
 }
