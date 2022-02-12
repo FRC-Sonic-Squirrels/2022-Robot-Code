@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.HubCentricConstants;
 import frc.robot.commands.CargoMoveToUpperBeltsCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.ShootOneCargoCommand;
@@ -198,14 +199,20 @@ public class SwerveTrajectoryFollowCommandFactory {
    */
 
   public static Command shootAndMoveToCargoCommand(TestTrajectories testTrajectories, Drivetrain drivetrain,
-      ShooterSubsystem shooter, CargoSubsystem cargo, IntakeSubsystem intake, Pose2d cargoPose2d) {
+      ShooterSubsystem shooter, CargoSubsystem cargo, IntakeSubsystem intake, Pose2d cargoPose2d, Pose2d shootPos) {
+
+    // assuming the angle is set rather than added: angle = arctangent ((robotX - hubX) / (robotY - hubY))
+    // hub/center coordinates: (324, 162)
+    // The robot will most likely start at a 0 degree angle
+    Rotation2d shootAngle = new Rotation2d( Math.atan((shootPos.getX() - HubCentricConstants.HUB_CENTER.x))
+                                                    / (shootPos.getY() - HubCentricConstants.HUB_CENTER.y));
 
     Pose2d startPos = drivetrain.getPose();
-    // TODO: find the true starting rotation of the drivetrain
     // positioned to be about to load the cargo (this means facing the cargo as well)
     Pose2d midPos = new Pose2d(startPos.getX() - 1, startPos.getY(), new Rotation2d(0)); 
     Pose2d cargoPos = new Pose2d(Units.inchesToMeters(cargoPose2d.getX()), Units.inchesToMeters(cargoPose2d.getY()),
-        cargoPose2d.getRotation());
+        new Rotation2d(0));
+
 
     double rpm = 0;
 
@@ -215,8 +222,12 @@ public class SwerveTrajectoryFollowCommandFactory {
         new WaitUntilCommand(() -> cargo.cargoInUpperBelts()),
         new InstantCommand(() -> shooter.setFlywheelRPM(rpm)),
         new WaitUntilCommand(() -> shooter.isAtDesiredRPM()),
-        SwerveControllerCommand(testTrajectories.driveToPose(startPos, midPos), drivetrain, true)
+        // TODO: have the robot face the hub, then shoot
+        SwerveControllerCommand(testTrajectories.driveToPose(new Pose2d(shootPos.getX(), shootPos.getY(), shootAngle),
+            drivetrain.getPose()), drivetrain, true)
       ),
+      new ShootOneCargoCommand(cargo, shooter, intake),
+      SwerveControllerCommand(testTrajectories.driveToPose(startPos, midPos), drivetrain, true),
       new IntakeDeployCommand(intake, cargo),
       new WaitUntilCommand(() -> intake.intakeAtDesiredRPM()),
       SwerveControllerCommand(testTrajectories.driveToPose(midPos, cargoPos), drivetrain, true)
