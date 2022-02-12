@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.CargoReverseCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
@@ -43,7 +44,7 @@ import frc.robot.subsystems.VisionSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final Drivetrain drivetrain = new Drivetrain();
-  //public final ArmSubsystem m_armSubsystem = new ArmSubsystem();
+  public final ArmSubsystem m_arm = new ArmSubsystem();
   public final VisionSubsystem m_visionSubsystem = new VisionSubsystem();
   public final CargoSubsystem m_cargoSubsystem = new CargoSubsystem();
   public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
@@ -99,6 +100,8 @@ public class RobotContainer {
         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
         () -> m_controller.getPOV(), 0.0));
+    
+    m_arm.setDefaultCommand(new ArmManualControlCommand(() -> m_operatorController.getRightY(), m_arm));
 
     //control winch with right joystick 
     // m_armSubsystem.setDefaultCommand(new InstantCommand(
@@ -159,6 +162,9 @@ public class RobotContainer {
 
     new Button(m_operatorController::getRightBumper)
       .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
+    
+    new Button(m_operatorController::getRightJoystick)
+      .whileHeld(new ArmManualControlCommand(m_, arm))
 
   }
   
