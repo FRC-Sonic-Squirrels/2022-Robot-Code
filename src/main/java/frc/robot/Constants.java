@@ -158,4 +158,9 @@ public final class Constants {
   public static class FieldConstants{
     public int test;
   } 
+
+  public static class ArmConstants{
+    public static final double m_maxEncoderValue = 2000;
+    public static final double m_minEncoderValue = -2000;
+  }
 }
