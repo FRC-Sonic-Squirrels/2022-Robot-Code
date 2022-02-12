@@ -163,4 +163,10 @@ public final class Constants {
     public static final double m_maxEncoderValue = 2000;
     public static final double m_minEncoderValue = -2000;
   }
+
+  public static class ShooterConstants {
+    //TODO: find the actual activated and idle values
+    public static final double m_activated = 2000;
+    public static final double m_idle = 500;
+  }
 }
