@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -23,12 +22,12 @@ public class ShootOneCargoCommand extends CommandBase {
     m_shooterSubsystem = shooterSubsystem;
     m_intakeSubsystem = intakeSubsystem;
 
-    //TODO: we dont need the require the intake as we are only reading a value 
-    addRequirements(cargoSubsystem, shooterSubsystem, intakeSubsystem);
+    addRequirements(cargoSubsystem, shooterSubsystem);
   }
 
   // Called when the command is initially scheduled.
-  // TODO: What if we have a ball in the lower belts but not upper? Move it up first then shoot?
+  // todo: What if we have a ball in the lower belts but not upper? Move it up first then shoot?
+  // This command will only be called in autonomous mode, where the ball is already moved to the upper belts.
   @Override
   public void initialize() {
     m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getDesiredRPM());

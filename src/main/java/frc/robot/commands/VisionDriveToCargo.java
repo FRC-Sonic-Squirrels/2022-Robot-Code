@@ -111,9 +111,9 @@ public class VisionDriveToCargo extends CommandBase {
   public void end(boolean interrupted) {
     //gets the command using the drivetrain this should be the trajectory command 
     var command = CommandScheduler.getInstance().requiring(m_drivetrain);
-    //cancles any command using the drive train probably the trajectory command at this time 
-    //so drivetrain doesnt have any command using it at this moment thus it will return to its 
-    //defualt driving command  
+    //cancels any command using the drive train probably the trajectory command at this time 
+    //so drivetrain doesn't have any command using it at this moment thus it will return to its 
+    //default driving command  
     if(command!=null){
       command.end(true);
     }
