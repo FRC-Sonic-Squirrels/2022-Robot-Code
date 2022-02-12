@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -62,6 +63,10 @@ public class ShootOneCargoCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-      return ! m_cargoSubsystem.cargoInUpperBelts();
+      if (! m_cargoSubsystem.cargoInUpperBelts()) {
+        new WaitCommand(0.5);
+        return true;
+      }
+      return false;
   }
 }
