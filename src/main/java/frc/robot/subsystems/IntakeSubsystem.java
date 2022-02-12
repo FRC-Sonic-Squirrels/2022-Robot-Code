@@ -40,6 +40,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private double minIntakeRPM = 2500;
   private double maxIntakeRPM = 6000;
   private double intakeRPM = 0.0;
+  private double m_desiredRPM = 0.0;
   private boolean m_isDeployed = false;
   private static int kPIDLoopIdx = 0;
   private static int kTimeoutMs = 30;
@@ -108,6 +109,7 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public void setIntakeMotorRPM(double desiredRPM) {
     intakeRPM = desiredRPM;
+    m_desiredRPM = desiredRPM;
     m_intake.set(ControlMode.Velocity, desiredRPM * 2048 / 600.0);
   }
 
@@ -129,6 +131,13 @@ public class IntakeSubsystem extends SubsystemBase {
 
     setIntakeMotorRPM(desiredMotorRPM);
     
+  }
+
+  /**
+   * returns whether or not the intake motor is at the required speed
+   */
+  public boolean intakeAtDesiredRPM() {
+    return (intakeRPM == m_desiredRPM);
   }
 
   /**
