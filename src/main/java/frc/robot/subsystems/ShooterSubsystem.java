@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.team2930.lib.util.linearInterpolator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,8 +21,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private double kMaxOutput, kMinOutput;
   private double m_desiredRPM = 0;
   private boolean m_atSpeed = false;
-  //TODO: import linearInterpolator
-  //private linearInterpolator m_lt_feet;
+  private linearInterpolator m_lt_feet;
   private int m_idleRPM = 2000;
   private double m_currentRPM = 0;
   private double m_error = 0;
