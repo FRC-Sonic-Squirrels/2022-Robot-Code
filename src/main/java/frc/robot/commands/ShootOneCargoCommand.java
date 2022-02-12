@@ -22,10 +22,12 @@ public class ShootOneCargoCommand extends CommandBase {
     m_shooterSubsystem = shooterSubsystem;
     m_intakeSubsystem = intakeSubsystem;
 
+    //TODO: we dont need the require the intake as we are only reading a value 
     addRequirements(cargoSubsystem, shooterSubsystem, intakeSubsystem);
   }
 
   // Called when the command is initially scheduled.
+  // TODO: What if we have a ball in the lower belts but not upper? Move it up first then shoot?
   @Override
   public void initialize() {
     m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getDesiredRPM());
