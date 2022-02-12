@@ -74,8 +74,8 @@ public class DriveHubCentricCommand extends CommandBase {
     }
     if(m_sidewaysSupplier.get() != 0.0) {
        //Not scaling by radius anymore
-      strafeX += findStrafeX(targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), HubCentricConstants.SIDEWAYS_MULTIPLER);
-      strafeY += findStrafeY(targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), HubCentricConstants.SIDEWAYS_MULTIPLER);
+      strafeX += findStrafeX(targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), HubCentricConstants.SIDEWAYS_MULTIPLIER);
+      strafeY += findStrafeY(targetHeading.getRadians(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, m_sidewaysSupplier.get(), HubCentricConstants.SIDEWAYS_MULTIPLIER);
     }
     
     //TODO: might have to adjust rotationCorrection check since we are now multiplying by max angular speed 
