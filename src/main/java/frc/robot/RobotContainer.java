@@ -107,7 +107,7 @@ public class RobotContainer {
         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
         () -> m_controller.getPOV(), 0.0));
     
-    m_arm.setDefaultCommand(new ArmManualControlCommand(() -> m_operatorController.getRightY(), m_arm));
+    m_arm.setDefaultCommand(new InstantCommand());
 
 
     m_elevator.setDefaultCommand(new InstantCommand());
@@ -174,6 +174,9 @@ public class RobotContainer {
  
     new Button(m_operatorController::getLeftBumper)
       .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);
+
+    new Button(m_operatorController::getRightBumper)
+      .whileHeld(new ArmManualControlCommand(() -> m_operatorController.getRightY(), m_arm), true);
 
   }
   
