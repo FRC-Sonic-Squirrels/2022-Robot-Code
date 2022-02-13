@@ -22,10 +22,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.canId;
 
 public class ArmSubsystem extends SubsystemBase {
-  enum Mode {
-    MANUAL,
-    AUTOMATIC
-  };
   //TODO: check if these are brushless motors 
   CANSparkMax m_armLeadMotor = new CANSparkMax(canId.CANID19_ARM_LEAD_MOTOR, MotorType.kBrushless);
   CANSparkMax m_armFollowMotor = new CANSparkMax(canId.CANID20_ARM_FOLLOW_MOTOR, MotorType.kBrushless);
