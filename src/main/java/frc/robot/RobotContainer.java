@@ -22,7 +22,6 @@ import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.CargoReverseCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
-import frc.robot.commands.ElevatorAutoControlCommand;
 import frc.robot.commands.ElevatorControlCommand;
 import frc.robot.commands.ShootOneCargoCommand;
 import frc.robot.commands.IntakeDeployCommand;
