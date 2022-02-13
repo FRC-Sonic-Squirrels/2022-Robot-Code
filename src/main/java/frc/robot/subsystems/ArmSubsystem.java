@@ -52,7 +52,9 @@ public class ArmSubsystem extends SubsystemBase {
     //TODO: figure out how we use trapezoidal stuff 
     m_armPID.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
     m_armPID.setSmartMotionMaxAccel(0.5, 0);
+    //TODO: velocity 45degress per second ish 
     m_armPID.setSmartMotionMaxVelocity(0.75, 0);
+    //TODO: 1 degree error 22.75 ticks every degress 
     m_armPID.setSmartMotionAllowedClosedLoopError(0.05, 0);
     //good for preventing small changes but this can also be done with the joystick itself 
     //m_armPID.setSmartMotionMinOutputVelocity(0.05, 0);
@@ -68,6 +70,14 @@ public class ArmSubsystem extends SubsystemBase {
     m_armPID.setReference(encoderValue, ControlType.kPosition);
   }
 
+  public void setArmToSpecificAngle(double angle){
+    //TODO: write logic for this
+  }
+
+  //TODO: write logic for this
+  public boolean isAtAngle(double angle){
+    return false;
+  }
   public void setArmPercentOutput(double percentage){
     m_armLeadMotor.set(percentage);
   }

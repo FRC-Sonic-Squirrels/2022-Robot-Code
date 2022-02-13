@@ -169,4 +169,15 @@ public final class Constants {
     public static final double m_activated = 2000;
     public static final double m_idle = 500;
   }
+
+  //TODO: MAKE SURE THESE VALUES ARE CORRECT BEFORE WE TEST AUTONOMUS 
+  public static class AutoClimbConstants{
+    public static class Stage_1{
+      public static final double ELEVATOR_PULL_HEIGHT_STAGE1 = 0;
+      public static final double ARM_TARGET_ANGLE_STAGE1 = 0;
+      public static final double ELEVATOR_SWITCH_TO_ARM_HEIGHT = 0;
+    }
+    
+
+  }
 }
