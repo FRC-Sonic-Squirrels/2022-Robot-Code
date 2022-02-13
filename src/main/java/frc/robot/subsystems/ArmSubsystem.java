@@ -65,7 +65,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   //This would be encoder rotation values I think 
   public void setArmToSpecificRotation(double encoderValue){
-    //makes sure it doesnt go over or under? Maybe use similar logic in periodic to stop or does the limit switch handle that? 
+    //makes sure it doesn't go over or under? Maybe use similar logic in periodic to stop or does the limit switch handle that? 
     if(encoderValue > m_maxEncoderValue) {encoderValue = m_maxEncoderValue;}
     else if(encoderValue < m_minEncoderValue) {encoderValue = m_minEncoderValue;}
 
