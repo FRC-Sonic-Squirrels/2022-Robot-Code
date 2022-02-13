@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import javax.sound.midi.Track;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -12,7 +11,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,7 +25,6 @@ import frc.robot.Constants.HubCentricConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.CargoMoveToUpperBeltsCommand;
 import frc.robot.commands.IntakeDeployCommand;
-import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.ShootOneCargoCommand;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
@@ -191,7 +188,7 @@ public class SwerveTrajectoryFollowCommandFactory {
 
   /**
    * command for autonomously shooting and then moving to the next set of cargo coordinates.
-   * @param cargoPose2d the position of the wanted cargo (in inches)
+   * @param cargoPos the position of the wanted cargo (in inches)
    * @param shootPos the position of the robot when about to shoot cargo (in inches)
    * @param midPos the position right in front of the wanted cargo (in inches)
    * @return a set of actions with the robot shooting its current cargo, then moving and picking up the next cargo
@@ -199,7 +196,6 @@ public class SwerveTrajectoryFollowCommandFactory {
   public static Command shootAndMoveToCargoCommand(Pose2d cargoPos, Pose2d shootPos, Pose2d midPos,
       TestTrajectories testTrajectories, Drivetrain drivetrain, ShooterSubsystem shooter, CargoSubsystem cargo, IntakeSubsystem intake) {
 
-    // assuming the angle is set rather than added: angle = arctangent ((robotX - hubX) / (robotY - hubY))
     // hub/center coordinates: (324, 162)
     // The robot will most likely start at a 0 degree angle
     Rotation2d shootAngle = new Rotation2d( Math.atan((shootPos.getX() - HubCentricConstants.HUB_CENTER.x))
@@ -208,8 +204,6 @@ public class SwerveTrajectoryFollowCommandFactory {
     // positioned to be about to load the cargo (this means facing the cargo as well) 
     cargoPos = new Pose2d(Units.inchesToMeters(cargoPos.getX()), Units.inchesToMeters(cargoPos.getY()), new Rotation2d(0));
     Trajectory startToShoot = testTrajectories.driveToPose(new Pose2d(shootPos.getX(), shootPos.getY(), shootAngle), drivetrain.getPose());
-    
-    //double rpm = 0;
 
     return new SequentialCommandGroup(
       // 1. move cargo to upper belts, set up flywheel, then move to the shooting location
@@ -251,5 +245,104 @@ public class SwerveTrajectoryFollowCommandFactory {
     Pose2d current = drivetrain.getPose();
     target = new Pose2d(Units.inchesToMeters(target.getX()), Units.inchesToMeters(target.getY()), target.getRotation());
     return SwerveControllerCommand(testTrajectories.driveToPose(current, target), drivetrain, true);
+  }
+
+  // command that lets the robot intake 1 cargo without shooting it
+  public static Command intakeCargoCommand(TestTrajectories testTrajectories, Drivetrain drivetrain, CargoSubsystem cargo,
+      IntakeSubsystem intake, Pose2d targetPos, Pose2d midPos) {
+    
+    // executing this command does not make sense if there is already two cargo in the robot
+    if (cargo.cargoInLowerBelts() && cargo.cargoInUpperBelts()) {
+      return null;
+    }
+
+    //TODO: replace target with start
+    Trajectory startToMid = testTrajectories.driveToPose(targetPos, midPos);
+    startToMid.transformBy(new Transform2d(targetPos, drivetrain.getPose()));
+    Trajectory midToTarget = testTrajectories.driveToPose(drivetrain.getPose(), targetPos);
+
+    return new SequentialCommandGroup(
+      // 1. deploy intake then move to the front of a cargo. if there is a stored cargo move it to the upper belts
+      new ParallelCommandGroup(
+        new CargoMoveToUpperBeltsCommand(cargo),
+        SwerveControllerCommand(startToMid, drivetrain, true),
+        new IntakeDeployCommand(intake, cargo),
+        new WaitUntilCommand(() -> intake.intakeAtDesiredRPM()),
+        new WaitUntilCommand(() -> ! cargo.cargoInLowerBelts())
+      ),
+      
+      // 2. collect the cargo, then wait until it is fully in the lower belts
+      SwerveControllerCommand(midToTarget, drivetrain, true),
+      new WaitUntilCommand(() -> cargo.cargoInLowerBelts()),
+
+      // 3. retract and deactivate the intake
+      new ParallelCommandGroup(
+        new InstantCommand(() -> intake.retractIntake()),
+        new InstantCommand(() -> intake.stop())
+      )
+    );
+
+  }
+
+
+    /**
+   * command for autonomously shooting two cargo then collecting the next two cargo by coordinates.
+   * @param cargoPos1 the position of the wanted cargo (in inches)
+   * @param midPos1 the position of the robot when about to shoot cargo (in inches)
+   * @param shootPos the position right in front of the wanted cargo (in inches)
+   * @param cargoPos2
+   * @param midPos2
+   * @return a set of actions with the robot shooting its current cargo, then moving and picking up the next cargo
+   */
+  public static Command doubleShootAndMoveToCargoCommand(Pose2d cargoPos1, Pose2d midPos1, Pose2d shootPos, Pose2d cargoPos2,
+      Pose2d midPos2, TestTrajectories testTrajectories, Drivetrain drivetrain, ShooterSubsystem shooter,
+      CargoSubsystem cargo, IntakeSubsystem intake) {
+
+    // assuming the angle is set rather than added: angle = arctangent ((robotX - hubX) / (robotY - hubY))
+    // hub/center coordinates: (324, 162)
+    // The robot will most likely start at a 0 degree angle
+    Rotation2d shootAngle = new Rotation2d( Math.atan((shootPos.getX() - HubCentricConstants.HUB_CENTER.x))
+                                                    / (shootPos.getY() - HubCentricConstants.HUB_CENTER.y));
+    
+    Trajectory startToShoot = testTrajectories.driveToPose(new Pose2d(shootPos.getX(), shootPos.getY(), shootAngle), drivetrain.getPose());
+
+    // positioned to be about to load the cargo (this means facing the cargo as well) 
+    cargoPos1 = new Pose2d(Units.inchesToMeters(cargoPos1.getX()), Units.inchesToMeters(cargoPos1.getY()), new Rotation2d(0));
+    cargoPos2 = new Pose2d(Units.inchesToMeters(cargoPos2.getX()), Units.inchesToMeters(cargoPos2.getY()), new Rotation2d(0));
+
+    return new SequentialCommandGroup(
+      // 1. set up flywheel, then move to the shooting location
+      new ParallelCommandGroup(
+        new InstantCommand(() -> shooter.setFlywheelRPM(ShooterConstants.m_activated)),
+        new WaitUntilCommand(() -> shooter.isAtDesiredRPM()),
+        SwerveControllerCommand(startToShoot, drivetrain, true)
+      ),
+      
+      // 2. shoot the cargo
+      // FIXME: create a command that autonomously shoots both cargo
+      new ShootOneCargoCommand(cargo, shooter, intake),
+      
+      // 3. slow down flywheel, deploy the intake, then move in front of the first cargo
+      new ParallelCommandGroup(
+        new InstantCommand(() -> shooter.setFlywheelRPM(ShooterConstants.m_idle)),
+        SwerveControllerCommand(testTrajectories.driveToPose(drivetrain.getPose(), midPos1), drivetrain, true),
+        new IntakeDeployCommand(intake, cargo),
+        new WaitUntilCommand(() -> intake.intakeAtDesiredRPM())
+      ),
+      // 4. collect the first cargo, then wait until it is fully in the lower belts
+      SwerveControllerCommand(testTrajectories.driveToPose(midPos1, cargoPos1), drivetrain, true),
+      new WaitUntilCommand(() -> cargo.cargoInLowerBelts(),
+      
+      // TODO: add steps 5 and 6 to repeat steps 3 and 4 but with the second target cargo (excluding changing the flywheel/intake)
+      // 5. move in front of the second cargo
+      SwerveControllerCommand(testTrajectories.driveToPose(drivetrain.getPose(), midPos2), targetPos), drivetrain, true),
+      
+
+      // 7. retract and deactivate the intake
+      new ParallelCommandGroup(
+        new InstantCommand(() -> intake.retractIntake()),
+        new InstantCommand(() -> intake.stop())
+      )
+    );
   }
 }
