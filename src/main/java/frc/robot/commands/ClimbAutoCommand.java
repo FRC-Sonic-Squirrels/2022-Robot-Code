@@ -104,7 +104,7 @@ public class ClimbAutoCommand extends CommandBase {
   private stage getPreviousStage(){
     if(m_currentStage == stage.AUTO_0){ return stage.AUTO_0; }
 
-    for(int i=stages.length; i>=0; i++){
+    for(int i=0; i<stages.length; i++){
       if(m_currentStage == stages[i]){
         return stages[i-1];
       }
@@ -181,6 +181,7 @@ public class ClimbAutoCommand extends CommandBase {
       getButtonConfirmationCommand(),
 
       //maybe find a way to bring it to this height slowly so its a smoother transition?
+      //we might have to hold the arm angle here if the robot wants to naturally tip
       new InstantCommand(() -> m_elevator.setElevatorHeight(Stage_1.ELEVATOR_SWITCH_TO_ARM_HEIGHT), m_elevator),
       new WaitUntilCommand(() -> m_elevator.isAtHeight())
 
