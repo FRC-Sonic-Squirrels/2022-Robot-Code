@@ -9,14 +9,22 @@ import java.util.LinkedHashMap;
 import java.util.SortedMap;
 import java.util.function.Supplier;
 import edu.wpi.first.wpilibj.AddressableLED;
+
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants;
 import frc.robot.Constants.AutoClimbConstants;
+import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.AutoClimbConstants.Stage_1;
+import frc.robot.Constants.AutoClimbConstants.Stage_2;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 
@@ -40,7 +48,9 @@ public class ClimbAutoCommand extends CommandBase {
 
   HashMap<stage, Command> stageCommands = new HashMap<stage, Command>();
 
-  public ClimbAutoCommand(Supplier<Double> POVSupplier, ElevatorSubsystem elevator, ArmSubsystem arm) {
+  XboxController m_controller;
+
+  public ClimbAutoCommand(Supplier<Double> POVSupplier, ElevatorSubsystem elevator, ArmSubsystem arm, XboxController controller) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_elevator = elevator;
     m_arm = arm;
@@ -48,6 +58,8 @@ public class ClimbAutoCommand extends CommandBase {
     m_currentStage = stage.AUTO_0;
     m_currentCommand = getCommandForStage(stage.AUTO_0);
 
+    m_controller = controller;
+  
     assignStagesCommands();
     addRequirements(m_elevator, m_arm);
   }
@@ -116,27 +128,122 @@ public class ClimbAutoCommand extends CommandBase {
     stageCommands.put(stage.AUTO_3, getStage_3Command());
   }
 
+  private void rumbleController(){
+    m_controller.setRumble(RumbleType.kLeftRumble, 0.5);
+    m_controller.setRumble(RumbleType.kRightRumble, 0.5);
+  }
+
+  private void stopRumbleController(){
+    m_controller.setRumble(RumbleType.kLeftRumble, 0.0);
+    m_controller.setRumble(RumbleType.kRightRumble, 0.0);
+  }
+
+  //TODO: find appropriate button for this
+  private boolean isConfirmButtonPressed(){
+    return m_controller.getBackButtonPressed();
+  }
+  /**
+   * rumbles to tell the operator the program is ready to do an action and is seeking approval.
+   * This is to have a button press before doing any action with elevator heights or arm rotations
+   * 
+   * @return command
+   */
+  private Command getButtonConfirmationCommand(){
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> rumbleController()),
+      new WaitUntilCommand(() -> isConfirmButtonPressed()),
+      new InstantCommand(() -> stopRumbleController())
+    );
+  }
+
   private Command getStage_0Command(){
     return new InstantCommand();
   }
 
   private Command getStage_1Command(){
+    //this command assumes that the elevator is extended on the mid bar and the robot is ready to be pulled
     return new SequentialCommandGroup(
-      new ParallelCommandGroup(
-        //arm might have to move first before we pull
-        new InstantCommand(()-> m_elevator.setElevatorHeight(AutoClimbConstants.Stage_1.ELEVATOR_PULL_HEIGHT_STAGE1), m_elevator),
-        new InstantCommand(() -> m_arm.setArmToSpecificAngle(AutoClimbConstants.Stage_1.ARM_TARGET_ANGLE_STAGE1), m_arm)
-      ),
+      getButtonConfirmationCommand(),
+
+      new InstantCommand(() -> m_arm.setArmToSpecificAngle(Stage_1.ARM_TARGET_ANGLE), m_arm),
+      new WaitUntilCommand(() -> m_arm.isAtAngle(Stage_1.ARM_TARGET_ANGLE)),
+
+      getButtonConfirmationCommand(),              
+      
+      new InstantCommand(()-> m_elevator.setElevatorHeight(Stage_1.ELEVATOR_PULL_HEIGHT), m_elevator),
+      new WaitUntilCommand(() -> m_elevator.isAtHeight()),
+
+      getButtonConfirmationCommand(),
+
       new InstantCommand(() -> m_arm.setArmToSpecificAngle(0), m_arm),
       new WaitUntilCommand(() -> m_arm.isAtAngle(0)),
+
+      getButtonConfirmationCommand(),
+
       //maybe find a way to bring it to this height slowly so its a smoother transition?
-      new InstantCommand(() -> m_elevator.setElevatorHeight(AutoClimbConstants.Stage_1.ELEVATOR_SWITCH_TO_ARM_HEIGHT), m_elevator),
+      new InstantCommand(() -> m_elevator.setElevatorHeight(Stage_1.ELEVATOR_SWITCH_TO_ARM_HEIGHT), m_elevator),
       new WaitUntilCommand(() -> m_elevator.isAtHeight())
+
+      //how do we tell the operator this section is finished? rumble? but thats used for confirming actions? 
+      //use smartdashboard to send a boolean ready for next stage? 
     );
   }
 
   private Command getStage_2Command(){
-    return null;
+    return new SequentialCommandGroup(
+      getButtonConfirmationCommand(),
+      
+      new InstantCommand(() -> m_arm.holdAngle(Stage_2.ARM_STARTING_ANGLE), m_arm),
+      new WaitUntilCommand(() -> m_arm.isAtAngle(Stage_2.ARM_STARTING_ANGLE)),
+
+      getButtonConfirmationCommand(),
+
+      new InstantCommand(() -> m_elevator.setElevatorHeight(Stage_2.ELEVATOR_EXTENSION_HEIGHT), m_elevator),
+      new WaitUntilCommand(() -> m_elevator.isAtHeight()),
+
+      //have a button confirmation for this? it is shifting the arm angle so technically there should be a button press here 
+      getButtonConfirmationCommand(),
+
+      new InstantCommand(() -> m_arm.holdAngle(Stage_2.ARM_HOLD_ANGLE), m_arm),
+
+      getButtonConfirmationCommand(),
+
+      new ParallelCommandGroup(
+        new InstantCommand(() -> m_elevator.setElevatorHeight(Stage_2.ELEVATOR_PULL_HEIGHT), m_elevator),
+        new InstantCommand(() -> m_arm.setMotorCoastMode()),
+        new WaitUntilCommand(() -> m_elevator.isAtHeight())
+      ),
+
+      new InstantCommand(() -> m_arm.setMotorBreakMode()),
+
+      getButtonConfirmationCommand(),
+
+      new InstantCommand(() -> m_elevator.setElevatorHeight(Stage_2.ELEVATOR_BRING_ARM_TO_OTHER_SIDE_HEIGHT), m_elevator),
+      new WaitUntilCommand(() -> m_elevator.isAtHeight()),
+
+      getButtonConfirmationCommand(),
+
+      new InstantCommand(() -> m_arm.setArmToSpecificAngle(Stage_2.ARM_BRING_AROUND_ANGLE), m_arm),
+      new WaitUntilCommand(() -> m_arm.isAtAngle(Stage_2.ARM_BRING_AROUND_ANGLE)),
+
+      getButtonConfirmationCommand(),
+
+      new InstantCommand(() -> m_elevator.setElevatorHeight(Stage_2.ELEVATOR_PULL_TO_SWITCH_TO_ARM_HEIGHT), m_elevator),
+      new WaitUntilCommand(() -> m_elevator.isAtHeight()),
+
+      getButtonConfirmationCommand(),
+
+      new InstantCommand(() -> m_arm.setArmToSpecificAngle(0), m_arm),
+      new WaitUntilCommand(() -> m_arm.isAtAngle(0)),
+
+      getButtonConfirmationCommand(),
+
+      new InstantCommand(() -> m_elevator.setElevatorHeight(Stage_2.ELEVATOR_LIFT_TO_SWITCH_TO_ARM_HEIGHT), m_elevator),
+      new WaitUntilCommand(() -> m_elevator.isAtHeight())
+
+      //same as stage 1 use smartdashboard? 
+  
+    );
   }
 
   private Command getStage_3Command(){

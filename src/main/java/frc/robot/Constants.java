@@ -173,9 +173,23 @@ public final class Constants {
   //TODO: MAKE SURE THESE VALUES ARE CORRECT BEFORE WE TEST AUTONOMUS 
   public static class AutoClimbConstants{
     public static class Stage_1{
-      public static final double ELEVATOR_PULL_HEIGHT_STAGE1 = 0;
-      public static final double ARM_TARGET_ANGLE_STAGE1 = 0;
+      public static final double ELEVATOR_PULL_HEIGHT = 0;
+      public static final double ARM_TARGET_ANGLE = 0;
       public static final double ELEVATOR_SWITCH_TO_ARM_HEIGHT = 0;
+    }
+    public static class Stage_2{
+      //overshoot to let the elevator extend all the way then hold the correct angle
+      public static final double ARM_STARTING_ANGLE = 0;
+      public static final double ELEVATOR_EXTENSION_HEIGHT = 0;
+      public static final double ARM_HOLD_ANGLE = 0;
+      public static final double ELEVATOR_PULL_HEIGHT = 0;
+
+      public static final double ELEVATOR_BRING_ARM_TO_OTHER_SIDE_HEIGHT = 0;
+      public static final double ARM_BRING_AROUND_ANGLE = 0;
+
+      public static final double ELEVATOR_PULL_TO_SWITCH_TO_ARM_HEIGHT = 0;
+
+      public static final double ELEVATOR_LIFT_TO_SWITCH_TO_ARM_HEIGHT = 0;
     }
     
 

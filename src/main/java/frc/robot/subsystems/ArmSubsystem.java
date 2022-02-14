@@ -78,6 +78,12 @@ public class ArmSubsystem extends SubsystemBase {
   public boolean isAtAngle(double angle){
     return false;
   }
+
+  public void holdAngle(double angle){
+    //We need to be able to hold a angle for stage 2 of auto climbing. 
+    //Setting the angle once and leaving it will lead to the arm slipping I think 
+  }
+
   public void setArmPercentOutput(double percentage){
     m_armLeadMotor.set(percentage);
   }
@@ -89,6 +95,17 @@ public class ArmSubsystem extends SubsystemBase {
   public double getEncoderValue(){
     return m_throughBoreEncoder.getPosition();
   }
+
+  public void setMotorCoastMode(){
+    m_armLeadMotor.setIdleMode(IdleMode.kCoast);
+    m_armFollowMotor.setIdleMode(IdleMode.kCoast);
+  }
+
+  public void setMotorBreakMode(){
+    m_armLeadMotor.setIdleMode(IdleMode.kBrake);
+    m_armFollowMotor.setIdleMode(IdleMode.kBrake);
+  }
+
   @Override
   public void periodic() {
     //this maybe makes the arm stop?? 
