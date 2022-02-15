@@ -5,6 +5,9 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.Robot;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -14,14 +17,18 @@ public class ShootCargoCommand extends CommandBase {
   private CargoSubsystem m_cargoSubsystem;
   private ShooterSubsystem m_shooterSubsystem;
   private IntakeSubsystem m_intakeSubsystem;
+  private Robot m_robot;
+  private long m_time;
 
-  public ShootCargoCommand(CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem) {
+  public ShootCargoCommand(CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, Robot robot) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
     m_intakeSubsystem = intakeSubsystem;
+    m_robot = robot;
+    m_time = 0;
 
-    addRequirements(cargoSubsystem, shooterSubsystem, intakeSubsystem);
+    addRequirements(cargoSubsystem, shooterSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -58,7 +65,19 @@ public class ShootCargoCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // TODO: I suggest we make this return false, and have the command end when the operator takes thier finger off the button
-    return (! m_cargoSubsystem.cargoInUpperBelts()) && (! m_cargoSubsystem.cargoInLowerBelts());
+    // the command will automatically stop when both cargo are released in autonomous
+    if (m_robot.isAutonomous()) {
+      // the command will stop .5 seconds after no cargo is detected, to let the cargo finish shooting
+      if ((! m_cargoSubsystem.cargoInUpperBelts()) && (! m_cargoSubsystem.cargoInLowerBelts())) {
+        if (m_time == 0) {
+          m_time = System.currentTimeMillis();
+        }
+        if (System.currentTimeMillis() - m_time >= 500) {
+          return true;
+        }
+      }
+    }
+    // the command will be manually executed and ended by holding a button in teleop
+    return false;
   }
 }
