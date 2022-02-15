@@ -18,6 +18,7 @@ import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.canId;
 
@@ -28,6 +29,11 @@ public class ArmSubsystem extends SubsystemBase {
 
   SparkMaxAlternateEncoder.Type kAltEncType = SparkMaxAlternateEncoder.Type.kQuadrature;
   RelativeEncoder m_throughBoreEncoder;
+
+  double targetAngle = 0.0;
+  double ticksWhenStraightUp = 0;
+  double rpm2degreesPerSecond = 60.0/360.0;
+  double encoderTicks2degrees = 360.0/8192.0;
 
   SparkMaxPIDController m_armPID;
   
@@ -59,6 +65,16 @@ public class ArmSubsystem extends SubsystemBase {
     //good for preventing small changes but this can also be done with the joystick itself 
     //m_armPID.setSmartMotionMinOutputVelocity(0.05, 0);
     
+
+    // TODO: not sure how setting the conversion interacts with PID control
+    m_throughBoreEncoder.setPositionConversionFactor(360.0/8192.0);
+
+    // TODO: need to figure out how to zero the arm position
+    ticksWhenStraightUp = m_throughBoreEncoder.getPosition();
+  }
+
+  public double getAngleDegrees() {
+    return m_throughBoreEncoder.getPosition();
   }
 
   //This would be encoder rotation values I think 
@@ -70,18 +86,19 @@ public class ArmSubsystem extends SubsystemBase {
     m_armPID.setReference(encoderValue, ControlType.kPosition);
   }
 
-  public void setArmToSpecificAngle(double angle){
-    //TODO: write logic for this
+  public void setArmAngle(double angle) {
+    targetAngle = angle;
   }
 
-  //TODO: write logic for this
-  public boolean isAtAngle(double angle){
-    return false;
+  //TODO: configure tolerance
+  public boolean isAtAngle(){
+    return (Math.abs(getAngleDegrees() - targetAngle) < 1.0);
   }
 
   public void holdAngle(double angle){
     //We need to be able to hold a angle for stage 2 of auto climbing. 
     //Setting the angle once and leaving it will lead to the arm slipping I think 
+    // TODO: just set the setpoint
   }
 
   public void setArmPercentOutput(double percentage){
@@ -112,5 +129,14 @@ public class ArmSubsystem extends SubsystemBase {
     if(limitSwitchFront.get() || limitSwitchBack.get()){
       m_armPID.setReference(m_throughBoreEncoder.getPosition(), ControlType.kPosition);
     }
+
+    SmartDashboard.putNumber("Arm Angle deg", getAngleDegrees());
+    SmartDashboard.putNumber("Arm Vel (deg/s)", m_armLeadMotor.getEncoder().getVelocity()*rpm2degreesPerSecond);
+    SmartDashboard.putNumber("Arm SetPoint", targetAngle);
+    SmartDashboard.putNumber("Arm Error", targetAngle - getAngleDegrees());
+    // SmartDashboard.putBoolean("Arm limit", );
+    SmartDashboard.putNumber("Arm %output", m_armLeadMotor.getAppliedOutput());
+    SmartDashboard.putNumber("Arm Current", m_armLeadMotor.getOutputCurrent());
+
   }
 }
