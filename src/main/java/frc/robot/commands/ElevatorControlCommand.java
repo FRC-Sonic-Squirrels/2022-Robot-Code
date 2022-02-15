@@ -29,10 +29,7 @@ public class ElevatorControlCommand extends CommandBase {
   @Override
   public void execute() {
     
-    if(m_controllerSupplier.get() >= 0.1){
-      m_elevator.brakeOff();
-      m_elevator.setWinchPercentOutput(m_controllerSupplier.get()*ElevatorConstants.elevatorSpeedMultiplier);
-    } else if(m_controllerSupplier.get() <= -0.1){
+    if(Math.abs(m_controllerSupplier.get()) >= 0.1){
       m_elevator.brakeOff();
       m_elevator.setWinchPercentOutput(m_controllerSupplier.get()*ElevatorConstants.elevatorSpeedMultiplier);
     } else {
