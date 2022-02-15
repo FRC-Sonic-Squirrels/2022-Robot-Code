@@ -8,10 +8,10 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -307,11 +307,11 @@ public class SwerveTrajectoryFollowCommandFactory {
 
     // assuming the angle is set rather than added: angle = arctangent ((robotX - hubX) / (robotY - hubY))
     // hub/center coordinates: (324, 162)
-    // The robot will most likely start at a 0 degree angle
+    // The robot will most likely start at a 0 degree angle 
 
     // give shootAngle its rotation, then change units
-    Rotation2d shootAngle = new Rotation2d( Math.atan((shootPos.getX() - HubCentricConstants.HUB_CENTER.x))
-        / (shootPos.getY() - HubCentricConstants.HUB_CENTER.y));
+    Rotation2d shootAngle = new Rotation2d( Math.atan2(shootPos.getY() - HubCentricConstants.HUB_CENTER.y,
+        shootPos.getX() - HubCentricConstants.HUB_CENTER.x));
     shootPos = inchesToMeters(shootPos);
     shootPos = setRotation(shootPos, shootAngle);
     
@@ -324,6 +324,16 @@ public class SwerveTrajectoryFollowCommandFactory {
     initCargoPos = inchesToMeters(initCargoPos);
     cargoPos1 = inchesToMeters(cargoPos1);
     cargoPos2 = inchesToMeters(cargoPos2);
+
+    // find the angle the robot needs to be at to pick up the three different cargo, then set the midPoses to those angles
+    Rotation2d initAngle = getPosesAngle(initMidPos, initCargoPos);
+    initMidPos = setRotation(initMidPos, initAngle);
+
+    Rotation2d angle1 = getPosesAngle(midPos1, cargoPos1);
+    midPos1 = setRotation(midPos1, angle1);
+
+    Rotation2d angle2 = getPosesAngle(midPos2, cargoPos2);
+    midPos2 = setRotation(midPos2, angle2);
 
     // instantiate all the trajectories
     //Trajectory start_to_initMidPos = testTrajectories.driveToPose(drivetrain.getPose(), shootPos);
@@ -385,5 +395,15 @@ public class SwerveTrajectoryFollowCommandFactory {
   // private method that changes the rotation of a Pose2d (because that isn't already included in the class for some reason)
   private static Pose2d setRotation(Pose2d pose, Rotation2d rotation) {
     return new Pose2d(pose.getX(), pose.getY(), rotation);
+  }
+
+  // private method that gets the angle between two Pose2ds
+  private static Rotation2d getPosesAngle(Pose2d pose1, Pose2d pose2) {
+    Vector2d vector1 = new Vector2d(pose1.getX(), pose1.getY());
+    Vector2d vector2 = new Vector2d(pose2.getX(), pose2.getY());
+    double dotProduct = vector1.dot(vector2);
+    double magnitude = vector1.magnitude() * vector2.magnitude();
+
+    return new Rotation2d( Math.acos(dotProduct/magnitude) );
   }
 }
