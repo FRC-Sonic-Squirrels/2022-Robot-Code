@@ -23,26 +23,27 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.canId;
 
 public class ArmSubsystem extends SubsystemBase {
-  //TODO: check if these are brushless motors 
-  CANSparkMax m_armLeadMotor = new CANSparkMax(canId.CANID19_ARM_LEAD_MOTOR, MotorType.kBrushless);
-  CANSparkMax m_armFollowMotor = new CANSparkMax(canId.CANID20_ARM_FOLLOW_MOTOR, MotorType.kBrushless);
+  private CANSparkMax m_armLeadMotor = new CANSparkMax(canId.CANID19_ARM_LEAD_MOTOR, MotorType.kBrushless);
+  private CANSparkMax m_armFollowMotor = new CANSparkMax(canId.CANID20_ARM_FOLLOW_MOTOR, MotorType.kBrushless);
 
-  SparkMaxAlternateEncoder.Type kAltEncType = SparkMaxAlternateEncoder.Type.kQuadrature;
-  RelativeEncoder m_throughBoreEncoder;
+  private int kCPR = 8192;   // ticks per revolution
+  private SparkMaxAlternateEncoder.Type kAltEncType = SparkMaxAlternateEncoder.Type.kQuadrature;
+  private RelativeEncoder m_throughBoreEncoder;
 
-  double m_targetAngle = 0.0;
-  double ticksWhenStraightUp = 0;
-  double rpm2degreesPerSecond = 60.0/360.0;
-  double encoderTicks2degrees = 360.0/8192.0;
+  private double m_targetAngle = 0.0;
+  private double ticksWhenStraightUp = 0;
+  private double rpm2degreesPerSecond = 60.0/360.0;
+  private double encoderTicks2degrees = 360.0/kCPR;
 
-  SparkMaxPIDController m_armPID;
+  private SparkMaxPIDController m_armPID;
   
   //TODO: Find the actual channels
-  DigitalInput limitSwitchFront = new DigitalInput(1);
-  DigitalInput limitSwitchBack = new DigitalInput(2);
+  private DigitalInput limitSwitchFront = new DigitalInput(1);
+  private DigitalInput limitSwitchBack = new DigitalInput(2);
+
   //TODO: find true values 
-  double m_maxEncoderValue = 2000;
-  double m_minEncoderValue = -2000;
+  private double m_maxEncoderValue = 2000;
+  private double m_minEncoderValue = -2000;
 
   public ArmSubsystem() {
     m_armLeadMotor.setIdleMode(IdleMode.kBrake);
@@ -50,8 +51,10 @@ public class ArmSubsystem extends SubsystemBase {
 
     m_armFollowMotor.follow(m_armLeadMotor);
 
-    m_throughBoreEncoder = m_armLeadMotor.getAlternateEncoder(kAltEncType, 8192);
+    m_throughBoreEncoder = m_armLeadMotor.getAlternateEncoder(kAltEncType, kCPR);
     
+    // TODO: do we need to set SetFeedbackDeviceRange() on encoder?
+
     m_armPID = m_armLeadMotor.getPIDController();
     m_armPID.setFeedbackDevice(m_throughBoreEncoder);
     m_armPID.setOutputRange(-1, 1);
