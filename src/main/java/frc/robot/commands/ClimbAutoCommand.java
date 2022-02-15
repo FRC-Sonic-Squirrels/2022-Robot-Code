@@ -194,7 +194,7 @@ public class ClimbAutoCommand extends CommandBase {
     return new SequentialCommandGroup(
       getButtonConfirmationCommand(),
       
-      new InstantCommand(() -> m_arm.holdAngle(Stage_2.ARM_STARTING_ANGLE), m_arm),
+      new InstantCommand(() -> m_arm.setArmAngle(Stage_2.ARM_STARTING_ANGLE), m_arm),
       new WaitUntilCommand(() -> m_arm.isAtAngle()),
 
       getButtonConfirmationCommand(),
@@ -205,7 +205,7 @@ public class ClimbAutoCommand extends CommandBase {
       //have a button confirmation for this? it is shifting the arm angle so technically there should be a button press here 
       getButtonConfirmationCommand(),
 
-      new InstantCommand(() -> m_arm.holdAngle(Stage_2.ARM_HOLD_ANGLE), m_arm),
+      new InstantCommand(() -> m_arm.setArmAngle(Stage_2.ARM_HOLD_ANGLE), m_arm),
 
       getButtonConfirmationCommand(),
 
