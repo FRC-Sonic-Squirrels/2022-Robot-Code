@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import java.time.chrono.ThaiBuddhistChronology;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -31,7 +32,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
+    m_robotContainer = new RobotContainer(this);
 
     m_robotContainer.drivetrain.setGyroscopeHeadingDegrees(0);
     m_robotContainer.drivetrain.setPose(Constants.ROBOT_1M_LEFT_OF_HUB, m_robotContainer.drivetrain.getGyroscopeRotation());
@@ -107,4 +108,5 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+
 }

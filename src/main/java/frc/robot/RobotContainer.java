@@ -53,7 +53,8 @@ public class RobotContainer {
   public final CargoSubsystem m_cargoSubsystem = new CargoSubsystem();
   public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
   public final IntakeSubsystem m_intake = new IntakeSubsystem(drivetrain);
-  public  final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
+  public final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
+  public final Robot m_robot;
 
   public final XboxController m_controller = new XboxController(0);
   public final XboxController m_operatorController = new XboxController(1);
@@ -64,8 +65,10 @@ public class RobotContainer {
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer() {
+  public RobotContainer(Robot robot) {
 
+    m_robot = robot;
+    
     // set the starting position of the robot on the field
     // TODO: need a chooser object to select starting position and angle
     drivetrain.setGyroscopeHeadingDegrees(0);
@@ -159,7 +162,7 @@ public class RobotContainer {
       .whileHeld(new ShootOneCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake));
 
     new Button(m_operatorController::getBButton)
-      .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake));
+      .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
     
     new Button(m_operatorController::getXButton)
       .whileHeld(new IntakeDeployCommand(m_intake, m_cargoSubsystem));
