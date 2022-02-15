@@ -7,6 +7,7 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.Vector2d;
@@ -157,6 +158,21 @@ public final class Constants {
 
   public static class FieldConstants{
     public int test;
+    public Translation2d Blue1 = new Translation2d( Units.inchesToMeters(42), Units.inchesToMeters(44.4));
+    public Translation2d Blue2 = new Translation2d( Units.inchesToMeters(198), Units.inchesToMeters(72));
+    public Translation2d Blue3 = new Translation2d( Units.inchesToMeters(297.6), Units.inchesToMeters(7.2));
+    public Translation2d Blue4 = new Translation2d( Units.inchesToMeters(412.8), Units.inchesToMeters(36));
+    public Translation2d Blue5 = new Translation2d( Units.inchesToMeters(472.8), Units.inchesToMeters(198));
+    public Translation2d Blue6 = new Translation2d( Units.inchesToMeters(290.4), Units.inchesToMeters(312));
+    public Translation2d Blue7 = new Translation2d( Units.inchesToMeters(196.8), Units.inchesToMeters(246));
+    public Translation2d Red1 = new Translation2d( Units.inchesToMeters(605), Units.inchesToMeters(280));
+    public Translation2d Red2 = new Translation2d( Units.inchesToMeters(257), Units.inchesToMeters(441));
+    public Translation2d Red3 = new Translation2d( Units.inchesToMeters(350), Units.inchesToMeters(314));
+    public Translation2d Red4 = new Translation2d( Units.inchesToMeters(235), Units.inchesToMeters(275));
+    public Translation2d Red5 = new Translation2d( Units.inchesToMeters(174), Units.inchesToMeters(127));
+    public Translation2d Red6 = new Translation2d( Units.inchesToMeters(357), Units.inchesToMeters(12));
+    public Translation2d Red7 = new Translation2d( Units.inchesToMeters(460), Units.inchesToMeters(246));
+    public Translation2d HubCenter = new Translation2d( Units.inchesToMeters(324), Units.inchesToMeters(162));
   } 
 
   public static class ArmConstants{

@@ -30,7 +30,7 @@ public class ArmSubsystem extends SubsystemBase {
   SparkMaxAlternateEncoder.Type kAltEncType = SparkMaxAlternateEncoder.Type.kQuadrature;
   RelativeEncoder m_throughBoreEncoder;
 
-  double targetAngle = 0.0;
+  double m_targetAngle = 0.0;
   double ticksWhenStraightUp = 0;
   double rpm2degreesPerSecond = 60.0/360.0;
   double encoderTicks2degrees = 360.0/8192.0;
@@ -87,18 +87,20 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setArmAngle(double angle) {
-    targetAngle = angle;
+    m_targetAngle = angle;
+    double encoderValue = angleToEncoder(angle);
+    m_armPID.setReference(encoderValue, ControlType.kPosition);
+  }
+
+  //convert from angle to encoder value function
+
+  public double angleToEncoder(double angle){
+    return angle/encoderTicks2degrees;
   }
 
   //TODO: configure tolerance
   public boolean isAtAngle(){
-    return (Math.abs(getAngleDegrees() - targetAngle) < 1.0);
-  }
-
-  public void holdAngle(double angle){
-    //We need to be able to hold a angle for stage 2 of auto climbing. 
-    //Setting the angle once and leaving it will lead to the arm slipping I think 
-    // TODO: just set the setpoint
+    return (Math.abs(getAngleDegrees() - m_targetAngle) < 1.0);
   }
 
   public void setArmPercentOutput(double percentage){
@@ -132,11 +134,10 @@ public class ArmSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("Arm Angle deg", getAngleDegrees());
     SmartDashboard.putNumber("Arm Vel (deg/s)", m_armLeadMotor.getEncoder().getVelocity()*rpm2degreesPerSecond);
-    SmartDashboard.putNumber("Arm SetPoint", targetAngle);
-    SmartDashboard.putNumber("Arm Error", targetAngle - getAngleDegrees());
+    SmartDashboard.putNumber("Arm SetPoint", m_targetAngle);
+    SmartDashboard.putNumber("Arm Error", m_targetAngle - getAngleDegrees());
     // SmartDashboard.putBoolean("Arm limit", );
     SmartDashboard.putNumber("Arm %output", m_armLeadMotor.getAppliedOutput());
     SmartDashboard.putNumber("Arm Current", m_armLeadMotor.getOutputCurrent());
-
   }
 }
