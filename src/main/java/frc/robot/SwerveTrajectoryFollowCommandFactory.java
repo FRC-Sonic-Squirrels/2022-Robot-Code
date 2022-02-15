@@ -203,7 +203,10 @@ public class SwerveTrajectoryFollowCommandFactory {
 
     // positioned to be about to load the cargo (this means facing the cargo as well) 
     cargoPos = new Pose2d(Units.inchesToMeters(cargoPos.getX()), Units.inchesToMeters(cargoPos.getY()), new Rotation2d(0));
-    Trajectory startToShoot = testTrajectories.driveToPose(new Pose2d(shootPos.getX(), shootPos.getY(), shootAngle), drivetrain.getPose());
+
+    Trajectory startToShoot = testTrajectories.driveToPose(drivetrain.getPose(), new Pose2d(shootPos.getX(), shootPos.getY(), shootAngle));
+
+    //startToShoot.transformBy(new Transform2d(new Pose2d(shootPos.getX(), shootPos.getY(), shootAngle), drivetrain.getPose()));
 
     return new SequentialCommandGroup(
       // 1. move cargo to upper belts, set up flywheel, then move to the shooting location
@@ -243,23 +246,26 @@ public class SwerveTrajectoryFollowCommandFactory {
   public static Command moveToPoseCommand(TestTrajectories testTrajectories, Drivetrain drivetrain, Pose2d target) {
 
     Pose2d current = drivetrain.getPose();
-    target = new Pose2d(Units.inchesToMeters(target.getX()), Units.inchesToMeters(target.getY()), target.getRotation());
+    
+    target = inchesToMeters(target);
+
     return SwerveControllerCommand(testTrajectories.driveToPose(current, target), drivetrain, true);
   }
+
 
   // command that lets the robot intake 1 cargo without shooting it
   public static Command intakeCargoCommand(TestTrajectories testTrajectories, Drivetrain drivetrain, CargoSubsystem cargo,
       IntakeSubsystem intake, Pose2d targetPos, Pose2d midPos) {
     
-    // executing this command does not make sense if there is already two cargo in the robot
+    // precondition: the robot must have at least one free belt
     if (cargo.cargoInLowerBelts() && cargo.cargoInUpperBelts()) {
       return null;
     }
 
-    //TODO: replace target with start
-    Trajectory startToMid = testTrajectories.driveToPose(targetPos, midPos);
-    startToMid.transformBy(new Transform2d(targetPos, drivetrain.getPose()));
-    Trajectory midToTarget = testTrajectories.driveToPose(drivetrain.getPose(), targetPos);
+    Trajectory startToMid = testTrajectories.driveToPose(drivetrain.getPose(), midPos);
+    //startToMid.transformBy(new Transform2d(drivetrain.getPose(), midPos));
+    Trajectory midToTarget = testTrajectories.driveToPose(midPos, targetPos);
+    //midToTarget.transformBy(new Transform2d(midPos, targetPos));
 
     return new SequentialCommandGroup(
       // 1. deploy intake then move to the front of a cargo. if there is a stored cargo move it to the upper belts
@@ -290,9 +296,9 @@ public class SwerveTrajectoryFollowCommandFactory {
    * @param cargoPos1 the position of the wanted cargo (in inches)
    * @param midPos1 the position of the robot when about to shoot cargo (in inches)
    * @param shootPos the position right in front of the wanted cargo (in inches)
-   * @param cargoPos2
-   * @param midPos2
-   * @return a set of actions with the robot shooting its current cargo, then moving and picking up the next cargo
+   * @param cargoPos2 the position of the second wanted cargo (inches)
+   * @param midPos2 the position right in front of second wanted cargo (inches)
+   * @return a set of actions with the robot shooting its current 2 cargo, then moving and picking up the next 2 cargo
    */
   public static Command doubleShootAndMoveToCargoCommand(Pose2d cargoPos1, Pose2d midPos1, Pose2d shootPos, Pose2d cargoPos2,
       Pose2d midPos2, TestTrajectories testTrajectories, Drivetrain drivetrain, ShooterSubsystem shooter,
@@ -301,14 +307,22 @@ public class SwerveTrajectoryFollowCommandFactory {
     // assuming the angle is set rather than added: angle = arctangent ((robotX - hubX) / (robotY - hubY))
     // hub/center coordinates: (324, 162)
     // The robot will most likely start at a 0 degree angle
-    Rotation2d shootAngle = new Rotation2d( Math.atan((shootPos.getX() - HubCentricConstants.HUB_CENTER.x))
-                                                    / (shootPos.getY() - HubCentricConstants.HUB_CENTER.y));
-    
-    Trajectory startToShoot = testTrajectories.driveToPose(new Pose2d(shootPos.getX(), shootPos.getY(), shootAngle), drivetrain.getPose());
 
-    // positioned to be about to load the cargo (this means facing the cargo as well) 
-    cargoPos1 = new Pose2d(Units.inchesToMeters(cargoPos1.getX()), Units.inchesToMeters(cargoPos1.getY()), new Rotation2d(0));
-    cargoPos2 = new Pose2d(Units.inchesToMeters(cargoPos2.getX()), Units.inchesToMeters(cargoPos2.getY()), new Rotation2d(0));
+    // give shootAngle its rotation, then change units
+    Rotation2d shootAngle = new Rotation2d( Math.atan((shootPos.getX() - HubCentricConstants.HUB_CENTER.x))
+        / (shootPos.getY() - HubCentricConstants.HUB_CENTER.y));
+    shootPos = inchesToMeters(shootPos);
+    shootPos = setRotation(shootPos, shootAngle);
+    
+    // change units of mid poses
+    midPos1 = inchesToMeters(midPos1);
+    midPos2 = inchesToMeters(midPos2);
+
+    // change units of cargo poses
+    cargoPos1 = inchesToMeters(cargoPos1);
+    cargoPos2 = inchesToMeters(cargoPos2);
+
+    Trajectory startToShoot = testTrajectories.driveToPose(drivetrain.getPose(), shootPos);
 
     return new SequentialCommandGroup(
       // 1. set up flywheel, then move to the shooting location
@@ -344,5 +358,16 @@ public class SwerveTrajectoryFollowCommandFactory {
         new InstantCommand(() -> intake.stop())
       )
     );
+  }
+
+
+  // private method that will convert a pose2d in inches to meters
+  private static Pose2d inchesToMeters(Pose2d pose) {
+    return new Pose2d(Units.inchesToMeters(pose.getX()), Units.inchesToMeters(pose.getY()), pose.getRotation());
+  }
+
+  // private method that will change the rotation of a Pose2d
+  private static Pose2d setRotation(Pose2d pose, Rotation2d rotation) {
+    return new Pose2d(pose.getX(), pose.getY(), rotation);
   }
 }
