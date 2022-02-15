@@ -44,9 +44,6 @@ public class ArmSubsystem extends SubsystemBase {
   double m_maxEncoderValue = 2000;
   double m_minEncoderValue = -2000;
 
-  boolean m_isHolding; //used to determine if we have to update arm angle to be constant
-  double m_holdingAngle;
-
   public ArmSubsystem() {
     m_armLeadMotor.setIdleMode(IdleMode.kBrake);
     m_armFollowMotor.setIdleMode(IdleMode.kBrake);
@@ -106,19 +103,6 @@ public class ArmSubsystem extends SubsystemBase {
     return (Math.abs(getAngleDegrees() - m_targetAngle) < 1.0);
   }
 
-  public void holdAngle(double angle){
-    m_targetAngle = angle;
-    m_isHolding = true;
-    m_holdingAngle = angle;
-    //We need to be able to hold a angle for stage 2 of auto climbing. 
-    //Setting the angle once and leaving it will lead to the arm slipping I think 
-    // TODO: just set the setpoint
-  }
-
-  public void stopHoldingAngle(){
-    m_isHolding = false;
-  }
-
   public void setArmPercentOutput(double percentage){
     m_armLeadMotor.set(percentage);
   }
@@ -155,9 +139,5 @@ public class ArmSubsystem extends SubsystemBase {
     // SmartDashboard.putBoolean("Arm limit", );
     SmartDashboard.putNumber("Arm %output", m_armLeadMotor.getAppliedOutput());
     SmartDashboard.putNumber("Arm Current", m_armLeadMotor.getOutputCurrent());
-
-    if(!isAtAngle() && m_isHolding){ //checks for if arm no longer is at intended angle and fixes it
-      setArmAngle(m_holdingAngle);
-    }
   }
 }
