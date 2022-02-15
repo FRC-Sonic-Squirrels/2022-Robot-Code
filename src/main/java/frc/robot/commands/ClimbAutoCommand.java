@@ -165,8 +165,8 @@ public class ClimbAutoCommand extends CommandBase {
     return new SequentialCommandGroup(
       getButtonConfirmationCommand(),
 
-      new InstantCommand(() -> m_arm.setArmToSpecificAngle(Stage_1.ARM_TARGET_ANGLE), m_arm),
-      new WaitUntilCommand(() -> m_arm.isAtAngle(Stage_1.ARM_TARGET_ANGLE)),
+      new InstantCommand(() -> m_arm.setArmAngle(Stage_1.ARM_TARGET_ANGLE), m_arm),
+      new WaitUntilCommand(() -> m_arm.isAtAngle()),
 
       getButtonConfirmationCommand(),              
       
@@ -175,8 +175,8 @@ public class ClimbAutoCommand extends CommandBase {
 
       getButtonConfirmationCommand(),
 
-      new InstantCommand(() -> m_arm.setArmToSpecificAngle(0), m_arm),
-      new WaitUntilCommand(() -> m_arm.isAtAngle(0)),
+      new InstantCommand(() -> m_arm.setArmAngle(0), m_arm),
+      new WaitUntilCommand(() -> m_arm.isAtAngle()),
 
       getButtonConfirmationCommand(),
 
@@ -195,7 +195,7 @@ public class ClimbAutoCommand extends CommandBase {
       getButtonConfirmationCommand(),
       
       new InstantCommand(() -> m_arm.holdAngle(Stage_2.ARM_STARTING_ANGLE), m_arm),
-      new WaitUntilCommand(() -> m_arm.isAtAngle(Stage_2.ARM_STARTING_ANGLE)),
+      new WaitUntilCommand(() -> m_arm.isAtAngle()),
 
       getButtonConfirmationCommand(),
 
@@ -224,8 +224,8 @@ public class ClimbAutoCommand extends CommandBase {
 
       getButtonConfirmationCommand(),
 
-      new InstantCommand(() -> m_arm.setArmToSpecificAngle(Stage_2.ARM_BRING_AROUND_ANGLE), m_arm),
-      new WaitUntilCommand(() -> m_arm.isAtAngle(Stage_2.ARM_BRING_AROUND_ANGLE)),
+      new InstantCommand(() -> m_arm.setArmAngle(Stage_2.ARM_BRING_AROUND_ANGLE), m_arm),
+      new WaitUntilCommand(() -> m_arm.isAtAngle()),
 
       getButtonConfirmationCommand(),
 
@@ -234,8 +234,8 @@ public class ClimbAutoCommand extends CommandBase {
 
       getButtonConfirmationCommand(),
 
-      new InstantCommand(() -> m_arm.setArmToSpecificAngle(0), m_arm),
-      new WaitUntilCommand(() -> m_arm.isAtAngle(0)),
+      new InstantCommand(() -> m_arm.setArmAngle(0), m_arm),
+      new WaitUntilCommand(() -> m_arm.isAtAngle()),
 
       getButtonConfirmationCommand(),
 
