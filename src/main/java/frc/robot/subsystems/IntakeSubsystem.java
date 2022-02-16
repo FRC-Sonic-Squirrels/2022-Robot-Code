@@ -21,7 +21,6 @@ import static frc.robot.Constants.canId;
 import frc.robot.RobotContainer;
 
 
-
 public class IntakeSubsystem extends SubsystemBase {
 
   enum Mode {
@@ -45,6 +44,8 @@ public class IntakeSubsystem extends SubsystemBase {
   private static int kPIDLoopIdx = 0;
   private static int kTimeoutMs = 30;
   private Mode mode = Mode.STOP;
+  private double m_forwardRpmValue = 0;
+  private double m_reverseRpmValue = 0;
 
   public IntakeSubsystem(Drivetrain drivetrain) {
     
@@ -83,20 +84,26 @@ public class IntakeSubsystem extends SubsystemBase {
     //     setIntakeMotorRPM(intakeRPM);
     //   }
     //}
+    testingRpmValues();
     if(mode == Mode.STOP){
       setIntakeMotorRPM(minIntakeRPM);
     } else if(mode == Mode.FORWARD){
-      setIntakeMotorRPM(5000); //TODO: set RPM to actual value needed
+      setIntakeMotorRPM(m_forwardRpmValue); //TODO: set RPM to actual value needed
     } else if(mode == Mode.DYNAMIC){
       setIntakeToSpeed();
     } else if(mode == Mode.REVERSE){
-      setIntakeMotorRPM(-5000); //TODO: what does the spped have to be for reverse?
+      setIntakeMotorRPM(-m_reverseRpmValue); //TODO: what does the spped have to be for reverse?
     }
 
     SmartDashboard.putNumber("Intake Motor RPM", - m_encoder.getIntegratedSensorVelocity() * 600 / 2048);
     //SmartDashboard.putNumber("Robot Speed m per s", (m_drive.getLeftVelocity() + m_drive.getRightVelocity()) / 2.0);
   }
   
+  public void testingRpmValues(){
+    m_forwardRpmValue = SmartDashboard.getNumber("forward intake subsystem motor speed", 0);
+    m_reverseRpmValue = SmartDashboard.getNumber("reverse intake subsystem motor speed", 0);
+  }
+
   /**
    * Sets Intake Percent output to designated Percent
    */
