@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
@@ -384,6 +385,50 @@ public class SwerveTrajectoryFollowCommandFactory {
         new InstantCommand(() -> intake.stop())
       )
     );
+  }
+
+
+  /**
+   * the robot will maneuver to the left around another robot in teleop mode through a button press
+   * @param drivetrain
+   * @return
+   */
+  public Command dodgeLeftCommand(Drivetrain drivetrain, TestTrajectories testTrajectories) {
+
+    //TODO: get better coordinate values
+    Pose2d startPos = new Pose2d();
+    Pose2d poseTwo = new Pose2d(0, -3, new Rotation2d());
+    Pose2d poseThree = new Pose2d(3, -3, new Rotation2d(Math.PI - 0.1));
+    Pose2d poseFour = new Pose2d(3, 3, new Rotation2d(Math.PI - 0.1));
+    Pose2d endPos = new Pose2d(0, 4, new Rotation2d());
+
+    Transform2d posCorrection = new Transform2d(drivetrain.getPose().getTranslation(), drivetrain.getPose().getRotation());
+
+    Trajectory start_to_two = testTrajectories.driveToPose(startPos, poseTwo);
+    start_to_two.transformBy(posCorrection);
+
+    Trajectory two_to_three = testTrajectories.driveToPose(poseTwo, poseThree);
+    two_to_three.transformBy(posCorrection);
+
+    Trajectory three_to_four = testTrajectories.driveToPose(poseThree, poseFour);
+    three_to_four.transformBy(posCorrection);
+
+    Trajectory four_to_end = testTrajectories.driveToPose(poseFour, endPos);
+    four_to_end.transformBy(posCorrection);
+
+    return new SequentialCommandGroup(
+      //move back
+      SwerveControllerCommand(start_to_two, drivetrain, true);
+
+      //strafe to side
+      SwerveControllerCommand(two_to_three, drivetrain, true);
+
+      //go forward
+      SwerveControllerCommand(three_to_four, drivetrain, true);
+
+      //strafe back
+      SwerveControllerCommand(four_to_end, drivetrain, true);
+    )
   }
 
 
