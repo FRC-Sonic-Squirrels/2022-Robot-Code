@@ -84,7 +84,7 @@ public class IntakeSubsystem extends SubsystemBase {
     //   }
     //}
     if(mode == Mode.STOP){
-      setIntakeMotorRPM(minIntakeRPM);
+      setIntakeMotorRPM(0);
     } else if(mode == Mode.FORWARD){
       setIntakeMotorRPM(5000); //TODO: set RPM to actual value needed
     } else if(mode == Mode.DYNAMIC){
