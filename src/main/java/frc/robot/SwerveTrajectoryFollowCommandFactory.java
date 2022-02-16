@@ -394,13 +394,23 @@ public class SwerveTrajectoryFollowCommandFactory {
    * @param drivetrain
    * @return
    */
-  public Command dodgeLeftCommand(Drivetrain drivetrain, TestTrajectories testTrajectories, BooleanSupplier isInterrupted) {
+
+
+  //this code is unused vvv
+  public Command dodgeCommand(Drivetrain drivetrain, TestTrajectories testTrajectories, BooleanSupplier isInterrupted, boolean isRight) {
 
     //TODO: get better coordinate values
+    int Multiplier;
+    if(isRight=true){
+      Multiplier = 1;
+    } else {
+      Multiplier = -1;
+    }
+    
     Pose2d startPos = new Pose2d();
     Pose2d poseTwo = new Pose2d(0, -3, new Rotation2d());
-    Pose2d poseThree = new Pose2d(3, -3, new Rotation2d(Math.PI - 0.1));
-    Pose2d poseFour = new Pose2d(3, 3, new Rotation2d(Math.PI - 0.1));
+    Pose2d poseThree = new Pose2d(3 * Multiplier, -3, new Rotation2d(Math.PI - 0.1 * Multiplier));
+    Pose2d poseFour = new Pose2d(3 * Multiplier, 3, new Rotation2d(Math.PI - 0.1 * Multiplier));
     Pose2d endPos = new Pose2d(0, 4, new Rotation2d());
 
     Transform2d posCorrection = new Transform2d(drivetrain.getPose().getTranslation(), drivetrain.getPose().getRotation());
