@@ -43,6 +43,9 @@ public class ArmSubsystem extends SubsystemBase {
   private double maxAngleDegree = 45;
   private double minAngleDegree = -45;
 
+  private double m_armStepValue_testing = 0;
+
+
   public ArmSubsystem() {
     m_armLeadMotor.setIdleMode(IdleMode.kBrake);
     m_armFollowMotor.setIdleMode(IdleMode.kBrake);
@@ -130,8 +133,19 @@ public class ArmSubsystem extends SubsystemBase {
     m_armFollowMotor.setIdleMode(IdleMode.kBrake);
   }
 
+  public void armStepBy(){
+    m_armPID.setReference(m_throughBoreEncoder.getPosition() + m_armStepValue_testing, ControlType.kPosition);
+  }
+
+  public void updateTestingValues(){
+    m_armStepValue_testing = SmartDashboard.getNumber("Arm Step Value", 0);
+  }
+
   @Override
   public void periodic() {
+    updateTestingValues();
+    
+
     //this maybe makes the arm stop?? 
     if(limitSwitchFront.get() || limitSwitchBack.get()) {
       // TODO: getPosition will return an angle, need to convert back to ticks first

@@ -180,6 +180,8 @@ public class RobotContainer {
     new Button(m_operatorController::getRightBumper)
       .whileHeld(new ArmManualControlCommand(() -> m_operatorController.getRightY(), m_arm), true);
 
+    new Button(m_operatorController::getBackButton)
+      .whenPressed(new InstantCommand(() -> m_arm.armStepBy(), m_arm));
   }
   
   private static double deadband(double value, double deadband) {
