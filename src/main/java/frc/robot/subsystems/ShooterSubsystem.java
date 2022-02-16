@@ -14,6 +14,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ShooterSubsystem extends SubsystemBase {
+  
+  enum ShooterMode {
+    STATIC,
+    DYNAMIC
+  };
 
   private double targetRPM;
   private WPI_TalonFX m_flywheel = new WPI_TalonFX(Constants.canId.CANID7_FLYWHEEL);
@@ -27,6 +32,8 @@ public class ShooterSubsystem extends SubsystemBase {
   private double m_error = 0;
   private double m_max_RPM_error = 15;
   private final double RPMtoTicks = 2048 / 600;
+  private ShooterMode shooterMode = ShooterMode.DYNAMIC;
+  private double m_testingStaticRPM = 0;
 
   private double m_configP = 0;
   private double m_configI = 0;
@@ -42,13 +49,18 @@ public class ShooterSubsystem extends SubsystemBase {
   public ShooterSubsystem() {
     adjustPID();
   }
+  public void updateTestingRPM(){
+    m_testingStaticRPM = SmartDashboard.getNumber("static flywheel speed", 0);
+  }
 
   @Override
   public void periodic() {
     //this is for testing and tuning the pid
     setPIDFromSmartDashboard();
+    updateTestingRPM();
 
-    // This method will be called once per scheduler run
+    double setPoint = 0;
+    if(shooterMode == ShooterMode.DYNAMIC){
     m_currentRPM = m_encoder.getIntegratedSensorVelocity() / RPMtoTicks;
     m_error = m_currentRPM - m_desiredRPM;
 
@@ -61,13 +73,17 @@ public class ShooterSubsystem extends SubsystemBase {
       m_atSpeed = false;  
     }
 
-    double setPoint = m_rateLimiter.calculate(m_desiredRPM);
+    setPoint = m_rateLimiter.calculate(m_desiredRPM);
     if (m_desiredRPM < setPoint) {
       // we don't rate reduce slowing the robot
       setPoint = m_desiredRPM;
     }
+  } else if(shooterMode == ShooterMode.STATIC){
+     setPoint = m_testingStaticRPM;
+  }
 
     m_flywheel.set(ControlMode.Velocity, setPoint * RPMtoTicks);
+
 
     SmartDashboard.putNumber("RPM", m_currentRPM);
     SmartDashboard.putNumber("RPM set point", setPoint);
