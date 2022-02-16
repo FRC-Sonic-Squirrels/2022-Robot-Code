@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.Vector2d;
@@ -463,8 +464,5 @@ public class SwerveTrajectoryFollowCommandFactory {
     return new Rotation2d( Math.acos(dotProduct/magnitude) );
   }
 
-  //TODO: make a method that finds the wheel rotation
-  private static Rotation2d getWheelRotation() {
-    return null;
-  }
+  
 }
