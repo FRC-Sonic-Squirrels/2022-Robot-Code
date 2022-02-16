@@ -408,8 +408,27 @@ public class SwerveTrajectoryFollowCommandFactory {
     start_to_two.transformBy(posCorrection);
 
     Trajectory two_to_three = testTrajectories.driveToPose(poseTwo, poseThree);
+    two_to_three.transformBy(posCorrection);
 
-    return null;
+    Trajectory three_to_four = testTrajectories.driveToPose(poseThree, poseFour);
+    three_to_four.transformBy(posCorrection);
+
+    Trajectory four_to_end = testTrajectories.driveToPose(poseFour, endPos);
+    four_to_end.transformBy(posCorrection);
+
+    return new SequentialCommandGroup(
+      //move back
+      SwerveControllerCommand(start_to_two, drivetrain, true);
+
+      //strafe to side
+      SwerveControllerCommand(two_to_three, drivetrain, true);
+
+      //go forward
+      SwerveControllerCommand(three_to_four, drivetrain, true);
+
+      //strafe back
+      SwerveControllerCommand(four_to_end, drivetrain, true);
+    )
   }
 
 
