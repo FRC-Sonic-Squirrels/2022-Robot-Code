@@ -157,22 +157,33 @@ public final class Constants {
       new Pose2d(HubCentricConstants.HUB_CENTER.x - 1,HubCentricConstants.HUB_CENTER.y , new Rotation2d(0));
 
   public static class FieldConstants{
-    public int test;
-    public Translation2d Blue1 = new Translation2d( Units.inchesToMeters(42), Units.inchesToMeters(44.4));
-    public Translation2d Blue2 = new Translation2d( Units.inchesToMeters(198), Units.inchesToMeters(72));
-    public Translation2d Blue3 = new Translation2d( Units.inchesToMeters(297.6), Units.inchesToMeters(7.2));
-    public Translation2d Blue4 = new Translation2d( Units.inchesToMeters(412.8), Units.inchesToMeters(36));
-    public Translation2d Blue5 = new Translation2d( Units.inchesToMeters(472.8), Units.inchesToMeters(198));
-    public Translation2d Blue6 = new Translation2d( Units.inchesToMeters(290.4), Units.inchesToMeters(312));
-    public Translation2d Blue7 = new Translation2d( Units.inchesToMeters(196.8), Units.inchesToMeters(246));
-    public Translation2d Red1 = new Translation2d( Units.inchesToMeters(605), Units.inchesToMeters(280));
-    public Translation2d Red2 = new Translation2d( Units.inchesToMeters(257), Units.inchesToMeters(441));
-    public Translation2d Red3 = new Translation2d( Units.inchesToMeters(350), Units.inchesToMeters(314));
-    public Translation2d Red4 = new Translation2d( Units.inchesToMeters(235), Units.inchesToMeters(275));
-    public Translation2d Red5 = new Translation2d( Units.inchesToMeters(174), Units.inchesToMeters(127));
-    public Translation2d Red6 = new Translation2d( Units.inchesToMeters(357), Units.inchesToMeters(12));
-    public Translation2d Red7 = new Translation2d( Units.inchesToMeters(460), Units.inchesToMeters(246));
-    public Translation2d HubCenter = new Translation2d( Units.inchesToMeters(324), Units.inchesToMeters(162));
+    public Translation2d ALLIANCE_1 = new Translation2d( Units.inchesToMeters(42), Units.inchesToMeters(44.4));
+    public Translation2d ALLIANCE_CARGO_2 = new Translation2d( Units.inchesToMeters(198), Units.inchesToMeters(72));
+    public Translation2d ALLIANCE_CARGO_3 = new Translation2d( Units.inchesToMeters(297.6), Units.inchesToMeters(7.2));
+    public Translation2d ALLIANCE_CARGO_4 = new Translation2d( Units.inchesToMeters(412.8), Units.inchesToMeters(36));
+    public Translation2d ALLIANCE_CARGO_5 = new Translation2d( Units.inchesToMeters(472.8), Units.inchesToMeters(198));
+    public Translation2d ALLIANCE_CARGO_6 = new Translation2d( Units.inchesToMeters(290.4), Units.inchesToMeters(312));
+    public Translation2d ALLIANCE_CARGO_7 = new Translation2d( Units.inchesToMeters(196.8), Units.inchesToMeters(246));
+    public Translation2d OPPOSING_ALLIANCE_CARGO_1 = new Translation2d( Units.inchesToMeters(605), Units.inchesToMeters(280));
+    public Translation2d OPPOSING_ALLIANCE_CARGO_2 = new Translation2d( Units.inchesToMeters(257), Units.inchesToMeters(441));
+    public Translation2d OPPOSING_ALLIANCE_CARGO_3 = new Translation2d( Units.inchesToMeters(350), Units.inchesToMeters(314));
+    public Translation2d OPPOSING_ALLIANCE_CARGO_4 = new Translation2d( Units.inchesToMeters(235), Units.inchesToMeters(275));
+    public Translation2d OPPOSING_ALLIANCE_CARGO_5 = new Translation2d( Units.inchesToMeters(174), Units.inchesToMeters(127));
+    public Translation2d OPPOSING_ALLIANCE_CARGO_6 = new Translation2d( Units.inchesToMeters(357), Units.inchesToMeters(12));
+    public Translation2d OPPOSING_ALLIANCE_CARGO_7 = new Translation2d( Units.inchesToMeters(460), Units.inchesToMeters(246));
+    public Translation2d HUB_CENTER = new Translation2d( Units.inchesToMeters(324), Units.inchesToMeters(162));
+    public Translation2d ALLIANCE_LOW = new Translation2d( Units.inchesToMeters(130), Units.inchesToMeters(264));
+    public Translation2d ALLIANCE_MID = new Translation2d( Units.inchesToMeters(85), Units.inchesToMeters(264));
+    public Translation2d ALLIANCE_HIGH = new Translation2d( Units.inchesToMeters(62), Units.inchesToMeters(264));
+    public Translation2d ALLIANCE_TRANSVERSAL = new Translation2d( Units.inchesToMeters(38), Units.inchesToMeters(264));
+    public Translation2d ALLIANCE_PAD_1 = new Translation2d( Units.inchesToMeters(130), Units.inchesToMeters(216));
+    public Translation2d ALLIANCE_PAD_2 = new Translation2d( Units.inchesToMeters(130), Units.inchesToMeters(312));
+    public Translation2d OPPOSING_ALLIANCE_LOW = new Translation2d( Units.inchesToMeters(518), Units.inchesToMeters(60));
+    public Translation2d OPPOSING_ALLIANCE_MID = new Translation2d( Units.inchesToMeters(562), Units.inchesToMeters(60));
+    public Translation2d OPPOSING_ALLIANCE_HIGH = new Translation2d( Units.inchesToMeters(586), Units.inchesToMeters(60));
+    public Translation2d OPPOSING_ALLIANCE_TRANSVERSAL = new Translation2d( Units.inchesToMeters(607), Units.inchesToMeters(60));
+    public Translation2d OPPOSING_ALLIANCE_PAD_1 = new Translation2d( Units.inchesToMeters(518), Units.inchesToMeters(108));
+    public Translation2d OPPOSING_ALLIANCE_PAD_2 = new Translation2d( Units.inchesToMeters(518), Units.inchesToMeters(12));
   } 
 
   public static class ArmConstants{
