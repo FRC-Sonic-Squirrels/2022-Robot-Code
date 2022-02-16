@@ -93,6 +93,9 @@ public class CargoSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+  
+    updateTestingValues();
+
 
     if (mode == Mode.STOP) {
       stopIndexer();
@@ -135,8 +138,12 @@ public class CargoSubsystem extends SubsystemBase {
       stopIndexer();
     }
 
+
   }
 
+  public void updateTestingValues(){
+    m_percentOutput = SmartDashboard.getNumber("cargo subsystem motor speed", 0.1);
+  }
   public void setLowerBeltPercentOutput(double percent) {
     LowerBelts.set(ControlMode.PercentOutput, percent);
   }
