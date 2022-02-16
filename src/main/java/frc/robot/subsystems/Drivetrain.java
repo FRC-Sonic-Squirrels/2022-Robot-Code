@@ -10,6 +10,7 @@ import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -93,7 +94,7 @@ public class Drivetrain extends SubsystemBase {
       new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0));
 
   private final SwerveDriveOdometry m_odometry;
-
+  
   private final Field2d m_field = new Field2d();
 
   private PigeonIMU m_pigeon = null;
@@ -114,6 +115,13 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain() {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
+    //TODO: Explore this, this looks like a good solution for validating the position through the limelight also could just be a better odometry system 
+    // private final SwerveDrivePoseEstimator m_poseEstimator; 
+    // m_poseEstimator = new SwerveDrivePoseEstimator(gyroAngle, initialPoseMeters, kinematics, stateStdDevs, localMeasurementStdDevs, visionMeasurementStdDevs);
+    // m_poseEstimator = new SwerveDrivePoseEstimator(gyroAngle, initialPoseMeters, kinematics, stateStdDevs, localMeasurementStdDevs, visionMeasurementStdDevs, nominalDtSeconds);
+
+    // m_poseEstimator.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds);
+    
     m_pigeon = new PigeonIMU(DRIVETRAIN_PIGEON_ID);
   
     // There are 4 methods you can call to create your swerve modules.
