@@ -208,8 +208,9 @@ public class RobotContainer {
     return value;
   }
 
+  // method that checks if either joystick is active (used to interrupt the dodge commands)
   public BooleanSupplier joystickMoving() {
-    return () -> m_controller.getLeftStickButton();
+    return () -> (m_controller.getLeftStickButton() || m_controller.getRightStickButton());
   }
 }
 
