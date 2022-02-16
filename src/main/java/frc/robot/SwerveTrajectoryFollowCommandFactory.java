@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -393,7 +394,7 @@ public class SwerveTrajectoryFollowCommandFactory {
    * @param drivetrain
    * @return
    */
-  public Command dodgeLeftCommand(Drivetrain drivetrain, TestTrajectories testTrajectories) {
+  public Command dodgeLeftCommand(Drivetrain drivetrain, TestTrajectories testTrajectories, BooleanSupplier isInterrupted) {
 
     //TODO: get better coordinate values
     Pose2d startPos = new Pose2d();
@@ -418,17 +419,17 @@ public class SwerveTrajectoryFollowCommandFactory {
 
     return new SequentialCommandGroup(
       //move back
-      SwerveControllerCommand(start_to_two, drivetrain, true);
+      SwerveControllerCommand(start_to_two, drivetrain, false),
 
       //strafe to side
-      SwerveControllerCommand(two_to_three, drivetrain, true);
+      SwerveControllerCommand(two_to_three, drivetrain, false),
 
       //go forward
-      SwerveControllerCommand(three_to_four, drivetrain, true);
+      SwerveControllerCommand(three_to_four, drivetrain, false),
 
       //strafe back
-      SwerveControllerCommand(four_to_end, drivetrain, true);
-    )
+      SwerveControllerCommand(four_to_end, drivetrain, true)
+    ).withInterrupt(isInterrupted);
   }
 
 
@@ -450,5 +451,10 @@ public class SwerveTrajectoryFollowCommandFactory {
     double magnitude = vector1.magnitude() * vector2.magnitude();
 
     return new Rotation2d( Math.acos(dotProduct/magnitude) );
+  }
+
+  //TODO: make a method that finds the wheel rotation
+  private static Rotation2d getWheelRotation() {
+    return null;
   }
 }
