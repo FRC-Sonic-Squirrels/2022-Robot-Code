@@ -4,9 +4,6 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAlternateEncoder;
@@ -14,10 +11,7 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxPIDController.AccelStrategy;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.canId;
@@ -36,7 +30,8 @@ public class ArmSubsystem extends SubsystemBase {
   private double m_targetAngle = 0.0;
   private double ticksWhenStraightUp = 0;
   private double rpm2degreesPerSecond = 60.0/360.0;
-  private double encoderTicks2degrees = 360.0/kCPR;
+  private double degrees2ticks = kCPR/360.0;
+  private double toleranceDegrees = 1.0;
 
   private SparkMaxPIDController m_armPID;
   
@@ -45,8 +40,8 @@ public class ArmSubsystem extends SubsystemBase {
   private DigitalInput limitSwitchBack = new DigitalInput(2);
 
   //TODO: find true values 
-  private double m_maxEncoderValue = 2000;
-  private double m_minEncoderValue = -2000;
+  private double maxAngleDegree = 45;
+  private double minAngleDegree = -45;
 
   public ArmSubsystem() {
     m_armLeadMotor.setIdleMode(IdleMode.kBrake);
@@ -56,26 +51,24 @@ public class ArmSubsystem extends SubsystemBase {
 
     m_throughBoreEncoder = m_armLeadMotor.getAlternateEncoder(kAltEncType, kCPR);
     
-    // TODO: do we need to set SetFeedbackDeviceRange() on encoder?
-
     m_armPID = m_armLeadMotor.getPIDController();
     m_armPID.setFeedbackDevice(m_throughBoreEncoder);
     m_armPID.setOutputRange(-1, 1);
-    //TODO: figure out how we use trapezoidal stuff 
-    m_armPID.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
-    m_armPID.setSmartMotionMaxAccel(0.5, 0);
-    //TODO: velocity 45degress per second ish 
-    m_armPID.setSmartMotionMaxVelocity(0.75, 0);
-    //TODO: 1 degree error 22.75 ticks every degress 
-    m_armPID.setSmartMotionAllowedClosedLoopError(0.05, 0);
+    m_armPID.setSmartMotionAccelStrategy(SparkMaxPIDController.AccelStrategy.kTrapezoidal, 0);
+    // Acceleration is in RPM/s. 45 degrees per second per second.
+    m_armPID.setSmartMotionMaxAccel(60*(45.0/360.0), 0);
+    // velocity is in RPM. 7.5 RPM is 45 degrees per second
+    m_armPID.setSmartMotionMaxVelocity(60*(45.0/360.0), 0);
+    // Error is in rotations
+    m_armPID.setSmartMotionAllowedClosedLoopError(1/360.0, 0);
     //good for preventing small changes but this can also be done with the joystick itself 
     //m_armPID.setSmartMotionMinOutputVelocity(0.05, 0);
     
+    // TODO: maybe leave this alone and use raw encoder ticks
+    m_throughBoreEncoder.setPositionConversionFactor(360.0/kCPR);
 
-    // TODO: not sure how setting the conversion interacts with PID control
-    m_throughBoreEncoder.setPositionConversionFactor(360.0/8192.0);
-
-    // TODO: need to figure out how to zero the arm position
+    // TODO: need to figure out how to zero the arm position.
+    // maybe the arm will start on a hard stop, part way back with a limit switch
     ticksWhenStraightUp = m_throughBoreEncoder.getPosition();
   }
 
@@ -83,30 +76,36 @@ public class ArmSubsystem extends SubsystemBase {
     return m_throughBoreEncoder.getPosition();
   }
 
-  //This would be encoder rotation values I think 
-  public void setArmToSpecificRotation(double encoderValue){
-    //makes sure it doesn't go over or under? Maybe use similar logic in periodic to stop or does the limit switch handle that? 
-    if(encoderValue > m_maxEncoderValue) {encoderValue = m_maxEncoderValue;}
-    else if(encoderValue < m_minEncoderValue) {encoderValue = m_minEncoderValue;}
-
+  /**
+   * setArmAngle - sets the arm to a specific angle in degrees
+   * 
+   * @param target angle in degrees
+   */
+  public void setArmAngle(double angleDegrees) {
+    if(angleDegrees > maxAngleDegree) {
+      angleDegrees = maxAngleDegree;
+    }
+    else if (angleDegrees < minAngleDegree) {
+      angleDegrees = minAngleDegree;
+    }
+    m_targetAngle = angleDegrees;
+    double encoderValue = ticksWhenStraightUp + angleToEncoderTicks(angleDegrees);
     m_armPID.setReference(encoderValue, ControlType.kPosition);
   }
 
-  public void setArmAngle(double angle) {
-    m_targetAngle = angle;
-    double encoderValue = angleToEncoder(angle);
-    m_armPID.setReference(encoderValue, ControlType.kPosition);
+  /**
+   * convert from angle to encoder value function
+   */ 
+  public double angleToEncoderTicks(double angleDegrees) {
+    return angleDegrees * degrees2ticks;
   }
 
-  //convert from angle to encoder value function
-
-  public double angleToEncoder(double angle){
-    return angle/encoderTicks2degrees;
+  public void setTolerance(double toleranceDegrees) {
+    this.toleranceDegrees = toleranceDegrees;
   }
 
-  //TODO: configure tolerance
   public boolean isAtAngle(){
-    return (Math.abs(getAngleDegrees() - m_targetAngle) < 1.0);
+    return (Math.abs(getAngleDegrees() - m_targetAngle) <= toleranceDegrees);
   }
 
   public void setArmPercentOutput(double percentage){
@@ -134,8 +133,9 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     //this maybe makes the arm stop?? 
-    if(limitSwitchFront.get() || limitSwitchBack.get()){
-      m_armPID.setReference(m_throughBoreEncoder.getPosition(), ControlType.kPosition);
+    if(limitSwitchFront.get() || limitSwitchBack.get()) {
+      // TODO: getPosition will return an angle, need to convert back to ticks first
+      // m_armPID.setReference(m_throughBoreEncoder.getPosition(), ControlType.kPosition);
     }
 
     SmartDashboard.putNumber("Arm Angle deg", getAngleDegrees());
