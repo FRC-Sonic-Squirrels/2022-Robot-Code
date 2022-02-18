@@ -145,18 +145,52 @@ public final class Constants {
   public static class ElevatorConstants{
     public static final double elevatorSpeedMultiplier = 0.2;
   }
-  // according to game manual field is 27 ft. (~823 cm) by 54 ft. (~1646 cm)
-  public static class HubCentricConstants{
-    public static final Vector2d HUB_CENTER = new Vector2d(8.23, 4.11);
-    public static final double FORWARD_MULTIPLIER = 0.5;
-    public static final double SIDEWAYS_MULTIPLIER = 0.3;
-
+  
+  public static class ArmConstants{
+    public static final double m_maxEncoderValue = 2000;
+    public static final double m_minEncoderValue = -2000;
   }
 
-  public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
-      new Pose2d(HubCentricConstants.HUB_CENTER.x - 1,HubCentricConstants.HUB_CENTER.y , new Rotation2d(0));
+  public static class ShooterConstants {
+    //TODO: find the actual activated and idle values
+    public static final double m_activated = 2000;
+    public static final double m_idle = 500;
+  }
+// according to game manual field is 27 ft. (~823 cm) by 54 ft. (~1646 cm)
+public static class HubCentricConstants{
+  public static final Vector2d HUB_CENTER = new Vector2d(8.23, 4.11);
+  public static final double FORWARD_MULTIPLIER = 0.5;
+  public static final double SIDEWAYS_MULTIPLIER = 0.3;
+
+}
+
+public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
+    new Pose2d(HubCentricConstants.HUB_CENTER.x - 1,HubCentricConstants.HUB_CENTER.y , new Rotation2d(0));
+  //TODO: MAKE SURE THESE VALUES ARE CORRECT BEFORE WE TEST AUTONOMUS 
+  public static class AutoClimbConstants{
+    public static class Stage_1{
+      public static final double ELEVATOR_PULL_HEIGHT = 0;
+      public static final double ARM_TARGET_ANGLE = 0;
+      public static final double ELEVATOR_SWITCH_TO_ARM_HEIGHT = 0;
+    }
+    public static class Stage_2{
+      //overshoot to let the elevator extend all the way then hold the correct angle
+      public static final double ARM_STARTING_ANGLE = 0;
+      public static final double ELEVATOR_EXTENSION_HEIGHT = 0;
+      public static final double ARM_HOLD_ANGLE = 0;
+      public static final double ELEVATOR_PULL_HEIGHT = 0;
+
+      public static final double ELEVATOR_BRING_ARM_TO_OTHER_SIDE_HEIGHT = 0;
+      public static final double ARM_BRING_AROUND_ANGLE = 0;
+
+      public static final double ELEVATOR_PULL_TO_SWITCH_TO_ARM_HEIGHT = 0;
+
+      public static final double ELEVATOR_LIFT_TO_SWITCH_TO_ARM_HEIGHT = 0;
+    }
+  }
 
   public static class FieldConstants{
+    //TODO: change this to red and blue allience
     public Translation2d ALLIANCE_1 = new Translation2d( Units.inchesToMeters(42), Units.inchesToMeters(44.4));
     public Translation2d ALLIANCE_CARGO_2 = new Translation2d( Units.inchesToMeters(198), Units.inchesToMeters(72));
     public Translation2d ALLIANCE_CARGO_3 = new Translation2d( Units.inchesToMeters(297.6), Units.inchesToMeters(7.2));
@@ -185,40 +219,4 @@ public final class Constants {
     public Translation2d OPPOSING_ALLIANCE_PAD_1 = new Translation2d( Units.inchesToMeters(518), Units.inchesToMeters(108));
     public Translation2d OPPOSING_ALLIANCE_PAD_2 = new Translation2d( Units.inchesToMeters(518), Units.inchesToMeters(12));
   } 
-
-  public static class ArmConstants{
-    public static final double m_maxEncoderValue = 2000;
-    public static final double m_minEncoderValue = -2000;
-  }
-
-  public static class ShooterConstants {
-    //TODO: find the actual activated and idle values
-    public static final double m_activated = 2000;
-    public static final double m_idle = 500;
-  }
-
-  //TODO: MAKE SURE THESE VALUES ARE CORRECT BEFORE WE TEST AUTONOMUS 
-  public static class AutoClimbConstants{
-    public static class Stage_1{
-      public static final double ELEVATOR_PULL_HEIGHT = 0;
-      public static final double ARM_TARGET_ANGLE = 0;
-      public static final double ELEVATOR_SWITCH_TO_ARM_HEIGHT = 0;
-    }
-    public static class Stage_2{
-      //overshoot to let the elevator extend all the way then hold the correct angle
-      public static final double ARM_STARTING_ANGLE = 0;
-      public static final double ELEVATOR_EXTENSION_HEIGHT = 0;
-      public static final double ARM_HOLD_ANGLE = 0;
-      public static final double ELEVATOR_PULL_HEIGHT = 0;
-
-      public static final double ELEVATOR_BRING_ARM_TO_OTHER_SIDE_HEIGHT = 0;
-      public static final double ARM_BRING_AROUND_ANGLE = 0;
-
-      public static final double ELEVATOR_PULL_TO_SWITCH_TO_ARM_HEIGHT = 0;
-
-      public static final double ELEVATOR_LIFT_TO_SWITCH_TO_ARM_HEIGHT = 0;
-    }
-    
-
-  }
 }
