@@ -6,13 +6,16 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.HubCentricConstants;
 import frc.robot.subsystems.Drivetrain;
@@ -27,7 +30,11 @@ public class DriveHubCentricCommand extends CommandBase {
   
 
   // copied values from Swerve Template Odometry
-  private PIDController rotationalController = new PIDController(3.0, 0.0, 0.02);
+  private ProfiledPIDController rotationalController = new ProfiledPIDController(3.0, 0.0, 0.02,
+      new TrapezoidProfile.Constraints(
+          Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+          Drivetrain.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED * 0.9));
+
 
   private Vector2d m_hubCenter = Constants.HubCentricConstants.HUB_CENTER;
   
@@ -43,8 +50,12 @@ public class DriveHubCentricCommand extends CommandBase {
 
   @Override
   public void initialize() {
+    //TODO: do we need continous input? drive with set rotation doesnt have it
     rotationalController.enableContinuousInput(-Math.PI, Math.PI);
     rotationalController.setTolerance(Math.PI/180); //1 degree of wiggle room
+
+    //TODO: what does this do? drive with set rotation has this 
+    rotationalController.reset(m_drivetrain.getGyroscopeRotation().getRadians());
   }
 
   @Override
@@ -83,6 +94,11 @@ public class DriveHubCentricCommand extends CommandBase {
         // don't try to correct small turns if we aren't moving
         rotationCorrection = 0.0;
     }
+
+    //TODO: try testing without checking for movement 
+    // if (rotationCorrection < 0.03) {
+    //   rotationCorrection = 0.0;
+    // }
 
     m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(strafeX, strafeY, rotationCorrection, currentHeading));
 
