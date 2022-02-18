@@ -42,14 +42,15 @@ public final class Constants {
     public static final int CANID12_FRONT_RIGHT_MODULE_STEER_MOTOR = 12;
     public static final int CANID22_FRONT_RIGHT_MODULE_STEER_ENCODER = 22;
 
-    public static final int CANID4_BACK_LEFT_MODULE_DRIVE_MOTOR = 4;
-    public static final int CANID14_BACK_LEFT_MODULE_STEER_MOTOR = 14;
-    public static final int CANID24_BACK_LEFT_MODULE_STEER_ENCODER = 24;
-
     public static final int CANID3_BACK_RIGHT_MODULE_DRIVE_MOTOR = 3;
     public static final int CANID13_BACK_RIGHT_MODULE_STEER_MOTOR = 13;
     public static final int CANID23_BACK_RIGHT_MODULE_STEER_ENCODER = 23;
 
+    public static final int CANID4_BACK_LEFT_MODULE_DRIVE_MOTOR = 4;
+    public static final int CANID14_BACK_LEFT_MODULE_STEER_MOTOR = 14;
+    public static final int CANID24_BACK_LEFT_MODULE_STEER_ENCODER = 24;
+
+    
     public static final int CANID5_LOWER_BELTS = 5;
     public static final int CANID6_UPPER_BELTS = 6;
     public static final int CANID7_FLYWHEEL = 7;
