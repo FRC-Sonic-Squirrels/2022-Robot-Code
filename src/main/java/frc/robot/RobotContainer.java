@@ -105,10 +105,11 @@ public class RobotContainer {
     //   () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / 4)
     // ));
     
-    drivetrain.setDefaultCommand(new DriveWithSetRotationCommand(drivetrain,
-        () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-        () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-        () -> m_controller.getPOV(), 0.0));
+    drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
+      drivetrain, 
+      () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+      () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
+      () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
     
     m_arm.setDefaultCommand(new InstantCommand());
 
@@ -154,6 +155,12 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 0.5));
 
     new Button(m_controller::getAButton)
+            .whenPressed(new DriveFieldCentricCommand(drivetrain,
+            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
+            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+
+    new Button(m_controller::getLeftBumper)
       .whileHeld(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
 
     new Button(m_controller::getRightBumper)
