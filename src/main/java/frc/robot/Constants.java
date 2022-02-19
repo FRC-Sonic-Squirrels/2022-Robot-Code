@@ -7,6 +7,7 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -160,6 +161,7 @@ public final class Constants {
 // according to game manual field is 27 ft. (~823 cm) by 54 ft. (~1646 cm)
 public static class HubCentricConstants{
   public static final Vector2d HUB_CENTER = new Vector2d(8.23, 4.11);
+  public static final Pose2d HUB_CENTER_POSE2D = new Pose2d(8.23, 4.11, new Rotation2d());
   public static final double FORWARD_MULTIPLIER = 0.5;
   public static final double SIDEWAYS_MULTIPLIER = 0.3;
 
@@ -220,4 +222,14 @@ public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
     public Translation2d OPPOSING_ALLIANCE_PAD_1 = new Translation2d( Units.inchesToMeters(518), Units.inchesToMeters(108));
     public Translation2d OPPOSING_ALLIANCE_PAD_2 = new Translation2d( Units.inchesToMeters(518), Units.inchesToMeters(12));
   } 
+
+  public static class VisionConstants{
+    public static final double cameraHeightInches = 42.0;
+    public static final double targetHeightInches = 104.0;
+    public static final double cameraPitchDegrees = 34.0;
+
+    //TODO: final distance between camera and the center of robot
+    public static final Transform2d cameraToRobot = new Transform2d(new Translation2d(0.5, 0.2), new Rotation2d());
+
+  }
 }
