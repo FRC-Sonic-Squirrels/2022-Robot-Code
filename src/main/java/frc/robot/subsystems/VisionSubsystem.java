@@ -53,7 +53,7 @@ public class VisionSubsystem extends SubsystemBase{
       SmartDashboard.putNumber("yaw", -200);
     }
     SmartDashboard.putBoolean("has targets", m_result.hasTargets());
-    SmartDashboard.putNumber("piplineLatency", latencySeconds);
+    SmartDashboard.putNumber("pipelineLatency", latencySeconds);
   }
 
   public Pose2d getRobotPose() {
