@@ -32,6 +32,7 @@ public class ArmSubsystem extends SubsystemBase {
   private double rpm2degreesPerSecond = 60.0/360.0;
   private double degrees2ticks = kCPR/360.0;
   private double toleranceDegrees = 1.0;
+  private double m_encoderToArmRatio = 0.428571;
 
   private SparkMaxPIDController m_armPID;
   
@@ -72,9 +73,10 @@ public class ArmSubsystem extends SubsystemBase {
 
     // TODO: need to figure out how to zero the arm position.
     // maybe the arm will start on a hard stop, part way back with a limit switch
-    ticksWhenStraightUp = m_throughBoreEncoder.getPosition();
+    //ticksWhenStraightUp = m_throughBoreEncoder.getPosition();
   }
 
+  //TODO: this is the encoder angle, not the arm angle
   public double getAngleDegrees() {
     return m_throughBoreEncoder.getPosition();
   }
@@ -121,6 +123,10 @@ public class ArmSubsystem extends SubsystemBase {
 
   public double getEncoderValue(){
     return m_throughBoreEncoder.getPosition();
+  }
+
+  public double getArmAngle() {
+    return m_throughBoreEncoder.getPosition() * m_encoderToArmRatio;
   }
 
   public void setMotorCoastMode(){
