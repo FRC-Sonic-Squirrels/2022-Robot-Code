@@ -52,23 +52,23 @@ public class VisionSubsystem extends SubsystemBase{
     
   }
 
-  public double getRobotDistance() {
-    PhotonCamera frontCam = new PhotonCamera("cameraname"); //TODO: name camera
+  public Pose2d getRobotPose() {
+    PhotonCamera frontCam = new PhotonCamera("limelight"); //TODO: name camera
     var result = frontCam.getLatestResult();
     PhotonTrackedTarget tape = result.getBestTarget();
     double targetPitch = tape.getPitch();
-     var roboPose = PhotonUtils.estimateFieldToRobot(
-      Units.inchesToMeters(Constants.VisionConstants.cameraHeightInches), 
-      Units.inchesToMeters(Constants.VisionConstants.targetHeightInches), 
-      Units.degreesToRadians(Constants.VisionConstants.cameraPitchDegrees), 
-      targetPitch, 
-      Rotation2d.fromDegrees(-tape.getYaw()), 
-      m_drivetrain.getGyroscopeRotation(),
-      Constants.HubCentricConstants.HUB_CENTER_POSE2D, 
-      Constants.VisionConstants.cameraToRobot);
+    var roboPose = PhotonUtils.estimateFieldToRobot(
+     Units.inchesToMeters(Constants.VisionConstants.cameraHeightInches), 
+     Units.inchesToMeters(Constants.VisionConstants.targetHeightInches), 
+     Units.degreesToRadians(Constants.VisionConstants.cameraPitchDegrees), 
+     targetPitch, 
+     Rotation2d.fromDegrees(-tape.getYaw()), 
+     m_drivetrain.getGyroscopeRotation(),
+     Constants.HubCentricConstants.HUB_CENTER_POSE2D, 
+     Constants.VisionConstants.cameraToRobot
+     );
 
-    //TODO: distance formula return it
-    return 0.0;
-
+    return roboPose;
    }
+  
 }
