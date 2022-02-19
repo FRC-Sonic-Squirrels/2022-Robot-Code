@@ -86,7 +86,7 @@ public class IntakeSubsystem extends SubsystemBase {
     //}
     testingRpmValues();
     if(mode == Mode.STOP){
-      setIntakeMotorRPM(0);
+      m_intake.setVoltage(0);
     } else if(mode == Mode.FORWARD){
       setIntakeMotorRPM(m_forwardRpmValue); //TODO: set RPM to actual value needed
     } else if(mode == Mode.DYNAMIC){
