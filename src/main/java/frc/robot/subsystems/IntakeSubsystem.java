@@ -95,7 +95,7 @@ public class IntakeSubsystem extends SubsystemBase {
       setIntakeMotorRPM(-m_reverseRpmValue); //TODO: what does the spped have to be for reverse?
     }
 
-    SmartDashboard.putNumber("Intake Motor RPM", - m_encoder.getIntegratedSensorVelocity() * 600 / 2048);
+    SmartDashboard.putNumber("RPM", - m_encoder.getIntegratedSensorVelocity() * 600 / 2048);
     //SmartDashboard.putNumber("Robot Speed m per s", (m_drive.getLeftVelocity() + m_drive.getRightVelocity()) / 2.0);
   }
   

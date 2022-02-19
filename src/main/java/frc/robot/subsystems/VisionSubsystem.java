@@ -18,8 +18,11 @@ import frc.robot.Constants;
 
 public class VisionSubsystem extends SubsystemBase{
   private PhotonCamera m_camera;
+  private PhotonCamera limelight;
   private PhotonPipelineResult m_result;
   private Drivetrain m_drivetrain;
+  private double latencySeconds;
+  private PhotonPipelineResult result;
 
   //if you want to get pitch, yaw etc. call the getResult method. This will return the lastest result 
   //you can check if the result has targets result.hasTargets() 
@@ -29,6 +32,8 @@ public class VisionSubsystem extends SubsystemBase{
   public VisionSubsystem(Drivetrain drivetrain){
    m_drivetrain = drivetrain;
    m_camera = new PhotonCamera("Microsoft_LifeCam_HD-3000");
+   limelight = new PhotonCamera("limelight");
+   result = limelight.getLatestResult();
    //how do we know which index is which i.e red pipeline/blue pipeline 
    // TODO: add Constants that denote RedCargo and BlueCargo pipelines
    m_camera.setPipelineIndex(0);
@@ -41,20 +46,18 @@ public class VisionSubsystem extends SubsystemBase{
   @Override
   public void periodic() {
     m_result = m_camera.getLatestResult();
-
+    latencySeconds = result.getLatencyMillis() / 1000.0;
     if(m_result.hasTargets()){
       SmartDashboard.putNumber("yaw", m_result.getBestTarget().getYaw());
     } else {
       SmartDashboard.putNumber("yaw", -200);
     }
     SmartDashboard.putBoolean("has targets", m_result.hasTargets());
-    
-    
+    SmartDashboard.putNumber("piplineLatency", latencySeconds);
   }
 
   public Pose2d getRobotPose() {
-    PhotonCamera frontCam = new PhotonCamera("limelight"); //TODO: name camera
-    var result = frontCam.getLatestResult();
+     //TODO: name camera
     PhotonTrackedTarget tape = result.getBestTarget();
     double targetPitch = tape.getPitch();
     var roboPose = PhotonUtils.estimateFieldToRobot(
