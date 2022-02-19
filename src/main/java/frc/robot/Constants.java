@@ -191,6 +191,16 @@ public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
       public static final double ELEVATOR_LIFT_TO_SWITCH_TO_ARM_HEIGHT = 0;
     }
   }
+  
+  public static class VisionConstants{
+    public static final double cameraHeightInches = 42.0;
+    public static final double targetHeightInches = 104.0;
+    public static final double cameraPitchDegrees = 34.0;
+
+    //TODO: final distance between camera and the center of robot
+    public static final Transform2d cameraToRobot = new Transform2d(new Translation2d(0.5, 0.2), new Rotation2d());
+
+  }
 
   public static class FieldConstants{
     //TODO: change this to red and blue allience
@@ -223,13 +233,5 @@ public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
     public Translation2d OPPOSING_ALLIANCE_PAD_2 = new Translation2d( Units.inchesToMeters(518), Units.inchesToMeters(12));
   } 
 
-  public static class VisionConstants{
-    public static final double cameraHeightInches = 42.0;
-    public static final double targetHeightInches = 104.0;
-    public static final double cameraPitchDegrees = 34.0;
-
-    //TODO: final distance between camera and the center of robot
-    public static final Transform2d cameraToRobot = new Transform2d(new Translation2d(0.5, 0.2), new Rotation2d());
-
-  }
+  
 }
