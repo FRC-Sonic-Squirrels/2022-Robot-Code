@@ -36,7 +36,7 @@ public class ClimbAutoCommand extends CommandBase {
     AUTO_3,
   }
 
-  stage[] stages = {stage.AUTO_0, stage.AUTO_1, stage.AUTO_2, stage.AUTO_3};
+  stage[] m_stages = {stage.AUTO_0, stage.AUTO_1, stage.AUTO_2, stage.AUTO_3};
   stage m_currentStage;
   stage m_lastStage = stage.AUTO_3;
 
@@ -46,7 +46,7 @@ public class ClimbAutoCommand extends CommandBase {
   ArmSubsystem m_arm;
   Supplier<Double> m_POVSupplier;
 
-  HashMap<stage, Command> stageCommands = new HashMap<stage, Command>();
+  HashMap<stage, Command> m_stageCommands = new HashMap<stage, Command>();
 
   XboxController m_controller;
 
@@ -71,8 +71,8 @@ public class ClimbAutoCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(!m_currentCommand.isScheduled()){
-      if(m_POVSupplier.get()==90){ m_currentStage = getNextStage();} 
+    if (! m_currentCommand.isScheduled()) {
+      if(m_POVSupplier.get() == 90){ m_currentStage = getNextStage();} 
       if(m_POVSupplier.get() == 270){ m_currentStage = getPreviousStage();}
 
       m_currentCommand = getCommandForStage(m_currentStage);
@@ -91,30 +91,34 @@ public class ClimbAutoCommand extends CommandBase {
   }
 
   private stage getNextStage(){
-    if(m_currentStage == m_lastStage){ return stage.AUTO_0;}
+    if(m_currentStage == m_lastStage){
+      return stage.AUTO_0;
+    }
 
-    for(int i=0; i<stages.length; i++){
-      if(m_currentStage == stages[i]){
-        return stages[i+1];
+    for(int i = 0; i < m_stages.length; i++) {
+      if(m_currentStage == m_stages[i]){
+        return m_stages[i + 1];
       }
     }
     return null;
   }
 
   private stage getPreviousStage(){
-    if(m_currentStage == stage.AUTO_0){ return stage.AUTO_0; }
+    if(m_currentStage == stage.AUTO_0) {
+      return stage.AUTO_0;
+    }
 
-    for(int i=0; i<stages.length; i++){
-      if(m_currentStage == stages[i]){
-        return stages[i-1];
+    for(int i = 0; i < m_stages.length; i++) {
+      if(m_currentStage == m_stages[i]) {
+        return m_stages[i - 1];
       }
     }
     return null;
   }
 
   private Command getCommandForStage(stage stage){
-    if(stageCommands.containsKey(stage)) { 
-      return stageCommands.get(stage);
+    if(m_stageCommands.containsKey(stage)) { 
+      return m_stageCommands.get(stage);
     }
 
     return null;
@@ -122,10 +126,10 @@ public class ClimbAutoCommand extends CommandBase {
 
   //TODO: make sure this gets updated with how many stages we have 
   private void assignStagesCommands(){
-    stageCommands.put(stage.AUTO_0, getStage_0Command());
-    stageCommands.put(stage.AUTO_1, getStage_1Command());
-    stageCommands.put(stage.AUTO_2, getStage_2Command());
-    stageCommands.put(stage.AUTO_3, getStage_3Command());
+    m_stageCommands.put(stage.AUTO_0, getStage_0Command());
+    m_stageCommands.put(stage.AUTO_1, getStage_1Command());
+    m_stageCommands.put(stage.AUTO_2, getStage_2Command());
+    m_stageCommands.put(stage.AUTO_3, getStage_3Command());
   }
 
   private void rumbleController(){

@@ -8,11 +8,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorZeroHeight extends CommandBase {
-  private ElevatorSubsystem elevator;
+  private ElevatorSubsystem m_elevator;
 
   /** Creates a new ElevatorZeroHeight. */
   public ElevatorZeroHeight(ElevatorSubsystem elevator) {
-    this.elevator = elevator;
+    m_elevator = elevator;
     addRequirements(elevator);
   }
 
@@ -20,7 +20,7 @@ public class ElevatorZeroHeight extends CommandBase {
   @Override
   public void initialize() {
    // TODO:Test if we need higher values for percent  
-    elevator.setWinchPercentOutput(-0.01);
+    m_elevator.setWinchPercentOutput(-0.01);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -30,12 +30,12 @@ public class ElevatorZeroHeight extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    elevator.stop();
+    m_elevator.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return elevator.atLowerLimit();
+    return m_elevator.atLowerLimit();
   }
 }
