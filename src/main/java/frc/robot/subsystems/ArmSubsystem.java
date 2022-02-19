@@ -32,6 +32,7 @@ public class ArmSubsystem extends SubsystemBase {
   private double rpm2degreesPerSecond = 60.0/360.0;
   private double degrees2ticks = kCPR/360.0;
   private double toleranceDegrees = 1.0;
+  // arm angle = encoder angle * constant ratio
   private double m_encoderToArmRatio = 0.428571;
 
   private SparkMaxPIDController m_armPID;
@@ -73,18 +74,18 @@ public class ArmSubsystem extends SubsystemBase {
 
     // TODO: need to figure out how to zero the arm position.
     // maybe the arm will start on a hard stop, part way back with a limit switch
-    //ticksWhenStraightUp = m_throughBoreEncoder.getPosition();
+    ticksWhenStraightUp = m_throughBoreEncoder.getPosition();
   }
 
   //TODO: this is the encoder angle, not the arm angle
-  public double getAngleDegrees() {
-    return m_throughBoreEncoder.getPosition();
-  }
+  // public double getAngleDegrees() {
+  //   return m_throughBoreEncoder.getPosition();
+  // }
 
   /**
    * setArmAngle - sets the arm to a specific angle in degrees
    * 
-   * @param target angle in degrees
+   * @param angleDegrees arm angle in degrees
    */
   public void setArmAngle(double angleDegrees) {
     if(angleDegrees > maxAngleDegree) {
@@ -94,7 +95,7 @@ public class ArmSubsystem extends SubsystemBase {
       angleDegrees = minAngleDegree;
     }
     m_targetAngle = angleDegrees;
-    double encoderValue = ticksWhenStraightUp + angleToEncoderTicks(angleDegrees);
+    double encoderValue = ticksWhenStraightUp + angleToEncoderTicks(angleDegrees / m_encoderToArmRatio);
     m_armPID.setReference(encoderValue, ControlType.kPosition);
   }
 
@@ -110,7 +111,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public boolean isAtAngle(){
-    return (Math.abs(getAngleDegrees() - m_targetAngle) <= toleranceDegrees);
+    return (Math.abs(getEncoderValue() - m_targetAngle) <= toleranceDegrees);
   }
 
   public void setArmPercentOutput(double percentage){
@@ -158,10 +159,10 @@ public class ArmSubsystem extends SubsystemBase {
       // m_armPID.setReference(m_throughBoreEncoder.getPosition(), ControlType.kPosition);
     }
 
-    SmartDashboard.putNumber("Arm Angle deg", getAngleDegrees());
+    SmartDashboard.putNumber("Arm Angle deg", getArmAngle());
     SmartDashboard.putNumber("Arm Vel (deg/s)", m_armLeadMotor.getEncoder().getVelocity()*rpm2degreesPerSecond);
     SmartDashboard.putNumber("Arm SetPoint", m_targetAngle);
-    SmartDashboard.putNumber("Arm Error", m_targetAngle - getAngleDegrees());
+    SmartDashboard.putNumber("Arm Error", m_targetAngle - getEncoderValue());
     // SmartDashboard.putBoolean("Arm limit", );
     SmartDashboard.putNumber("Arm %output", m_armLeadMotor.getAppliedOutput());
     SmartDashboard.putNumber("Arm Current", m_armLeadMotor.getOutputCurrent());
