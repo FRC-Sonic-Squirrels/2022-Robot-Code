@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.AddressableLED;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -167,6 +168,8 @@ public class ClimbAutoCommand extends CommandBase {
   private Command getStage_1Command(){
     //this command assumes that the elevator is extended on the mid bar and the robot is ready to be pulled
     return new SequentialCommandGroup(
+      new InstantCommand(() -> SmartDashboard.putBoolean("Climb_Auton Can move to next stage", false)),
+      
       getButtonConfirmationCommand(),
 
       new InstantCommand(() -> m_arm.setArmAngle(Stage_1.ARM_TARGET_ANGLE), m_arm),
@@ -187,15 +190,15 @@ public class ClimbAutoCommand extends CommandBase {
       //maybe find a way to bring it to this height slowly so its a smoother transition?
       //we might have to hold the arm angle here if the robot wants to naturally tip
       new InstantCommand(() -> m_elevator.setElevatorHeight(Stage_1.ELEVATOR_SWITCH_TO_ARM_HEIGHT), m_elevator),
-      new WaitUntilCommand(() -> m_elevator.isAtHeight())
+      new WaitUntilCommand(() -> m_elevator.isAtHeight()),
 
-      //how do we tell the operator this section is finished? rumble? but thats used for confirming actions? 
-      //use smartdashboard to send a boolean ready for next stage? 
+      new InstantCommand(() -> SmartDashboard.putBoolean("Climb_Auton Can move to next stage", true))
     );
   }
 
   private Command getStage_2Command(){
     return new SequentialCommandGroup(
+      new InstantCommand(() -> SmartDashboard.putBoolean("Climb_Auton Can move to next stage", false)),
       getButtonConfirmationCommand(),
       
       new InstantCommand(() -> m_arm.setArmAngle(Stage_2.ARM_STARTING_ANGLE), m_arm),
@@ -244,15 +247,15 @@ public class ClimbAutoCommand extends CommandBase {
       getButtonConfirmationCommand(),
 
       new InstantCommand(() -> m_elevator.setElevatorHeight(Stage_2.ELEVATOR_LIFT_TO_SWITCH_TO_ARM_HEIGHT), m_elevator),
-      new WaitUntilCommand(() -> m_elevator.isAtHeight())
+      new WaitUntilCommand(() -> m_elevator.isAtHeight()),
 
-      //same as stage 1 use smartdashboard? 
-  
+      new InstantCommand(() -> SmartDashboard.putBoolean("Climb_Auton Can move to next stage", true))
     );
   }
 
+  //Should technically be the same as stage 2 but there will be swing so that might change stuff 
   private Command getStage_3Command(){
-    return null;
+    return getStage_2Command();
   }
 
   private Command getStage_4Command(){
