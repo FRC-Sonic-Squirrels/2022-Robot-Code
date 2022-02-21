@@ -11,6 +11,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,12 +21,13 @@ import frc.robot.Constants;
 
 public class VisionSubsystem extends SubsystemBase{
   private PhotonCamera m_camera;
-  private PhotonCamera limelight;
   private PhotonPipelineResult m_result;
   private Drivetrain m_drivetrain;
-  private double latencySeconds;
-  private PhotonPipelineResult result;
-
+  private NetworkTable table;
+  private double pitch;
+  private double latency;
+  private double target;
+  private double rotation;
   //if you want to get pitch, yaw etc. call the getResult method. This will return the lastest result 
   //you can check if the result has targets result.hasTargets() 
   //if it does you can do result.getBestTarget()
@@ -32,8 +36,11 @@ public class VisionSubsystem extends SubsystemBase{
   public VisionSubsystem(Drivetrain drivetrain){
    m_drivetrain = drivetrain;
    m_camera = new PhotonCamera("Microsoft_LifeCam_HD-3000");
-   limelight = new PhotonCamera("limelight");
-   result = limelight.getLatestResult();
+   table = NetworkTableInstance.getDefault().getTable("limelight");
+   pitch = table.getEntry("ty").getDouble(0);
+   latency = (table.getEntry("tl").getDouble(0))*1000;
+   target = table.getEntry("tv").getDouble(0);
+   rotation = table.getEntry("ts").getDouble(0);
    //how do we know which index is which i.e red pipeline/blue pipeline 
    // TODO: add Constants that denote RedCargo and BlueCargo pipelines
    m_camera.setPipelineIndex(0);
@@ -46,32 +53,31 @@ public class VisionSubsystem extends SubsystemBase{
   @Override
   public void periodic() {
     m_result = m_camera.getLatestResult();
-    latencySeconds = result.getLatencyMillis() / 1000.0;
     if(m_result.hasTargets()){
-      SmartDashboard.putNumber("Vision_Subsystem yaw", m_result.getBestTarget().getYaw());
+      SmartDashboard.putNumber("yaw", m_result.getBestTarget().getYaw());
     } else {
-      SmartDashboard.putNumber("Vision_Subsystem yaw", -200);
+      SmartDashboard.putNumber("yaw", -200);
     }
-    SmartDashboard.putBoolean("Vision_Subsystem has targets", m_result.hasTargets());
-    SmartDashboard.putNumber("Vision_Subsystem pipelineLatency", latencySeconds);
+    SmartDashboard.putBoolean("has targets", m_result.hasTargets());
+    SmartDashboard.putNumber("pipelineLatency", latency);
   }
 
   public Pose2d getRobotPose() {
-     //TODO: name camera
-    PhotonTrackedTarget tape = result.getBestTarget();
-    double targetPitch = tape.getPitch();
-    var roboPose = PhotonUtils.estimateFieldToRobot(
-     Units.inchesToMeters(Constants.VisionConstants.cameraHeightInches), 
-     Units.inchesToMeters(Constants.VisionConstants.targetHeightInches), 
-     Units.degreesToRadians(Constants.VisionConstants.cameraPitchDegrees), 
-     targetPitch, 
-     Rotation2d.fromDegrees(-tape.getYaw()), 
-     m_drivetrain.getGyroscopeRotation(),
-     Constants.HubCentricConstants.HUB_CENTER_POSE2D, 
-     Constants.VisionConstants.cameraToRobot
-     );
-
-    return roboPose;
-   }
+    if(target==1){
+      var roboPose = PhotonUtils.estimateFieldToRobot(
+      Units.inchesToMeters(Constants.VisionConstants.CAMERA_HEIGHT_INCHES), 
+      Units.inchesToMeters(Constants.VisionConstants.TARGET_HEIGHT_INCHES), 
+      Units.degreesToRadians(Constants.VisionConstants.CAMERA_PITCH_DEGREES), 
+      pitch, 
+      Rotation2d.fromDegrees(rotation), 
+      m_drivetrain.getGyroscopeRotation(),
+      Constants.HubCentricConstants.HUB_CENTER_POSE2D, 
+      Constants.VisionConstants.CAMERA_TO_ROBOT
+      );
+      return roboPose;
+    } else {
+      return null;
+    }
+  }
   
 }
