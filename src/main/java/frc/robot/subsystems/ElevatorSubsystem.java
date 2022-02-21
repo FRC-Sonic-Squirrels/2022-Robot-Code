@@ -195,12 +195,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     if(atLowerLimit()){
       zeroHeight();
     }
-    SmartDashboard.putNumber("Elev Height (inches)", getHeightInches());
-    SmartDashboard.putNumber("Elev Vel (inches/s)", ticks2distance * winch_lead_talon.getSelectedSensorVelocity() / 10.0);
-    SmartDashboard.putNumber("Elev SetPoint", heightSetpointInches);
-    SmartDashboard.putNumber("Elev Error", heightSetpointInches - getHeightInches());
-    SmartDashboard.putBoolean("Elev limit", atLowerLimit());
-    SmartDashboard.putNumber("Elev %output", winch_lead_talon.getMotorOutputPercent());
-    SmartDashboard.putNumber("Elev Current", winch_lead_talon.getSupplyCurrent());
+    SmartDashboard.putNumber("Elev_Subsystem Height (inches)", getHeightInches());
+    SmartDashboard.putNumber("Elev_Subsystem Vel (inches/s)", ticks2distance * winch_lead_talon.getSelectedSensorVelocity() / 10.0);
+    SmartDashboard.putNumber("Elev_Subsystem SetPoint", heightSetpointInches);
+    SmartDashboard.putNumber("Elev_Subsystem Error", heightSetpointInches - getHeightInches());
+    SmartDashboard.putBoolean("Elev_Subsystem limit", atLowerLimit());
+    SmartDashboard.putNumber("Elev_Subsystem %output", winch_lead_talon.getMotorOutputPercent());
+    SmartDashboard.putNumber("Elev_Subsystem Current", winch_lead_talon.getSupplyCurrent());
   }
 }

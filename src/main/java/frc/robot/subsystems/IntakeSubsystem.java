@@ -65,9 +65,8 @@ public class IntakeSubsystem extends SubsystemBase {
     //deployIntake();
     
     intakeRPM = 0.0;
-    SmartDashboard.putNumber("Set Intake Motor RPM", 0.0);
-    SmartDashboard.putNumber("Intake Motor RPM", 0.0);
-    SmartDashboard.putNumber("Robot Speed m per s", 0.0);
+    
+    
   }
     // TODO: How does the motor stop when retracted?
 
@@ -95,7 +94,9 @@ public class IntakeSubsystem extends SubsystemBase {
       setIntakeMotorRPM(-m_reverseRpmValue); //TODO: what does the spped have to be for reverse?
     }
 
-    SmartDashboard.putNumber("RPM", - m_encoder.getIntegratedSensorVelocity() * 600 / 2048);
+    SmartDashboard.putNumber("Intake_Subsystem RPM", - m_encoder.getIntegratedSensorVelocity() * 600 / 2048);
+    SmartDashboard.putNumber("Intake_Subsystem desired Motor RPM", m_desiredRPM);
+    SmartDashboard.putNumber("Intake_Subsystem Robot Speed m per s", m_drivetrain.getVelocity());
     //SmartDashboard.putNumber("Robot Speed m per s", (m_drive.getLeftVelocity() + m_drive.getRightVelocity()) / 2.0);
   }
   

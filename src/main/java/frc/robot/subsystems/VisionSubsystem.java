@@ -48,12 +48,12 @@ public class VisionSubsystem extends SubsystemBase{
     m_result = m_camera.getLatestResult();
     latencySeconds = result.getLatencyMillis() / 1000.0;
     if(m_result.hasTargets()){
-      SmartDashboard.putNumber("yaw", m_result.getBestTarget().getYaw());
+      SmartDashboard.putNumber("Vision_Subsystem yaw", m_result.getBestTarget().getYaw());
     } else {
-      SmartDashboard.putNumber("yaw", -200);
+      SmartDashboard.putNumber("Vision_Subsystem yaw", -200);
     }
-    SmartDashboard.putBoolean("has targets", m_result.hasTargets());
-    SmartDashboard.putNumber("pipelineLatency", latencySeconds);
+    SmartDashboard.putBoolean("Vision_Subsystem has targets", m_result.hasTargets());
+    SmartDashboard.putNumber("Vision_Subsystem pipelineLatency", latencySeconds);
   }
 
   public Pose2d getRobotPose() {

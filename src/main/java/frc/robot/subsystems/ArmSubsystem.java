@@ -159,12 +159,12 @@ public class ArmSubsystem extends SubsystemBase {
       // m_armPID.setReference(m_throughBoreEncoder.getPosition(), ControlType.kPosition);
     }
 
-    SmartDashboard.putNumber("Arm Angle deg", getArmAngle());
-    SmartDashboard.putNumber("Arm Vel (deg/s)", m_armLeadMotor.getEncoder().getVelocity()*rpm2degreesPerSecond);
-    SmartDashboard.putNumber("Arm SetPoint", m_targetAngle);
-    SmartDashboard.putNumber("Arm Error", m_targetAngle - getEncoderValue());
+    SmartDashboard.putNumber("Arm_Subsystem Angle deg", getArmAngle());
+    SmartDashboard.putNumber("Arm_Subsystem Vel (deg/s)", m_armLeadMotor.getEncoder().getVelocity()*rpm2degreesPerSecond);
+    SmartDashboard.putNumber("Arm_Subsystem SetPoint", m_targetAngle);
+    SmartDashboard.putNumber("Arm_Subsystem Error", m_targetAngle - getEncoderValue());
     // SmartDashboard.putBoolean("Arm limit", );
-    SmartDashboard.putNumber("Arm %output", m_armLeadMotor.getAppliedOutput());
-    SmartDashboard.putNumber("Arm Current", m_armLeadMotor.getOutputCurrent());
+    SmartDashboard.putNumber("Arm_Subsystem %output", m_armLeadMotor.getAppliedOutput());
+    SmartDashboard.putNumber("Arm_Subsystem Current", m_armLeadMotor.getOutputCurrent());
   }
 }
