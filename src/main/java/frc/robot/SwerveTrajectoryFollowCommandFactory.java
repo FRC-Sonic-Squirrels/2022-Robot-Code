@@ -92,7 +92,7 @@ public class SwerveTrajectoryFollowCommandFactory {
   }
 
   public static Command sidewaysLeft1mCommand(TestTrajectories testTrajectories, Drivetrain drivetrain) {
-    return SwerveControllerCommand(testTrajectories.straightSideways(1.0), drivetrain, true);
+    return SwerveControllerCommand(testTrajectories.strafeSideways(1.0), drivetrain, true);
   }
 
   public static Command figureEightCommand(TestTrajectories testTrajectories, Drivetrain drivetrain) {

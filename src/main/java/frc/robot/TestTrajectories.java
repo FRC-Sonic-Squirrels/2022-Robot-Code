@@ -91,8 +91,7 @@ public class TestTrajectories {
    * @param distanceInMeters
    * @return trajectory
    */
-  // TODO: this is a terrible function name. fix this.
-  public Trajectory straightSideways(double distanceInMeters) {
+  public Trajectory strafeSideways(double distanceInMeters) {
 
     if( isSwerve ) {
       return TrajectoryGenerator.generateTrajectory(new Pose2d(0.0, 0.0, new Rotation2d(0)),

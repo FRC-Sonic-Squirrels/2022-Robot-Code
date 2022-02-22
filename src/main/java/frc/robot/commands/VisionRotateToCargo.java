@@ -33,7 +33,7 @@ public class VisionRotateToCargo extends CommandBase {
     m_drivetrain = drivetrain;
     m_visionSubsystem = visionSubsystem;
 
-    // TODO: pick red or blue pipeline based on alliance color
+
     if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
       m_visionSubsystem.setPipeline(VisionPipeline.RED);
     } else {
