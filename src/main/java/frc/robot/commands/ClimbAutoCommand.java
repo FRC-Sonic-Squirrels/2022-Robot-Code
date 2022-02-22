@@ -190,7 +190,7 @@ public class ClimbAutoCommand extends CommandBase {
       new WaitUntilCommand(() -> m_elevator.isAtHeight())
 
       //how do we tell the operator this section is finished? rumble? but thats used for confirming actions? 
-      //use smartdashboard to send a boolean ready for next stage? 
+      //use smartDashboard to send a boolean ready for next stage? 
     );
   }
 
@@ -246,7 +246,7 @@ public class ClimbAutoCommand extends CommandBase {
       new InstantCommand(() -> m_elevator.setElevatorHeight(Stage_2.ELEVATOR_LIFT_TO_SWITCH_TO_ARM_HEIGHT), m_elevator),
       new WaitUntilCommand(() -> m_elevator.isAtHeight())
 
-      //same as stage 1 use smartdashboard? 
+      //same as stage 1 use smartDashboard? 
   
     );
   }

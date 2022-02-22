@@ -23,6 +23,12 @@ public class VisionSubsystem extends SubsystemBase{
   private Drivetrain m_drivetrain;
   private double latencySeconds;
   private PhotonPipelineResult result;
+  private VisionPipeline mode;
+
+  public enum VisionPipeline {
+    RED,
+    BLUE
+  }
 
   //if you want to get pitch, yaw etc. call the getResult method. This will return the lastest result 
   //you can check if the result has targets result.hasTargets() 
@@ -72,6 +78,10 @@ public class VisionSubsystem extends SubsystemBase{
      );
 
     return roboPose;
+   }
+
+   public void setPipeline(VisionPipeline mode) {
+      this.mode = mode;
    }
   
 }
