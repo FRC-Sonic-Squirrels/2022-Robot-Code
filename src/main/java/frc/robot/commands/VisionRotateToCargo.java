@@ -35,9 +35,9 @@ public class VisionRotateToCargo extends CommandBase {
 
 
     if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
-      m_visionSubsystem.setPipeline(VisionPipeline.RED);
+      m_visionSubsystem.setPipelineRed();
     } else {
-      m_visionSubsystem.setPipeline(VisionPipeline.BLUE);
+      m_visionSubsystem.setPipelineBlue();
     }
 
     addRequirements(m_drivetrain, m_visionSubsystem);
