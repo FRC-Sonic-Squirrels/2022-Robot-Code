@@ -162,5 +162,15 @@ public class ArmSubsystem extends SubsystemBase {
     // SmartDashboard.putBoolean("Arm limit", );
     SmartDashboard.putNumber("Arm_Subsystem %output", m_armLeadMotor.getAppliedOutput());
     SmartDashboard.putNumber("Arm_Subsystem Current", m_armLeadMotor.getOutputCurrent());
+    SmartDashboard.putNumber("Arm_Subsystem kCPR", kCPR);
+    SmartDashboard.putNumber("Arm_Subsystem target Angle", m_targetAngle);
+    SmartDashboard.putNumber("Arm_Subsystem ticks When Strait Up", ticksWhenStraightUp);
+    SmartDashboard.putNumber("Arm_Subsystem rpm To Degrees Per Second", rpm2degreesPerSecond);
+    SmartDashboard.putNumber("Arm_Subsystem degrees To Ticks", degrees2ticks);
+    SmartDashboard.putNumber("Arm_Subsystem tolerance Degrees", toleranceDegrees);
+    SmartDashboard.putNumber("Arm_Subsystem encoder To Arm Ratio", m_encoderToArmRatio);
+    SmartDashboard.putNumber("Arm_Subsystem maximum Angle Degree", maxAngleDegree);
+    SmartDashboard.putNumber("Arm_Subsystem minimum Angle Degree", minAngleDegree);
+    SmartDashboard.putNumber("Arm_Subsystem arm Step Value Testing", m_armStepValue_testing);
   }
 }
