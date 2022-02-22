@@ -102,17 +102,18 @@ public class DriveHubCentricCommand extends CommandBase {
 
     m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(strafeX, strafeY, rotationCorrection, currentHeading));
 
-    SmartDashboard.putNumber("currentHeading", currentHeading.getDegrees());
-    SmartDashboard.putNumber("targetHeading", targetHeading.getDegrees());
-    SmartDashboard.putNumberArray("robotPosition", new double[] {robotPosition.getX(), robotPosition.getY()});
+    //TODO: check if need to flip order of coordinates from x,y to y,x
+    SmartDashboard.putNumber("Hub_Centric currentHeading", currentHeading.getDegrees());
+    SmartDashboard.putNumber("Hub_Centric targetHeading", targetHeading.getDegrees());
+    SmartDashboard.putNumberArray("Hub_Centric robotPosition", new double[] {robotPosition.getX(), robotPosition.getY()});
     
-    SmartDashboard.putNumber("rotationCorrection", rotationCorrection);
-    SmartDashboard.putNumberArray("strafe values", new double[] {strafeX, strafeY});
+    SmartDashboard.putNumber("Hub_Centric rotationCorrection", rotationCorrection);
+    SmartDashboard.putNumberArray("Hub_Centric strafe values", new double[] {strafeX, strafeY});
 
-    SmartDashboard.putNumber("sidewaysInput", m_sidewaysSupplier.get());
-    SmartDashboard.putNumber("forwardInput", m_forwardSupplier.get());
+    SmartDashboard.putNumber("Hub_Centric sidewaysInput", m_sidewaysSupplier.get());
+    SmartDashboard.putNumber("Hub_Centric forwardInput", m_forwardSupplier.get());
 
-    SmartDashboard.putNumber("radius", radius);
+    SmartDashboard.putNumber("Hub_Centric radius", radius);
   }
 
   // Called once the command ends or is interrupted.

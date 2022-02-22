@@ -53,10 +53,10 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    SmartDashboard.putNumber("jLeftY", m_robotContainer.m_controller.getLeftY());
-    SmartDashboard.putNumber("jLeftX", m_robotContainer.m_controller.getLeftX());
-    SmartDashboard.putNumber("jRightY", m_robotContainer.m_controller.getRightY());
-    SmartDashboard.putNumber("jRightX", m_robotContainer.m_controller.getRightX());
+    SmartDashboard.putNumber("Joystick_Values jLeftY", m_robotContainer.m_controller.getLeftY());
+    SmartDashboard.putNumber("Joystick_Values jLeftX", m_robotContainer.m_controller.getLeftX());
+    SmartDashboard.putNumber("Joystick_Values jRightY", m_robotContainer.m_controller.getRightY());
+    SmartDashboard.putNumber("Joystick_Values jRightX", m_robotContainer.m_controller.getRightX());
 
   }
 

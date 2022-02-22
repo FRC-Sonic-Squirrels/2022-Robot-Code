@@ -114,17 +114,17 @@ public class DriveWithSetRotationCommand extends CommandBase {
     double rotationOutput = rotationController
         .calculate(m_drivetrainSubsystem.getGyroscopeRotation().getRadians(), m_setRotationRadians);
 
-    SmartDashboard.putNumber("TargetAngle", Math.toDegrees(m_setRotationRadians));
-    SmartDashboard.putNumber("RobotAngleRadians",
+    SmartDashboard.putNumber("Drive w/ setRotation TargetAngle", Math.toDegrees(m_setRotationRadians));
+    SmartDashboard.putNumber("Drive w/ setRotation RobotAngleRadians",
         m_drivetrainSubsystem.getGyroscopeRotation().getRadians());
-    SmartDashboard.putNumber("RobotAngleVelRadians",
+    SmartDashboard.putNumber("Drive w/ setRotation RobotAngleVelRadians",
         m_drivetrainSubsystem.getGyroscopeRotationVelocity().getRadians());
-    SmartDashboard.putNumber("RotationOutput", rotationOutput);
-    SmartDashboard.putNumber("ThetaVError", rotationController.getVelocityError());
-    SmartDashboard.putNumber("ThetaError", rotationController.getPositionError());
-    SmartDashboard.putBoolean("ThetaAtTarget", rotationController.atGoal());
-    SmartDashboard.putNumber("X", m_translationXSupplier.getAsDouble());
-    SmartDashboard.putNumber("Y", m_translationYSupplier.getAsDouble());
+    SmartDashboard.putNumber("Drive w/ setRotation RotationOutput", rotationOutput);
+    SmartDashboard.putNumber("Drive w/ setRotation ThetaVError", rotationController.getVelocityError());
+    SmartDashboard.putNumber("Drive w/ setRotation ThetaError", rotationController.getPositionError());
+    SmartDashboard.putBoolean("Drive w/ setRotation ThetaAtTarget", rotationController.atGoal());
+    SmartDashboard.putNumber("Drive w/ setRotation X", m_translationXSupplier.getAsDouble());
+    SmartDashboard.putNumber("Drive w/ setRotation Y", m_translationYSupplier.getAsDouble());
 
     if (Math.abs(rotationOutput) < 0.05) {
       rotationOutput = 0.0;
