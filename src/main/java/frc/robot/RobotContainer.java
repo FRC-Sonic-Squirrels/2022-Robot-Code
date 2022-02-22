@@ -75,7 +75,7 @@ public class RobotContainer {
     m_robot = robot;
     
     // set the starting position of the robot on the field
-    // TODO: add starting poses to chooser
+    // TODO: add starting poses to start pose chooser
     startPoseChooser.addOption("pose 1", new Pose2d(0, 0, new Rotation2d()));
     startPoseChooser.addOption("pose 2", new Pose2d(100, 200, new Rotation2d(Math.PI/2)));
 

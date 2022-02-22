@@ -158,39 +158,39 @@ public final class Constants {
     public static final double m_activated = 2000;
     public static final double m_idle = 500;
   }
-// according to game manual field is 27 ft. (~823 cm) by 54 ft. (~1646 cm)
-public static class HubCentricConstants{
-  public static final Vector2d HUB_CENTER = new Vector2d(8.23, 4.11);
-  public static final Pose2d HUB_CENTER_POSE2D = new Pose2d(8.23, 4.11, new Rotation2d());
-  public static final double FORWARD_MULTIPLIER = 0.5;
-  public static final double SIDEWAYS_MULTIPLIER = 0.3;
+  // according to game manual field is 27 ft. (~823 cm) by 54 ft. (~1646 cm)
+  public static class HubCentricConstants{
+    public static final Vector2d HUB_CENTER = new Vector2d(8.23, 4.11);
+    public static final Pose2d HUB_CENTER_POSE2D = new Pose2d(8.23, 4.11, new Rotation2d());
+    public static final double FORWARD_MULTIPLIER = 0.5;
+    public static final double SIDEWAYS_MULTIPLIER = 0.3;
 
-}
+  }
 
-public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
-    new Pose2d(HubCentricConstants.HUB_CENTER.x - 1,HubCentricConstants.HUB_CENTER.y , new Rotation2d(0));
-  //TODO: MAKE SURE THESE VALUES ARE CORRECT BEFORE WE TEST AUTONOMUS 
+  public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
+      new Pose2d(HubCentricConstants.HUB_CENTER.x - 1,HubCentricConstants.HUB_CENTER.y , new Rotation2d(0));
+  //TODO: MAKE SURE THESE VALUES ARE CORRECT BEFORE WE TEST AUTONOMOUS 
   public static class AutoClimbConstants{
-    public static class Stage_1{
+    public static class Stage_1 {
       public static final double ELEVATOR_PULL_HEIGHT = 0;
       public static final double ARM_TARGET_ANGLE = 0;
       public static final double ELEVATOR_SWITCH_TO_ARM_HEIGHT = 0;
-    }
-    public static class Stage_2{
-      //overshoot to let the elevator extend all the way then hold the correct angle
-      public static final double ARM_STARTING_ANGLE = 0;
-      public static final double ELEVATOR_EXTENSION_HEIGHT = 0;
-      public static final double ARM_HOLD_ANGLE = 0;
-      public static final double ELEVATOR_PULL_HEIGHT = 0;
-
-      public static final double ELEVATOR_BRING_ARM_TO_OTHER_SIDE_HEIGHT = 0;
-      public static final double ARM_BRING_AROUND_ANGLE = 0;
-
-      public static final double ELEVATOR_PULL_TO_SWITCH_TO_ARM_HEIGHT = 0;
-
-      public static final double ELEVATOR_LIFT_TO_SWITCH_TO_ARM_HEIGHT = 0;
-    }
   }
+  public static class Stage_2 {
+    //overshoot to let the elevator extend all the way then hold the correct angle
+    public static final double ARM_STARTING_ANGLE = 0;
+    public static final double ELEVATOR_EXTENSION_HEIGHT = 0;
+    public static final double ARM_HOLD_ANGLE = 0;
+    public static final double ELEVATOR_PULL_HEIGHT = 0;
+
+    public static final double ELEVATOR_BRING_ARM_TO_OTHER_SIDE_HEIGHT = 0;
+    public static final double ARM_BRING_AROUND_ANGLE = 0;
+
+    public static final double ELEVATOR_PULL_TO_SWITCH_TO_ARM_HEIGHT = 0;
+
+    public static final double ELEVATOR_LIFT_TO_SWITCH_TO_ARM_HEIGHT = 0;
+  }
+}
   
   public static class VisionConstants{
     public static final double CAMERA_HEIGHT_INCHES = 42.0;
@@ -202,14 +202,14 @@ public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
 
   }
 
-  public static class VisionPipeline {
+  public static class VisionPipelineIndex {
     // TODO: find out what values the red and blue pipelines need to be
-    public static final String RED_PIPELINE = null;
-    public static final String BLUE_PIPELINE = null;
+    public static final int RED_PIPELINE = 1;
+    public static final int BLUE_PIPELINE = 2;
   }
 
   public static class FieldConstants{
-    public Translation2d BLUE_CARGO_1 = new Translation2d( Units.inchesToMeters(42), Units.inchesToMeters(44.4)); //this is blue alliance right?
+    public Translation2d BLUE_CARGO_1 = new Translation2d( Units.inchesToMeters(42), Units.inchesToMeters(44.4));
     public Translation2d BLUE_CARGO_2 = new Translation2d( Units.inchesToMeters(198), Units.inchesToMeters(72));
     public Translation2d BLUE_CARGO_3 = new Translation2d( Units.inchesToMeters(297.6), Units.inchesToMeters(7.2));
     public Translation2d BLUE_CARGO_4 = new Translation2d( Units.inchesToMeters(412.8), Units.inchesToMeters(36));

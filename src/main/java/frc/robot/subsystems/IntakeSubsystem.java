@@ -68,7 +68,7 @@ public class IntakeSubsystem extends SubsystemBase {
     
     
   }
-    // TODO: How does the motor stop when retracted?
+  // I think the motor, when retracted, is also paired with a stop command
 
   @Override
   public void periodic() {
@@ -91,7 +91,7 @@ public class IntakeSubsystem extends SubsystemBase {
     } else if(mode == Mode.DYNAMIC){
       setIntakeToSpeed();
     } else if(mode == Mode.REVERSE){
-      setIntakeMotorRPM(-m_reverseRpmValue); //TODO: what does the spped have to be for reverse?
+      setIntakeMotorRPM(-m_reverseRpmValue); //TODO: what does the speed have to be for reverse?
     }
 
     SmartDashboard.putNumber("Intake_Subsystem RPM", - m_encoder.getIntegratedSensorVelocity() * 600 / 2048);

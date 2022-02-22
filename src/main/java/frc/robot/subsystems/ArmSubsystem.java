@@ -77,10 +77,6 @@ public class ArmSubsystem extends SubsystemBase {
     ticksWhenStraightUp = m_throughBoreEncoder.getPosition();
   }
 
-  //TODO: this is the encoder angle, not the arm angle
-  // public double getAngleDegrees() {
-  //   return m_throughBoreEncoder.getPosition();
-  // }
 
   /**
    * setArmAngle - sets the arm to a specific angle in degrees
