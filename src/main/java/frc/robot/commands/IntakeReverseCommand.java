@@ -28,7 +28,6 @@ public class IntakeReverseCommand extends CommandBase {
   public void execute() {}
 
   // Called once the command ends or is interrupted.
-  //TODO: have this command deploy, set intake to reverse, then stop
   @Override
   public void end(boolean interrupted) {
     m_intake.setStopMode();

@@ -27,6 +27,7 @@ public class VisionSubsystem extends SubsystemBase{
   private PhotonPipelineResult result;
   private VisionPipeline mode;
 
+  // enum might be unnecessary, still unsure
   public enum VisionPipeline {
     RED,
     BLUE
@@ -52,8 +53,8 @@ public class VisionSubsystem extends SubsystemBase{
    latency = (table.getEntry("tl").getDouble(0))*1000;
    target = table.getEntry("tv").getDouble(0);
    rotation = table.getEntry("ts").getDouble(0);
-   //how do we know which index is which i.e red pipeline/blue pipeline 
-   // TODO: add Constants that denote RedCargo and BlueCargo pipelines
+   //how do we know which index is which i.e red pipeline/blue pipeline
+   // index 1 is red, index 2 is blue
    m_camera.setPipelineIndex(0);
   }
 
@@ -91,8 +92,14 @@ public class VisionSubsystem extends SubsystemBase{
     }
   }
 
-  public void setPipeline(VisionPipeline newMode) {
-    mode = newMode;
+  public void setPipelineRed() {
+    mode = VisionPipeline.RED;
+    m_camera.setPipelineIndex(1);
+  }
+
+  public void setPipelineBlue() {
+    mode = VisionPipeline.BLUE;
+    m_camera.setPipelineIndex(2);
   }
   
 }
