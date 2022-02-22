@@ -17,6 +17,7 @@
   },
   "cSpell.words": [
     "AHRS",
+    "Auton",
     "camtran",
     "CANID",
     "currentlimit",
@@ -24,15 +25,18 @@
     "drivetrains",
     "Feedforward",
     "holonomic",
+    "LOWERONLY",
     "Mjpeg",
     "navx",
     "odometry",
     "opencv",
+    "robo",
     "Setpoint",
     "teleop",
     "teleoperated",
     "TRACKWIDTH",
-    "unconfigured"
+    "unconfigured",
+    "UPPERONLY"
   ],
   "[java]": {
     "editor.tabSize": 2
