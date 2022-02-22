@@ -11,6 +11,8 @@ import edu.wpi.first.cscore.MjpegServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -61,6 +63,8 @@ public class RobotContainer {
   public final XboxController m_operatorController = new XboxController(1);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
+  public final SendableChooser<Pose2d> startPoseChooser = new SendableChooser<>();
+
   public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
 
   /**
@@ -71,7 +75,10 @@ public class RobotContainer {
     m_robot = robot;
     
     // set the starting position of the robot on the field
-    // TODO: need a chooser object to select starting position and angle
+    // TODO: add starting poses to chooser
+    startPoseChooser.addOption("pose 1", new Pose2d(0, 0, new Rotation2d()));
+    startPoseChooser.addOption("pose 2", new Pose2d(100, 200, new Rotation2d(Math.PI/2)));
+
     drivetrain.setGyroscopeHeadingDegrees(0);
     drivetrain.setPose(Constants.ROBOT_1M_LEFT_OF_HUB, drivetrain.getGyroscopeRotation());
 
