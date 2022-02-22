@@ -23,16 +23,27 @@ public class VisionSubsystem extends SubsystemBase{
   private PhotonCamera m_camera;
   private PhotonPipelineResult m_result;
   private Drivetrain m_drivetrain;
+  private double latencySeconds;
+  private PhotonPipelineResult result;
+  private VisionPipeline mode;
+
+  public enum VisionPipeline {
+    RED,
+    BLUE
+  }
+
   private NetworkTable table;
   private double pitch;
   private double latency;
   private double target;
   private double rotation;
-  //if you want to get pitch, yaw etc. call the getResult method. This will return the lastest result 
+  //if you want to get pitch, yaw etc. call the getResult method. This will return the latest result 
   //you can check if the result has targets result.hasTargets() 
   //if it does you can do result.getBestTarget()
   //you can now access pitch,yaw etc from that target object 
   //this is to prevent null errors and pipeline d-sync 
+
+
   public VisionSubsystem(Drivetrain drivetrain){
    m_drivetrain = drivetrain;
    m_camera = new PhotonCamera("Microsoft_LifeCam_HD-3000");
@@ -78,6 +89,10 @@ public class VisionSubsystem extends SubsystemBase{
     } else {
       return null;
     }
+  }
+
+  public void setPipeline(VisionPipeline newMode) {
+    mode = newMode;
   }
   
 }

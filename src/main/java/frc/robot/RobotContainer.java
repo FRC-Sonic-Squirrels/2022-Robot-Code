@@ -166,6 +166,7 @@ public class RobotContainer {
     new Button(m_controller::getRightBumper)
       .whileHeld(new VisionDriveToCargo(m_visionSubsystem, drivetrain));
 
+
     new Button(m_operatorController::getAButton)
       .whileHeld(new ShootOneCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake));
 
@@ -178,9 +179,8 @@ public class RobotContainer {
     new Button(m_operatorController::getYButton)
       .whileHeld(new IntakeReverseCommand(m_intake));
 
-      //TODO: find better button binding
-    // new Button(m_operatorController::getRightBumper)
-    //   .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
+    new Button(m_operatorController::getLeftStickButtonPressed)
+      .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
  
     new Button(m_operatorController::getLeftBumper)
       .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);

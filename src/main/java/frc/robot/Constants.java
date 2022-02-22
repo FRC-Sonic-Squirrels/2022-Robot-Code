@@ -202,6 +202,12 @@ public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
 
   }
 
+  public static class VisionPipeline {
+    // TODO: find out what values the red and blue pipelines need to be
+    public static final String RED_PIPELINE = null;
+    public static final String BLUE_PIPELINE = null;
+  }
+
   public static class FieldConstants{
     public Translation2d BLUE_CARGO_1 = new Translation2d( Units.inchesToMeters(42), Units.inchesToMeters(44.4)); //this is blue alliance right?
     public Translation2d BLUE_CARGO_2 = new Translation2d( Units.inchesToMeters(198), Units.inchesToMeters(72));

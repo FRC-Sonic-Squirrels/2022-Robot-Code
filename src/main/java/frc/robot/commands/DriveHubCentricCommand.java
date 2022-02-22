@@ -50,11 +50,11 @@ public class DriveHubCentricCommand extends CommandBase {
 
   @Override
   public void initialize() {
-    //TODO: do we need continous input? drive with set rotation doesnt have it
+    //TODO: do we need continuous input? drive with set rotation doesn't have it
     rotationalController.enableContinuousInput(-Math.PI, Math.PI);
     rotationalController.setTolerance(Math.PI/180); //1 degree of wiggle room
 
-    //TODO: what does this do? drive with set rotation has this 
+    
     rotationalController.reset(m_drivetrain.getGyroscopeRotation().getRadians());
   }
 

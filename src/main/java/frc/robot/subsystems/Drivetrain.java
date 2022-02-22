@@ -325,7 +325,6 @@ public class Drivetrain extends SubsystemBase {
     return m_kinematics;
   }
 
-  //TODO: make a method that finds the wheel rotation
   public Rotation2d getWheelRotation() {
     double avgRotation = 0;
     for (int i = 0; i < 4; i++) {

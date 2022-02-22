@@ -13,9 +13,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.VisionSubsystem.VisionPipeline;
 
 public class VisionRotateToCargo extends CommandBase {
   private Drivetrain m_drivetrain;
@@ -33,9 +35,9 @@ public class VisionRotateToCargo extends CommandBase {
 
     // TODO: pick red or blue pipeline based on alliance color
     if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
-      // m_visionSubsystem.setPipeline(Constants.VisionPipeline.RED_PIPELINE);
+      m_visionSubsystem.setPipeline(VisionPipeline.RED);
     } else {
-      // m_visionSubsystem.setPipeline(Constants.VisionPipeline.BLUE_PIPELINE);
+      m_visionSubsystem.setPipeline(VisionPipeline.BLUE);
     }
 
     addRequirements(m_drivetrain, m_visionSubsystem);
