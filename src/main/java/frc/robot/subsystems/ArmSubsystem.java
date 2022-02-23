@@ -42,11 +42,10 @@ public class ArmSubsystem extends SubsystemBase {
   private DigitalInput limitSwitchBack = new DigitalInput(2);
 
   //TODO: find true values 
-  private double maxAngleDegree = 45;
-  private double minAngleDegree = -45;
+  private double maxAngleDegree = 30;
+  private double minAngleDegree = -30;
 
-  private double m_armStepValue_testing = 0;
-
+  private double m_armStepValueDegrees = 3.0;
 
   public ArmSubsystem() {
     m_armLeadMotor.setIdleMode(IdleMode.kBrake);
@@ -63,6 +62,7 @@ public class ArmSubsystem extends SubsystemBase {
     // Acceleration is in RPM/s. 45 degrees per second per second.
     m_armPID.setSmartMotionMaxAccel(60*(45.0/360.0), 0);
     // velocity is in RPM. 7.5 RPM is 45 degrees per second
+    // for reference JVN calc claims max velocity of about 450 degrees per second.
     m_armPID.setSmartMotionMaxVelocity(60*(45.0/360.0), 0);
     // Error is in rotations
     m_armPID.setSmartMotionAllowedClosedLoopError(1/360.0, 0);
@@ -78,7 +78,6 @@ public class ArmSubsystem extends SubsystemBase {
     // maybe the arm will start on a hard stop, part way back with a limit switch
     ticksWhenStraightUp = m_throughBoreEncoder.getPosition();
   }
-
 
   /**
    * setArmAngle - sets the arm to a specific angle in degrees
@@ -138,24 +137,33 @@ public class ArmSubsystem extends SubsystemBase {
     m_armFollowMotor.setIdleMode(IdleMode.kBrake);
   }
 
-  public void armStepBy(){
-    m_armPID.setReference(m_throughBoreEncoder.getPosition() + m_armStepValue_testing, ControlType.kPosition);
+  /**
+   * incrementArmAngle - increments the arm angle (+ or -) arm angle increment
+   * 
+   * The sign (not the magnitude) of the increment is determined by the sign the parameter.
+   * 
+   * @param sign
+   */
+  public void incrementArmAngle(int sign) {
+    setArmAngle(m_targetAngle + Math.signum(sign) * m_armStepValueDegrees);
   }
 
   public void updateTestingValues(){
-    m_armStepValue_testing = SmartDashboard.getNumber("Arm Step Value", 0);
+    double asv = SmartDashboard.getNumber("Arm_Subsystem Step Value Deg", 0);
+    if (asv != m_armStepValueDegrees) {
+      m_armStepValueDegrees = asv;
+    }
   }
 
   @Override
   public void periodic() {
     updateTestingValues();
     
-
-    //this maybe makes the arm stop?? 
-    if(limitSwitchFront.get() || limitSwitchBack.get()) {
-      // TODO: getPosition will return an angle, need to convert back to ticks first
-      // m_armPID.setReference(m_throughBoreEncoder.getPosition(), ControlType.kPosition);
-    }
+    // TODO: we don't have limit switches on the robot yet
+    //if(limitSwitchFront.get() || limitSwitchBack.get()) {
+    //    TODO: getPosition will return an angle, need to convert back to ticks first
+    //    m_armPID.setReference(m_throughBoreEncoder.getPosition(), ControlType.kPosition);
+    //}
 
     SmartDashboard.putNumber("Arm_Subsystem Angle deg", getArmAngle());
     SmartDashboard.putNumber("Arm_Subsystem Vel (deg/s)", m_armLeadMotor.getEncoder().getVelocity()*rpm2degreesPerSecond);
@@ -173,6 +181,6 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Arm_Subsystem encoder To Arm Ratio", m_encoderToArmRatio);
     SmartDashboard.putNumber("Arm_Subsystem maximum Angle Degree", maxAngleDegree);
     SmartDashboard.putNumber("Arm_Subsystem minimum Angle Degree", minAngleDegree);
-    SmartDashboard.putNumber("Arm_Subsystem arm Step Value Testing", m_armStepValue_testing);
+    SmartDashboard.putNumber("Arm_Subsystem Step Value Deg", m_armStepValueDegrees);
   }
 }
