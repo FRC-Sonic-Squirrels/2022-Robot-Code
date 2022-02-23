@@ -107,7 +107,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public boolean isAtAngle(){
-    return (Math.abs(getEncoderValue() - m_targetAngle) <= toleranceDegrees);
+    return (Math.abs(getArmAngle() - m_targetAngle) <= toleranceDegrees);
   }
 
   public void setArmPercentOutput(double percentage){
