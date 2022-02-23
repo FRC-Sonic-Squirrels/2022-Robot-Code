@@ -42,7 +42,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private double m_configIZ = 0;
 
   // lower number here, slows the rate of change and decreases the power spike 
-  private double m_rate_RPMpersecond = 2500;
+  private double m_rate_RPMperSecond = 2500;
   private SlewRateLimiter m_rateLimiter;
 
   /** Creates a new ShooterSubsystem. */
@@ -89,6 +89,20 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Shooter_Subsystem RPM set point", setPoint);
     SmartDashboard.putNumber("Shooter_Subsystem RPM error", m_error);
     SmartDashboard.putBoolean("Shooter_Subsystem isAtSpeed", m_atSpeed);
+    SmartDashboard.putNumber("Shooter_Subsystem m_CurrentRPM", m_currentRPM);
+    SmartDashboard.putNumber("Shooter_Subsystem m_desiredRPM", m_desiredRPM);
+    SmartDashboard.putBoolean("Shooter_Subsystem m_atSpeed", m_atSpeed);
+    SmartDashboard.putNumber("Shooter_Subsystem m_idleRPM", m_idleRPM);
+    SmartDashboard.putNumber("Shooter_Subsystem m_error", m_error);
+    SmartDashboard.putNumber("Shooter_Subsystem m_max_RPM_error", m_max_RPM_error);
+    SmartDashboard.putNumber("Shooter_Subsystem RPMtoTicks", RPMtoTicks);
+    SmartDashboard.putNumber("Shooter_Subsystem m_testingStaticRPM", m_testingStaticRPM);
+    SmartDashboard.putNumber("Shooter_Subsystem  m_configI",  m_configI);
+    SmartDashboard.putNumber("Shooter_Subsystem  m_configD",  m_configD);
+    SmartDashboard.putNumber("Shooter_Subsystem  m_configF",  m_configF);
+    SmartDashboard.putNumber("Shooter_Subsystem  m_configIZ",  m_configIZ);
+    SmartDashboard.putNumber("Shooter_Subsystem m_rate_RPMperSecond", m_rate_RPMperSecond);
+
   }
 
   public void setFlywheelRPM(double rpm) {
