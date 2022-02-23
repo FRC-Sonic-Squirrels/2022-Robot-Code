@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
@@ -18,8 +19,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.Relay;
 import static frc.robot.Constants.canId;
-import frc.robot.RobotContainer;
-
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -47,12 +46,18 @@ public class IntakeSubsystem extends SubsystemBase {
   private double m_forwardRpmValue = 0;
   private double m_reverseRpmValue = 0;
 
+  private SupplyCurrentLimitConfiguration currentLimit =
+    new SupplyCurrentLimitConfiguration(true, 25, 30, 0.5);
+
   public IntakeSubsystem(Drivetrain drivetrain) {
     
     m_drivetrain = drivetrain;
     m_intake.configFactoryDefault();
     m_intake.setInverted(true);
     m_intake.setNeutralMode(NeutralMode.Coast); 
+    m_intake.configVoltageCompSaturation(10.0);
+    m_intake.configSupplyCurrentLimit(currentLimit);
+
     m_intake.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, kPIDLoopIdx, kTimeoutMs);
 
     m_intake.config_kP(kPIDLoopIdx, 0.2);

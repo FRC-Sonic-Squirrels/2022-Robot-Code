@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,6 +36,10 @@ public class CargoSubsystem extends SubsystemBase {
   private DigitalInput lowerSensor = new DigitalInput(digitalIOConstants.dio0_indexerSensor1);
   private DigitalInput upperSensor = new DigitalInput(digitalIOConstants.dio1_indexerSensor2);
   private Mode mode = Mode.STOP;
+
+  private SupplyCurrentLimitConfiguration currentLimit =
+      new SupplyCurrentLimitConfiguration(true, 25, 30, 0.5);
+  
   // TODO: check the real percent outputs of the conveyor belts
   private double m_percentOutput = 0.7;
 
@@ -45,6 +50,13 @@ public class CargoSubsystem extends SubsystemBase {
 
     LowerBelts.configFactoryDefault();
     UpperBelts.configFactoryDefault();
+
+    // limit motors to 10V max
+    LowerBelts.configVoltageCompSaturation(10.0);
+    UpperBelts.configVoltageCompSaturation(10.0);
+
+    LowerBelts.configSupplyCurrentLimit(currentLimit);
+    UpperBelts.configSupplyCurrentLimit(currentLimit);
 
     // reduce CAN traffic for motors (not using speed control)
     LowerBelts.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
