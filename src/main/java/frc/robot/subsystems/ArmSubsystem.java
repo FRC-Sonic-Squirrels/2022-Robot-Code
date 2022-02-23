@@ -72,6 +72,8 @@ public class ArmSubsystem extends SubsystemBase {
     // TODO: maybe leave this alone and use raw encoder ticks
     m_throughBoreEncoder.setPositionConversionFactor(360.0/kCPR);
 
+    //because of gear box the encoder is spinning the wrong way
+    m_throughBoreEncoder.setInverted(true);
     // TODO: need to figure out how to zero the arm position.
     // maybe the arm will start on a hard stop, part way back with a limit switch
     ticksWhenStraightUp = m_throughBoreEncoder.getPosition();
