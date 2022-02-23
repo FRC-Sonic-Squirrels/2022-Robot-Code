@@ -14,10 +14,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ShooterSubsystem extends SubsystemBase {
-  
+
   enum ShooterMode {
-    STATIC,
-    DYNAMIC
+    STATIC, DYNAMIC
   };
 
   private double targetRPM;
@@ -41,7 +40,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private double m_configF = 0;
   private double m_configIZ = 0;
 
-  // lower number here, slows the rate of change and decreases the power spike 
+  // lower number here, slows the rate of change and decreases the power spike
   private double m_rate_RPMperSecond = 2500;
   private SlewRateLimiter m_rateLimiter;
 
@@ -49,38 +48,38 @@ public class ShooterSubsystem extends SubsystemBase {
   public ShooterSubsystem() {
     adjustPID();
   }
-  public void updateTestingRPM(){
+
+  public void updateTestingRPM() {
     m_testingStaticRPM = SmartDashboard.getNumber("static flywheel speed", 0);
   }
 
   @Override
   public void periodic() {
-    //this is for testing and tuning the pid
+    // this is for testing and tuning the pid
     setPIDFromSmartDashboard();
     updateTestingRPM();
 
     double setPoint = 0;
-    if(shooterMode == ShooterMode.DYNAMIC){
-    m_currentRPM = m_encoder.getIntegratedSensorVelocity() / RPMtoTicks;
-    m_error = m_currentRPM - m_desiredRPM;
+    if (shooterMode == ShooterMode.DYNAMIC) {
+      m_currentRPM = m_encoder.getIntegratedSensorVelocity() / RPMtoTicks;
+      m_error = m_currentRPM - m_desiredRPM;
 
-    //if (Math.abs(m_error) < m_max_RPM_error) {
-    if (((m_error >= 0) && (m_error < m_max_RPM_error)) ||
-        ((m_error < 0) && (m_error > -m_max_RPM_error))) {
-      m_atSpeed = true;
-    }
-    else {
-      m_atSpeed = false;  
-    }
+      // if (Math.abs(m_error) < m_max_RPM_error) {
+      if (((m_error >= 0) && (m_error < m_max_RPM_error))
+          || ((m_error < 0) && (m_error > -m_max_RPM_error))) {
+        m_atSpeed = true;
+      } else {
+        m_atSpeed = false;
+      }
 
-    setPoint = m_rateLimiter.calculate(m_desiredRPM);
-    if (m_desiredRPM < setPoint) {
-      // we don't rate reduce slowing the robot
-      setPoint = m_desiredRPM;
+      setPoint = m_rateLimiter.calculate(m_desiredRPM);
+      if (m_desiredRPM < setPoint) {
+        // we don't rate reduce slowing the robot
+        setPoint = m_desiredRPM;
+      }
+    } else if (shooterMode == ShooterMode.STATIC) {
+      setPoint = m_testingStaticRPM;
     }
-  } else if(shooterMode == ShooterMode.STATIC){
-     setPoint = m_testingStaticRPM;
-  }
 
     m_flywheel.set(ControlMode.Velocity, setPoint * RPMtoTicks);
 
@@ -97,10 +96,10 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Shooter_Subsystem m_max_RPM_error", m_max_RPM_error);
     SmartDashboard.putNumber("Shooter_Subsystem RPMtoTicks", RPMtoTicks);
     SmartDashboard.putNumber("Shooter_Subsystem m_testingStaticRPM", m_testingStaticRPM);
-    SmartDashboard.putNumber("Shooter_Subsystem  m_configI",  m_configI);
-    SmartDashboard.putNumber("Shooter_Subsystem  m_configD",  m_configD);
-    SmartDashboard.putNumber("Shooter_Subsystem  m_configF",  m_configF);
-    SmartDashboard.putNumber("Shooter_Subsystem  m_configIZ",  m_configIZ);
+    SmartDashboard.putNumber("Shooter_Subsystem  m_configI", m_configI);
+    SmartDashboard.putNumber("Shooter_Subsystem  m_configD", m_configD);
+    SmartDashboard.putNumber("Shooter_Subsystem  m_configF", m_configF);
+    SmartDashboard.putNumber("Shooter_Subsystem  m_configIZ", m_configIZ);
     SmartDashboard.putNumber("Shooter_Subsystem m_rate_RPMperSecond", m_rate_RPMperSecond);
 
   }
@@ -125,7 +124,7 @@ public class ShooterSubsystem extends SubsystemBase {
     return m_idleRPM;
   }
 
-  private void setPIDFromSmartDashboard(){
+  private void setPIDFromSmartDashboard() {
     double P = SmartDashboard.getNumber("Shooter_K", 0);
     double I = SmartDashboard.getNumber("Shooter_I", 0);
     double D = SmartDashboard.getNumber("Shooter_D", 0);
@@ -133,18 +132,33 @@ public class ShooterSubsystem extends SubsystemBase {
     double IZ = SmartDashboard.getNumber("Shooter_IZ", 0);
 
     boolean hasChanged = false;
-    if(m_configP != P) {m_configP = P; hasChanged = true;}
-    if(m_configI != I) {m_configI = I; hasChanged = true;}
-    if(m_configD != D) {m_configD = D; hasChanged = true;}
-    if(m_configF != F) {m_configF = F; hasChanged = true;}
-    if(m_configIZ != IZ) {m_configIZ = IZ; hasChanged = true;}
+    if (m_configP != P) {
+      m_configP = P;
+      hasChanged = true;
+    }
+    if (m_configI != I) {
+      m_configI = I;
+      hasChanged = true;
+    }
+    if (m_configD != D) {
+      m_configD = D;
+      hasChanged = true;
+    }
+    if (m_configF != F) {
+      m_configF = F;
+      hasChanged = true;
+    }
+    if (m_configIZ != IZ) {
+      m_configIZ = IZ;
+      hasChanged = true;
+    }
 
-    if(hasChanged){
+    if (hasChanged) {
       adjustPID();
     }
   }
 
-  private void adjustPID(){
+  private void adjustPID() {
     m_flywheel.config_kP(0, m_configP);
     m_flywheel.config_kI(0, m_configI);
     m_flywheel.config_kD(0, m_configD);
