@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.team2930.lib.util.linearInterpolator;
@@ -19,7 +21,6 @@ public class ShooterSubsystem extends SubsystemBase {
     STATIC, DYNAMIC
   };
 
-  private double targetRPM;
   private WPI_TalonFX m_flywheel = new WPI_TalonFX(Constants.canId.CANID7_FLYWHEEL);
   private TalonFXSensorCollection m_encoder;
   private double kMaxOutput, kMinOutput;
@@ -31,7 +32,6 @@ public class ShooterSubsystem extends SubsystemBase {
   private double m_error = 0;
   private double m_max_RPM_error = 15;
   private final double RPMtoTicks = 2048 / 600;
-  private ShooterMode shooterMode = ShooterMode.DYNAMIC;
   private double m_testingStaticRPM = 0;
 
   private double m_configP = 0;
@@ -46,11 +46,21 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
+    m_flywheel.configFactoryDefault();
+    m_flywheel.setNeutralMode(NeutralMode.Coast);
+    m_flywheel.configVoltageCompSaturation(11.0);
+    m_flywheel.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+
     adjustPID();
   }
 
   public void updateTestingRPM() {
     m_testingStaticRPM = SmartDashboard.getNumber("static flywheel speed", 0);
+  }
+
+  public void stop() {
+    m_desiredRPM = 0;
+    m_flywheel.set(ControlMode.PercentOutput, 0);
   }
 
   @Override
@@ -60,29 +70,28 @@ public class ShooterSubsystem extends SubsystemBase {
     updateTestingRPM();
 
     double setPoint = 0;
-    if (shooterMode == ShooterMode.DYNAMIC) {
-      m_currentRPM = m_encoder.getIntegratedSensorVelocity() / RPMtoTicks;
-      m_error = m_currentRPM - m_desiredRPM;
+    m_currentRPM = m_encoder.getIntegratedSensorVelocity() / RPMtoTicks;
+    m_error = m_currentRPM - m_desiredRPM;
 
-      // if (Math.abs(m_error) < m_max_RPM_error) {
-      if (((m_error >= 0) && (m_error < m_max_RPM_error))
-          || ((m_error < 0) && (m_error > -m_max_RPM_error))) {
-        m_atSpeed = true;
-      } else {
-        m_atSpeed = false;
-      }
-
-      setPoint = m_rateLimiter.calculate(m_desiredRPM);
-      if (m_desiredRPM < setPoint) {
-        // we don't rate reduce slowing the robot
-        setPoint = m_desiredRPM;
-      }
-    } else if (shooterMode == ShooterMode.STATIC) {
-      setPoint = m_testingStaticRPM;
+    if (Math.abs(m_error) <= m_max_RPM_error) {
+      m_atSpeed = true;
+    } else {
+      m_atSpeed = false;
     }
 
-    m_flywheel.set(ControlMode.Velocity, setPoint * RPMtoTicks);
+    setPoint = m_rateLimiter.calculate(m_desiredRPM);
+    if (m_desiredRPM < setPoint) {
+      // we don't rate reduce slowing the robot
+      setPoint = m_desiredRPM;
+    }
 
+    if (m_desiredRPM == 0) {
+      // special case, turn off power to flywheel
+      m_flywheel.set(ControlMode.PercentOutput, 0);
+    }
+    else {
+      m_flywheel.set(ControlMode.Velocity, setPoint * RPMtoTicks);
+    }
 
     SmartDashboard.putNumber("Shooter_Subsystem RPM", m_currentRPM);
     SmartDashboard.putNumber("Shooter_Subsystem RPM set point", setPoint);
