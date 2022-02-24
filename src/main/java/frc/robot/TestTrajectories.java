@@ -25,7 +25,7 @@ public class TestTrajectories {
 
   private boolean isSwerve = true;
 
-  // These are very tame velocity and acceleration values. Relatively save for testing.
+  // These are very tame velocity and acceleration values. Relatively safe for testing.
   private double maxVelocity = 1.0;
   private double maxAcceleration = 0.75;
 

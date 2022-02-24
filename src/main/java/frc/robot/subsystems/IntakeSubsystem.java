@@ -10,16 +10,16 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import static frc.robot.Constants.canId;
-import frc.robot.RobotContainer;
-
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -32,9 +32,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private WPI_TalonFX m_intake = new WPI_TalonFX(canId.CANID18_INTAKE);
   private TalonFXSensorCollection m_encoder;
-  private Relay intakeRelay = new Relay(0);
+  private Solenoid intakeSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Constants.pneumatics.channel_15_intake);
   private Drivetrain m_drivetrain;
-  
   private double circOfIntake_meters = (1.4725 * Math.PI) * 0.0254;
   private double minIntakeRPM = 2500;
   private double maxIntakeRPM = 6000;
@@ -44,8 +43,13 @@ public class IntakeSubsystem extends SubsystemBase {
   private static int kPIDLoopIdx = 0;
   private static int kTimeoutMs = 30;
   private Mode mode = Mode.STOP;
-  private double m_forwardRpmValue = 0;
-  private double m_reverseRpmValue = 0;
+
+  // TODO: find actual RPM values to use
+  private double m_forwardRpmValue = 2000;
+  private double m_reverseRpmValue = -1000;
+
+  private SupplyCurrentLimitConfiguration currentLimit =
+    new SupplyCurrentLimitConfiguration(true, 25, 30, 0.5);
 
   public IntakeSubsystem(Drivetrain drivetrain) {
     
@@ -53,6 +57,9 @@ public class IntakeSubsystem extends SubsystemBase {
     m_intake.configFactoryDefault();
     m_intake.setInverted(true);
     m_intake.setNeutralMode(NeutralMode.Coast); 
+    m_intake.configVoltageCompSaturation(10.0);
+    m_intake.configSupplyCurrentLimit(currentLimit);
+
     m_intake.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, kPIDLoopIdx, kTimeoutMs);
 
     m_intake.config_kP(kPIDLoopIdx, 0.2);
@@ -87,11 +94,11 @@ public class IntakeSubsystem extends SubsystemBase {
     if(mode == Mode.STOP){
       m_intake.setVoltage(0);
     } else if(mode == Mode.FORWARD){
-      setIntakeMotorRPM(m_forwardRpmValue); //TODO: set RPM to actual value needed
+      setIntakeMotorRPM(m_forwardRpmValue);
     } else if(mode == Mode.DYNAMIC){
       setIntakeToSpeed();
     } else if(mode == Mode.REVERSE){
-      setIntakeMotorRPM(-m_reverseRpmValue); //TODO: what does the speed have to be for reverse?
+      setIntakeMotorRPM(m_reverseRpmValue);
     }
 
     SmartDashboard.putNumber("Intake_Subsystem RPM", - m_encoder.getIntegratedSensorVelocity() * 600 / 2048);
@@ -107,8 +114,9 @@ public class IntakeSubsystem extends SubsystemBase {
   }
   
   public void testingRpmValues(){
-    m_forwardRpmValue = SmartDashboard.getNumber("forward intake subsystem motor speed", 0);
-    m_reverseRpmValue = SmartDashboard.getNumber("reverse intake subsystem motor speed", 0);
+    // SmartDashboard values have to match those in periodic() for values to update correctly
+    m_forwardRpmValue = SmartDashboard.getNumber("Intake_Subsystem forward RPM Value", 0);
+    m_reverseRpmValue = SmartDashboard.getNumber("Intake_Subsystem reverse RPM Value", 0);
   }
 
   /**
@@ -155,19 +163,18 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   /**
-   * release and deploy the intake
+   * extend piston to deploy intake
    */
   public void deployIntake() {
-    intakeRelay.set(Relay.Value.kReverse);
+    intakeSolenoid.set(true);
     m_isDeployed = true;
   }
 
   /**
-   * reset solenoids
+   * retract piston to retract intake
    */
   public void retractIntake() {
-    // There is no retract on this robot. Just reset solenoids
-    intakeRelay.set(Relay.Value.kForward);
+    intakeSolenoid.set(false);
     m_isDeployed = false;
   }
 
@@ -193,7 +200,7 @@ public class IntakeSubsystem extends SubsystemBase {
     setStopMode();
     m_intake.setVoltage(0.0);
     setIntakeMotorRPM(0.0);
-    intakeRelay.set(Relay.Value.kForward);
+    retractIntake();
   }
 
   public boolean isDeployed(){

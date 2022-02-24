@@ -31,7 +31,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private WPI_TalonFX winch_lead_talon = new WPI_TalonFX(Constants.canId.CANID9_ELEVATOR_LEAD_TALON);
   private WPI_TalonFX winch_follow_talon = new WPI_TalonFX(Constants.canId.CANID10_ELEVATOR_FOLLOW_TALON);
   private Solenoid frictionBrakeSolenoid =
-      new Solenoid(PneumaticsModuleType.REVPH, Constants.canId.CANID8_FRICTION_BRAKE_SOLENOID);
+      new Solenoid(PneumaticsModuleType.REVPH, Constants.pneumatics.channel_14_friction_break);
   private final double gearRatio =  0.074;
   private final double winchDiameter_inches = 1.30;   // 1.25 diameter + string windings
   private final double winchCircumference = Math.PI * winchDiameter_inches;

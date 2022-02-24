@@ -195,8 +195,13 @@ public class RobotContainer {
     new Button(m_operatorController::getRightBumper)
       .whileHeld(new ArmManualControlCommand(() -> m_operatorController.getRightY(), m_arm), true);
 
+    // rotate arm one step in the positive direction (towards the front of robot)
     new Button(m_operatorController::getBackButton)
-      .whenPressed(new InstantCommand(() -> m_arm.armStepBy(), m_arm));
+      .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(1), m_arm));
+
+    // rotate arm one step in the negative direction (towards the back of robot)
+    new Button(m_operatorController::getStartButton)
+      .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(-1), m_arm));
   }
   
   private static double deadband(double value, double deadband) {

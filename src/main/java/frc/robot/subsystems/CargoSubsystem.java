@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,6 +36,7 @@ public class CargoSubsystem extends SubsystemBase {
   private DigitalInput lowerSensor = new DigitalInput(digitalIOConstants.dio0_indexerSensor1);
   private DigitalInput upperSensor = new DigitalInput(digitalIOConstants.dio1_indexerSensor2);
   private Mode mode = Mode.STOP;
+
   // TODO: check the real percent outputs of the conveyor belts
   private double m_percentOutput = 0.7;
 
@@ -53,14 +55,20 @@ public class CargoSubsystem extends SubsystemBase {
     UpperBelts.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 100);
 
     // Voltage limits, percent output is scaled to this new max
-    LowerBelts.configVoltageCompSaturation(11);
+    LowerBelts.configVoltageCompSaturation(10);
     LowerBelts.enableVoltageCompensation(true);
-    UpperBelts.configVoltageCompSaturation(11);
+    UpperBelts.configVoltageCompSaturation(10);
     UpperBelts.enableVoltageCompensation(true);
 
-    // current limits
-    LowerBelts.configSupplyCurrentLimit(currentLimits.m_currentlimitSecondary);
-    UpperBelts.configSupplyCurrentLimit(currentLimits.m_currentlimitSecondary);
+    // current limits, Max 30A
+    SupplyCurrentLimitConfiguration currentLimit =
+        new SupplyCurrentLimitConfiguration(true, 25, 30, 0.3);
+    LowerBelts.configSupplyCurrentLimit(currentLimit);
+    UpperBelts.configSupplyCurrentLimit(currentLimit);
+
+    // ramp rate, how long to take to get to full power
+    LowerBelts.configOpenloopRamp(0.25);
+    UpperBelts.configOpenloopRamp(0.25);
 
     // Brake mode
     LowerBelts.setNeutralMode(NeutralMode.Brake);
