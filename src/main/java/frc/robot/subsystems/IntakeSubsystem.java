@@ -43,8 +43,10 @@ public class IntakeSubsystem extends SubsystemBase {
   private static int kPIDLoopIdx = 0;
   private static int kTimeoutMs = 30;
   private Mode mode = Mode.STOP;
-  private double m_forwardRpmValue = 0;
-  private double m_reverseRpmValue = 0;
+
+  // TODO: find actual RPM values to use
+  private double m_forwardRpmValue = 2000;
+  private double m_reverseRpmValue = -1000;
 
   private SupplyCurrentLimitConfiguration currentLimit =
     new SupplyCurrentLimitConfiguration(true, 25, 30, 0.5);
@@ -92,11 +94,11 @@ public class IntakeSubsystem extends SubsystemBase {
     if(mode == Mode.STOP){
       m_intake.setVoltage(0);
     } else if(mode == Mode.FORWARD){
-      setIntakeMotorRPM(m_forwardRpmValue); //TODO: set RPM to actual value needed
+      setIntakeMotorRPM(m_forwardRpmValue);
     } else if(mode == Mode.DYNAMIC){
       setIntakeToSpeed();
     } else if(mode == Mode.REVERSE){
-      setIntakeMotorRPM(-m_reverseRpmValue); //TODO: what does the speed have to be for reverse?
+      setIntakeMotorRPM(m_reverseRpmValue);
     }
 
     SmartDashboard.putNumber("Intake_Subsystem RPM", - m_encoder.getIntegratedSensorVelocity() * 600 / 2048);
@@ -112,8 +114,9 @@ public class IntakeSubsystem extends SubsystemBase {
   }
   
   public void testingRpmValues(){
-    m_forwardRpmValue = SmartDashboard.getNumber("forward intake subsystem motor speed", 0);
-    m_reverseRpmValue = SmartDashboard.getNumber("reverse intake subsystem motor speed", 0);
+    // SmartDashboard values have to match those in periodic() for values to update correctly
+    m_forwardRpmValue = SmartDashboard.getNumber("Intake_Subsystem forward RPM Value", 0);
+    m_reverseRpmValue = SmartDashboard.getNumber("Intake_Subsystem reverse RPM Value", 0);
   }
 
   /**
