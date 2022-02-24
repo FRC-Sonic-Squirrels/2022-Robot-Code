@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.HubCentricConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.CargoMoveToUpperBeltsCommand;
@@ -137,9 +138,17 @@ public class SwerveTrajectoryFollowCommandFactory {
    * @param chooser
    */
   public static void addTestTrajectoriesToChooser(SendableChooser<Command> chooser, double maxVelocity,
-      double maxAcceleration, Drivetrain drivetrain, boolean isSwerve) {
+      double maxAcceleration, Drivetrain drivetrain, boolean isSwerve, ShooterSubsystem shooter,
+      CargoSubsystem cargo, IntakeSubsystem intake, Robot robot) {
 
     TestTrajectories tt = new TestTrajectories(maxVelocity, maxAcceleration, drivetrain, isSwerve);
+    
+    chooser.addOption("4 ball auton", fourBallAutonCommand(
+        new Pose2d(FieldConstants.BLUE_CARGO_1, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_1, new Rotation2d()), 
+        null, null,
+        null,
+        null, null,
+        tt, drivetrain, shooter, cargo, intake, robot));
 
     chooser.addOption("Figure 8", figureEightCommand(tt, drivetrain));
     chooser.addOption("Go Forward 1m", straightForward1mCommand(tt, drivetrain));
@@ -304,7 +313,7 @@ public class SwerveTrajectoryFollowCommandFactory {
    * @param midPos2 the position right in front of second wanted cargo (inches)
    * @return a set of actions with the robot shooting its current 2 cargo, then moving and picking up the next 2 cargo
    */
-  public static Command doubleShootAndMoveToCargoCommand(Pose2d initCargoPos, Pose2d initMidPos, Pose2d cargoPos1, Pose2d midPos1,
+  public static Command fourBallAutonCommand(Pose2d initCargoPos, Pose2d initMidPos, Pose2d cargoPos1, Pose2d midPos1,
       Pose2d shootPos, Pose2d cargoPos2, Pose2d midPos2, TestTrajectories testTrajectories, Drivetrain drivetrain,
       ShooterSubsystem shooter, CargoSubsystem cargo, IntakeSubsystem intake, Robot robot) {
 
