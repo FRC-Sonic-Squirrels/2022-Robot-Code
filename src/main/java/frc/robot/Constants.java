@@ -51,7 +51,6 @@ public final class Constants {
     public static final int CANID14_BACK_LEFT_MODULE_STEER_MOTOR = 14;
     public static final int CANID24_BACK_LEFT_MODULE_STEER_ENCODER = 24;
 
-    
     public static final int CANID5_LOWER_BELTS = 5;
     public static final int CANID6_UPPER_BELTS = 6;
     public static final int CANID7_FLYWHEEL = 7;
@@ -99,8 +98,8 @@ public final class Constants {
   }
 
   public static final class currentLimits {
-    public static SupplyCurrentLimitConfiguration m_currentlimitMain = new SupplyCurrentLimitConfiguration(true, 35, 1, 1);
-    public static SupplyCurrentLimitConfiguration m_currentlimitSecondary = new SupplyCurrentLimitConfiguration(true, 25, 1, 1);
+    public static SupplyCurrentLimitConfiguration m_currentlimit38A = new SupplyCurrentLimitConfiguration(true, 30, 38, 0.2);
+    public static SupplyCurrentLimitConfiguration m_currentlimit30A = new SupplyCurrentLimitConfiguration(true, 25, 30, 0.2);
   }
 
   /**
