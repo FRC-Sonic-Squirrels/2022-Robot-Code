@@ -82,7 +82,8 @@ public class RobotContainer {
     drivetrain.setGyroscopeHeadingDegrees(0);
     drivetrain.setPose(Constants.ROBOT_1M_LEFT_OF_HUB, drivetrain.getGyroscopeRotation());
 
-    SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true);
+    SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooterSubsystem,
+        m_cargoSubsystem, m_intake, m_robot);
     SmartDashboard.putData("Auto mode", chooser);
 
     // Creates UsbCamera and MjpegServer [1] and connects them
