@@ -17,7 +17,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import static frc.robot.Constants.canId;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -31,9 +32,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private WPI_TalonFX m_intake = new WPI_TalonFX(canId.CANID18_INTAKE);
   private TalonFXSensorCollection m_encoder;
-  private Relay intakeRelay = new Relay(0);
+  private Solenoid intakeSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Constants.pneumatics.channel_15_intake);
   private Drivetrain m_drivetrain;
-  
   private double circOfIntake_meters = (1.4725 * Math.PI) * 0.0254;
   private double minIntakeRPM = 2500;
   private double maxIntakeRPM = 6000;
@@ -160,19 +160,18 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   /**
-   * release and deploy the intake
+   * extend piston to deploy intake
    */
   public void deployIntake() {
-    intakeRelay.set(Relay.Value.kReverse);
+    intakeSolenoid.set(true);
     m_isDeployed = true;
   }
 
   /**
-   * reset solenoids
+   * retract piston to retract intake
    */
   public void retractIntake() {
-    // There is no retract on this robot. Just reset solenoids
-    intakeRelay.set(Relay.Value.kForward);
+    intakeSolenoid.set(false);
     m_isDeployed = false;
   }
 
@@ -198,7 +197,7 @@ public class IntakeSubsystem extends SubsystemBase {
     setStopMode();
     m_intake.setVoltage(0.0);
     setIntakeMotorRPM(0.0);
-    intakeRelay.set(Relay.Value.kForward);
+    retractIntake();
   }
 
   public boolean isDeployed(){
