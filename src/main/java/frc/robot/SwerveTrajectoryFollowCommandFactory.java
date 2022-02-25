@@ -143,10 +143,18 @@ public class SwerveTrajectoryFollowCommandFactory {
 
     TestTrajectories tt = new TestTrajectories(maxVelocity, maxAcceleration, drivetrain, isSwerve);
     
-    chooser.addOption("4 ball auton", fourBallAutonCommand(
+    //TODO: have the mid poses be different than the cargo poses and find the shoot pose
+    chooser.addOption("4 ball auton 123", fourBallAutonCommand(
         new Pose2d(FieldConstants.BLUE_CARGO_1, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_1, new Rotation2d()), 
+        null,
+        new Pose2d(FieldConstants.BLUE_CARGO_2, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_2, new Rotation2d()),
+        new Pose2d(FieldConstants.BLUE_CARGO_3, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_3, new Rotation2d()),
+        tt, drivetrain, shooter, cargo, intake, robot));
+    
+    chooser.addOption("4 ball auton 456", fourBallAutonCommand(
         null, null,
         null,
+        null, null,
         null, null,
         tt, drivetrain, shooter, cargo, intake, robot));
 
@@ -201,9 +209,9 @@ public class SwerveTrajectoryFollowCommandFactory {
 
   /**
    * command for autonomously shooting and then moving to the next set of cargo coordinates.
-   * @param cargoPos the position of the wanted cargo (in inches)
-   * @param shootPos the position of the robot when about to shoot cargo (in inches)
-   * @param midPos the position right in front of the wanted cargo (in inches)
+   * @param cargoPos the position of the wanted cargo 
+   * @param shootPos the position of the robot when about to shoot cargo 
+   * @param midPos the position right in front of the wanted cargo 
    * @return a set of actions with the robot shooting its current cargo, then moving and picking up the next cargo
    */
   public static Command shootAndMoveToCargoCommand(Pose2d cargoPos, Pose2d shootPos, Pose2d midPos,
@@ -304,17 +312,17 @@ public class SwerveTrajectoryFollowCommandFactory {
   /**
    * command for autonomously shooting two cargo then collecting the next two cargo by coordinates.
    * (i apologize for this method having 13 parameters)
-   * @param initCargoPos the position of the pre-shoot cargo (inches)
-   * @param initMidPos the position before collecting the pre-shoot cargo (inches)
-   * @param cargoPos1 the position of the wanted cargo (in inches)
-   * @param midPos1 the position of the robot when about to shoot cargo (in inches)
-   * @param shootPos the position right in front of the wanted cargo (in inches)
-   * @param cargoPos2 the position of the second wanted cargo (inches)
-   * @param midPos2 the position right in front of second wanted cargo (inches)
+   * @param initCargoPos the position of the pre-shoot cargo (meters)
+   * @param initMidPos the position before collecting the pre-shoot cargo (meters)
+   * @param shootPos the position of the robot when about to shoot cargo (in meters)
+   * @param cargoPos1 the position of the wanted cargo (in meters)
+   * @param midPos1 the position right in front of the wanted cargo (in meters)
+   * @param cargoPos2 the position of the second wanted cargo (meters)
+   * @param midPos2 the position right in front of second wanted cargo (meters)
    * @return a set of actions with the robot shooting its current 2 cargo, then moving and picking up the next 2 cargo
    */
-  public static Command fourBallAutonCommand(Pose2d initCargoPos, Pose2d initMidPos, Pose2d cargoPos1, Pose2d midPos1,
-      Pose2d shootPos, Pose2d cargoPos2, Pose2d midPos2, TestTrajectories testTrajectories, Drivetrain drivetrain,
+  public static Command fourBallAutonCommand(Pose2d initCargoPos, Pose2d initMidPos, Pose2d shootPos, Pose2d cargoPos1,
+      Pose2d midPos1, Pose2d cargoPos2, Pose2d midPos2, TestTrajectories testTrajectories, Drivetrain drivetrain,
       ShooterSubsystem shooter, CargoSubsystem cargo, IntakeSubsystem intake, Robot robot) {
 
     // assuming the angle is set rather than added: angle = arctangent ((robotX - hubX) / (robotY - hubY))
@@ -324,18 +332,18 @@ public class SwerveTrajectoryFollowCommandFactory {
     // give shootAngle its rotation, then change units
     Rotation2d shootAngle = new Rotation2d( Math.atan2(shootPos.getY() - HubCentricConstants.HUB_CENTER.y,
         shootPos.getX() - HubCentricConstants.HUB_CENTER.x));
-    shootPos = inchesToMeters(shootPos);
+    //shootPos = inchesToMeters(shootPos);
     shootPos = setRotation(shootPos, shootAngle);
     
     // change units of mid poses
-    initMidPos = inchesToMeters(initMidPos);
-    midPos1 = inchesToMeters(midPos1);
-    midPos2 = inchesToMeters(midPos2);
+    //initMidPos = inchesToMeters(initMidPos);
+    //midPos1 = inchesToMeters(midPos1);
+    //midPos2 = inchesToMeters(midPos2);
 
     // change units of cargo poses
-    initCargoPos = inchesToMeters(initCargoPos);
-    cargoPos1 = inchesToMeters(cargoPos1);
-    cargoPos2 = inchesToMeters(cargoPos2);
+    //initCargoPos = inchesToMeters(initCargoPos);
+    //cargoPos1 = inchesToMeters(cargoPos1);
+    //cargoPos2 = inchesToMeters(cargoPos2);
 
     // find the angle the robot needs to be at to pick up the three different cargo, then set the midPoses to those angles
     Rotation2d initAngle = getPosesAngle(initMidPos, initCargoPos);
