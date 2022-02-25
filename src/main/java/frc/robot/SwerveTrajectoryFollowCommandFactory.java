@@ -163,7 +163,7 @@ public class SwerveTrajectoryFollowCommandFactory {
   }
 
   public static Command getOutOfTarmacAutonomousCommand(TestTrajectories testTrajectories, Drivetrain drivetrain) {
-    //TODO: figure out actual positions (add into constants)
+    // (if this command is used, change the poses to ones in constants)
     Pose2d startPos = new Pose2d(0, 0, new Rotation2d(0));
     Pose2d outOfTarmac = new Pose2d(10, 10, new Rotation2d(0));
     var trajectory = testTrajectories.simpleCurve(outOfTarmac.getX() - startPos.getX(), outOfTarmac.getY() - startPos.getY());
@@ -418,10 +418,10 @@ public class SwerveTrajectoryFollowCommandFactory {
     }
     
     Pose2d startPos = new Pose2d();
-    Pose2d poseTwo = new Pose2d(0, -3, new Rotation2d());
-    Pose2d poseThree = new Pose2d(3 * Multiplier, -3, new Rotation2d(Math.PI - 0.1 * Multiplier));
-    Pose2d poseFour = new Pose2d(3 * Multiplier, 3, new Rotation2d(Math.PI - 0.1 * Multiplier));
-    Pose2d endPos = new Pose2d(0, 4, new Rotation2d());
+    Pose2d poseTwo = new Pose2d(0, -36, new Rotation2d());
+    Pose2d poseThree = new Pose2d(36 * Multiplier, -36, new Rotation2d(Math.PI - 0.03 * Multiplier));
+    Pose2d poseFour = new Pose2d(36 * Multiplier, 36, new Rotation2d(Math.PI - 0.03 * Multiplier));
+    Pose2d endPos = new Pose2d(0, 48, new Rotation2d());
 
     Transform2d posCorrection = new Transform2d(drivetrain.getPose().getTranslation(), drivetrain.getPose().getRotation());
 

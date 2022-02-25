@@ -93,12 +93,10 @@ public class VisionSubsystem extends SubsystemBase{
   }
 
   public void setPipelineRed() {
-    mode = VisionPipeline.RED;
     m_camera.setPipelineIndex(1);
   }
 
   public void setPipelineBlue() {
-    mode = VisionPipeline.BLUE;
     m_camera.setPipelineIndex(2);
   }
   
