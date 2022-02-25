@@ -93,7 +93,6 @@ public class ShooterSubsystem extends SubsystemBase {
       m_flywheel.set(ControlMode.Velocity, setPoint * RPMtoTicks);
     }
 
-    SmartDashboard.putNumber("Shooter_Subsystem RPM", m_currentRPM);
     SmartDashboard.putNumber("Shooter_Subsystem RPM set point", setPoint);
     SmartDashboard.putNumber("Shooter_Subsystem RPM error", m_error);
     SmartDashboard.putBoolean("Shooter_Subsystem isAtSpeed", m_atSpeed);
