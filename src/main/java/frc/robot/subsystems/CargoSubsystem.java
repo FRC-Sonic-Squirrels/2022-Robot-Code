@@ -37,8 +37,9 @@ public class CargoSubsystem extends SubsystemBase {
   private DigitalInput upperSensor = new DigitalInput(digitalIOConstants.dio1_indexerSensor2);
   private Mode mode = Mode.STOP;
 
-  // TODO: check the real percent outputs of the conveyor belts
-  private double m_percentOutput = 0.7;
+  // TODO: find the real percent outputs of the conveyor belts
+  private double m_lowerOutput = 0.5;
+  private double m_upperOutput = 0.5;
 
   public CargoSubsystem() {
 
@@ -114,33 +115,33 @@ public class CargoSubsystem extends SubsystemBase {
         if (cargoInLowerBelts()) {
           stopLowerBelts();
         } else {
-          setLowerBeltPercentOutput(m_percentOutput);
+          setLowerBeltPercentOutput(m_lowerOutput);
         }
       } else {
-        setLowerBeltPercentOutput(m_percentOutput);
-        setUpperBeltPercentOutput(m_percentOutput);
+        setLowerBeltPercentOutput(m_lowerOutput);
+        setUpperBeltPercentOutput(m_upperOutput);
       }
       
     } 
     else if (mode == Mode.LOWERONLY) {
       stopUpperBelts();
-      setLowerBeltPercentOutput(m_percentOutput);
+      setLowerBeltPercentOutput(m_lowerOutput);
     } 
     else if (mode == Mode.UPPERONLY) {
       stopLowerBelts();
-      setUpperBeltPercentOutput(m_percentOutput);
+      setUpperBeltPercentOutput(m_upperOutput);
     } 
     else if (mode == Mode.BOTH) {
       // Normal, non-eject mode
       SmartDashboard.putNumber("Eject State", 0);
 
       // shoot mode releases the upper cargo, then moves the lower cargo to the top
-      setUpperBeltPercentOutput(m_percentOutput);
-      setLowerBeltPercentOutput(m_percentOutput);
+      setUpperBeltPercentOutput(m_upperOutput);
+      setLowerBeltPercentOutput(m_lowerOutput);
     } 
     else if (mode == Mode.REVERSE) {
-      setUpperBeltPercentOutput(-m_percentOutput); //negate percent output to make belts go in reverse
-      setLowerBeltPercentOutput(-m_percentOutput);
+      setUpperBeltPercentOutput(-m_lowerOutput); //negate percent output to make belts go in reverse
+      setLowerBeltPercentOutput(-m_upperOutput);
     }
     else {
       stopIndexer();
@@ -150,7 +151,8 @@ public class CargoSubsystem extends SubsystemBase {
   }
 
   public void updateTestingValues(){
-    m_percentOutput = SmartDashboard.getNumber("cargo subsystem motor speed", 0.1);
+    m_lowerOutput = SmartDashboard.getNumber("cargo subsystem lower motor speed", 0.1);
+    m_upperOutput = SmartDashboard.getNumber("cargo subsystem upper motor speed", 0.1);
   }
   public void setLowerBeltPercentOutput(double percent) {
     LowerBelts.set(ControlMode.PercentOutput, percent);
