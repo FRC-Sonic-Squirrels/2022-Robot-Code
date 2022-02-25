@@ -364,5 +364,14 @@ public class Drivetrain extends SubsystemBase {
 
     // Update pose in field simulation
     m_field.setRobotPose(m_odometry.getPoseMeters());
+
+    SmartDashboard.putNumber("Drivetrain IMU yaw", m_pigeon.getYaw());
+    SmartDashboard.putNumber("Drivetrain IMU roll", m_pigeon.getRoll());
+    SmartDashboard.putNumber("Drivetrain IMU temp", m_pigeon.getTemp());
+    SmartDashboard.putNumber("Drivetrain IMU pitch", m_pigeon.getPitch());
+    SmartDashboard.putNumber("Drivetrain IMU compass field strength", m_pigeon.getCompassFieldStrength());
+    SmartDashboard.putNumber("Drivetrain IMU compass heading", m_pigeon.getCompassHeading());
+    SmartDashboard.putNumber("Drivetrain IMU Fused Heading", m_pigeon.getFusedHeading());
+    SmartDashboard.putNumber("Drivetrain IMU absolute compass heading", m_pigeon.getAbsoluteCompassHeading());
   }
 }
