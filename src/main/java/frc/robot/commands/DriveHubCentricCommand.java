@@ -106,7 +106,8 @@ public class DriveHubCentricCommand extends CommandBase {
     SmartDashboard.putNumber("Hub_Centric currentHeading", currentHeading.getDegrees());
     SmartDashboard.putNumber("Hub_Centric targetHeading", targetHeading.getDegrees());
     SmartDashboard.putNumberArray("Hub_Centric robotPosition", new double[] {robotPosition.getX(), robotPosition.getY()});
-    
+    SmartDashboard.putNumberArray("Hub_Centric hubPosition", new double[] {Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX(), Constants.HubCentricConstants.HUB_CENTER_POSE2D.getY()});
+
     SmartDashboard.putNumber("Hub_Centric rotationCorrection", rotationCorrection);
     SmartDashboard.putNumberArray("Hub_Centric strafe values", new double[] {strafeX, strafeY});
 
