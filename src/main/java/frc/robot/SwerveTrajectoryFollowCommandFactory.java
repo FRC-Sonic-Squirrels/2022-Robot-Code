@@ -151,7 +151,14 @@ public class SwerveTrajectoryFollowCommandFactory {
         new Pose2d(FieldConstants.BLUE_CARGO_3, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_3, new Rotation2d()),
         tt, drivetrain, shooter, cargo, intake, robot));
     
-    chooser.addOption("4 ball auton 456", fourBallAutonCommand(
+    chooser.addOption("4 ball auton 237", fourBallAutonCommand(
+        null, null,
+        null,
+        null, null,
+        null, null,
+        tt, drivetrain, shooter, cargo, intake, robot));
+
+    chooser.addOption("4 ball auton 372", fourBallAutonCommand(
         null, null,
         null,
         null, null,
