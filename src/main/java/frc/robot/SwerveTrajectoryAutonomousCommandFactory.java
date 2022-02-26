@@ -12,12 +12,14 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.Vector2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.HubCentricConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.CargoMoveToUpperBeltsCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.ShootCargoCommand;
@@ -31,6 +33,35 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 public class SwerveTrajectoryAutonomousCommandFactory {
+
+  public static void addAutonTrajectoriesToChooser(SendableChooser<Command> chooser, double maxVelocity,
+      double maxAcceleration, Pose2d start, Drivetrain drivetrain, boolean isSwerve, ShooterSubsystem shooter,
+      CargoSubsystem cargo, IntakeSubsystem intake, Robot robot) {
+
+    TestTrajectories tt = new TestTrajectories(maxVelocity, maxAcceleration, drivetrain, isSwerve);
+    
+    //TODO: have the mid poses be different than the cargo poses and find the shoot pose
+    chooser.addOption("4 blue auton 123", fourBallAutonCommand( start,
+        new Pose2d(FieldConstants.BLUE_CARGO_1, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_1, new Rotation2d()), 
+        null,
+        new Pose2d(FieldConstants.BLUE_CARGO_2, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_2, new Rotation2d()),
+        new Pose2d(FieldConstants.BLUE_CARGO_3, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_3, new Rotation2d()),
+        tt, drivetrain, shooter, cargo, intake, robot));
+    
+    chooser.addOption("4 blue auton 237", fourBallAutonCommand( start,
+        null, null,
+        null,
+        null, null,
+        null, null,
+        tt, drivetrain, shooter, cargo, intake, robot));
+
+    chooser.addOption("4 blue auton 372", fourBallAutonCommand( start,
+        null, null,
+        null,
+        null, null,
+        null, null,
+        tt, drivetrain, shooter, cargo, intake, robot));
+  }
 
    /**
    * command for autonomously shooting and then moving to the next set of cargo coordinates.
@@ -127,6 +158,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   /**
    * command for autonomously shooting two cargo then collecting the next two cargo by coordinates.
    * (i apologize for this method having 13 parameters)
+   * @param startPos the robots position at the beginning of the match (a constant)
    * @param initCargoPos the position of the pre-shoot cargo (meters)
    * @param initMidPos the position before collecting the pre-shoot cargo (meters)
    * @param shootPos the position of the robot when about to shoot cargo (in meters)
@@ -136,13 +168,11 @@ public class SwerveTrajectoryAutonomousCommandFactory {
    * @param midPos2 the position right in front of second wanted cargo (meters)
    * @return a set of actions with the robot shooting its current 2 cargo, then moving and picking up the next 2 cargo
    */
-  public static Command fourBallAutonCommand(Pose2d initCargoPos, Pose2d initMidPos, Pose2d shootPos, Pose2d cargoPos1,
+  public static Command fourBallAutonCommand(Pose2d startPos, Pose2d initCargoPos, Pose2d initMidPos, Pose2d shootPos, Pose2d cargoPos1,
       Pose2d midPos1, Pose2d cargoPos2, Pose2d midPos2, TestTrajectories testTrajectories, Drivetrain drivetrain,
       ShooterSubsystem shooter, CargoSubsystem cargo, IntakeSubsystem intake, Robot robot) {
 
-    // assuming the angle is set rather than added: angle = arctangent ((robotX - hubX) / (robotY - hubY))
-    // hub/center coordinates: (324, 162)
-    // The robot will most likely start at a 0 degree angle 
+    drivetrain.setPose(startPos, startPos.getRotation());
 
     // give shootAngle its rotation, then change units
     Rotation2d shootAngle = new Rotation2d( Math.atan2(shootPos.getY() - HubCentricConstants.HUB_CENTER.y,
@@ -221,7 +251,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     );
   }
 
-  
+
   /**
    * Create a swerve trajectory follow command. If stopAtEnd is set to true, robot will come to full
    * stop at the end of the command.

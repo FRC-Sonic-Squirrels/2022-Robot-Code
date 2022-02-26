@@ -65,6 +65,7 @@ public class RobotContainer {
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
   public final SendableChooser<Pose2d> startPoseChooser = new SendableChooser<>();
+  public final SendableChooser<Command> autonTrajectoryChooser = new SendableChooser<>();
 
   public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
 
@@ -76,12 +77,11 @@ public class RobotContainer {
     m_robot = robot;
     
     // set the starting position of the robot on the field
-    // TODO: add starting poses to start pose chooser
     startPoseChooser.addOption("1m left of hub", Constants.ROBOT_1M_LEFT_OF_HUB);
     startPoseChooser.addOption("blue 1", StartPoseConstants.BLUE_20_13);
     startPoseChooser.addOption("blue 2", StartPoseConstants.BLUE_22_19);
     startPoseChooser.addOption("blue 3", StartPoseConstants.BLUE_22_8);
-    startPoseChooser.addOption("blue 4", StartPoseConstants.BLUE_27_6);
+    startPoseChooser.addOption("blue 4", StartPoseConstants.BLUE_27_6); //note: cannot be used in paths starting with ball 3
     startPoseChooser.addOption("red 1", StartPoseConstants.RED_27_21);
     startPoseChooser.addOption("red 2", StartPoseConstants.RED_31_14);
     startPoseChooser.addOption("red 3", StartPoseConstants.RED_32_19);
@@ -92,7 +92,12 @@ public class RobotContainer {
 
     SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooterSubsystem,
         m_cargoSubsystem, m_intake, m_robot);
-    SmartDashboard.putData("Auto mode", chooser);
+    SmartDashboard.putData("Auto Mode (discontinued)", chooser);
+
+    // TODO: figure out if getSelected() will work properly or just return null
+    SwerveTrajectoryAutonomousCommandFactory.addAutonTrajectoriesToChooser(autonTrajectoryChooser, 1.0, 0.75,
+        startPoseChooser.getSelected(), drivetrain, true, m_shooterSubsystem, m_cargoSubsystem, m_intake, m_robot);
+    SmartDashboard.putData("Auto Mode (real)", autonTrajectoryChooser);
 
     // Creates UsbCamera and MjpegServer [1] and connects them
     // UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);

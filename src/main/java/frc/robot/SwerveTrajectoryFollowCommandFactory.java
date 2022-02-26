@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.Vector2d;
@@ -41,6 +40,13 @@ import frc.robot.subsystems.ShooterSubsystem;
  * a given trajectory.
  * 
  */
+
+
+
+//IMPORTANT: autonomous related commands are currently being worked on in @SwerveTrajectoryAutonomousCommandFactory
+
+
+
 public class SwerveTrajectoryFollowCommandFactory {
 
   /**
