@@ -93,6 +93,7 @@ public class IntakeSubsystem extends SubsystemBase {
     testingRpmValues();
     if(mode == Mode.STOP){
       m_intake.setVoltage(0);
+      //setIntakeMotorRPM(m_forwardRpmValue); // (if the intake makes contact with the lower belt)
     } else if(mode == Mode.FORWARD){
       setIntakeMotorRPM(m_forwardRpmValue);
     } else if(mode == Mode.DYNAMIC){
