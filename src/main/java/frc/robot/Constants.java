@@ -87,8 +87,8 @@ public final class Constants {
     public static final int channel_11 = 11;
     public static final int channel_12 = 12;
     public static final int channel_13 = 13;
-    public static final int channel_14_friction_break = 14;
-    public static final int channel_15_intake = 15;  
+    public static final int channel_14_intake = 14;
+    public static final int channel_15_friction_brake = 15;  
   }
   public static final class digitalIOConstants {
     // assign digital IO (DIO) ports 0-9
