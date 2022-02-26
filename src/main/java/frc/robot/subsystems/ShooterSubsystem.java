@@ -21,8 +21,8 @@ public class ShooterSubsystem extends SubsystemBase {
     STATIC, DYNAMIC
   };
 
-  private WPI_TalonFX m_flywheel = new WPI_TalonFX(Constants.canId.CANID16_flywheel_lead);
-  private WPI_TalonFX m_flywheel_follower = new WPI_TalonFX(Constants.canId.CANID17_flywheel_follow);
+  private WPI_TalonFX flywheel_lead= new WPI_TalonFX(Constants.canId.CANID16_flywheel_lead);
+  private WPI_TalonFX flywheel_follow = new WPI_TalonFX(Constants.canId.CANID17_flywheel_follow);
   private TalonFXSensorCollection m_encoder;
   private double kMaxOutput, kMinOutput;
   private double m_desiredRPM = 0;
@@ -43,16 +43,29 @@ public class ShooterSubsystem extends SubsystemBase {
 
   // lower number here, slows the rate of change and decreases the power spike
   private double m_rate_RPMperSecond = 2500;
-  private SlewRateLimiter m_rateLimiter;
+  private SlewRateLimiter m_rateLimiter = new SlewRateLimiter(6000);
 
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
-    m_flywheel.configFactoryDefault();
-    m_flywheel.setNeutralMode(NeutralMode.Coast);
-    m_flywheel.configVoltageCompSaturation(11.0);
-    m_flywheel.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
 
-    // TODO: configure follow motor
+    // TODO: go over this and confirm motors are set up correctly. check against 2021 code
+    flywheel_lead.configFactoryDefault();
+    flywheel_follow.configFactoryDefault();
+
+    flywheel_lead.setNeutralMode(NeutralMode.Coast);
+    flywheel_follow.setNeutralMode(NeutralMode.Coast);
+
+    flywheel_lead.configVoltageCompSaturation(11.0);
+    flywheel_lead.enableVoltageCompensation(true);
+    flywheel_follow.configVoltageCompSaturation(11.0);
+    flywheel_follow.enableVoltageCompensation(true);
+
+    flywheel_lead.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+
+    m_encoder = flywheel_lead.getSensorCollection();
+
+    flywheel_follow.follow(flywheel_lead);
+    flywheel_follow.setInverted(true);
 
     adjustPID();
   }
@@ -63,7 +76,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void stop() {
     m_desiredRPM = 0;
-    m_flywheel.set(ControlMode.PercentOutput, 0);
+    flywheel_lead.set(ControlMode.PercentOutput, 0);
   }
 
   @Override
@@ -90,10 +103,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
     if (m_desiredRPM == 0) {
       // special case, turn off power to flywheel
-      m_flywheel.set(ControlMode.PercentOutput, 0);
+      flywheel_lead.set(ControlMode.PercentOutput, 0);
     }
     else {
-      m_flywheel.set(ControlMode.Velocity, setPoint * RPMtoTicks);
+      flywheel_lead.set(ControlMode.Velocity, setPoint * RPMtoTicks);
     }
 
     SmartDashboard.putNumber("Shooter_Subsystem RPM set point", setPoint);
@@ -170,10 +183,10 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   private void adjustPID() {
-    m_flywheel.config_kP(0, m_configP);
-    m_flywheel.config_kI(0, m_configI);
-    m_flywheel.config_kD(0, m_configD);
-    m_flywheel.config_kF(0, m_configF);
-    m_flywheel.config_IntegralZone(0, m_configIZ);
+    flywheel_lead.config_kP(0, m_configP);
+    flywheel_lead.config_kI(0, m_configI);
+    flywheel_lead.config_kD(0, m_configD);
+    flywheel_lead.config_kF(0, m_configF);
+    flywheel_lead.config_IntegralZone(0, m_configIZ);
   }
 }
