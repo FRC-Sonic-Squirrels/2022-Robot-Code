@@ -38,8 +38,8 @@ public class ArmSubsystem extends SubsystemBase {
   private SparkMaxPIDController m_armPID;
   
   //TODO: Find the actual channels
-  private DigitalInput limitSwitchFront = new DigitalInput(1);
-  private DigitalInput limitSwitchBack = new DigitalInput(2);
+  private DigitalInput limitSwitchFront = new DigitalInput(5);
+  private DigitalInput limitSwitchBack = new DigitalInput(6);
 
   //TODO: find true values 
   private double maxAngleDegree = 30;

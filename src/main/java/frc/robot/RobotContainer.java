@@ -90,14 +90,14 @@ public class RobotContainer {
     drivetrain.setGyroscopeHeadingDegrees(0);
     drivetrain.setPose(Constants.ROBOT_1M_LEFT_OF_HUB, drivetrain.getGyroscopeRotation());
 
-    SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooterSubsystem,
-        m_cargoSubsystem, m_intake, m_robot);
-    SmartDashboard.putData("Auto Mode (discontinued)", chooser);
+    // SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooterSubsystem,
+    //     m_cargoSubsystem, m_intake, m_robot);
+    // SmartDashboard.putData("Auto Mode (discontinued)", chooser);
 
-    // TODO: figure out if getSelected() will work properly or just return null
-    SwerveTrajectoryAutonomousCommandFactory.addAutonTrajectoriesToChooser(autonTrajectoryChooser, 1.0, 0.75,
-        startPoseChooser.getSelected(), drivetrain, true, m_shooterSubsystem, m_cargoSubsystem, m_intake, m_robot);
-    SmartDashboard.putData("Auto Mode (real)", autonTrajectoryChooser);
+    // // TODO: figure out if getSelected() will work properly or just return null
+    // SwerveTrajectoryAutonomousCommandFactory.addAutonTrajectoriesToChooser(autonTrajectoryChooser, 1.0, 0.75,
+    //     startPoseChooser.getSelected(), drivetrain, true, m_shooterSubsystem, m_cargoSubsystem, m_intake, m_robot);
+    // SmartDashboard.putData("Auto Mode (real)", autonTrajectoryChooser);
 
     // Creates UsbCamera and MjpegServer [1] and connects them
     // UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
@@ -132,10 +132,10 @@ public class RobotContainer {
       () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
       () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
     
-    m_arm.setDefaultCommand(new InstantCommand());
+    //m_arm.setDefaultCommand(new InstantCommand());
 
 
-    m_elevator.setDefaultCommand(new InstantCommand());
+    //m_elevator.setDefaultCommand(new InstantCommand());
     //control winch with right joystick 
     // m_armSubsystem.setDefaultCommand(new InstantCommand(
     //   () -> m_armSubsystem.setArmPercentOutput(modifyAxis(m_operatorController.getRightTriggerAxis())), 

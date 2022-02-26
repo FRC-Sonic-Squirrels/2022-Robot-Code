@@ -41,26 +41,26 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     TestTrajectories tt = new TestTrajectories(maxVelocity, maxAcceleration, drivetrain, isSwerve);
     
     //TODO: have the mid poses be different than the cargo poses and find the shoot pose
-    chooser.addOption("4 blue auton 123", fourBallAutonCommand( start,
-        new Pose2d(FieldConstants.BLUE_CARGO_1, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_1, new Rotation2d()), 
-        null,
-        new Pose2d(FieldConstants.BLUE_CARGO_2, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_2, new Rotation2d()),
-        new Pose2d(FieldConstants.BLUE_CARGO_3, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_3, new Rotation2d()),
-        tt, drivetrain, shooter, cargo, intake, robot));
+    // chooser.addOption("4 blue auton 123", fourBallAutonCommand( start,
+    //     new Pose2d(FieldConstants.BLUE_CARGO_1, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_1, new Rotation2d()), 
+    //     null,
+    //     new Pose2d(FieldConstants.BLUE_CARGO_2, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_2, new Rotation2d()),
+    //     new Pose2d(FieldConstants.BLUE_CARGO_3, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_3, new Rotation2d()),
+    //     tt, drivetrain, shooter, cargo, intake, robot));
     
-    chooser.addOption("4 blue auton 237", fourBallAutonCommand( start,
-        null, null,
-        null,
-        null, null,
-        null, null,
-        tt, drivetrain, shooter, cargo, intake, robot));
+    // chooser.addOption("4 blue auton 237", fourBallAutonCommand( start,
+    //     null, null,
+    //     null,
+    //     null, null,
+    //     null, null,
+    //     tt, drivetrain, shooter, cargo, intake, robot));
 
-    chooser.addOption("4 blue auton 372", fourBallAutonCommand( start,
-        null, null,
-        null,
-        null, null,
-        null, null,
-        tt, drivetrain, shooter, cargo, intake, robot));
+    // chooser.addOption("4 blue auton 372", fourBallAutonCommand( start,
+    //     null, null,
+    //     null,
+    //     null, null,
+    //     null, null,
+    //     tt, drivetrain, shooter, cargo, intake, robot));
   }
 
    /**
