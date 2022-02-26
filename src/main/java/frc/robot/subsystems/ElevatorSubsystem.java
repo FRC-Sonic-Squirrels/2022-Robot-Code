@@ -83,7 +83,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         LimitSwitchNormal.NormallyOpen, 0);
 
     winch_follow_talon.follow(winch_lead_talon);
-    winch_follow_talon.setInverted(false);
+    winch_lead_talon.setInverted(true);
+    winch_follow_talon.setInverted(true);
 
     MotorUtils.setCtreStatusSlow(winch_follow_talon);
 
@@ -175,14 +176,14 @@ public class ElevatorSubsystem extends SubsystemBase {
    * brakeOn() turns on the brake.
    */
   public void brakeOff(){
-    frictionBrakeSolenoid.set(false);
+    frictionBrakeSolenoid.set(true);
   }
 
   /**
    * brakeOff() turns off the brake.
    */
   public void brakeOn(){
-    frictionBrakeSolenoid.set(true);
+    frictionBrakeSolenoid.set(false);
   }
 
   /**

@@ -50,7 +50,7 @@ public class RobotContainer {
   public final CargoSubsystem m_cargoSubsystem = new CargoSubsystem();
   public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
   public final IntakeSubsystem m_intake = new IntakeSubsystem(drivetrain);
-  //public final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
+  public final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
   public final Robot m_robot;
 
   public final XboxController m_controller = new XboxController(0);
@@ -195,8 +195,8 @@ public class RobotContainer {
     new Button(m_operatorController::getLeftStickButtonPressed)
       .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
  
-    // new Button(m_operatorController::getLeftBumper)
-    //   .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);
+    new Button(m_operatorController::getLeftBumper)
+       .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);
 
     // new Button(m_operatorController::getRightBumper)
     //   .whileHeld(new ArmManualControlCommand(() -> m_operatorController.getRightY(), m_arm), true);
