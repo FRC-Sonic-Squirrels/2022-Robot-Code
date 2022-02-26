@@ -34,7 +34,7 @@ public class ShootCargoCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getDesiredRPM());
+    m_shooterSubsystem.setFlywheelRPM(1375);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
