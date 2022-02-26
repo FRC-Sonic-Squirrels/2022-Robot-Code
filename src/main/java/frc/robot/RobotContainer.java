@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import frc.robot.Constants.StartPoseConstants;
 import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.CargoReverseCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
@@ -76,8 +77,15 @@ public class RobotContainer {
     
     // set the starting position of the robot on the field
     // TODO: add starting poses to start pose chooser
-    startPoseChooser.addOption("pose 1", new Pose2d(0, 0, new Rotation2d()));
-    startPoseChooser.addOption("pose 2", new Pose2d(100, 200, new Rotation2d(Math.PI/2)));
+    startPoseChooser.addOption("1m left of hub", Constants.ROBOT_1M_LEFT_OF_HUB);
+    startPoseChooser.addOption("blue 1", StartPoseConstants.BLUE_20_13);
+    startPoseChooser.addOption("blue 2", StartPoseConstants.BLUE_22_19);
+    startPoseChooser.addOption("blue 3", StartPoseConstants.BLUE_22_8);
+    startPoseChooser.addOption("blue 4", StartPoseConstants.BLUE_27_6);
+    startPoseChooser.addOption("red 1", StartPoseConstants.RED_27_21);
+    startPoseChooser.addOption("red 2", StartPoseConstants.RED_31_14);
+    startPoseChooser.addOption("red 3", StartPoseConstants.RED_32_19);
+    startPoseChooser.addOption("red 4", StartPoseConstants.RED_32_8);
 
     drivetrain.setGyroscopeHeadingDegrees(0);
     drivetrain.setPose(Constants.ROBOT_1M_LEFT_OF_HUB, drivetrain.getGyroscopeRotation());
