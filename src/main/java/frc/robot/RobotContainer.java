@@ -87,7 +87,6 @@ public class RobotContainer {
         m_cargoSubsystem, m_intake, m_robot);
     SmartDashboard.putData("Auto Mode (discontinued)", chooser);
 
-    // TODO: figure out if getSelected() will work properly or just return null
     SwerveTrajectoryAutonomousCommandFactory.addAutonTrajectoriesToChooser(autonTrajectoryChooser, 1.0, 0.75);
     SmartDashboard.putData("Auto Mode (real)", autonTrajectoryChooser);
 
