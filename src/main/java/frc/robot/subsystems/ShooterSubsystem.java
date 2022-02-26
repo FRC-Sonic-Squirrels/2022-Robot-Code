@@ -36,14 +36,14 @@ public class ShooterSubsystem extends SubsystemBase {
   private final double RPMtoTicks = 2048 / 600;
   private double m_testingStaticRPM = 0;
 
-  private double m_configP = 0;
-  private double m_configI = 0;
-  private double m_configD = 0;
-  private double m_configF = 0;
-  private double m_configIZ = 0;
+  private double m_configP = 0.13;
+  private double m_configI = 0.001;
+  private double m_configD = 0.0;
+  private double m_configF = 0.048;
+  private double m_configIZ = 100;
 
   // lower number here, slows the rate of change and decreases the power spike
-  private double m_rate_RPMperSecond = 2500;
+  private double m_rate_RPMperSecond = 1000;
   private SlewRateLimiter m_rateLimiter = new SlewRateLimiter(6000);
 
   /** Creates a new ShooterSubsystem. */
@@ -65,16 +65,18 @@ public class ShooterSubsystem extends SubsystemBase {
 
     m_encoder = flywheel_lead.getSensorCollection();
 
+    flywheel_lead.setInverted(false);
+
     flywheel_follow.follow(flywheel_lead);
     flywheel_follow.setInverted(true);
 
     MotorUtils.setCtreStatusSlow(flywheel_follow);
 
-    adjustPID();
+    setPID();
   }
 
   public void updateTestingRPM() {
-    m_testingStaticRPM = SmartDashboard.getNumber("static flywheel speed", 0);
+    m_testingStaticRPM = SmartDashboard.getNumber("static flywheel speed", m_testingStaticRPM);
   }
 
   public void stop() {
@@ -85,7 +87,7 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // this is for testing and tuning the pid
-    setPIDFromSmartDashboard();
+    // setPIDFromSmartDashboard();
     updateTestingRPM();
 
     double setPoint = 0;
@@ -181,11 +183,11 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     if (hasChanged) {
-      adjustPID();
+      setPID();
     }
   }
 
-  private void adjustPID() {
+  private void setPID() {
     flywheel_lead.config_kP(0, m_configP);
     flywheel_lead.config_kI(0, m_configI);
     flywheel_lead.config_kD(0, m_configD);
