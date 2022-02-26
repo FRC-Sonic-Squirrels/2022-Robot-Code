@@ -27,7 +27,7 @@ public class IntakeDeployCommand extends CommandBase {
     m_intake.deployIntake();
     m_intake.setForwardMode();
     //m_intake.setDynamicMode();
-    //m_cargo.setIntakeMode();
+    m_cargo.setIntakeMode();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

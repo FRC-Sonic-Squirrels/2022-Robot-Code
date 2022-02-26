@@ -38,8 +38,8 @@ public class CargoSubsystem extends SubsystemBase {
   private Mode mode = Mode.STOP;
 
   // TODO: find the real percent outputs of the conveyor belts
-  private double m_lowerOutput = 0.5;
-  private double m_upperOutput = 0.5;
+  private double m_lowerOutput = 0.9;
+  private double m_upperOutput = 0.9;
 
   public CargoSubsystem() {
 
@@ -64,12 +64,12 @@ public class CargoSubsystem extends SubsystemBase {
     // current limits, Max 30A
     SupplyCurrentLimitConfiguration currentLimit =
         new SupplyCurrentLimitConfiguration(true, 25, 30, 0.3);
-    LowerBelts.configSupplyCurrentLimit(currentLimit);
-    UpperBelts.configSupplyCurrentLimit(currentLimit);
+    // LowerBelts.configSupplyCurrentLimit(currentLimit);
+    // UpperBelts.configSupplyCurrentLimit(currentLimit);
 
     // ramp rate, how long to take to get to full power
-    LowerBelts.configOpenloopRamp(0.25);
-    UpperBelts.configOpenloopRamp(0.25);
+    LowerBelts.configOpenloopRamp(0.1);
+    UpperBelts.configOpenloopRamp(0.1);
 
     // Brake mode
     LowerBelts.setNeutralMode(NeutralMode.Brake);
@@ -79,8 +79,8 @@ public class CargoSubsystem extends SubsystemBase {
     LowerBelts.setInverted(false);
     UpperBelts.setInverted(false);
 
-    LowerBelts.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
-    UpperBelts.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
+    LowerBelts.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+    UpperBelts.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
     
     //Set Ramp-Up
     //UpperBelts.configClosedloopRamp(0.1);
@@ -133,7 +133,7 @@ public class CargoSubsystem extends SubsystemBase {
     } 
     else if (mode == Mode.BOTH) {
       // Normal, non-eject mode
-      SmartDashboard.putNumber("Eject State", 0);
+
 
       // shoot mode releases the upper cargo, then moves the lower cargo to the top
       setUpperBeltPercentOutput(m_upperOutput);
@@ -147,12 +147,21 @@ public class CargoSubsystem extends SubsystemBase {
       stopIndexer();
     }
 
+    SmartDashboard.putString("Cargo: Mode", mode.name());
+    SmartDashboard.putBoolean("Cargo in Upper", cargoInUpperBelts());
+    SmartDashboard.putBoolean("Cargo in Lower", cargoInLowerBelts());
+    SmartDashboard.putNumber("Cargo Upper Voltage", UpperBelts.getMotorOutputVoltage());
+    SmartDashboard.putNumber("Cargo Lower Voltage", LowerBelts.getMotorOutputVoltage());
+
+    // TODO: convert to RPM
+    // SmartDashboard.putNumber("Cargo RPM Upper", UpperBelts.getSelectedSensorVelocity());
+    // SmartDashboard.putNumber("Cargo RPM Lower", LoweBelts.getSelectedSensorVelocity());
 
   }
 
   public void updateTestingValues(){
-    m_lowerOutput = SmartDashboard.getNumber("cargo subsystem lower motor speed", 0.1);
-    m_upperOutput = SmartDashboard.getNumber("cargo subsystem upper motor speed", 0.1);
+    m_lowerOutput = SmartDashboard.getNumber("cargo subsystem lower motor speed", m_lowerOutput);
+    m_upperOutput = SmartDashboard.getNumber("cargo subsystem upper motor speed", m_upperOutput);
   }
   public void setLowerBeltPercentOutput(double percent) {
     LowerBelts.set(ControlMode.PercentOutput, percent);
