@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.canId;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.Vector2d;
@@ -97,7 +98,7 @@ public class Drivetrain extends SubsystemBase {
   
   private final Field2d m_field = new Field2d();
 
-  private PigeonIMU m_pigeon = null;
+  private WPI_Pigeon2 m_pigeon = new WPI_Pigeon2(Constants.canId.CANID15_pigeon_imu);
 
   // These are our modules. We initialize them in the constructor.
   private final SwerveModule m_frontLeftModule;
@@ -121,9 +122,7 @@ public class Drivetrain extends SubsystemBase {
     // m_poseEstimator = new SwerveDrivePoseEstimator(gyroAngle, initialPoseMeters, kinematics, stateStdDevs, localMeasurementStdDevs, visionMeasurementStdDevs, nominalDtSeconds);
 
     // m_poseEstimator.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds);
-    
-    m_pigeon = new PigeonIMU(DRIVETRAIN_PIGEON_ID);
-  
+      
     // There are 4 methods you can call to create your swerve modules.
     // The method you use depends on what motors you are using.
     //
@@ -208,7 +207,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void setGyroscopeHeadingDegrees(double deg) {
-    m_pigeon.setFusedHeading(deg);
+    //m_pigeon.setFusedHeading(deg);
     m_pigeon.setAccumZAngle(deg);
   }
 
@@ -232,7 +231,8 @@ public class Drivetrain extends SubsystemBase {
    * @return gyro angle in Rotation2d
    */
   public Rotation2d getGyroscopeRotation() {
-      return Rotation2d.fromDegrees(m_pigeon.getFusedHeading());
+      // return Rotation2d.fromDegrees(m_pigeon.getFusedHeading());
+      return Rotation2d.fromDegrees(m_pigeon.getYaw());
   }
 
 
@@ -371,7 +371,7 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Drivetrain IMU Pitch", m_pigeon.getPitch());
     SmartDashboard.putNumber("Drivetrain IMU Compass_field_strength", m_pigeon.getCompassFieldStrength());
     SmartDashboard.putNumber("Drivetrain IMU Compass_heading", m_pigeon.getCompassHeading());
-    SmartDashboard.putNumber("Drivetrain IMU Fused_Heading", m_pigeon.getFusedHeading());
+    // SmartDashboard.putNumber("Drivetrain IMU Fused_Heading", m_pigeon.getFusedHeading());
     SmartDashboard.putNumber("Drivetrain IMU Absolute_compass_heading", m_pigeon.getAbsoluteCompassHeading());
   }
 }
