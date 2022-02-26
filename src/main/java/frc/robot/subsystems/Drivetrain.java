@@ -207,7 +207,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void setGyroscopeHeadingDegrees(double deg) {
-    //m_pigeon.setFusedHeading(deg);
+    m_pigeon.setYaw(deg);
     m_pigeon.setAccumZAngle(deg);
   }
 
