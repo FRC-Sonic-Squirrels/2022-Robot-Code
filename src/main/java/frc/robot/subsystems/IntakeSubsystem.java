@@ -55,7 +55,7 @@ public class IntakeSubsystem extends SubsystemBase {
     
     m_drivetrain = drivetrain;
     m_intake.configFactoryDefault();
-    m_intake.setInverted(true);
+    m_intake.setInverted(false);
     m_intake.setNeutralMode(NeutralMode.Coast); 
     m_intake.configVoltageCompSaturation(10.0);
     m_intake.configSupplyCurrentLimit(currentLimit);
@@ -63,17 +63,14 @@ public class IntakeSubsystem extends SubsystemBase {
     m_intake.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, kPIDLoopIdx, kTimeoutMs);
 
     m_intake.config_kP(kPIDLoopIdx, 0.2);
-    m_intake.config_kI(kPIDLoopIdx, 0.0005);
-    m_intake.config_kD(kPIDLoopIdx, 0);
+    m_intake.config_kI(kPIDLoopIdx, 0.0);
+    m_intake.config_kD(kPIDLoopIdx, 0.0);
     m_intake.config_kF(kPIDLoopIdx, 0.05);
     m_intake.config_IntegralZone(kPIDLoopIdx, 100);
 
     m_encoder = m_intake.getSensorCollection();
-    //deployIntake();
     
     intakeRPM = 0.0;
-    
-    
   }
   // I think the motor, when retracted, is also paired with a stop command
 
@@ -102,7 +99,7 @@ public class IntakeSubsystem extends SubsystemBase {
       setIntakeMotorRPM(m_reverseRpmValue);
     }
 
-    SmartDashboard.putNumber("Intake_Subsystem RPM", - m_encoder.getIntegratedSensorVelocity() * 600 / 2048);
+    SmartDashboard.putNumber("Intake_Subsystem RPM", m_encoder.getIntegratedSensorVelocity() * 600 / 2048);
     SmartDashboard.putNumber("Intake_Subsystem desired Motor RPM", m_desiredRPM);
     SmartDashboard.putNumber("Intake_Subsystem Robot Speed m per s", m_drivetrain.getVelocity());
     SmartDashboard.putNumber("Intake_Subsystem minimum Intake RPM", minIntakeRPM);
@@ -116,8 +113,8 @@ public class IntakeSubsystem extends SubsystemBase {
   
   public void testingRpmValues(){
     // SmartDashboard values have to match those in periodic() for values to update correctly
-    m_forwardRpmValue = SmartDashboard.getNumber("Intake_Subsystem forward RPM Value", 0);
-    m_reverseRpmValue = SmartDashboard.getNumber("Intake_Subsystem reverse RPM Value", 0);
+    m_forwardRpmValue = SmartDashboard.getNumber("Intake_Subsystem forward RPM Value", m_forwardRpmValue);
+    m_reverseRpmValue = SmartDashboard.getNumber("Intake_Subsystem reverse RPM Value", m_reverseRpmValue);
   }
 
   /**
