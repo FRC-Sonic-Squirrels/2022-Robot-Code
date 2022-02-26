@@ -238,16 +238,15 @@ public final class Constants {
   } 
 
   public static class StartPoseConstants {
-    //TODO: get the angles of start pose constants
-    public static Pose2d BLUE_27_6  = new Pose2d( Units.feetToMeters(27), Units.feetToMeters(6),  new Rotation2d() );
-    public static Pose2d BLUE_22_8  = new Pose2d( Units.feetToMeters(22), Units.feetToMeters(8),  new Rotation2d() );
-    public static Pose2d BLUE_20_13 = new Pose2d( Units.feetToMeters(20), Units.feetToMeters(13), new Rotation2d() );
-    public static Pose2d BLUE_22_19 = new Pose2d( Units.feetToMeters(22), Units.feetToMeters(19), new Rotation2d() );
+    public static Pose2d BLUE_27_6  = new Pose2d( Units.feetToMeters(27), Units.feetToMeters(6),  new Rotation2d(Math.PI) );
+    public static Pose2d BLUE_22_8  = new Pose2d( Units.feetToMeters(22), Units.feetToMeters(8),  new Rotation2d(Math.PI/2) );
+    public static Pose2d BLUE_20_13 = new Pose2d( Units.feetToMeters(20), Units.feetToMeters(13), new Rotation2d(Math.PI/2) );
+    public static Pose2d BLUE_22_19 = new Pose2d( Units.feetToMeters(22), Units.feetToMeters(19), new Rotation2d(0) );
 
-    public static Pose2d RED_27_21 = new Pose2d( Units.feetToMeters(27), Units.feetToMeters(21), new Rotation2d() );
-    public static Pose2d RED_32_19 = new Pose2d( Units.feetToMeters(32), Units.feetToMeters(19), new Rotation2d() );
-    public static Pose2d RED_31_14 = new Pose2d( Units.feetToMeters(31), Units.feetToMeters(14), new Rotation2d() );
-    public static Pose2d RED_32_8  = new Pose2d( Units.feetToMeters(32), Units.feetToMeters(8),  new Rotation2d() );
+    public static Pose2d RED_27_21 = new Pose2d( Units.feetToMeters(27), Units.feetToMeters(21), new Rotation2d(0) );
+    public static Pose2d RED_32_19 = new Pose2d( Units.feetToMeters(32), Units.feetToMeters(19), new Rotation2d(3*Math.PI/2) );
+    public static Pose2d RED_31_14 = new Pose2d( Units.feetToMeters(31), Units.feetToMeters(14), new Rotation2d(3*Math.PI/2) );
+    public static Pose2d RED_32_8  = new Pose2d( Units.feetToMeters(32), Units.feetToMeters(8),  new Rotation2d(Math.PI) );
   }
 
   public static class ShootPoseConstants {
