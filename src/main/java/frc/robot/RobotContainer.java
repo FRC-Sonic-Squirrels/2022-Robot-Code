@@ -198,6 +198,9 @@ public class RobotContainer {
     new Button(m_operatorController::getLeftBumper)
        .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);
 
+    new Button(m_operatorController::getStartButton)
+       .whenPressed(new InstantCommand(() -> m_elevator.zeroHeight(), m_elevator));
+
     // new Button(m_operatorController::getRightBumper)
     //   .whileHeld(new ArmManualControlCommand(() -> m_operatorController.getRightY(), m_arm), true);
 

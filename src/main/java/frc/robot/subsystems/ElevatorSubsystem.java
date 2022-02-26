@@ -34,7 +34,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private Solenoid frictionBrakeSolenoid =
       new Solenoid(PneumaticsModuleType.REVPH, Constants.pneumatics.channel_15_friction_brake);
   private final double gearRatio =  0.074;
-  private final double winchDiameter_inches = 1.30;   // 1.25 diameter + string windings
+  private final double winchDiameter_inches = 1.95;   // 1.25 diameter + string windings
   private final double winchCircumference = Math.PI * winchDiameter_inches;
   private final double maxExtensionInches = 18.0;
   private double heightSetpointInches = 0.0;
@@ -138,7 +138,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return height of the elevator in inches
    */
   public double getHeightInches() {
-    return (winch_lead_talon.getSelectedSensorPosition() - StartingTicks) * ticks2distance;
+    return -(winch_lead_talon.getSelectedSensorPosition() - StartingTicks) * ticks2distance;
   }
 
   /**
