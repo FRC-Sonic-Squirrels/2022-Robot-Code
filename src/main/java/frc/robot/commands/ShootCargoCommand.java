@@ -19,9 +19,11 @@ public class ShootCargoCommand extends CommandBase {
   private IntakeSubsystem m_intakeSubsystem;
   private Robot m_robot;
   private long m_time;
+  private double rpm = 2000;
 
-  public ShootCargoCommand(CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, Robot robot) {
+  public ShootCargoCommand(double rpm, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, Robot robot) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.rpm = rpm;
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
     m_intakeSubsystem = intakeSubsystem;
@@ -34,7 +36,7 @@ public class ShootCargoCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_shooterSubsystem.setFlywheelRPM(1375);
+    m_shooterSubsystem.setFlywheelRPM(rpm);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -52,7 +54,7 @@ public class ShootCargoCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getIdleRPM());
+    m_shooterSubsystem.stop();
 
     if (m_intakeSubsystem.isDeployed()) {
       m_cargoSubsystem.setIntakeMode();

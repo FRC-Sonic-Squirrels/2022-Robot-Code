@@ -180,12 +180,15 @@ public class RobotContainer {
     // new Button(m_controller::getRightBumper)
     //   .whileHeld(new VisionDriveToCargo(m_visionSubsystem, drivetrain));
 
-    new Button(m_operatorController::getAButton)
-      .whileHeld(new ShootOneCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake));
+    // new Button(m_operatorController::getAButton)
+    //   .whileHeld(new ShootOneCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake));
 
+    new Button(m_operatorController::getAButton)
+      .whileHeld(new ShootCargoCommand(2000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+ 
     new Button(m_operatorController::getBButton)
-      .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
-    
+      .whileHeld(new ShootCargoCommand(3000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+
     new Button(m_operatorController::getXButton)
       .whileHeld(new IntakeDeployCommand(m_intake, m_cargoSubsystem));
 
