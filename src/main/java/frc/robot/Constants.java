@@ -238,7 +238,7 @@ public final class Constants {
   } 
 
   public static class StartPoseConstants {
-    //TODO: get the angles of start and shoot pose constants
+    //TODO: get the angles of start pose constants
     public static Pose2d BLUE_27_6  = new Pose2d( Units.feetToMeters(27), Units.feetToMeters(6),  new Rotation2d() );
     public static Pose2d BLUE_22_8  = new Pose2d( Units.feetToMeters(22), Units.feetToMeters(8),  new Rotation2d() );
     public static Pose2d BLUE_20_13 = new Pose2d( Units.feetToMeters(20), Units.feetToMeters(13), new Rotation2d() );
@@ -251,11 +251,11 @@ public final class Constants {
   }
 
   public static class ShootPoseConstants {
-    public static Pose2d BLUE_UP   = new Pose2d( Units.feetToMeters(25.5), Units.feetToMeters(9.5),  new Rotation2d() );
-    public static Pose2d BLUE_DOWN = new Pose2d( Units.feetToMeters(23.5), Units.feetToMeters(15.5), new Rotation2d() );
+    public static Pose2d BLUE_UP   = new Pose2d( Units.feetToMeters(25.5), Units.feetToMeters(9.5),  new Rotation2d(3.66));
+    public static Pose2d BLUE_DOWN = new Pose2d( Units.feetToMeters(23.5), Units.feetToMeters(15.5), new Rotation2d(5.92));
 
-    public static Pose2d RED_UP    = new Pose2d( Units.feetToMeters(28.5), Units.feetToMeters(17.5), new Rotation2d() );
-    public static Pose2d RED_DOWN  = new Pose2d( Units.feetToMeters(30.5), Units.feetToMeters(11.5), new Rotation2d() );
+    public static Pose2d RED_UP    = new Pose2d( Units.feetToMeters(28.5), Units.feetToMeters(17.5), new Rotation2d(2.78));
+    public static Pose2d RED_DOWN  = new Pose2d( Units.feetToMeters(30.5), Units.feetToMeters(11.5), new Rotation2d(1.05));
   }
   
 }
