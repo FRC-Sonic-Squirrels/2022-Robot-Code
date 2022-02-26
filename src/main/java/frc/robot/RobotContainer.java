@@ -4,13 +4,6 @@
 
 package frc.robot;
 
-import java.util.function.BooleanSupplier;
-import edu.wpi.first.cscore.CvSink;
-import edu.wpi.first.cscore.CvSource;
-import edu.wpi.first.cscore.MjpegServer;
-import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.cscore.VideoMode.PixelFormat;
-import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -52,12 +45,12 @@ import frc.robot.subsystems.VisionSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final Drivetrain drivetrain = new Drivetrain();
-  public final ArmSubsystem m_arm = new ArmSubsystem();
-  public final VisionSubsystem m_visionSubsystem = new VisionSubsystem(drivetrain);
+  //public final ArmSubsystem m_arm = new ArmSubsystem();
+  //public final VisionSubsystem m_visionSubsystem = new VisionSubsystem(drivetrain);
   public final CargoSubsystem m_cargoSubsystem = new CargoSubsystem();
   public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
   public final IntakeSubsystem m_intake = new IntakeSubsystem(drivetrain);
-  public final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
+  //public final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
   public final Robot m_robot;
 
   public final XboxController m_controller = new XboxController(0);
@@ -181,12 +174,11 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
-    new Button(m_controller::getLeftBumper)
-      .whileHeld(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
+    // new Button(m_controller::getLeftBumper)
+    //   .whileHeld(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
 
-    new Button(m_controller::getRightBumper)
-      .whileHeld(new VisionDriveToCargo(m_visionSubsystem, drivetrain));
-
+    // new Button(m_controller::getRightBumper)
+    //   .whileHeld(new VisionDriveToCargo(m_visionSubsystem, drivetrain));
 
     new Button(m_operatorController::getAButton)
       .whileHeld(new ShootOneCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake));
@@ -203,19 +195,19 @@ public class RobotContainer {
     new Button(m_operatorController::getLeftStickButtonPressed)
       .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
  
-    new Button(m_operatorController::getLeftBumper)
-      .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);
+    // new Button(m_operatorController::getLeftBumper)
+    //   .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);
 
-    new Button(m_operatorController::getRightBumper)
-      .whileHeld(new ArmManualControlCommand(() -> m_operatorController.getRightY(), m_arm), true);
+    // new Button(m_operatorController::getRightBumper)
+    //   .whileHeld(new ArmManualControlCommand(() -> m_operatorController.getRightY(), m_arm), true);
 
     // rotate arm one step in the positive direction (towards the front of robot)
-    new Button(m_operatorController::getBackButton)
-      .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(1), m_arm));
+    // new Button(m_operatorController::getBackButton)
+    //   .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(1), m_arm));
 
-    // rotate arm one step in the negative direction (towards the back of robot)
-    new Button(m_operatorController::getStartButton)
-      .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(-1), m_arm));
+    // // rotate arm one step in the negative direction (towards the back of robot)
+    // new Button(m_operatorController::getStartButton)
+    //   .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(-1), m_arm));
   }
   
   private static double deadband(double value, double deadband) {
