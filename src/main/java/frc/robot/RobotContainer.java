@@ -190,7 +190,7 @@ public class RobotContainer {
       .whileHeld(new IntakeDeployCommand(m_intake, m_cargoSubsystem));
 
     new Button(m_operatorController::getYButton)
-      .whileHeld(new IntakeReverseCommand(m_intake));
+      .whileHeld(new IntakeReverseCommand(m_intake, m_cargoSubsystem));
 
     new Button(m_operatorController::getLeftStickButtonPressed)
       .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
