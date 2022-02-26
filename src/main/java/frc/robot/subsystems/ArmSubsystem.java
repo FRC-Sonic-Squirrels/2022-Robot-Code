@@ -11,6 +11,7 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.team2930.lib.util.MotorUtils;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -68,12 +69,15 @@ public class ArmSubsystem extends SubsystemBase {
     m_armPID.setSmartMotionAllowedClosedLoopError(1/360.0, 0);
     //good for preventing small changes but this can also be done with the joystick itself 
     //m_armPID.setSmartMotionMinOutputVelocity(0.05, 0);
-    
+  
+    MotorUtils.setSparkMaxStatusSlow(m_armFollowMotor);
+
     // TODO: maybe leave this alone and use raw encoder ticks
     m_throughBoreEncoder.setPositionConversionFactor(360.0/kCPR);
 
     //because of gear box the encoder is spinning the wrong way
     m_throughBoreEncoder.setInverted(true);
+  
     // TODO: need to figure out how to zero the arm position.
     // maybe the arm will start on a hard stop, part way back with a limit switch
     ticksWhenStraightUp = m_throughBoreEncoder.getPosition();

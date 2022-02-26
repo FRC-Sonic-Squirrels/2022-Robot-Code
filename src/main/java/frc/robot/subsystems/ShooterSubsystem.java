@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.team2930.lib.util.MotorUtils;
 import com.team2930.lib.util.linearInterpolator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -66,6 +67,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     flywheel_follow.follow(flywheel_lead);
     flywheel_follow.setInverted(true);
+
+    MotorUtils.setCtreStatusSlow(flywheel_follow);
 
     adjustPID();
   }

@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.team2930.lib.util.MotorUtils;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -83,6 +84,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     winch_follow_talon.follow(winch_lead_talon);
     winch_follow_talon.setInverted(false);
+
+    MotorUtils.setCtreStatusSlow(winch_follow_talon);
 
     // NOTE: when we power up, we expect the elevator to be full down, triggering the lower limit switch.
     // if not, we need to move the elevator down to the lower limit switch (VERY SLOWLY).
