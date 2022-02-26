@@ -21,7 +21,8 @@ public class ShooterSubsystem extends SubsystemBase {
     STATIC, DYNAMIC
   };
 
-  private WPI_TalonFX m_flywheel = new WPI_TalonFX(Constants.canId.CANID7_FLYWHEEL);
+  private WPI_TalonFX m_flywheel = new WPI_TalonFX(Constants.canId.CANID16_flywheel_lead);
+  private WPI_TalonFX m_flywheel_follower = new WPI_TalonFX(Constants.canId.CANID17_flywheel_follow);
   private TalonFXSensorCollection m_encoder;
   private double kMaxOutput, kMinOutput;
   private double m_desiredRPM = 0;
@@ -50,6 +51,8 @@ public class ShooterSubsystem extends SubsystemBase {
     m_flywheel.setNeutralMode(NeutralMode.Coast);
     m_flywheel.configVoltageCompSaturation(11.0);
     m_flywheel.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+
+    // TODO: configure follow motor
 
     adjustPID();
   }
