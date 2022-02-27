@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -69,26 +70,29 @@ public class RobotContainer {
 
     m_robot = robot;
     
-    // set the starting position of the robot on the field
-    startPoseChooser.addOption("1m left of hub", Constants.ROBOT_1M_LEFT_OF_HUB);
-    startPoseChooser.addOption("blue 1", StartPoseConstants.BLUE_20_13);
-    startPoseChooser.addOption("blue 2", StartPoseConstants.BLUE_22_19);
-    startPoseChooser.addOption("blue 3", StartPoseConstants.BLUE_22_8);
-    startPoseChooser.addOption("blue 4", StartPoseConstants.BLUE_27_6); //note: cannot be used in paths starting with ball 3
-    startPoseChooser.addOption("red 1", StartPoseConstants.RED_27_21);
-    startPoseChooser.addOption("red 2", StartPoseConstants.RED_31_14);
-    startPoseChooser.addOption("red 3", StartPoseConstants.RED_32_19);
-    startPoseChooser.addOption("red 4", StartPoseConstants.RED_32_8);
+    // the starting position will be based on the chosen trajectory
+    // startPoseChooser.addOption("1m left of hub", Constants.ROBOT_1M_LEFT_OF_HUB);
+    // startPoseChooser.addOption("blue 1", StartPoseConstants.BLUE_20_13);
+    // startPoseChooser.addOption("blue 2", StartPoseConstants.BLUE_22_19);
+    // startPoseChooser.addOption("blue 3", StartPoseConstants.BLUE_22_8);
+    // startPoseChooser.addOption("blue 4", StartPoseConstants.BLUE_27_6); //note: cannot be used in paths starting with ball 3
+    // startPoseChooser.addOption("red 1", StartPoseConstants.RED_27_21);
+    // startPoseChooser.addOption("red 2", StartPoseConstants.RED_31_14);
+    // startPoseChooser.addOption("red 3", StartPoseConstants.RED_32_19);
+    // startPoseChooser.addOption("red 4", StartPoseConstants.RED_32_8);
 
     drivetrain.setGyroscopeHeadingDegrees(0);
     drivetrain.setPose(Constants.ROBOT_1M_LEFT_OF_HUB, drivetrain.getGyroscopeRotation());
 
-    SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooterSubsystem,
-        m_cargoSubsystem, m_intake, m_robot);
-    SmartDashboard.putData("Auto Mode (discontinued)", chooser);
+    // SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooterSubsystem,
+    //     m_cargoSubsystem, m_intake, m_robot);
+    // SmartDashboard.putData("Auto Mode (discontinued)", chooser);
 
-    SwerveTrajectoryAutonomousCommandFactory.addAutonTrajectoriesToChooser(autonTrajectoryChooser, 1.0, 0.75);
-    SmartDashboard.putData("Auto Mode (real)", autonTrajectoryChooser);
+    // SwerveTrajectoryAutonomousCommandFactory.addAutonTrajectoriesToChooser(autonTrajectoryChooser, 1.0, 0.75);
+    // SmartDashboard.putData("Auto Mode (real)", autonTrajectoryChooser);
+
+    autonTrajectoryChooser.addOption("test auton", SwerveTrajectoryAutonomousCommandFactory.testAutonCommand(
+        StartPoseConstants.BLUE_20_13, new Translation2d(10, 15)));
 
     // Creates UsbCamera and MjpegServer [1] and connects them
     // UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
