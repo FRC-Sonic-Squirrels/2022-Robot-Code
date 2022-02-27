@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.StartPoseConstants;
 import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.CargoReverseCommand;
+import frc.robot.commands.ClimbManualCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.ElevatorControlCommand;
@@ -51,6 +52,7 @@ public class RobotContainer {
   public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
   public final IntakeSubsystem m_intake = new IntakeSubsystem(drivetrain);
   public final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
+  public final ArmSubsystem m_arm = new ArmSubsystem();
   public final Robot m_robot;
 
   public final XboxController m_controller = new XboxController(0);
@@ -119,11 +121,11 @@ public class RobotContainer {
     //   () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / 4)
     // ));
     
-    // drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
-    //   drivetrain, 
-    //   () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-    //   () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
-    //   () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
+    drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
+      drivetrain, 
+      () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+      () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
+      () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
     
     //m_arm.setDefaultCommand(new InstantCommand());
 
@@ -146,6 +148,9 @@ public class RobotContainer {
    */
 
   private void configureButtonBindings() {
+
+    //-------------- DRIVER CONTROLS DEFINED HERE --------------------------  
+
     // Back button zeros the gyroscope
     new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
@@ -180,40 +185,53 @@ public class RobotContainer {
     // new Button(m_controller::getRightBumper)
     //   .whileHeld(new VisionDriveToCargo(m_visionSubsystem, drivetrain));
 
-    // new Button(m_operatorController::getAButton)
-    //   .whileHeld(new ShootOneCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake));
+    // -------------- OPERATOR CONTROLS DEFINED HERE -------------------------- 
 
-    new Button(m_operatorController::getAButton)
-      .whileHeld(new ShootCargoCommand(2000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
- 
+    //shoot 1 ball idk if this is useful but its here 
     new Button(m_operatorController::getBButton)
-      .whileHeld(new ShootCargoCommand(3000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+      .whileHeld(new ShootOneCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake));
+ 
+    //shoot while holding 
+    new Button(m_operatorController::getRightBumper)
+      .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
-    new Button(m_operatorController::getXButton)
+    //toggle climbing mode 
+    new Button(m_operatorController::getLeftBumper)
+      .whenPressed(new ClimbManualCommand(m_arm, m_elevator, m_operatorController));
+
+    //Deploy intake while holding 
+    new Button(m_operatorController::getAButton)
       .whileHeld(new IntakeDeployCommand(m_intake, m_cargoSubsystem));
 
+    //reverse intake and indexer while holding
     new Button(m_operatorController::getYButton)
       .whileHeld(new IntakeReverseCommand(m_intake, m_cargoSubsystem));
-
-    new Button(m_operatorController::getLeftStickButtonPressed)
-      .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
- 
-    new Button(m_operatorController::getLeftBumper)
-       .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);
 
     new Button(m_operatorController::getStartButton)
        .whenPressed(new InstantCommand(() -> m_elevator.zeroHeight(), m_elevator));
 
+    new Button(m_operatorController::getBackButton)
+      .whenPressed(new InstantCommand(() -> m_arm.zeroEncoder(), m_arm));
+    
     // new Button(m_operatorController::getRightBumper)
-    //   .whileHeld(new ArmManualControlCommand(() -> m_operatorController.getRightY(), m_arm), true);
+    //   .whileHeld(new ArmManualControlCommand(() -> m_operatorController.getRightY(), m_arm));
 
-    // rotate arm one step in the positive direction (towards the front of robot)
+    // new Button(m_operatorController::getLeftBumper)
+    //   .whileHeld(new ElevatorControlCommand(() -> m_controller.getLeftY(), m_elevator));
+
+  
+
+    // //rotate arm one step in the positive direction (towards the front of robot)
     // new Button(m_operatorController::getBackButton)
     //   .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(1), m_arm));
 
     // // rotate arm one step in the negative direction (towards the back of robot)
     // new Button(m_operatorController::getStartButton)
     //   .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(-1), m_arm));
+
+    // //this exists but are we gonna use it? 
+    // new Button(m_operatorController::getXButton)
+    //   .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
   }
   
   private static double deadband(double value, double deadband) {
