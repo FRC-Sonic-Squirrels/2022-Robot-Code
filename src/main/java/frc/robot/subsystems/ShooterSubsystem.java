@@ -46,6 +46,8 @@ public class ShooterSubsystem extends SubsystemBase {
   private double m_rate_RPMperSecond = 1000;
   private SlewRateLimiter m_rateLimiter = new SlewRateLimiter(6000);
 
+  //TODO: add shooting, idle and stop enums use them for logic for setting rpm when shooting, setting motor voltage to 0 when idle and slowing/setting rpm for when stopping
+
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
 
@@ -136,6 +138,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public void setFlywheelRPM(double rpm) {
     m_desiredRPM = rpm;
   }
+
 
   public double getCurrentRPM() {
     return m_currentRPM;

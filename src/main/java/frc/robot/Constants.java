@@ -118,6 +118,11 @@ public final class Constants {
   // Set pigeon ID to -1 to disable and use NAVX on SPI.Port.kMXP
   public static final int DRIVETRAIN_PIGEON_ID = 15;
 
+  public static class DriveFieldCentricConstant {
+    public static final double TRANSLATION_MULTIPLIER = 0.6; 
+    public static final double ROTATION_MULTIPLIER = 0.5; 
+  }
+
   public static final class AutoConstants {
     // This kP worked for the DriveWithSetRotation command
     public static final double kPThetaController = 3.0;
@@ -163,7 +168,6 @@ public final class Constants {
     public static final Pose2d HUB_CENTER_POSE2D = new Pose2d(8.23, 4.11, new Rotation2d());
     public static final double FORWARD_MULTIPLIER = 0.5;
     public static final double SIDEWAYS_MULTIPLIER = 0.3;
-
   }
 
   public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
