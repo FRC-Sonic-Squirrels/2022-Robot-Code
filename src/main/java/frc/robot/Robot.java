@@ -8,6 +8,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,6 +25,8 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+
+  public final PowerDistribution revPDH = new PowerDistribution();
 
   private UsbCamera camera;
 
@@ -43,6 +46,11 @@ public class Robot extends TimedRobot {
     camera = CameraServer.startAutomaticCapture();
     camera.setResolution(320, 240);
     camera.setFPS(20);
+
+    // clear sticky faults
+    revPDH.clearStickyFaults();
+    revPDH.resetTotalEnergy();
+
   }
 
   /**
@@ -64,6 +72,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Joystick_Values jLeftX", m_robotContainer.m_controller.getLeftX());
     SmartDashboard.putNumber("Joystick_Values jRightY", m_robotContainer.m_controller.getRightY());
     SmartDashboard.putNumber("Joystick_Values jRightX", m_robotContainer.m_controller.getRightX());
+
+    SmartDashboard.putNumber("PDH Total Power", revPDH.getTotalPower());
+    SmartDashboard.putNumber("PDH Total Current", revPDH.getTotalCurrent());
+    SmartDashboard.putNumber("PDH Total Energy", revPDH.getTotalEnergy());
 
   }
 
