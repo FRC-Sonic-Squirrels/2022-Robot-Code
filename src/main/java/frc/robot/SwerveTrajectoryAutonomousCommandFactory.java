@@ -141,17 +141,18 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   public static Command testAutonCommand(Pose2d startPos, Translation2d endPos) {
 
     m_drivetrain.setPose(startPos, startPos.getRotation());
+    startPos = m_drivetrain.getPose();
 
-    double shootAngle = getTranslationsAngle(poseToTranslation(startPos), new Translation2d(27, 13.5)).getRadians();
+    //double shootAngle = getTranslationsAngle(poseToTranslation(startPos), new Translation2d(27, 13.5)).getRadians();
 
-    Trajectory rotateToShoot = m_tt.rotateRobot(shootAngle);
+    //Trajectory rotateToShoot = m_tt.rotateRobot(shootAngle);
     Trajectory moveToEnd = m_tt.driveToPose(poseToTranslation(startPos), endPos);
 
     return new SequentialCommandGroup(
       new ParallelCommandGroup(
         new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated)),
-        new WaitUntilCommand(() -> m_shooter.isAtDesiredRPM()),
-        SwerveControllerCommand(rotateToShoot, true)
+        new WaitUntilCommand(() -> m_shooter.isAtDesiredRPM())//,
+        //SwerveControllerCommand(rotateToShoot, true)
       ),
       new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
       SwerveControllerCommand(moveToEnd, true)
