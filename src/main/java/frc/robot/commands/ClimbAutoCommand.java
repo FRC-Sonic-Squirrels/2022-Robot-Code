@@ -5,10 +5,7 @@
 package frc.robot.commands;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.SortedMap;
 import java.util.function.Supplier;
-import edu.wpi.first.wpilibj.AddressableLED;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
