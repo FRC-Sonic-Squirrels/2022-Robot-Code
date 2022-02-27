@@ -38,8 +38,8 @@ public class CargoSubsystem extends SubsystemBase {
   private Mode mode = Mode.STOP;
 
   // TODO: find the real percent outputs of the conveyor belts
-  private double m_lowerOutput = 0.9;
-  private double m_upperOutput = 0.9;
+  private double m_lowerOutput = 0.95;
+  private double m_upperOutput = 0.95;
 
   public CargoSubsystem() {
 

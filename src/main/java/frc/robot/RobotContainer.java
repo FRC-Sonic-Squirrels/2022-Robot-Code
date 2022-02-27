@@ -84,9 +84,9 @@ public class RobotContainer {
     drivetrain.setGyroscopeHeadingDegrees(0);
     drivetrain.setPose(Constants.ROBOT_1M_LEFT_OF_HUB, drivetrain.getGyroscopeRotation());
 
-    // SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooterSubsystem,
-    //     m_cargoSubsystem, m_intake, m_robot);
-    // SmartDashboard.putData("Auto Mode (discontinued)", chooser);
+    SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooterSubsystem,
+        m_cargoSubsystem, m_intake, m_robot);
+    SmartDashboard.putData("Auto Mode (discontinued)", chooser);
 
     // // TODO: figure out if getSelected() will work properly or just return null
     // SwerveTrajectoryAutonomousCommandFactory.addAutonTrajectoriesToChooser(autonTrajectoryChooser, 1.0, 0.75,
@@ -195,8 +195,8 @@ public class RobotContainer {
       .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
     //toggle climbing mode 
-    new Button(m_operatorController::getLeftBumper)
-      .whenPressed(new ClimbManualCommand(m_arm, m_elevator, m_operatorController));
+    // new Button(m_operatorController::getLeftBumper)
+    //   .whenPressed(new ClimbManualCommand(m_arm, m_elevator, m_operatorController));
 
     //Deploy intake while holding 
     new Button(m_operatorController::getAButton)
@@ -220,8 +220,8 @@ public class RobotContainer {
     new Button(m_operatorController::getBButton)
       .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(-1), m_arm));
  
-    // new Button(m_operatorController::getLeftBumper)
-    //    .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);
+    new Button(m_operatorController::getLeftBumper)
+       .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);
 
     // new Button(m_operatorController::getRightBumper)
     //   .whileHeld(new ArmManualControlCommand(() -> m_operatorController.getRightX(), m_arm), true);
@@ -245,7 +245,7 @@ public class RobotContainer {
   //TODO: check if deadband value needs to be changed  
   private static double modifyAxis(double value) {
     // Deadband
-    value = deadband(value, 0.08);
+    value = deadband(value, 0.15);
 
     // Square the axis
     value = Math.copySign(value * value, value);

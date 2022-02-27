@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -35,6 +36,7 @@ public class ClimbManualCommand extends CommandBase {
   @Override
   public void initialize() {
     rumbleSequenceCommand().schedule();
+    SmartDashboard.putBoolean("CLIMBING MANUAL ACTIVE", true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -58,6 +60,8 @@ public class ClimbManualCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    SmartDashboard.putBoolean("CLIMBING MANUAL ACTIVE", false);
+
     m_arm.setArmPercentOutput(0);
     m_elevator.setWinchPercentOutput(0);
     rumbleSequenceCommand().schedule();

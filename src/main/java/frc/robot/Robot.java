@@ -36,6 +36,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+
+    SmartDashboard.putNumber("SHOOTING RPM", 2000);
+    
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(this);
@@ -43,9 +46,9 @@ public class Robot extends TimedRobot {
     m_robotContainer.drivetrain.setGyroscopeHeadingDegrees(0);
     m_robotContainer.drivetrain.setPose(Constants.ROBOT_1M_LEFT_OF_HUB, m_robotContainer.drivetrain.getGyroscopeRotation());
 
-    camera = CameraServer.startAutomaticCapture();
-    camera.setResolution(320, 240);
-    camera.setFPS(20);
+    // camera = CameraServer.startAutomaticCapture();
+    // camera.setResolution(320, 240);
+    // camera.setFPS(20);
 
     // clear sticky faults
     revPDH.clearStickyFaults();
@@ -76,6 +79,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("PDH Total Power", revPDH.getTotalPower());
     SmartDashboard.putNumber("PDH Total Current", revPDH.getTotalCurrent());
     SmartDashboard.putNumber("PDH Total Energy", revPDH.getTotalEnergy());
+
+    
 
   }
 

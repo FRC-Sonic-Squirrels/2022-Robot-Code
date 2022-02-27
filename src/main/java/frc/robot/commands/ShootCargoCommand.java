@@ -37,7 +37,7 @@ public class ShootCargoCommand extends CommandBase {
   @Override
   public void initialize() {
     //by default from testing on 2/26 2000 works well enough for low goal shots 
-    m_rpm = SmartDashboard.getNumber("!!! SHOOTING RPM (GIVE THIS A VALUE)", 2000);
+    m_rpm = SmartDashboard.getNumber("SHOOTING RPM", 2000);
 
     m_shooterSubsystem.setFlywheelRPM(m_rpm);
     m_intakeSubsystem.deployIntake();
