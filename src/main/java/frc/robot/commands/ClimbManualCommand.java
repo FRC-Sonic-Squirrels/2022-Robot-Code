@@ -62,6 +62,8 @@ public class ClimbManualCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    m_arm.setArmPercentOutput(0);
+    m_elevator.setWinchPercentOutput(0);
     rumbleSequenceCommand().schedule();
   }
 
