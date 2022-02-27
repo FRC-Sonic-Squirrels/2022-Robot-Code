@@ -45,7 +45,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private Mode mode = Mode.STOP;
 
   // TODO: find actual RPM values to use
-  private double m_forwardRpmValue = 2000;
+  private double m_forwardRpmValue = 2500;
   private double m_reverseRpmValue = -1000;
 
   private SupplyCurrentLimitConfiguration currentLimit =

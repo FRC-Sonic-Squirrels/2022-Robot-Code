@@ -27,18 +27,20 @@ public class ArmManualControlCommand extends CommandBase {
   @Override
   public void execute() {
     double joystickValue = m_controllerSupplier.get();
-    if(joystickValue > 0.05){
-      m_arm.setArmPercentOutput(joystickValue);
+    if(joystickValue > 0.1){
+      m_arm.setArmPercentOutput(joystickValue *0.3);
     }
-    if(joystickValue < -0.05){
-      m_arm.setArmPercentOutput(joystickValue);
+    if(joystickValue < -0.1){
+      m_arm.setArmPercentOutput(joystickValue *0.3);
     }
 
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_arm.setArmPercentOutput(0);
+  }
 
   // Returns true when the command should end.
   @Override

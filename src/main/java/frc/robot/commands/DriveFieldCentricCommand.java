@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
 
 import java.util.function.DoubleSupplier;
@@ -27,12 +28,12 @@ public class DriveFieldCentricCommand extends CommandBase {
 
     @Override
     public void execute() {
-        // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented movement
+        //DO NOT MULTIPLY THESE BY MAX VELOCITY that is already done in robot container
         m_drivetrainSubsystem.drive(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
-                        m_translationXSupplier.getAsDouble(),
-                        m_translationYSupplier.getAsDouble(),
-                        m_rotationSupplier.getAsDouble(),
+                        m_translationXSupplier.getAsDouble() * Constants.DriveFieldCentricConstant.TRANSLATION_MULTIPLIER,
+                        m_translationYSupplier.getAsDouble() * Constants.DriveFieldCentricConstant.TRANSLATION_MULTIPLIER,
+                        m_rotationSupplier.getAsDouble() * Constants.DriveFieldCentricConstant.ROTATION_MULTIPLIER,
                         m_drivetrainSubsystem.getGyroscopeRotation()
                 )
         );

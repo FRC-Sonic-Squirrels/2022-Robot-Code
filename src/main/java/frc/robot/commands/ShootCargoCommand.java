@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -19,11 +20,10 @@ public class ShootCargoCommand extends CommandBase {
   private IntakeSubsystem m_intakeSubsystem;
   private Robot m_robot;
   private long m_time;
-  private double rpm = 2000;
+  private double m_rpm;
 
-  public ShootCargoCommand(double rpm, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, Robot robot) {
+  public ShootCargoCommand(CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, Robot robot) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.rpm = rpm;
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
     m_intakeSubsystem = intakeSubsystem;
@@ -37,6 +37,7 @@ public class ShootCargoCommand extends CommandBase {
   @Override
   public void initialize() {
     m_shooterSubsystem.setFlywheelRPM(rpm);
+    m_intakeSubsystem.deployIntake();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -48,6 +49,7 @@ public class ShootCargoCommand extends CommandBase {
 
     if (m_shooterSubsystem.isAtDesiredRPM()) {
       m_cargoSubsystem.setBothMode();
+      m_intakeSubsystem.deployIntake();
     }
   }
 
@@ -55,13 +57,8 @@ public class ShootCargoCommand extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_shooterSubsystem.stop();
-
-    if (m_intakeSubsystem.isDeployed()) {
-      m_cargoSubsystem.setIntakeMode();
-    }
-    else {
-      m_cargoSubsystem.setStopMode();
-    }
+    m_cargoSubsystem.setStopMode();
+    m_intakeSubsystem.retractIntake();
   }
 
   // Returns true when the command should end.
