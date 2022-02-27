@@ -37,6 +37,7 @@ public class ShootCargoCommand extends CommandBase {
   @Override
   public void initialize() {
     m_shooterSubsystem.setFlywheelRPM(rpm);
+    m_intakeSubsystem.deployIntake();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -55,13 +56,8 @@ public class ShootCargoCommand extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_shooterSubsystem.stop();
-
-    if (m_intakeSubsystem.isDeployed()) {
-      m_cargoSubsystem.setIntakeMode();
-    }
-    else {
-      m_cargoSubsystem.setStopMode();
-    }
+    m_cargoSubsystem.setStopMode();
+    m_intakeSubsystem.retractIntake();
   }
 
   // Returns true when the command should end.

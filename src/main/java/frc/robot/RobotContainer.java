@@ -45,7 +45,7 @@ import frc.robot.subsystems.VisionSubsystem;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final Drivetrain drivetrain = new Drivetrain();
-  //public final ArmSubsystem m_arm = new ArmSubsystem();
+  public final ArmSubsystem m_arm = new ArmSubsystem();
   //public final VisionSubsystem m_visionSubsystem = new VisionSubsystem(drivetrain);
   public final CargoSubsystem m_cargoSubsystem = new CargoSubsystem();
   public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
@@ -201,19 +201,19 @@ public class RobotContainer {
     new Button(m_operatorController::getLeftBumper)
        .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);
 
-    new Button(m_operatorController::getStartButton)
-       .whenPressed(new InstantCommand(() -> m_elevator.zeroHeight(), m_elevator));
-
-    // new Button(m_operatorController::getRightBumper)
-    //   .whileHeld(new ArmManualControlCommand(() -> m_operatorController.getRightY(), m_arm), true);
-
-    // rotate arm one step in the positive direction (towards the front of robot)
-    // new Button(m_operatorController::getBackButton)
-    //   .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(1), m_arm));
-
-    // // rotate arm one step in the negative direction (towards the back of robot)
     // new Button(m_operatorController::getStartButton)
-    //   .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(-1), m_arm));
+    //    .whenPressed(new InstantCommand(() -> m_elevator.zeroHeight(), m_elevator));
+
+    new Button(m_operatorController::getRightBumper)
+      .whileHeld(new ArmManualControlCommand(() -> m_operatorController.getRightX(), m_arm), true);
+
+    //rotate arm one step in the positive direction (towards the front of robot)
+    new Button(m_operatorController::getBackButton)
+      .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(1), m_arm));
+
+    // rotate arm one step in the negative direction (towards the back of robot)
+    new Button(m_operatorController::getStartButton)
+      .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(-1), m_arm));
   }
   
   private static double deadband(double value, double deadband) {
