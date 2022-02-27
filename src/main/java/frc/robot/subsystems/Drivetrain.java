@@ -156,7 +156,7 @@ public class Drivetrain extends SubsystemBase {
                 0),
             Mk4iSwerveModuleHelper.GearRatio.L2,
             canId.CANID2_FRONT_RIGHT_MODULE_DRIVE_MOTOR,
-            canId.CANID11_FRONT_LEFT_MODULE_STEER_MOTOR,
+            canId.CANID12_FRONT_RIGHT_MODULE_STEER_MOTOR,
             canId.CANID22_FRONT_RIGHT_MODULE_STEER_ENCODER,
             FRONT_RIGHT_MODULE_STEER_OFFSET);
 
