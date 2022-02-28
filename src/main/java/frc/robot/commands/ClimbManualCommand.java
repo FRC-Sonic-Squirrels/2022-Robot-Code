@@ -28,7 +28,7 @@ public class ClimbManualCommand extends CommandBase {
     m_controller = controller;
 
     //if left bumper pressed again then end command 
-    withInterrupt(() -> m_controller.getLeftBumperPressed());
+  
     addRequirements(arm, elevator);
   }
 
@@ -36,6 +36,9 @@ public class ClimbManualCommand extends CommandBase {
   @Override
   public void initialize() {
     rumbleSequenceCommand().schedule();
+    //  m_controller.setRumble(RumbleType.kLeftRumble, 1);
+    //  m_controller.setRumble(RumbleType.kRightRumble, 1);
+
     SmartDashboard.putBoolean("CLIMBING MANUAL ACTIVE", true);
   }
 
@@ -65,12 +68,15 @@ public class ClimbManualCommand extends CommandBase {
     m_arm.setArmPercentOutput(0);
     m_elevator.setWinchPercentOutput(0);
     rumbleSequenceCommand().schedule();
+
+    // m_controller.setRumble(RumbleType.kLeftRumble, 1);
+    //  m_controller.setRumble(RumbleType.kRightRumble, 1);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return m_controller.getLeftBumperPressed();
   }
 
   //rumble wait 1 second then end rumble 

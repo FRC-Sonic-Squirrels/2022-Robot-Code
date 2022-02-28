@@ -88,6 +88,10 @@ public class RobotContainer {
         m_cargoSubsystem, m_intake, m_robot);
     SmartDashboard.putData("Auto Mode (discontinued)", chooser);
 
+    autonTrajectoryChooser.setDefaultOption("nothing", new InstantCommand());
+    SwerveTrajectoryAutonomousCommandFactory.addAutonTrajectoriesToChooser(autonTrajectoryChooser, 
+    1.0, 0.75);
+
     // // TODO: figure out if getSelected() will work properly or just return null
     // SwerveTrajectoryAutonomousCommandFactory.addAutonTrajectoriesToChooser(autonTrajectoryChooser, 1.0, 0.75,
     //     startPoseChooser.getSelected(), drivetrain, true, m_shooterSubsystem, m_cargoSubsystem, m_intake, m_robot);
@@ -191,7 +195,7 @@ public class RobotContainer {
     //   .whileHeld(new ShootOneCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake));
  
     //shoot while holding 
-    new Button(m_operatorController::getRightBumper)
+    new Button(m_operatorController::getXButton)
       .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
     //toggle climbing mode 
@@ -213,8 +217,8 @@ public class RobotContainer {
       .whenPressed(new InstantCommand(() -> m_arm.zeroEncoder()));
 
     //rotate arm one step in the positive direction (towards the front of robot)
-    new Button(m_operatorController::getXButton)
-      .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(1), m_arm));
+    // new Button(m_operatorController::getXButton)
+    //   .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(1), m_arm));
 
     // rotate arm one step in the negative direction (towards the back of robot)
     new Button(m_operatorController::getBButton)
@@ -223,8 +227,8 @@ public class RobotContainer {
     new Button(m_operatorController::getLeftBumper)
        .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);
 
-    // new Button(m_operatorController::getRightBumper)
-    //   .whileHeld(new ArmManualControlCommand(() -> m_operatorController.getRightX(), m_arm), true);
+    new Button(m_operatorController::getRightBumper)
+      .whileHeld(new ArmManualControlCommand(() -> m_operatorController.getRightX(), m_arm), true);
 
     // new Button(m_operatorController::getLeftStickButtonPressed)
     //   .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));

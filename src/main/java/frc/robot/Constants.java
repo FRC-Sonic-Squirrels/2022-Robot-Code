@@ -120,7 +120,7 @@ public final class Constants {
 
   public static class DriveFieldCentricConstant {
     public static final double TRANSLATION_MULTIPLIER = 0.6; 
-    public static final double ROTATION_MULTIPLIER = 0.5; 
+    public static final double ROTATION_MULTIPLIER = 0.35; 
   }
 
   public static final class AutoConstants {
@@ -251,7 +251,7 @@ public final class Constants {
     public static Pose2d RED_27_21 = new Pose2d( Units.feetToMeters(27), Units.feetToMeters(21), new Rotation2d() );
     public static Pose2d RED_32_19 = new Pose2d( Units.feetToMeters(32), Units.feetToMeters(19), new Rotation2d() );
     public static Pose2d RED_31_14 = new Pose2d( Units.feetToMeters(31), Units.feetToMeters(14), new Rotation2d() );
-    public static Pose2d RED_32_8  = new Pose2d( Units.feetToMeters(32), Units.feetToMeters(8),  new Rotation2d() );
+    public static Pose2d RED_32_8  = new Pose2d( Units.feetToMeters(32), Units.feetToMeters(8),  Rotation2d.fromDegrees(305));
   }
 
   public static class ShootPoseConstants {

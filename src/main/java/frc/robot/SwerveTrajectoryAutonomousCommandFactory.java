@@ -57,31 +57,38 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
   public static void addAutonTrajectoriesToChooser(SendableChooser<Command> chooser, double maxVelocity,
       double maxAcceleration) {
-    
-    chooser.addOption("4 blue auton 321", fourBallAutonCommand( 
-        StartPoseConstants.BLUE_27_6, FieldConstants.BLUE_CARGO_3, ShootPoseConstants.BLUE_DOWN,
-        FieldConstants.BLUE_CARGO_2, FieldConstants.BLUE_CARGO_1, ShootPoseConstants.BLUE_UP));
-    
-    chooser.addOption("4 blue auton 712", fourBallAutonCommand(
-        StartPoseConstants.BLUE_22_19, FieldConstants.BLUE_CARGO_7, ShootPoseConstants.BLUE_UP,
-        FieldConstants.BLUE_CARGO_1, FieldConstants.BLUE_CARGO_2, ShootPoseConstants.BLUE_DOWN));
+        
+      chooser.addOption("testing auton", shootAndMoveToCargoCommand(
+        Constants.StartPoseConstants.RED_32_8, 
+        Constants.FieldConstants.RED_CARGO_7, 
+        new Pose2d()
 
-    chooser.addOption("4 blue auton 372", fourBallAutonCommand(
-        StartPoseConstants.BLUE_27_6, FieldConstants.BLUE_CARGO_3, ShootPoseConstants.BLUE_DOWN,
-        FieldConstants.BLUE_CARGO_7, FieldConstants.BLUE_CARGO_2, ShootPoseConstants.BLUE_DOWN));
+      ));
+
+    // chooser.addOption("4 blue auton 321", fourBallAutonCommand( 
+    //     StartPoseConstants.BLUE_27_6, FieldConstants.BLUE_CARGO_3, ShootPoseConstants.BLUE_DOWN,
+    //     FieldConstants.BLUE_CARGO_2, FieldConstants.BLUE_CARGO_1, ShootPoseConstants.BLUE_UP));
+    
+    // chooser.addOption("4 blue auton 712", fourBallAutonCommand(
+    //     StartPoseConstants.BLUE_22_19, FieldConstants.BLUE_CARGO_7, ShootPoseConstants.BLUE_UP,
+    //     FieldConstants.BLUE_CARGO_1, FieldConstants.BLUE_CARGO_2, ShootPoseConstants.BLUE_DOWN));
+
+    // chooser.addOption("4 blue auton 372", fourBallAutonCommand(
+    //     StartPoseConstants.BLUE_27_6, FieldConstants.BLUE_CARGO_3, ShootPoseConstants.BLUE_DOWN,
+    //     FieldConstants.BLUE_CARGO_7, FieldConstants.BLUE_CARGO_2, ShootPoseConstants.BLUE_DOWN));
     
 
-    chooser.addOption("4 red auton 321", fourBallAutonCommand( 
-        StartPoseConstants.RED_27_21, FieldConstants.RED_CARGO_3, ShootPoseConstants.BLUE_DOWN,
-        FieldConstants.RED_CARGO_2, FieldConstants.RED_CARGO_1, ShootPoseConstants.RED_DOWN));
+    // chooser.addOption("4 red auton 321", fourBallAutonCommand( 
+    //     StartPoseConstants.RED_27_21, FieldConstants.RED_CARGO_3, ShootPoseConstants.BLUE_DOWN,
+    //     FieldConstants.RED_CARGO_2, FieldConstants.RED_CARGO_1, ShootPoseConstants.RED_DOWN));
     
-    chooser.addOption("4 red auton 712", fourBallAutonCommand(
-        StartPoseConstants.RED_32_8, FieldConstants.RED_CARGO_7, ShootPoseConstants.BLUE_UP,
-        FieldConstants.RED_CARGO_1, FieldConstants.RED_CARGO_2, ShootPoseConstants.RED_UP));
+    // chooser.addOption("4 red auton 712", fourBallAutonCommand(
+    //     StartPoseConstants.RED_32_8, FieldConstants.RED_CARGO_7, ShootPoseConstants.BLUE_UP,
+    //     FieldConstants.RED_CARGO_1, FieldConstants.RED_CARGO_2, ShootPoseConstants.RED_UP));
 
-    chooser.addOption("4 red auton 372", fourBallAutonCommand(
-        StartPoseConstants.RED_27_21, FieldConstants.RED_CARGO_3, ShootPoseConstants.BLUE_DOWN,
-        FieldConstants.RED_CARGO_7, FieldConstants.RED_CARGO_2, ShootPoseConstants.RED_UP));
+    // chooser.addOption("4 red auton 372", fourBallAutonCommand(
+    //     StartPoseConstants.RED_27_21, FieldConstants.RED_CARGO_3, ShootPoseConstants.BLUE_DOWN,
+    //     FieldConstants.RED_CARGO_7, FieldConstants.RED_CARGO_2, ShootPoseConstants.RED_UP));
   }
 
    /**
@@ -105,11 +112,11 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     return new SequentialCommandGroup(
       // 1. move cargo to upper belts, set up flywheel, then move to the shooting location
       new ParallelCommandGroup(
-        new CargoMoveToUpperBeltsCommand(m_cargo),
-        new WaitUntilCommand(() -> m_cargo.cargoInUpperBelts()),
+        //new CargoMoveToUpperBeltsCommand(m_cargo),
+        //new WaitUntilCommand(() -> m_cargo.cargoInUpperBelts()),
         new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated)),
-        new WaitUntilCommand(() -> m_shooter.isAtDesiredRPM()),
-        SwerveControllerCommand(startToShoot, true)
+        new WaitUntilCommand(() -> m_shooter.isAtDesiredRPM())
+        //SwerveControllerCommand(startToShoot, true)
       ),
       
       // 2. shoot the cargo
@@ -119,19 +126,17 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       new ParallelCommandGroup(
         new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle)),
         SwerveControllerCommand(m_tt.driveToPose(startPos, rot_midPos), true),
-        new IntakeDeployCommand(m_intake, m_cargo),
-        new WaitUntilCommand(() -> m_intake.intakeAtDesiredRPM())
+        new IntakeDeployCommand(m_intake, m_cargo)
+        //new WaitUntilCommand(() -> m_intake.intakeAtDesiredRPM())
       ),
       
       // 4. collect the cargo, then wait until it is fully in the lower belts
       SwerveControllerCommand(m_tt.driveToPose(midPos, cargoPos), true),
       new WaitUntilCommand(() -> m_cargo.cargoInLowerBelts()),
 
-      // 5. retract and deactivate the intake
-      new ParallelCommandGroup(
-        new InstantCommand(() -> m_intake.retractIntake()),
-        new InstantCommand(() -> m_intake.stop())
-      )
+      // 5. retract and deactivate the intake 
+      new InstantCommand(() -> m_intake.stop())
+      
     );
 
   }
@@ -205,92 +210,92 @@ public class SwerveTrajectoryAutonomousCommandFactory {
    * @param shootPos2 the position of the robot when shooting the second batch of cargo (meters)
    * @return a set of actions with the robot shooting its current 2 cargo, then moving and picking up the next 2 cargo
    */
-  public static Command fourBallAutonCommand(Pose2d startPos, Translation2d initCargoPos, Pose2d shootPos,
-      Translation2d cargoPos1, Translation2d cargoPos2, Pose2d shootPos2) {
+  // public static Command fourBallAutonCommand(Pose2d startPos, Translation2d initCargoPos, Pose2d shootPos,
+  //     Translation2d cargoPos1, Translation2d cargoPos2, Pose2d shootPos2) {
 
-    m_drivetrain.setPose(startPos, startPos.getRotation());
+  //   m_drivetrain.setPose(startPos, startPos.getRotation());
 
-    // give shootAngle its rotation, then change units
-    //Rotation2d shootAngle = new Rotation2d( Math.atan2(shootPos.getY() - HubCentricConstants.HUB_CENTER.y,
-    //    shootPos.getX() - HubCentricConstants.HUB_CENTER.x));
-    //shootPos = inchesToMeters(shootPos);
-    //shootPos = setRotation(shootPos, shootAngle);
+  //   // give shootAngle its rotation, then change units
+  //   //Rotation2d shootAngle = new Rotation2d( Math.atan2(shootPos.getY() - HubCentricConstants.HUB_CENTER.y,
+  //   //    shootPos.getX() - HubCentricConstants.HUB_CENTER.x));
+  //   //shootPos = inchesToMeters(shootPos);
+  //   //shootPos = setRotation(shootPos, shootAngle);
 
-    // find the mid poses
-    Translation2d initMidPos = midPosFinder(poseToTranslation(startPos), initCargoPos);
-    Rotation2d initAngle = getTranslationsAngle(initMidPos, initCargoPos);
-    Pose2d rot_initMidPos = new Pose2d(initMidPos, initAngle);
+  //   // find the mid poses
+  //   Translation2d initMidPos = midPosFinder(poseToTranslation(startPos), initCargoPos);
+  //   Rotation2d initAngle = getTranslationsAngle(initMidPos, initCargoPos);
+  //   Pose2d rot_initMidPos = new Pose2d(initMidPos, initAngle);
 
-    Translation2d midPos1 = midPosFinder(poseToTranslation(shootPos), cargoPos1);
-    Rotation2d angle1 = getTranslationsAngle(midPos1, cargoPos1);
-    Pose2d rot_midPos1 = new Pose2d(midPos1, angle1);
+  //   Translation2d midPos1 = midPosFinder(poseToTranslation(shootPos), cargoPos1);
+  //   Rotation2d angle1 = getTranslationsAngle(midPos1, cargoPos1);
+  //   Pose2d rot_midPos1 = new Pose2d(midPos1, angle1);
     
-    Translation2d midPos2 = midPosFinder(cargoPos1, cargoPos2);
-    Rotation2d angle2 = getTranslationsAngle(midPos2, cargoPos2);
-    Pose2d rot_midPos2 = new Pose2d(midPos2, angle2);
+  //   Translation2d midPos2 = midPosFinder(cargoPos1, cargoPos2);
+  //   Rotation2d angle2 = getTranslationsAngle(midPos2, cargoPos2);
+  //   Pose2d rot_midPos2 = new Pose2d(midPos2, angle2);
 
-    // instantiate all the trajectories
-    Trajectory start_to_initMidPos = m_tt.driveToPose(startPos, rot_initMidPos); // changes angle
-    Trajectory initMidPos_to_initCargoPos = m_tt.driveToPose(initMidPos, initCargoPos); // no angle change
-    Trajectory initCargoPos_to_shootPos = m_tt.driveToPose(initCargoPos, shootPos); // changes angle
-    Trajectory shootPos_to_midPos1 = m_tt.driveToPose(shootPos, rot_midPos1); // changes angle   (pos - pos)
-    Trajectory midPos1_to_cargoPos1 = m_tt.driveToPose(midPos1, cargoPos1); // no angle change   (trans - trans)
-    Trajectory cargoPos1_to_midPos2 = m_tt.driveToPose(cargoPos1, rot_midPos2); // changes angle (trans - pos)
-    Trajectory midPos2_to_cargoPos2 = m_tt.driveToPose(midPos2, cargoPos2); // no angle change   (trans - trans)
-    Trajectory cargoPos2_to_shootPos2 = m_tt.driveToPose(cargoPos2, shootPos2); // changes angle (trans - pos)
+  //   // instantiate all the trajectories
+  //   Trajectory start_to_initMidPos = m_tt.driveToPose(startPos, rot_initMidPos); // changes angle
+  //   Trajectory initMidPos_to_initCargoPos = m_tt.driveToPose(initMidPos, initCargoPos); // no angle change
+  //   Trajectory initCargoPos_to_shootPos = m_tt.driveToPose(initCargoPos, shootPos); // changes angle
+  //   Trajectory shootPos_to_midPos1 = m_tt.driveToPose(shootPos, rot_midPos1); // changes angle   (pos - pos)
+  //   Trajectory midPos1_to_cargoPos1 = m_tt.driveToPose(midPos1, cargoPos1); // no angle change   (trans - trans)
+  //   Trajectory cargoPos1_to_midPos2 = m_tt.driveToPose(cargoPos1, rot_midPos2); // changes angle (trans - pos)
+  //   Trajectory midPos2_to_cargoPos2 = m_tt.driveToPose(midPos2, cargoPos2); // no angle change   (trans - trans)
+  //   Trajectory cargoPos2_to_shootPos2 = m_tt.driveToPose(cargoPos2, shootPos2); // changes angle (trans - pos)
     
 
-    return new SequentialCommandGroup(
-      // 1. move to the location of the initial cargo and start/deploy intake
-      new ParallelCommandGroup(
-        SwerveControllerCommand(start_to_initMidPos, true),
-        new InstantCommand(() -> m_intake.deployIntake())
-      ),
+  //   return new SequentialCommandGroup(
+  //     // 1. move to the location of the initial cargo and start/deploy intake
+  //     new ParallelCommandGroup(
+  //       SwerveControllerCommand(start_to_initMidPos, true),
+  //       new InstantCommand(() -> m_intake.deployIntake())
+  //     ),
 
-      // 2. collect the initial cargo
-      SwerveControllerCommand(initMidPos_to_initCargoPos, false),
+  //     // 2. collect the initial cargo
+  //     SwerveControllerCommand(initMidPos_to_initCargoPos, false),
 
-      // 3. set up flywheel and move to the shooting location
-      new ParallelCommandGroup(
-        new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated)),
-        new WaitUntilCommand(() -> m_shooter.isAtDesiredRPM()),
-        SwerveControllerCommand(initCargoPos_to_shootPos, false)
-      ),
+  //     // 3. set up flywheel and move to the shooting location
+  //     new ParallelCommandGroup(
+  //       new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated)),
+  //       new WaitUntilCommand(() -> m_shooter.isAtDesiredRPM()),
+  //       SwerveControllerCommand(initCargoPos_to_shootPos, false)
+  //     ),
       
-      // 4. shoot both cargo
-      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
+  //     // 4. shoot both cargo
+  //     new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
       
-      // 5. slow down flywheel, deploy the intake and move in front of the first cargo
-      new ParallelCommandGroup(
-        //new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle)),
-        SwerveControllerCommand(shootPos_to_midPos1, true),
-        new IntakeDeployCommand(m_intake, m_cargo),
-        new WaitUntilCommand(() -> m_intake.intakeAtDesiredRPM())
-      ),
+  //     // 5. slow down flywheel, deploy the intake and move in front of the first cargo
+  //     new ParallelCommandGroup(
+  //       //new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle)),
+  //       SwerveControllerCommand(shootPos_to_midPos1, true),
+  //       new IntakeDeployCommand(m_intake, m_cargo),
+  //       new WaitUntilCommand(() -> m_intake.intakeAtDesiredRPM())
+  //     ),
 
-      // 6. collect the first cargo, then wait until it is fully in the upper belts
-      SwerveControllerCommand(midPos1_to_cargoPos1, false),
-      new WaitUntilCommand(() -> m_cargo.cargoInUpperBelts()),
+  //     // 6. collect the first cargo, then wait until it is fully in the upper belts
+  //     SwerveControllerCommand(midPos1_to_cargoPos1, false),
+  //     new WaitUntilCommand(() -> m_cargo.cargoInUpperBelts()),
       
-      // 7. move from where the first cargo was, to the second mid position
-      SwerveControllerCommand(cargoPos1_to_midPos2, true),
+  //     // 7. move from where the first cargo was, to the second mid position
+  //     SwerveControllerCommand(cargoPos1_to_midPos2, true),
 
-      // 8. collect the second cargo, then wait until it is fully in the lower belts
-      SwerveControllerCommand(midPos2_to_cargoPos2, false),
-      new WaitUntilCommand(() -> m_cargo.cargoInLowerBelts()),
+  //     // 8. collect the second cargo, then wait until it is fully in the lower belts
+  //     SwerveControllerCommand(midPos2_to_cargoPos2, false),
+  //     new WaitUntilCommand(() -> m_cargo.cargoInLowerBelts()),
 
-      // 9. after both cargo are loaded, go to the second shoot position while stopping the intake
-      new ParallelCommandGroup(
-        new InstantCommand(() -> m_intake.retractIntake()),
-        new InstantCommand(() -> m_intake.stop()),
-        SwerveControllerCommand(cargoPos2_to_shootPos2, true)
-      ),
+  //     // 9. after both cargo are loaded, go to the second shoot position while stopping the intake
+  //     new ParallelCommandGroup(
+  //       new InstantCommand(() -> m_intake.retractIntake()),
+  //       new InstantCommand(() -> m_intake.stop()),
+  //       SwerveControllerCommand(cargoPos2_to_shootPos2, true)
+  //     ),
 
-      // 10. shoot the last two cargo
-      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot)
-      // congratulations
-    );
-  }
+  //     // 10. shoot the last two cargo
+  //     new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot)
+  //     // congratulations
+  //   );
+  // }
 
 
   /**

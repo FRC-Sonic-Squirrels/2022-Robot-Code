@@ -149,6 +149,18 @@ public class TestTrajectories {
       getTrajectoryConfig());
   }
 
+  public Trajectory driveToPose(Translation2d currentPos, Translation2d targetPos){
+    Pose2d pos1 = new Pose2d(currentPos, new Rotation2d());
+    Pose2d pos2 = new Pose2d(targetPos, new Rotation2d());
+
+    var translation = new Transform2d(pos1, pos2);
+
+    return TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0.0, 0.0, new Rotation2d()), 
+      List.of(),
+      new Pose2d(translation.getTranslation(), new Rotation2d()),
+      getTrajectoryConfig());
+  }
   public Trajectory rotateRobot(double angle) {
 
     return TrajectoryGenerator.generateTrajectory(

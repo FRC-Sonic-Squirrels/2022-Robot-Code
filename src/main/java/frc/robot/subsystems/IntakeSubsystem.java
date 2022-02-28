@@ -45,7 +45,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private Mode mode = Mode.STOP;
 
   // TODO: find actual RPM values to use
-  private double m_forwardRpmValue = 3000;
+  private double m_forwardRpmValue = 3500;
   private double m_reverseRpmValue = -1000;
 
   private SupplyCurrentLimitConfiguration currentLimit =
@@ -196,7 +196,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void stop() {
     setStopMode();
-    m_intake.setVoltage(0.0);
+   // m_intake.setVoltage(0.0);
     setIntakeMotorRPM(0.0);
     retractIntake();
   }
