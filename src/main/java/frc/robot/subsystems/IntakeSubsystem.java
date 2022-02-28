@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -49,7 +50,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private double m_reverseRpmValue = -1000;
 
   private SupplyCurrentLimitConfiguration currentLimit =
-    new SupplyCurrentLimitConfiguration(true, 25, 30, 0.5);
+    new SupplyCurrentLimitConfiguration(true, 20, 25, 0.1);
 
   public IntakeSubsystem(Drivetrain drivetrain) {
     
@@ -58,6 +59,7 @@ public class IntakeSubsystem extends SubsystemBase {
     m_intake.setInverted(false);
     m_intake.setNeutralMode(NeutralMode.Coast); 
     m_intake.configVoltageCompSaturation(10.0);
+    m_intake.enableVoltageCompensation(true);
     m_intake.configSupplyCurrentLimit(currentLimit);
 
     m_intake.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, kPIDLoopIdx, kTimeoutMs);
@@ -67,6 +69,11 @@ public class IntakeSubsystem extends SubsystemBase {
     m_intake.config_kD(kPIDLoopIdx, 0.0);
     m_intake.config_kF(kPIDLoopIdx, 0.05);
     m_intake.config_IntegralZone(kPIDLoopIdx, 100);
+
+
+    // Reduce CAN traffic a little, we
+    m_intake.setStatusFramePeriod(StatusFrame.Status_1_General, 40);
+    m_intake.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 40);
 
     m_encoder = m_intake.getSensorCollection();
     
