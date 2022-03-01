@@ -73,10 +73,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     winch_follow_talon.setNeutralMode(NeutralMode.Brake);
 
     // set soft limit on forward movement
-    winch_lead_talon.configForwardSoftLimitThreshold(maxExtensionInches / ticks2distance);
-    winch_follow_talon.configForwardSoftLimitThreshold(18.0 / ticks2distance);
-    winch_lead_talon.configForwardSoftLimitEnable(true);
-    winch_follow_talon.configForwardSoftLimitEnable(true);
+    winch_lead_talon.configReverseSoftLimitThreshold(maxExtensionInches / ticks2distance);
+    winch_follow_talon.configReverseSoftLimitThreshold(maxExtensionInches / ticks2distance);
+    winch_lead_talon.configReverseSoftLimitEnable(true);
+    winch_follow_talon.configReverseSoftLimitEnable(true);
 
     // config hard limit switch for full down position
     winch_lead_talon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
