@@ -222,7 +222,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       ),
       
       // 2. shoot both cargo
-      new ShootCargoCommand(cargo, shooter, intake, robot),
+      new ShootCargoCommand(cargo, shooter, intake, robot, drivetrain),
       
       // 3. slow down flywheel, deploy the intake, then move in front of the first cargo
       new ParallelCommandGroup(

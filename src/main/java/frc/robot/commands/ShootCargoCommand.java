@@ -36,7 +36,10 @@ public class ShootCargoCommand extends CommandBase {
     m_robot = robot;
     m_time = 0;
 
-    addRequirements(cargoSubsystem, shooterSubsystem);
+
+    // drivetrain is not included in the requirements, as it use in a "read only"
+    // fashion, to call getPose(). 
+    addRequirements(cargoSubsystem, shooterSubsystem, intakeSubsystem);
   }
 
   // Called when the command is initially scheduled.
