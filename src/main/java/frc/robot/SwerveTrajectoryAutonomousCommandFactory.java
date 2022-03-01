@@ -68,9 +68,9 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         StartPoseConstants.BLUE_22_19, FieldConstants.BLUE_CARGO_7,
         FieldConstants.BLUE_CARGO_1, FieldConstants.BLUE_CARGO_2));
 
-    chooser.addOption("4 blue auton 372", fourBallAutonCommand(
-        StartPoseConstants.BLUE_27_6, FieldConstants.BLUE_CARGO_3,
-        FieldConstants.BLUE_CARGO_7, FieldConstants.BLUE_CARGO_2));
+    chooser.addOption("4 blue auton 723", fourBallAutonCommand(
+        StartPoseConstants.BLUE_22_19, FieldConstants.BLUE_CARGO_7,
+        FieldConstants.BLUE_CARGO_2, FieldConstants.BLUE_CARGO_3));
     
 
     chooser.addOption("4 red auton 321", fourBallAutonCommand( 
@@ -81,9 +81,9 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         StartPoseConstants.RED_32_8, FieldConstants.RED_CARGO_7,
         FieldConstants.RED_CARGO_1, FieldConstants.RED_CARGO_2));
 
-    chooser.addOption("4 red auton 372", fourBallAutonCommand(
-        StartPoseConstants.RED_27_21, FieldConstants.RED_CARGO_3,
-        FieldConstants.RED_CARGO_7, FieldConstants.RED_CARGO_2));
+    chooser.addOption("4 red auton 723", fourBallAutonCommand(
+        StartPoseConstants.RED_32_8, FieldConstants.RED_CARGO_7,
+        FieldConstants.RED_CARGO_2, FieldConstants.RED_CARGO_3));
   }
 
    /**
