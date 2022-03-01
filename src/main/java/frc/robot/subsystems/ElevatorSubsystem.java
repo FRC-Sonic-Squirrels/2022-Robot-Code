@@ -86,8 +86,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     winch_lead_talon.setInverted(true);
     winch_follow_talon.setInverted(true);
 
+    // Reduce CAN traffic where possible
+    // https://docs.ctre-phoenix.com/en/latest/ch18_CommonAPI.html
     MotorUtils.setCtreStatusSlow(winch_follow_talon);
+    // leave lead motor with default CAN settings. We need position and limit switch updates
 
+    
     // NOTE: when we power up, we expect the elevator to be full down, triggering the lower limit switch.
     // if not, we need to move the elevator down to the lower limit switch (VERY SLOWLY).
     // hitting either limit switch must stop the elevator.

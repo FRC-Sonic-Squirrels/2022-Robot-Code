@@ -16,7 +16,17 @@ import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
  * Thanks to:
  * https://github.com/4512OtterChaos/frc2020/blob/119f72d0c05b82cc3073ff0d15ac819d76450d67/src/main/java/frc/robot/common/OCConfig.java#L185-L205
  * 
+ * Info:
+ *   https://www.hi-im.kim/canbus
+ * 
+ * CTRE docs:
+ *   https://docs.ctre-phoenix.com/en/latest/ch18_CommonAPI.html
+ * 
+ * REV docs:
+ *   https://docs.revrobotics.com/sparkmax/operating-modes/control-interfaces#periodic-status-frames
+ * 
  */
+
 public class MotorUtils {
 
   /**
@@ -29,7 +39,7 @@ public class MotorUtils {
   public static void setCtreStatusSlow(BaseMotorController... motors) {
     for (BaseMotorController motor : motors) {
       motor.setStatusFramePeriod(StatusFrame.Status_1_General, 500);
-      motor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 100);
+      motor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 500);
     }
   }
 

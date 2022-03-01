@@ -11,6 +11,7 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.team2930.lib.util.MotorUtils;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -70,7 +71,14 @@ public class ArmSubsystem extends SubsystemBase {
     //good for preventing small changes but this can also be done with the joystick itself 
     //m_armPID.setSmartMotionMinOutputVelocity(0.05, 0);
   
+
+    // Reduce CAN traffic when possible
+    // https://www.hi-im.kim/canbus
     MotorUtils.setSparkMaxStatusSlow(m_armFollowMotor);
+    // we don't need fast updates of sensor velocity
+    m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 200);
+    // we do need updates of sensor position
+    m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
 
     // TODO: maybe leave this alone and use raw encoder ticks
     m_throughBoreEncoder.setPositionConversionFactor(1.0);

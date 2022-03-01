@@ -38,8 +38,8 @@ public class CargoSubsystem extends SubsystemBase {
   private Mode mode = Mode.STOP;
 
   // TODO: find the real percent outputs of the conveyor belts
-  private double m_lowerOutput = 0.95;
-  private double m_upperOutput = 0.95;
+  private double m_lowerOutput = 0.8;
+  private double m_upperOutput = 0.8;
 
   public CargoSubsystem() {
 
@@ -51,9 +51,9 @@ public class CargoSubsystem extends SubsystemBase {
 
     // reduce CAN traffic for motors (not using speed control)
     LowerBelts.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
-    LowerBelts.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 100);
+    LowerBelts.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 200);
     UpperBelts.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
-    UpperBelts.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 100);
+    UpperBelts.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 200);
 
     // Voltage limits, percent output is scaled to this new max
     LowerBelts.configVoltageCompSaturation(10);
@@ -63,12 +63,12 @@ public class CargoSubsystem extends SubsystemBase {
 
     // current limits, Max 30A
     SupplyCurrentLimitConfiguration currentLimit =
-        new SupplyCurrentLimitConfiguration(true, 25, 30, 0.3);
-    // LowerBelts.configSupplyCurrentLimit(currentLimit);
-    // UpperBelts.configSupplyCurrentLimit(currentLimit);
+        new SupplyCurrentLimitConfiguration(true, 25, 30, 0.1);
+    LowerBelts.configSupplyCurrentLimit(currentLimit);
+    UpperBelts.configSupplyCurrentLimit(currentLimit);
 
     // ramp rate, how long to take to get to full power
-    LowerBelts.configOpenloopRamp(0.1);
+    LowerBelts.configOpenloopRamp(0.2);
     UpperBelts.configOpenloopRamp(0.1);
 
     // Brake mode
@@ -82,21 +82,18 @@ public class CargoSubsystem extends SubsystemBase {
     LowerBelts.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
     UpperBelts.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
     
-    //Set Ramp-Up
-    //UpperBelts.configClosedloopRamp(0.1);
-    //LowerBelts.configClosedloopRamp(0.1);
-
+ 
     // TODO: configure PID for lower and upper belts
     // Config PID values to control RPM
-    LowerBelts.config_kP(0, 0.15, 10);
-    LowerBelts.config_kI(0, 0.0, 10);
-    LowerBelts.config_kD(0, 1.5, 10);
-    LowerBelts.config_kF(0, 0.048, 10);
+    // LowerBelts.config_kP(0, 0.15, 10);
+    // LowerBelts.config_kI(0, 0.0, 10);
+    // LowerBelts.config_kD(0, 1.5, 10);
+    // LowerBelts.config_kF(0, 0.048, 10);
 
-    UpperBelts.config_kP(0, 0.15, 10);
-    UpperBelts.config_kI(0, 0.0, 10);
-    UpperBelts.config_kD(0, 1.5, 10);
-    UpperBelts.config_kF(0, 0.053, 10);
+    // UpperBelts.config_kP(0, 0.15, 10);
+    // UpperBelts.config_kI(0, 0.0, 10);
+    // UpperBelts.config_kD(0, 1.5, 10);
+    // UpperBelts.config_kF(0, 0.053, 10);
 
   }
 
@@ -104,7 +101,6 @@ public class CargoSubsystem extends SubsystemBase {
   public void periodic() {
   
     updateTestingValues();
-
 
     if (mode == Mode.STOP) {
       stopIndexer();
@@ -163,6 +159,7 @@ public class CargoSubsystem extends SubsystemBase {
     m_lowerOutput = SmartDashboard.getNumber("cargo subsystem lower motor speed", m_lowerOutput);
     m_upperOutput = SmartDashboard.getNumber("cargo subsystem upper motor speed", m_upperOutput);
   }
+
   public void setLowerBeltPercentOutput(double percent) {
     LowerBelts.set(ControlMode.PercentOutput, percent);
   }
