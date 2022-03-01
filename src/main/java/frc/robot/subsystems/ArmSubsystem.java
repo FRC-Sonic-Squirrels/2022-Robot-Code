@@ -73,7 +73,7 @@ public class ArmSubsystem extends SubsystemBase {
     MotorUtils.setSparkMaxStatusSlow(m_armFollowMotor);
 
     // TODO: maybe leave this alone and use raw encoder ticks
-    m_throughBoreEncoder.setPositionConversionFactor(360.0/kCPR);
+    m_throughBoreEncoder.setPositionConversionFactor(1.0);
 
     //because of gear box the encoder is spinning the wrong way
     m_throughBoreEncoder.setInverted(true);
@@ -128,7 +128,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public double getArmAngle() {
-    return m_throughBoreEncoder.getPosition() * m_encoderToArmRatio;
+    return m_throughBoreEncoder.getPosition() * m_encoderToArmRatio * 360;
   }
 
   public void setMotorCoastMode(){
@@ -170,6 +170,7 @@ public class ArmSubsystem extends SubsystemBase {
     //}
 
     SmartDashboard.putNumber("Arm_Subsystem Angle deg", getArmAngle());
+    SmartDashboard.putNumber("Arm_Subsystem ticks", getEncoderValue());
     SmartDashboard.putNumber("Arm_Subsystem Vel (deg/s)", m_armLeadMotor.getEncoder().getVelocity()*rpm2degreesPerSecond);
     SmartDashboard.putNumber("Arm_Subsystem SetPoint", m_targetAngle);
     SmartDashboard.putNumber("Arm_Subsystem Error", m_targetAngle - getEncoderValue());
