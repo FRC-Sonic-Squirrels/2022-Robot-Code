@@ -48,6 +48,22 @@ public class ShooterSubsystem extends SubsystemBase {
 
   //TODO: add shooting, idle and stop enums use them for logic for setting rpm when shooting, setting motor voltage to 0 when idle and slowing/setting rpm for when stopping
 
+  private double shooterDistances[][] = {
+    //TODO: these values are random, we need to measure the robot's shooting and put the values here {distance (feet), flywheel motor RPM}
+    {4.0, 3700},  // 4 feet 
+    {4.7, 3800},
+    {5.0, 3850},  // 5 feet
+    {5.8, 3850},
+    {6.6, 3900},
+    {9.7, 4675},
+    {11.0, 5000}, 
+    {15.0, 5400}, // 15 feet
+    {16.2, 5500},
+    {20.0, 6000},  // 20 feet
+    {23.3, 6000},
+    {25.0, 6200}
+  };
+
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
 
@@ -71,6 +87,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     flywheel_follow.follow(flywheel_lead);
     flywheel_follow.setInverted(true);
+
+    //set up linear interpolator
+    m_lt_feet = new linearInterpolator(shooterDistances);
 
     MotorUtils.setCtreStatusSlow(flywheel_follow);
 
@@ -196,5 +215,9 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheel_lead.config_kD(0, m_configD);
     flywheel_lead.config_kF(0, m_configF);
     flywheel_lead.config_IntegralZone(0, m_configIZ);
+  }
+  
+  public double getRPMforDistanceFeet(double distanceFeet) {
+    return m_lt_feet.getInterpolatedValue(distanceFeet);
   }
 }
