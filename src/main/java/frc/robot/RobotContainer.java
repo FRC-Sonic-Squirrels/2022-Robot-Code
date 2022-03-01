@@ -210,7 +210,7 @@ public class RobotContainer {
       .whenPressed(new InstantCommand(() -> m_elevator.zeroHeight(), m_elevator));
     
     new Button(m_operatorController::getBackButton)
-      .whenPressed(new InstantCommand(() -> m_arm.zeroEncoder()));
+      .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(15.6)));
 
     //rotate arm one step in the positive direction (towards the front of robot)
     new Button(m_operatorController::getXButton)
