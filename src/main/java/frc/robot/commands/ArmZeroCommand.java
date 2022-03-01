@@ -9,8 +9,10 @@ import frc.robot.subsystems.ArmSubsystem;
 
 public class ArmZeroCommand extends CommandBase {
   private ArmSubsystem arm;
-  private double lastPosition = 999999;  // something really big
-  private int repeatCount = 0;
+  private double lastPositionDegrees = 360;
+
+  // start count negative to give arm time to start moving when we start
+  private int repeatCount = -2;
 
   public ArmZeroCommand(ArmSubsystem arm) {
     this.arm = arm;
@@ -20,22 +22,22 @@ public class ArmZeroCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    lastPosition = arm.getEncoderValue();
+    lastPositionDegrees = arm.getArmAngle();
     arm.setArmPercentOutput(-0.05);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double currentPosition = arm.getEncoderValue();
-    // anything within 5 encoder ticks is close enough to be unchanged
-    if (Math.abs(lastPosition - currentPosition) <= 5) {
+    double currentPositionDegrees = arm.getArmAngle();
+    // anything within 0.1 deg is close enough to be considered unchanged
+    if (Math.abs(lastPositionDegrees - currentPositionDegrees) <= 0.1) {
       repeatCount++;
     }
     else {
       repeatCount = 0;
     }
-    lastPosition = currentPosition;
+    lastPositionDegrees = currentPositionDegrees;
   }
 
   // Called once the command ends or is interrupted.
