@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import java.io.Console;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
@@ -26,6 +27,8 @@ public class ShootCargoCommand extends CommandBase {
   private Robot m_robot;
   private long m_time;
   private double m_rpm;
+  private Pose2d m_robotPosition;
+  private double m_shootingCorrection;
 
   public ShootCargoCommand(CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, Robot robot, Drivetrain drivetrain) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -46,12 +49,13 @@ public class ShootCargoCommand extends CommandBase {
   @Override
   public void initialize() {
     //by default from testing on 2/26 2000 works well enough for low goal shots 
-    m_rpm = SmartDashboard.getNumber("SHOOTING RPM", 2000);
-    
-    Pose2d robotPosition = m_drivetrain.getPose();
-    m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getRPMforDistanceFeet(Math.sqrt(
-      Math.pow(Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX() - robotPosition.getX(), 2) 
-      + Math.pow(Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX() - robotPosition.getY(), 2))));
+    m_shootingCorrection = SmartDashboard.getNumber("SHOOTING CORRECTION", 0);
+    m_robotPosition = m_drivetrain.getPose();
+    m_rpm = m_shooterSubsystem.getRPMforDistanceFeet((Units.feetToMeters(Math.sqrt(
+      Math.pow(Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX() - m_robotPosition.getX(), 2) 
+      + Math.pow(Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX() - m_robotPosition.getY(), 2)))) + m_shootingCorrection);
+    SmartDashboard.putNumber("SHOOTING RPM", m_rpm);
+    m_shooterSubsystem.setFlywheelRPM(m_rpm);
     m_intakeSubsystem.deployIntake();
   }
 
