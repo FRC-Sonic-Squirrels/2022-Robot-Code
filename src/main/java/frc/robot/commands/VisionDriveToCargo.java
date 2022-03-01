@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import frc.robot.SwerveTrajectoryFollowCommandFactory;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 

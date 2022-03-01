@@ -84,9 +84,9 @@ public class RobotContainer {
     drivetrain.setGyroscopeHeadingDegrees(0);
     drivetrain.setPose(Constants.ROBOT_1M_LEFT_OF_HUB, drivetrain.getGyroscopeRotation());
 
-    SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooterSubsystem,
-        m_cargoSubsystem, m_intake, m_robot);
-    SmartDashboard.putData("Auto Mode (discontinued)", chooser);
+    // SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooterSubsystem,
+    //     m_cargoSubsystem, m_intake, m_robot);
+    // SmartDashboard.putData("Auto Mode (discontinued)", chooser);
 
     // // TODO: figure out if getSelected() will work properly or just return null
     // SwerveTrajectoryAutonomousCommandFactory.addAutonTrajectoriesToChooser(autonTrajectoryChooser, 1.0, 0.75,
