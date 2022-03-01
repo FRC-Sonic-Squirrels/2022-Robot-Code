@@ -4,6 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.cscore.CvSink;
+import edu.wpi.first.cscore.CvSource;
+import edu.wpi.first.cscore.MjpegServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -93,19 +98,19 @@ public class RobotContainer {
     //     startPoseChooser.getSelected(), drivetrain, true, m_shooterSubsystem, m_cargoSubsystem, m_intake, m_robot);
     // SmartDashboard.putData("Auto Mode (real)", autonTrajectoryChooser);
 
-    // Creates UsbCamera and MjpegServer [1] and connects them
-    // UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
-    // MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
-    // mjpegServer1.setSource(usbCamera);
+    //Creates UsbCamera and MjpegServer [1] and connects them
+    UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
+    MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
+    mjpegServer1.setSource(usbCamera);
 
-    // // Creates the CvSink and connects it to the UsbCamera
-    // CvSink cvSink = new CvSink("opencv_USB Camera 0");
-    // cvSink.setSource(usbCamera);
+    // Creates the CvSink and connects it to the UsbCamera
+    CvSink cvSink = new CvSink("opencv_USB Camera 0");
+    cvSink.setSource(usbCamera);
 
-    // // Creates the CvSource and MjpegServer [2] and connects them
-    // CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
-    // MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
-    // mjpegServer2.setSource(outputStream);
+    // Creates the CvSource and MjpegServer [2] and connects them
+    CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
+    MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
+    mjpegServer2.setSource(outputStream);
     
 
     // Set up the default command for the drivetrain.
