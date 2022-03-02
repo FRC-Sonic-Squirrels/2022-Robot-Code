@@ -60,47 +60,47 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   public static void addAutonTrajectoriesToChooser(SendableChooser<Command> chooser) {
     
     chooser.addOption("4 blue auton 321", fourBallAutonCommand( 
-        StartPoseConstants.BLUE_27_6, FieldConstants.BLUE_CARGO_3,
+        StartPoseConstants.BLUE_BOTTOM, FieldConstants.BLUE_CARGO_3,
         FieldConstants.BLUE_CARGO_2, FieldConstants.BLUE_CARGO_1));
     
     chooser.addOption("4 blue auton 712", fourBallAutonCommand(
-        StartPoseConstants.BLUE_22_19, FieldConstants.BLUE_CARGO_7,
+        StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7,
         FieldConstants.BLUE_CARGO_1, FieldConstants.BLUE_CARGO_2));
 
     chooser.addOption("4 blue auton 723", fourBallAutonCommand(
-        StartPoseConstants.BLUE_22_19, FieldConstants.BLUE_CARGO_7,
+        StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7,
         FieldConstants.BLUE_CARGO_2, FieldConstants.BLUE_CARGO_3));
     
 
     chooser.addOption("4 red auton 321", fourBallAutonCommand( 
-        StartPoseConstants.RED_27_21, FieldConstants.RED_CARGO_3,
+        StartPoseConstants.RED_TOP, FieldConstants.RED_CARGO_3,
         FieldConstants.RED_CARGO_2, FieldConstants.RED_CARGO_1));
     
     chooser.addOption("4 red auton 712", fourBallAutonCommand(
-        StartPoseConstants.RED_32_8, FieldConstants.RED_CARGO_7,
+        StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7,
         FieldConstants.RED_CARGO_1, FieldConstants.RED_CARGO_2));
 
     chooser.addOption("4 red auton 723", fourBallAutonCommand(
-        StartPoseConstants.RED_32_8, FieldConstants.RED_CARGO_7,
+        StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7,
         FieldConstants.RED_CARGO_2, FieldConstants.RED_CARGO_3));
   }
 
   public static void addSimpleTrajectoriesToChooser(SendableChooser<Command> chooser) {
-    chooser.addOption("blue top", testAutonCommand(StartPoseConstants.BLUE_22_19, FieldConstants.BLUE_CARGO_7));
+    chooser.addOption("blue top", testAutonCommand(StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7));
 
-    chooser.addOption("blue mid-top", testAutonCommand(StartPoseConstants.BLUE_20_13, FieldConstants.BLUE_CARGO_2));
+    chooser.addOption("blue mid-top", testAutonCommand(StartPoseConstants.BLUE_MID_TOP, FieldConstants.BLUE_CARGO_2));
 
-    chooser.addOption("blue mid-bottom", testAutonCommand(StartPoseConstants.BLUE_22_8, FieldConstants.BLUE_CARGO_2));
+    chooser.addOption("blue mid-bottom", testAutonCommand(StartPoseConstants.BLUE_MID_BOTTOM, FieldConstants.BLUE_CARGO_2));
 
-    chooser.addOption("blue bottom", testAutonCommand(StartPoseConstants.BLUE_27_6, FieldConstants.BLUE_CARGO_3));
+    chooser.addOption("blue bottom", testAutonCommand(StartPoseConstants.BLUE_BOTTOM, FieldConstants.BLUE_CARGO_3));
 
-    chooser.addOption("red top", testAutonCommand(StartPoseConstants.RED_27_21, FieldConstants.RED_CARGO_3));
+    chooser.addOption("red top", testAutonCommand(StartPoseConstants.RED_TOP, FieldConstants.RED_CARGO_3));
 
-    chooser.addOption("red mid-top", testAutonCommand(StartPoseConstants.RED_32_19, FieldConstants.RED_CARGO_2));
+    chooser.addOption("red mid-top", testAutonCommand(StartPoseConstants.RED_MID_TOP, FieldConstants.RED_CARGO_2));
 
-    chooser.addOption("red mid-bottom", testAutonCommand(StartPoseConstants.RED_31_14, FieldConstants.RED_CARGO_2));
+    chooser.addOption("red mid-bottom", testAutonCommand(StartPoseConstants.RED_MID_BOTTOM, FieldConstants.RED_CARGO_2));
 
-    chooser.addOption("red bottom", testAutonCommand(StartPoseConstants.RED_32_8, FieldConstants.RED_CARGO_7));
+    chooser.addOption("red bottom", testAutonCommand(StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7));
   }
 
    /**
