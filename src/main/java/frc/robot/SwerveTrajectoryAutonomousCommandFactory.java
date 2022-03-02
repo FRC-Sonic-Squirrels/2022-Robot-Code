@@ -86,21 +86,21 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   }
 
   public static void addSimpleTrajectoriesToChooser(SendableChooser<Command> chooser) {
-    chooser.addOption("blue top", testAutonCommand(StartPoseConstants.BLUE_22_19, new Translation2d(18, 22)));
+    chooser.addOption("blue top", testAutonCommand(StartPoseConstants.BLUE_22_19, FieldConstants.BLUE_CARGO_7));
 
-    chooser.addOption("blue mid-top", testAutonCommand(StartPoseConstants.BLUE_20_13, new Translation2d(14, 15)));
+    chooser.addOption("blue mid-top", testAutonCommand(StartPoseConstants.BLUE_20_13, FieldConstants.BLUE_CARGO_2));
 
-    chooser.addOption("blue mid-bottom", testAutonCommand(StartPoseConstants.BLUE_22_8, new Translation2d(19, 3)));
+    chooser.addOption("blue mid-bottom", testAutonCommand(StartPoseConstants.BLUE_22_8, FieldConstants.BLUE_CARGO_2));
 
-    chooser.addOption("blue bottom", testAutonCommand(StartPoseConstants.BLUE_27_6, new Translation2d(27, 2)));
+    chooser.addOption("blue bottom", testAutonCommand(StartPoseConstants.BLUE_27_6, FieldConstants.BLUE_CARGO_3));
 
-    chooser.addOption("red top", testAutonCommand(StartPoseConstants.RED_27_21, new Translation2d(27, 25)));
+    chooser.addOption("red top", testAutonCommand(StartPoseConstants.RED_27_21, FieldConstants.RED_CARGO_3));
 
-    chooser.addOption("red mid-top", testAutonCommand(StartPoseConstants.RED_32_19, new Translation2d(35, 24)));
+    chooser.addOption("red mid-top", testAutonCommand(StartPoseConstants.RED_32_19, FieldConstants.RED_CARGO_2));
 
-    chooser.addOption("red mid-bottom", testAutonCommand(StartPoseConstants.RED_31_14, new Translation2d(40, 12)));
+    chooser.addOption("red mid-bottom", testAutonCommand(StartPoseConstants.RED_31_14, FieldConstants.RED_CARGO_2));
 
-    chooser.addOption("red bottom", testAutonCommand(StartPoseConstants.RED_32_8, new Translation2d(36, 5)));
+    chooser.addOption("red bottom", testAutonCommand(StartPoseConstants.RED_32_8, FieldConstants.RED_CARGO_7));
   }
 
    /**
@@ -156,8 +156,8 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   }
 
 
-  // simple command for shooting 1 cargo into hub, then exiting tarmac
-  public static Command testAutonCommand(Pose2d startPos, Translation2d endPos) {
+  // simple command for shooting 1 cargo into hub, then driving to another
+  public static Command testAutonCommand(Pose2d startPos, Translation2d cargoPos) {
 
     m_drivetrain.setPose(startPos, startPos.getRotation());
     startPos = m_drivetrain.getPose();
@@ -165,7 +165,11 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     //double shootAngle = getTranslationsAngle(poseToTranslation(startPos), new Translation2d(27, 13.5)).getRadians();
 
     //Trajectory rotateToShoot = m_tt.rotateRobot(shootAngle);
-    Trajectory moveToEnd = m_tt.driveToPose(poseToTranslation(startPos), endPos);
+    // get the target pose (slightly in front of the cargo pose)
+    Pose2d target = new Pose2d( midPosFinder(poseToTranslation(startPos), cargoPos),
+        getTranslationsAngle(poseToTranslation(startPos), cargoPos));
+
+    Trajectory moveToEnd = m_tt.driveToPose(poseToTranslation(startPos), target);
 
     return new SequentialCommandGroup(
       new ParallelCommandGroup(
