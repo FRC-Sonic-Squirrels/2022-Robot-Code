@@ -16,6 +16,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import static frc.robot.Constants.currentLimits;
 import static frc.robot.Constants.digitalIOConstants;
 import static frc.robot.Constants.canId;
@@ -103,14 +104,9 @@ public class CargoSubsystem extends SubsystemBase {
   
     updateTestingValues();
 
-    if(mode == Mode.IDLE){
-      setUpperBeltPercentOutput(Constants.ShooterConstants.m_idle);
-      setLowerBeltPercentOutput(Constants.ShooterConstants.m_idle);
-    }
-     else if (mode == Mode.STOP) {
+    if (mode == Mode.STOP) {
       stopIndexer();
-    }
-  
+    } 
     else if (mode == Mode.INTAKE) {
       if (cargoInUpperBelts()) {
         stopUpperBelts();
@@ -145,7 +141,10 @@ public class CargoSubsystem extends SubsystemBase {
       setUpperBeltPercentOutput(-m_lowerOutput); //negate percent output to make belts go in reverse
       setLowerBeltPercentOutput(-m_upperOutput);
     }
-
+    else if(mode == Mode.IDLE){
+      setUpperBeltPercentOutput(Constants.ShooterConstants.m_idle);
+      setLowerBeltPercentOutput(Constants.ShooterConstants.m_idle);
+    }
     else {
       stopIndexer();
     }
