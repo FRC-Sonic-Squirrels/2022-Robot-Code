@@ -35,8 +35,15 @@ public class ArmSubsystem extends SubsystemBase {
   private double toleranceDegrees = 1.0;
   // arm angle = encoder angle * constant ratio
   private double m_encoderToArmRatio = 0.428571;
-
+  
   private SparkMaxPIDController m_armPID;
+  private double kP = 0.1;
+  private double kI = 0;
+  private double kD = 0;
+  private double kIz = 100;
+  private double kFF = 0;
+  private double kMaxOutput = 1;
+  private double kMinOutput = -1;
   
   //TODO: Find the actual channels if physical limit switches are installed
   // private DigitalInput limitSwitchFront = new DigitalInput(5);
@@ -69,6 +76,13 @@ public class ArmSubsystem extends SubsystemBase {
     //good for preventing small changes but this can also be done with the joystick itself 
     //m_armPID.setSmartMotionMinOutputVelocity(0.05, 0);
   
+    // set PID coefficients
+    m_armPID.setP(kP);
+    m_armPID.setI(kI);
+    m_armPID.setD(kD);
+    m_armPID.setIZone(kIz);
+    m_armPID.setFF(kFF);
+    m_armPID.setOutputRange(kMinOutput, kMaxOutput);
 
     // Reduce CAN traffic when possible
     // https://www.hi-im.kim/canbus
