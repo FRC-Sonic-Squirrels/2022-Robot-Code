@@ -207,7 +207,6 @@ public class RobotContainer {
     new Button(m_operatorController::getAButton)
       .whileHeld(new IntakeDeployCommand(m_intake, m_cargoSubsystem));
 
-    //reverse intake and indexer while holding
     new Button(m_operatorController::getYButton)
       .whileHeld(new IntakeReverseCommand(m_intake, m_cargoSubsystem));
 
@@ -217,16 +216,21 @@ public class RobotContainer {
     new Button(m_operatorController::getBackButton)
       .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(15.6)));
 
-    //rotate arm one step in the positive direction (towards the front of robot)
+    // Arm back
     new Button(m_operatorController::getXButton)
-      .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(1), m_arm));
+      .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(-6), m_arm));
 
-    // rotate arm one step in the negative direction (towards the back of robot)
+    // Arm almost straight up, just a little forward to grab
+    // new Button(m_operatorController::getYButton)
+    //   .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(1), m_arm));
+
+    // Arm forward
     new Button(m_operatorController::getBButton)
-      .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(-1), m_arm));
+      .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(25), m_arm));
  
-    new Button(m_operatorController::getLeftBumper)
-       .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);
+    // disable elevator until it's fixed
+    // new Button(m_operatorController::getLeftBumper)
+    //    .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);
 
     // new Button(m_operatorController::getRightBumper)
     //   .whileHeld(new ArmManualControlCommand(() -> m_operatorController.getRightX(), m_arm), true);
