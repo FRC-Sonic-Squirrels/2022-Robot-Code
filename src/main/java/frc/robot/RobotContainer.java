@@ -121,7 +121,8 @@ public class RobotContainer {
       () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
       () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
     
-    m_elevator.setDefaultCommand(new ClimbManualCommand(m_arm, m_elevator, m_operatorController));
+    Command climbManualCommand = new ClimbManualCommand(m_arm, m_elevator, m_operatorController);
+    m_elevator.setDefaultCommand(climbManualCommand);
     
     // Configure the button bindings
     configureButtonBindings();

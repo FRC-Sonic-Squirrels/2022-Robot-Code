@@ -5,13 +5,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -28,16 +23,13 @@ public class ClimbManualCommand extends CommandBase {
     m_elevator = elevator;
     m_controller = controller;
 
-    // if left bumper pressed again then end command
-    withInterrupt(() -> m_controller.getLeftBumperPressed());
     addRequirements(arm, elevator);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    rumbleSequenceCommand().schedule();
-    SmartDashboard.putBoolean("CLIMBING MANUAL ACTIVE", true);
+    SmartDashboard.putBoolean("CLIMBING MANUAL ACTIVE", m_isUnlocked);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -46,13 +38,14 @@ public class ClimbManualCommand extends CommandBase {
 
     if (m_controller.getLeftBumperPressed()) {
       m_isUnlocked = !m_isUnlocked;
-      rumbleSequenceCommand().schedule();
+      //rumbleSequenceCommand().schedule();
 
       if (m_isUnlocked == false) {
         m_arm.setArmPercentOutput(0);
         m_elevator.stop();
       }
     }
+    SmartDashboard.putBoolean("CLIMBING MANUAL ACTIVE", m_isUnlocked);
 
     if (m_isUnlocked) {
       // TODO: check the arm multiplier for changes
@@ -81,23 +74,11 @@ public class ClimbManualCommand extends CommandBase {
 
     m_arm.setArmPercentOutput(0);
     m_elevator.setWinchPercentOutput(0);
-    rumbleSequenceCommand().schedule();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;
-  }
-
-  //rumble wait 1 second then end rumble 
-  private Command rumbleSequenceCommand(){
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> m_controller.setRumble(RumbleType.kLeftRumble, 1)),
-      new InstantCommand(() -> m_controller.setRumble(RumbleType.kRightRumble, 1)),
-      new WaitCommand(1),
-      new InstantCommand(() -> m_controller.setRumble(RumbleType.kLeftRumble, 0)),
-      new InstantCommand(() -> m_controller.setRumble(RumbleType.kRightRumble, 0))
-    );
   }
 }
