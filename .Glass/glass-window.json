@@ -1,0 +1,55 @@
+{
+  "MainWindow": {
+    "GLOBAL": {
+      "height": "705",
+      "maximized": "1",
+      "style": "0",
+      "userScale": "2",
+      "width": "1366",
+      "xpos": "0",
+      "ypos": "23"
+    }
+  },
+  "Window": {
+    "###/SmartDashboard/Field": {
+      "Collapsed": "0",
+      "Pos": "479,67",
+      "Size": "798,396"
+    },
+    "###NetworkTables": {
+      "Collapsed": "0",
+      "Pos": "3,106",
+      "Size": "584,558"
+    },
+    "###NetworkTables Settings": {
+      "Collapsed": "0",
+      "Pos": "8,15",
+      "Size": "272,123"
+    },
+    "###Plot <0>": {
+      "Collapsed": "1",
+      "Pos": "610,133",
+      "Size": "700,400"
+    },
+    "###Plot <1>": {
+      "Collapsed": "0",
+      "Pos": "586,6",
+      "Size": "700,444"
+    },
+    "###Plot <2>": {
+      "Collapsed": "0",
+      "Pos": "636,278",
+      "Size": "700,380"
+    },
+    "###Plot <3>": {
+      "Collapsed": "1",
+      "Pos": "592,123",
+      "Size": "700,400"
+    },
+    "Debug##Default": {
+      "Collapsed": "0",
+      "Pos": "60,60",
+      "Size": "400,400"
+    }
+  }
+}

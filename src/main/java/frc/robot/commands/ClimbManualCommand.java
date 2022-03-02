@@ -27,6 +27,7 @@ public class ClimbManualCommand extends CommandBase {
     m_arm = arm;
     m_elevator = elevator;
     m_controller = controller;
+    m_isUnlocked = false;
 
     //if left bumper pressed again then end command 
 
@@ -49,6 +50,7 @@ public class ClimbManualCommand extends CommandBase {
     }
     if(m_isUnlocked){
       //TODO: check the arm multiplier for changes 
+      
     double armJoyStickValue = m_controller.getRightY();
     if(Math.abs(armJoyStickValue) > 0.1){
       m_arm.setArmPercentOutput(armJoyStickValue * 0.3);
