@@ -131,6 +131,10 @@ public class RobotContainer {
       () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
       () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
     
+    Command climbingDefaultCommand = new ClimbManualCommand(m_arm, m_elevator, m_operatorController);
+
+    m_arm.setDefaultCommand(climbingDefaultCommand);
+    m_elevator.setDefaultCommand(climbingDefaultCommand);
     //m_arm.setDefaultCommand(new InstantCommand());
 
 
@@ -199,7 +203,7 @@ public class RobotContainer {
     new Button(m_operatorController::getRightBumper)
       .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot, drivetrain));
 
-    //toggle climbing mode 
+    // toggle climbing mode 
     // new Button(m_operatorController::getLeftBumper)
     //   .whenPressed(new ClimbManualCommand(m_arm, m_elevator, m_operatorController));
 

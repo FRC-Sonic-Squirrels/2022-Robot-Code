@@ -21,6 +21,7 @@ public class ClimbManualCommand extends CommandBase {
   ArmSubsystem m_arm;
   ElevatorSubsystem m_elevator;
   XboxController m_controller;
+  boolean m_isUnlocked;
 
   public ClimbManualCommand(ArmSubsystem arm, ElevatorSubsystem elevator, XboxController controller) {
     m_arm = arm;
@@ -28,7 +29,7 @@ public class ClimbManualCommand extends CommandBase {
     m_controller = controller;
 
     //if left bumper pressed again then end command 
-    withInterrupt(() -> m_controller.getLeftBumperPressed());
+
     addRequirements(arm, elevator);
   }
 
@@ -42,7 +43,12 @@ public class ClimbManualCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //TODO: check the arm multiplier for changes 
+    if(m_controller.getLeftBumperPressed()){
+      m_isUnlocked = !m_isUnlocked;
+      rumbleSequenceCommand().schedule();
+    }
+    if(m_isUnlocked){
+      //TODO: check the arm multiplier for changes 
     double armJoyStickValue = m_controller.getRightY();
     if(Math.abs(armJoyStickValue) > 0.1){
       m_arm.setArmPercentOutput(armJoyStickValue * 0.3);
@@ -55,6 +61,9 @@ public class ClimbManualCommand extends CommandBase {
     } else {
       m_elevator.stop();
     }
+    }
+
+    
   }
 
   // Called once the command ends or is interrupted.
