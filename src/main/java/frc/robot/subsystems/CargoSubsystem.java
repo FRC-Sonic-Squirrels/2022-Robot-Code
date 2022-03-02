@@ -28,7 +28,8 @@ public class CargoSubsystem extends SubsystemBase {
     LOWERONLY,
     UPPERONLY,
     BOTH,
-    REVERSE
+    REVERSE,
+    IDLE
   };
 
   private WPI_TalonFX UpperBelts;
@@ -102,9 +103,14 @@ public class CargoSubsystem extends SubsystemBase {
   
     updateTestingValues();
 
-    if (mode == Mode.STOP) {
+    if(mode == Mode.IDLE){
+      setUpperBeltPercentOutput(Constants.ShooterConstants.m_idle);
+      setLowerBeltPercentOutput(Constants.ShooterConstants.m_idle);
+    }
+     else if (mode == Mode.STOP) {
       stopIndexer();
-    } 
+    }
+  
     else if (mode == Mode.INTAKE) {
       if (cargoInUpperBelts()) {
         stopUpperBelts();
@@ -139,6 +145,7 @@ public class CargoSubsystem extends SubsystemBase {
       setUpperBeltPercentOutput(-m_lowerOutput); //negate percent output to make belts go in reverse
       setLowerBeltPercentOutput(-m_upperOutput);
     }
+
     else {
       stopIndexer();
     }
@@ -218,6 +225,9 @@ public class CargoSubsystem extends SubsystemBase {
 
   public void setReverseMode(){
     mode = Mode.REVERSE;
+  }
+  public void setIdleMode(){
+    mode = Mode.IDLE;
   }
 
   /** 
