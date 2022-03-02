@@ -142,16 +142,17 @@ public class CargoSubsystem extends SubsystemBase {
       setLowerBeltPercentOutput(-m_upperOutput);
     }
     else if(mode == Mode.IDLE){
-      boolean cargoInLowerBelts=cargoInLowerBelts();
-      boolean cargoInUpperBelts=cargoInUpperBelts();
-      if(cargoInLowerBelts==true&&cargoInUpperBelts==true){
+      boolean cargoInLowerBelts = cargoInLowerBelts();
+      boolean cargoInUpperBelts = cargoInUpperBelts();
+      if(cargoInLowerBelts == true&&cargoInUpperBelts == true){
         stopIndexer();
         }
-      else if(cargoInLowerBelts==true){
-      setUpperBeltPercentOutput(Constants.ShooterConstants.m_idle);
-      setLowerBeltPercentOutput(Constants.ShooterConstants.m_idle);
+      else if(cargoInLowerBelts == true){
+      setUpperBeltPercentOutput(m_upperOutput);
+      setLowerBeltPercentOutput(m_lowerOutput);
       }
       else{
+      mode = Mode.STOP;
       stopIndexer();
       }
     }
