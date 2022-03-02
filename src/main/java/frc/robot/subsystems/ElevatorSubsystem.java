@@ -72,12 +72,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     winch_lead_talon.setNeutralMode(NeutralMode.Brake);
     winch_follow_talon.setNeutralMode(NeutralMode.Brake);
 
-    // set soft limit on forward movement
-    winch_lead_talon.configReverseSoftLimitThreshold(maxExtensionInches / ticks2distance);
-    winch_follow_talon.configReverseSoftLimitThreshold(maxExtensionInches / ticks2distance);
-    winch_lead_talon.configReverseSoftLimitEnable(true);
-    winch_follow_talon.configReverseSoftLimitEnable(true);
-
     // config hard limit switch for full down position
     winch_lead_talon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
         LimitSwitchNormal.NormallyOpen, 0);
@@ -90,7 +84,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     // https://docs.ctre-phoenix.com/en/latest/ch18_CommonAPI.html
     MotorUtils.setCtreStatusSlow(winch_follow_talon);
     // leave lead motor with default CAN settings. We need position and limit switch updates
-
     
     // NOTE: when we power up, we expect the elevator to be full down, triggering the lower limit switch.
     // if not, we need to move the elevator down to the lower limit switch (VERY SLOWLY).
@@ -98,11 +91,27 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     StartingTicks = winch_lead_talon.getSelectedSensorPosition();
     brakeOn();
+    zeroHeight();
+ 
+    // set soft limit on forward movement (down)
+    winch_lead_talon.configForwardSoftLimitThreshold(StartingTicks);
+    winch_follow_talon.configForwardSoftLimitThreshold(StartingTicks);
+    winch_lead_talon.configReverseSoftLimitEnable(true);
+    winch_follow_talon.configReverseSoftLimitEnable(true);
+
+    // set soft limit on reverse movement (Up)
+    winch_lead_talon.configReverseSoftLimitThreshold(StartingTicks + (maxExtensionInches / ticks2distance));
+    winch_follow_talon.configReverseSoftLimitThreshold(StartingTicks + (maxExtensionInches / ticks2distance));
+    winch_lead_talon.configReverseSoftLimitEnable(true);
+    winch_follow_talon.configReverseSoftLimitEnable(true);
   }
 
   public void setElevatorHeight(double heightInches) {
     if (heightInches < 0.0) {
       heightInches = 0.0;
+    }
+    if (heightInches > maxExtensionInches) {
+      heightInches = maxExtensionInches;
     }
 
     if (heightInches <= heightSetpointInches) {
@@ -133,7 +142,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return true if the elevator is at the height setpoint
    */
   public boolean isAtHeight() {
-    return (Math.abs(heightSetpointInches - getHeightInches()) < toleranceInches);
+    return  isAtHeight(heightSetpointInches);
   }
 
   /**
