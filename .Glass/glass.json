@@ -70,7 +70,7 @@
                 0.6901960968971252,
                 1.0
               ],
-              "id": "NT:/SmartDashboard/Shooter_Subsystem m_desiredRPM"
+              "id": "NT:/SmartDashboard/Shooter m_desiredRPM"
             },
             {
               "color": [
@@ -79,7 +79,7 @@
                 0.32156863808631897,
                 1.0
               ],
-              "id": "NT:/SmartDashboard/Shooter_Subsystem m_error"
+              "id": "NT:/SmartDashboard/Shooter m_error"
             },
             {
               "color": [
@@ -88,7 +88,7 @@
                 0.4078431725502014,
                 1.0
               ],
-              "id": "NT:/SmartDashboard/Shooter_Subsystem m_CurrentRPM"
+              "id": "NT:/SmartDashboard/Shooter m_CurrentRPM"
             }
           ]
         }
