@@ -4,11 +4,9 @@
 
 package frc.robot;
 
-import edu.wpi.first.cscore.CvSink;
-import edu.wpi.first.cscore.CvSource;
-import edu.wpi.first.cscore.MjpegServer;
+
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -68,6 +66,8 @@ public class RobotContainer {
 
   public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
 
+  private UsbCamera camera;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -98,11 +98,11 @@ public class RobotContainer {
     //     startPoseChooser.getSelected(), drivetrain, true, m_shooterSubsystem, m_cargoSubsystem, m_intake, m_robot);
     // SmartDashboard.putData("Auto Mode (real)", autonTrajectoryChooser);
 
-    //Creates UsbCamera and MjpegServer [1] and connects them
-    // UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
-    // MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
-    // mjpegServer1.setSource(usbCamera);
-
+    //Creates UsbCamera and sets resolution
+    camera = CameraServer.startAutomaticCapture();
+    camera.setResolution(320, 240);
+    camera.setFPS(20);
+ 
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
     // Left stick Y axis -> forward and backwards movement
