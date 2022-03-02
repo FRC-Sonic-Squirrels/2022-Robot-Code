@@ -77,7 +77,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Joystick_Values jRightX", m_robotContainer.m_controller.getRightX());
 
     SmartDashboard.putNumber("PDH Total Power", revPDH.getTotalPower());
-    SmartDashboard.putNumber("PDH Total Current", revPDH.getTotalCurrent());
+    // getTotalCurrent() throws errors
+    //SmartDashboard.putNumber("PDH Total Current", revPDH.getTotalCurrent());
     SmartDashboard.putNumber("PDH Total Energy", revPDH.getTotalEnergy());
 
     
