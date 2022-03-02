@@ -106,7 +106,7 @@
                 0.6901960968971252,
                 1.0
               ],
-              "id": "NT:/SmartDashboard/Arm_Subsystem Angle deg"
+              "id": "NT:/SmartDashboard/ArmAngle deg"
             },
             {
               "color": [
@@ -115,7 +115,7 @@
                 0.32156863808631897,
                 1.0
               ],
-              "id": "NT:/SmartDashboard/Arm_Subsystem SetPoint"
+              "id": "NT:/SmartDashboard/ArmSetPoint"
             }
           ]
         }
