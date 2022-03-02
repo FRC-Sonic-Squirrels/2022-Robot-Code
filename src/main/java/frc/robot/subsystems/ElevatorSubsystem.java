@@ -36,7 +36,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final double gearRatio =  0.074;
   private final double winchDiameter_inches = 1.95;   // 1.25 diameter + string windings
   private final double winchCircumference = Math.PI * winchDiameter_inches;
-  private final double maxExtensionInches = 18.0;
+  private final double maxExtensionInches = 21.0;
   private double heightSetpointInches = 0.0;
   private double toleranceInches = 0.2;
   private double StartingTicks = 0;
@@ -212,12 +212,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     if(atLowerLimit()){
       zeroHeight();
     }
-    SmartDashboard.putNumber("Elev_Subsystem Height (inches)", getHeightInches());
-    SmartDashboard.putNumber("Elev_Subsystem Vel (inches/s)", ticks2distance * winch_lead_talon.getSelectedSensorVelocity() / 10.0);
-    SmartDashboard.putNumber("Elev_Subsystem SetPoint", heightSetpointInches);
-    SmartDashboard.putNumber("Elev_Subsystem Error", heightSetpointInches - getHeightInches());
-    SmartDashboard.putBoolean("Elev_Subsystem limit", atLowerLimit());
-    SmartDashboard.putNumber("Elev_Subsystem %output", winch_lead_talon.getMotorOutputPercent());
-    SmartDashboard.putNumber("Elev_Subsystem Current", winch_lead_talon.getSupplyCurrent());
+    SmartDashboard.putNumber("Elevator Height (inches)", getHeightInches());
+    SmartDashboard.putNumber("Elevator Vel (inches per s)", ticks2distance * winch_lead_talon.getSelectedSensorVelocity() / 10.0);
+    SmartDashboard.putNumber("Elevator SetPoint", heightSetpointInches);
+    SmartDashboard.putNumber("Elevator Error", heightSetpointInches - getHeightInches());
+    SmartDashboard.putBoolean("Elevator limit", atLowerLimit());
+    SmartDashboard.putNumber("Elevator %output", winch_lead_talon.getMotorOutputPercent());
+    SmartDashboard.putNumber("Elevator Current", winch_lead_talon.getSupplyCurrent());
   }
 }

@@ -160,27 +160,8 @@ public class ArmSubsystem extends SubsystemBase {
     m_armFollowMotor.setIdleMode(IdleMode.kBrake);
   }
 
-  /**
-   * incrementArmAngle - increments the arm angle (+ or -) arm angle increment
-   * 
-   * The sign (not the magnitude) of the increment is determined by the sign the parameter.
-   * 
-   * @param sign
-   */
-  public void incrementArmAngle(int sign) {
-    setArmAngle(m_targetAngle + Math.signum(sign) * m_armStepValueDegrees);
-  }
-
-  public void updateTestingValues(){
-    double asv = SmartDashboard.getNumber("Arm_Subsystem Step Value Deg", 0);
-    if (asv != m_armStepValueDegrees) {
-      m_armStepValueDegrees = asv;
-    }
-  }
-
   @Override
   public void periodic() {
-    // updateTestingValues();
     
     // TODO: we don't have limit switches on the robot yet
     //if(limitSwitchFront.get() || limitSwitchBack.get()) {
@@ -188,23 +169,23 @@ public class ArmSubsystem extends SubsystemBase {
     //    m_armPID.setReference(m_throughBoreEncoder.getPosition(), ControlType.kPosition);
     //}
 
-    SmartDashboard.putNumber("Arm_Subsystem Angle deg", getArmAngle());
-    SmartDashboard.putNumber("Arm_Subsystem ticks", getEncoderValue());
-    SmartDashboard.putNumber("Arm_Subsystem Vel (deg/s)", m_armLeadMotor.getEncoder().getVelocity()*rpm2degreesPerSecond);
-    SmartDashboard.putNumber("Arm_Subsystem SetPoint", m_targetAngle);
-    SmartDashboard.putNumber("Arm_Subsystem Error", m_targetAngle - getEncoderValue());
+    SmartDashboard.putNumber("Arm Angle deg", getArmAngle());
+    SmartDashboard.putNumber("Arm ticks", getEncoderValue());
+    SmartDashboard.putNumber("Arm Vel (deg per sec)", m_armLeadMotor.getEncoder().getVelocity()*rpm2degreesPerSecond);
+    SmartDashboard.putNumber("Arm SetPoint", m_targetAngle);
+    SmartDashboard.putNumber("Arm Error", m_targetAngle - getEncoderValue());
     // SmartDashboard.putBoolean("Arm limit", );
-    SmartDashboard.putNumber("Arm_Subsystem %output", m_armLeadMotor.getAppliedOutput());
-    SmartDashboard.putNumber("Arm_Subsystem Current", m_armLeadMotor.getOutputCurrent());
-    //SmartDashboard.putNumber("Arm_Subsystem kCPR", kCPR);
-    SmartDashboard.putNumber("Arm_Subsystem target Angle", m_targetAngle);
-    //SmartDashboard.putNumber("Arm_Subsystem ticks When Strait Up", ticksWhenStraightUp);
-    SmartDashboard.putNumber("Arm_Subsystem rpm To Degrees Per Second", rpm2degreesPerSecond);
-    //SmartDashboard.putNumber("Arm_Subsystem degrees To Ticks", degrees2ticks);
-    SmartDashboard.putNumber("Arm_Subsystem tolerance Degrees", toleranceDegrees);
-    //SmartDashboard.putNumber("Arm_Subsystem encoder To Arm Ratio", m_encoderToArmRatio);
-    //SmartDashboard.putNumber("Arm_Subsystem maximum Angle Degree", maxAngleDegree);
-    //SmartDashboard.putNumber("Arm_Subsystem minimum Angle Degree", minAngleDegree);
-    //SmartDashboard.putNumber("Arm_Subsystem Step Value Deg", m_armStepValueDegrees);
+    SmartDashboard.putNumber("Arm %output", m_armLeadMotor.getAppliedOutput());
+    SmartDashboard.putNumber("Arm Current", m_armLeadMotor.getOutputCurrent());
+    //SmartDashboard.putNumber("Armk CPR", kCPR);
+    SmartDashboard.putNumber("Arm target Angle", m_targetAngle);
+    //SmartDashboard.putNumber("Arm ticks When Strait Up", ticksWhenStraightUp);
+    SmartDashboard.putNumber("Arm rpm To Degrees Per Second", rpm2degreesPerSecond);
+    //SmartDashboard.putNumber("Arm degrees To Ticks", degrees2ticks);
+    SmartDashboard.putNumber("Arm tolerance Degrees", toleranceDegrees);
+    //SmartDashboard.putNumber("Arm encoder To Arm Ratio", m_encoderToArmRatio);
+    //SmartDashboard.putNumber("Arm maximum Angle Degree", maxAngleDegree);
+    //SmartDashboard.putNumber("Arm minimum Angle Degree", minAngleDegree);
+
   }
 }
