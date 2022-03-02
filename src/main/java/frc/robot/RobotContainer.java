@@ -103,8 +103,6 @@ public class RobotContainer {
     // MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
     // mjpegServer1.setSource(usbCamera);
 
-  
-
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
     // Left stick Y axis -> forward and backwards movement
@@ -123,18 +121,7 @@ public class RobotContainer {
       () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
       () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
     
-    Command climbingDefaultCommand = new ClimbManualCommand(m_arm, m_elevator, m_operatorController);
-
-    m_arm.setDefaultCommand(climbingDefaultCommand);
-    m_elevator.setDefaultCommand(climbingDefaultCommand);
-    //m_arm.setDefaultCommand(new InstantCommand());
-
-
-    //m_elevator.setDefaultCommand(new InstantCommand());
-    //control winch with right joystick 
-    // m_armSubsystem.setDefaultCommand(new InstantCommand(
-    //   () -> m_armSubsystem.setArmPercentOutput(modifyAxis(m_operatorController.getRightTriggerAxis())), 
-    //   m_armSubsystem));
+    m_elevator.setDefaultCommand(new ClimbManualCommand(m_arm, m_elevator, m_operatorController));
     
     // Configure the button bindings
     configureButtonBindings();
