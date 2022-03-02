@@ -60,6 +60,7 @@ public class RobotContainer {
   public final SendableChooser<Command> chooser = new SendableChooser<>();
   public final SendableChooser<Pose2d> startPoseChooser = new SendableChooser<>();
   public final SendableChooser<Command> autonTrajectoryChooser = new SendableChooser<>();
+  public final SendableChooser<Command> simpleTrajectoryChooser = new SendableChooser<>();
 
   public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
 
@@ -88,11 +89,11 @@ public class RobotContainer {
     //     m_cargoSubsystem, m_intake, m_robot);
     // SmartDashboard.putData("Auto Mode (discontinued)", chooser);
 
-    // SwerveTrajectoryAutonomousCommandFactory.addAutonTrajectoriesToChooser(autonTrajectoryChooser, 1.0, 0.75);
+    // SwerveTrajectoryAutonomousCommandFactory.addAutonTrajectoriesToChooser(autonTrajectoryChooser);
     // SmartDashboard.putData("Auto Mode (real)", autonTrajectoryChooser);
 
-    autonTrajectoryChooser.addOption("test auton", SwerveTrajectoryAutonomousCommandFactory.testAutonCommand(
-        StartPoseConstants.BLUE_20_13, new Translation2d(10, 15)));
+    SwerveTrajectoryAutonomousCommandFactory.addSimpleTrajectoriesToChooser(simpleTrajectoryChooser);
+    SmartDashboard.putData("Simple auton commands", simpleTrajectoryChooser);
 
     // Creates UsbCamera and MjpegServer [1] and connects them
     // UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);

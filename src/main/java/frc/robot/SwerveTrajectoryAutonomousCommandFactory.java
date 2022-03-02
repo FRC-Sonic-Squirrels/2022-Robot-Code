@@ -57,8 +57,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     m_tt = new TestTrajectories(maxVelocity, maxAcceleration, m_drivetrain, true);
   }
 
-  public static void addAutonTrajectoriesToChooser(SendableChooser<Command> chooser, double maxVelocity,
-      double maxAcceleration) {
+  public static void addAutonTrajectoriesToChooser(SendableChooser<Command> chooser) {
     
     chooser.addOption("4 blue auton 321", fourBallAutonCommand( 
         StartPoseConstants.BLUE_27_6, FieldConstants.BLUE_CARGO_3,
@@ -84,6 +83,24 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     chooser.addOption("4 red auton 723", fourBallAutonCommand(
         StartPoseConstants.RED_32_8, FieldConstants.RED_CARGO_7,
         FieldConstants.RED_CARGO_2, FieldConstants.RED_CARGO_3));
+  }
+
+  public static void addSimpleTrajectoriesToChooser(SendableChooser<Command> chooser) {
+    chooser.addOption("blue top", testAutonCommand(StartPoseConstants.BLUE_22_19, new Translation2d(18, 22)));
+
+    chooser.addOption("blue mid-top", testAutonCommand(StartPoseConstants.BLUE_20_13, new Translation2d(14, 15)));
+
+    chooser.addOption("blue mid-bottom", testAutonCommand(StartPoseConstants.BLUE_22_8, new Translation2d(19, 3)));
+
+    chooser.addOption("blue bottom", testAutonCommand(StartPoseConstants.BLUE_27_6, new Translation2d(27, 2)));
+
+    chooser.addOption("red top", testAutonCommand(StartPoseConstants.RED_27_21, new Translation2d(27, 25)));
+
+    chooser.addOption("red mid-top", testAutonCommand(StartPoseConstants.RED_32_19, new Translation2d(35, 24)));
+
+    chooser.addOption("red mid-bottom", testAutonCommand(StartPoseConstants.RED_31_14, new Translation2d(40, 12)));
+
+    chooser.addOption("red bottom", testAutonCommand(StartPoseConstants.RED_32_8, new Translation2d(36, 5)));
   }
 
    /**
