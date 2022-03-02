@@ -104,7 +104,7 @@ public class IntakeSubsystem extends SubsystemBase {
       setIntakeToSpeed();
     } else if(mode == Mode.REVERSE){
       setIntakeMotorRPM(m_reverseRpmValue);
-    else if(mode == Mode.IDLE){
+    } else if(mode == Mode.IDLE){
       setIntakeMotorRPM(Constants.ShooterConstants.m_idle);
     }
 
