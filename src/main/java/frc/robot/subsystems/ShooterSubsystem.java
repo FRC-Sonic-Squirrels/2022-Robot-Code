@@ -116,22 +116,22 @@ public class ShooterSubsystem extends SubsystemBase {
       flywheel_lead.set(ControlMode.Velocity, setPoint * RPMtoTicks);
     }
 
-    SmartDashboard.putNumber("Shooter_Subsystem RPM set point", setPoint);
-    SmartDashboard.putNumber("Shooter_Subsystem RPM error", m_error);
-    SmartDashboard.putBoolean("Shooter_Subsystem isAtSpeed", m_atSpeed);
-    SmartDashboard.putNumber("Shooter_Subsystem m_CurrentRPM", m_currentRPM);
-    SmartDashboard.putNumber("Shooter_Subsystem m_desiredRPM", m_desiredRPM);
-    SmartDashboard.putBoolean("Shooter_Subsystem m_atSpeed", m_atSpeed);
-    SmartDashboard.putNumber("Shooter_Subsystem m_idleRPM", m_idleRPM);
-    SmartDashboard.putNumber("Shooter_Subsystem m_error", m_error);
-    SmartDashboard.putNumber("Shooter_Subsystem m_max_RPM_error", m_max_RPM_error);
-    SmartDashboard.putNumber("Shooter_Subsystem RPMtoTicks", RPMtoTicks);
-    SmartDashboard.putNumber("Shooter_Subsystem m_testingStaticRPM", m_testingStaticRPM);
-    SmartDashboard.putNumber("Shooter_Subsystem  m_configI", m_configI);
-    SmartDashboard.putNumber("Shooter_Subsystem  m_configD", m_configD);
-    SmartDashboard.putNumber("Shooter_Subsystem  m_configF", m_configF);
-    SmartDashboard.putNumber("Shooter_Subsystem  m_configIZ", m_configIZ);
-    SmartDashboard.putNumber("Shooter_Subsystem m_rate_RPMperSecond", m_rate_RPMperSecond);
+    SmartDashboard.putNumber("Shooter RPM set point", setPoint);
+    SmartDashboard.putNumber("Shooter RPM error", m_error);
+    SmartDashboard.putBoolean("Shooter isAtSpeed", m_atSpeed);
+    SmartDashboard.putNumber("Shooter m_CurrentRPM", m_currentRPM);
+    SmartDashboard.putNumber("Shooter m_desiredRPM", m_desiredRPM);
+    SmartDashboard.putBoolean("Shooter m_atSpeed", m_atSpeed);
+    SmartDashboard.putNumber("Shooter m_idleRPM", m_idleRPM);
+    SmartDashboard.putNumber("Shooter m_error", m_error);
+    SmartDashboard.putNumber("Shooter m_max_RPM_error", m_max_RPM_error);
+    SmartDashboard.putNumber("Shooter RPMtoTicks", RPMtoTicks);
+    SmartDashboard.putNumber("Shooter m_testingStaticRPM", m_testingStaticRPM);
+    SmartDashboard.putNumber("Shooter  m_configI", m_configI);
+    SmartDashboard.putNumber("Shooter  m_configD", m_configD);
+    SmartDashboard.putNumber("Shooter  m_configF", m_configF);
+    SmartDashboard.putNumber("Shooter  m_configIZ", m_configIZ);
+    SmartDashboard.putNumber("Shooter m_rate_RPMperSecond", m_rate_RPMperSecond);
 
   }
 
