@@ -31,17 +31,17 @@ public class ArmSubsystem extends SubsystemBase {
   private double m_targetAngle = 0.0;
   private double zeroedEncoderAngle = -20.4;
   private double rpm2degreesPerSecond = 60.0/360.0;
-  private double degrees2ticks = kCPR/360.0;
+  private double degrees2rotations = 1.0/360.0;
   private double toleranceDegrees = 1.0;
   // arm angle = encoder angle * constant ratio
   private double m_encoderToArmRatio = 0.428571;
   
   private SparkMaxPIDController m_armPID;
-  private double kP = 0.00081;
-  private double kI = 0;
-  private double kD = 0.62;
-  private double kIz = 100;
-  private double kFF = 0;
+  private double kP = 4.0;
+  private double kI = 0.0001;
+  private double kD = 0.0;
+  private double kIz = 0.005;
+  private double kFF = 0.1;
   private double kMaxOutput = 1;
   private double kMinOutput = -1;
   
@@ -113,15 +113,15 @@ public class ArmSubsystem extends SubsystemBase {
       angleDegrees = minAngleDegree;
     }
     m_targetAngle = angleDegrees;
-    double encoderValue = angleToEncoderTicks(angleDegrees);
+    double encoderValue = angleToEncoderRotations(angleDegrees);
     m_armPID.setReference(encoderValue, ControlType.kPosition);
   }
 
   /**
-   * convert from angle to encoder value function
+   * convert from angle to encoder value
    */ 
-  public double angleToEncoderTicks(double angleDegrees) {
-    return (angleDegrees - zeroedEncoderAngle) * degrees2ticks / m_encoderToArmRatio;
+  public double angleToEncoderRotations(double angleDegrees) {
+    return (angleDegrees - zeroedEncoderAngle) * degrees2rotations / m_encoderToArmRatio;
   }
 
   public void setTolerance(double toleranceDegrees) {
@@ -144,6 +144,10 @@ public class ArmSubsystem extends SubsystemBase {
     return m_throughBoreEncoder.getPosition();
   }
 
+  public double encoderRotationsToAngle(double encoderRotations) {
+    return ((encoderRotations * m_encoderToArmRatio / degrees2rotations) + zeroedEncoderAngle);
+  }
+
   public double getArmAngle() {
     return (m_throughBoreEncoder.getPosition() * m_encoderToArmRatio * 360) + zeroedEncoderAngle;
   }
@@ -160,24 +164,18 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    
-    // TODO: we don't have limit switches on the robot yet
-    //if(limitSwitchFront.get() || limitSwitchBack.get()) {
-    //    TODO: getPosition will return an angle, need to convert back to ticks first
-    //    m_armPID.setReference(m_throughBoreEncoder.getPosition(), ControlType.kPosition);
-    //}
 
     SmartDashboard.putNumber("Arm Angle deg", getArmAngle());
-    SmartDashboard.putNumber("Arm ticks", getEncoderValue());
+    SmartDashboard.putNumber("Arm Angle round trip", encoderRotationsToAngle(angleToEncoderRotations(getArmAngle())));
+    SmartDashboard.putNumber("Arm rotations", getEncoderValue());
     SmartDashboard.putNumber("Arm Vel (deg per sec)", m_armLeadMotor.getEncoder().getVelocity()*rpm2degreesPerSecond);
     SmartDashboard.putNumber("Arm SetPoint", m_targetAngle);
     SmartDashboard.putNumber("Arm Error", m_targetAngle - getArmAngle());
     SmartDashboard.putNumber("Arm %output", m_armLeadMotor.getAppliedOutput());
     SmartDashboard.putNumber("Arm Current", m_armLeadMotor.getOutputCurrent());
     SmartDashboard.putNumber("Arm target Angle", m_targetAngle);
-    SmartDashboard.putNumber("Arm target Ticks", angleToEncoderTicks(m_targetAngle));
+    SmartDashboard.putNumber("Arm target Rotations", angleToEncoderRotations(m_targetAngle));
     SmartDashboard.putNumber("Arm rpm To Degrees Per Second", rpm2degreesPerSecond);
-    //SmartDashboard.putNumber("Arm degrees To Ticks", degrees2ticks);
     SmartDashboard.putNumber("Arm tolerance Degrees", toleranceDegrees);
     //SmartDashboard.putNumber("Arm encoder To Arm Ratio", m_encoderToArmRatio);
     //SmartDashboard.putNumber("Arm maximum Angle Degree", maxAngleDegree);
