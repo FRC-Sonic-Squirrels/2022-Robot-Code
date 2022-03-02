@@ -205,7 +205,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void stop() {
     setStopMode();
-    setIntakeMotorRPM(0.0);
+    setIntakePercentOutput(0);  
     retractIntake();
   }
 

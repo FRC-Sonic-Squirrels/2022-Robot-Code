@@ -89,9 +89,9 @@ public class RobotContainer {
     drivetrain.setGyroscopeHeadingDegrees(0);
     drivetrain.setPose(Constants.ROBOT_1M_LEFT_OF_HUB, drivetrain.getGyroscopeRotation());
 
-    SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooterSubsystem,
-        m_cargoSubsystem, m_intake, m_robot);
-    SmartDashboard.putData("Auto Mode (discontinued)", chooser);
+    // SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooterSubsystem,
+    //     m_cargoSubsystem, m_intake, m_robot);
+    // SmartDashboard.putData("Auto Mode (discontinued)", chooser);
 
     // // TODO: figure out if getSelected() will work properly or just return null
     // SwerveTrajectoryAutonomousCommandFactory.addAutonTrajectoriesToChooser(autonTrajectoryChooser, 1.0, 0.75,
@@ -99,18 +99,18 @@ public class RobotContainer {
     // SmartDashboard.putData("Auto Mode (real)", autonTrajectoryChooser);
 
     //Creates UsbCamera and MjpegServer [1] and connects them
-    UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
-    MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
-    mjpegServer1.setSource(usbCamera);
+    // UsbCamera usbCamera = new UsbCamera("USB Camera 0", 0);
+    // MjpegServer mjpegServer1 = new MjpegServer("serve_USB Camera 0", 1181);
+    // mjpegServer1.setSource(usbCamera);
 
     // Creates the CvSink and connects it to the UsbCamera
-    CvSink cvSink = new CvSink("opencv_USB Camera 0");
-    cvSink.setSource(usbCamera);
+    // CvSink cvSink = new CvSink("opencv_USB Camera 0");
+    // cvSink.setSource(usbCamera);
 
     // Creates the CvSource and MjpegServer [2] and connects them
-    CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
-    MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
-    mjpegServer2.setSource(outputStream);
+    // CvSource outputStream = new CvSource("Blur", PixelFormat.kMJPEG, 640, 480, 30);
+    // MjpegServer mjpegServer2 = new MjpegServer("serve_Blur", 1182);
+    // mjpegServer2.setSource(outputStream);
     
 
     // Set up the default command for the drivetrain.
@@ -197,7 +197,7 @@ public class RobotContainer {
  
     //shoot while holding 
     new Button(m_operatorController::getRightBumper)
-      .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+      .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot, drivetrain));
 
     //toggle climbing mode 
     // new Button(m_operatorController::getLeftBumper)
@@ -207,7 +207,6 @@ public class RobotContainer {
     new Button(m_operatorController::getAButton)
       .whileHeld(new IntakeDeployCommand(m_intake, m_cargoSubsystem));
 
-    //reverse intake and indexer while holding
     new Button(m_operatorController::getYButton)
       .whileHeld(new IntakeReverseCommand(m_intake, m_cargoSubsystem));
 
@@ -215,18 +214,23 @@ public class RobotContainer {
       .whenPressed(new InstantCommand(() -> m_elevator.zeroHeight(), m_elevator));
     
     new Button(m_operatorController::getBackButton)
-      .whenPressed(new InstantCommand(() -> m_arm.zeroEncoder()));
+      .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(15.6)));
 
-    //rotate arm one step in the positive direction (towards the front of robot)
+    // Arm back
     new Button(m_operatorController::getXButton)
-      .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(1), m_arm));
+      .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(-6), m_arm));
 
-    // rotate arm one step in the negative direction (towards the back of robot)
+    // Arm almost straight up, just a little forward to grab
+    // new Button(m_operatorController::getYButton)
+    //   .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(1), m_arm));
+
+    // Arm forward
     new Button(m_operatorController::getBButton)
-      .whenPressed(new InstantCommand(() -> m_arm.incrementArmAngle(-1), m_arm));
+      .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(25), m_arm));
  
-    new Button(m_operatorController::getLeftBumper)
-       .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);
+    // disable elevator until it's fixed
+    // new Button(m_operatorController::getLeftBumper)
+    //    .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);
 
     // new Button(m_operatorController::getRightBumper)
     //   .whileHeld(new ArmManualControlCommand(() -> m_operatorController.getRightX(), m_arm), true);
