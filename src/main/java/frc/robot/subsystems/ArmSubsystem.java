@@ -13,7 +13,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.team2930.lib.util.MotorUtils;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.canId;
@@ -30,22 +29,28 @@ public class ArmSubsystem extends SubsystemBase {
   private RelativeEncoder m_throughBoreEncoder;
 
   private double m_targetAngle = 0.0;
-  private double ticksWhenStraightUp = 0;
+  private double zeroedEncoderAngle = -15.6;
   private double rpm2degreesPerSecond = 60.0/360.0;
   private double degrees2ticks = kCPR/360.0;
   private double toleranceDegrees = 1.0;
   // arm angle = encoder angle * constant ratio
   private double m_encoderToArmRatio = 0.428571;
-
-  private SparkMaxPIDController m_armPID;
   
-  //TODO: Find the actual channels
-  private DigitalInput limitSwitchFront = new DigitalInput(5);
-  private DigitalInput limitSwitchBack = new DigitalInput(6);
+  private SparkMaxPIDController m_armPID;
+  private double kP = 0.1;
+  private double kI = 0;
+  private double kD = 0;
+  private double kIz = 100;
+  private double kFF = 0;
+  private double kMaxOutput = 1;
+  private double kMinOutput = -1;
+  
+  //TODO: Find the actual channels if physical limit switches are installed
+  // private DigitalInput limitSwitchFront = new DigitalInput(5);
+  // private DigitalInput limitSwitchBack = new DigitalInput(6);
 
-  //TODO: find true values 
-  private double maxAngleDegree = 30;
-  private double minAngleDegree = -30;
+  private double maxAngleDegree = 27.1;
+  private double minAngleDegree = -15.6;
 
   private double m_armStepValueDegrees = 3.0;
 
@@ -71,6 +76,13 @@ public class ArmSubsystem extends SubsystemBase {
     //good for preventing small changes but this can also be done with the joystick itself 
     //m_armPID.setSmartMotionMinOutputVelocity(0.05, 0);
   
+    // set PID coefficients
+    m_armPID.setP(kP);
+    m_armPID.setI(kI);
+    m_armPID.setD(kD);
+    m_armPID.setIZone(kIz);
+    m_armPID.setFF(kFF);
+    m_armPID.setOutputRange(kMinOutput, kMaxOutput);
 
     // Reduce CAN traffic when possible
     // https://www.hi-im.kim/canbus
@@ -86,9 +98,8 @@ public class ArmSubsystem extends SubsystemBase {
     //because of gear box the encoder is spinning the wrong way
     m_throughBoreEncoder.setInverted(true);
   
-    // TODO: need to figure out how to zero the arm position.
-    // maybe the arm will start on a hard stop, part way back with a limit switch
-    ticksWhenStraightUp = m_throughBoreEncoder.getPosition();
+    // Arm will start on a hard stop, part way back with a limit switch
+    zeroEncoder();
   }
 
   /**
@@ -104,7 +115,7 @@ public class ArmSubsystem extends SubsystemBase {
       angleDegrees = minAngleDegree;
     }
     m_targetAngle = angleDegrees;
-    double encoderValue = ticksWhenStraightUp + angleToEncoderTicks(angleDegrees / m_encoderToArmRatio);
+    double encoderValue = angleToEncoderTicks((angleDegrees - zeroedEncoderAngle) / m_encoderToArmRatio);
     m_armPID.setReference(encoderValue, ControlType.kPosition);
   }
 
@@ -136,7 +147,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public double getArmAngle() {
-    return m_throughBoreEncoder.getPosition() * m_encoderToArmRatio * 360;
+    return (m_throughBoreEncoder.getPosition() * m_encoderToArmRatio * 360) - zeroedEncoderAngle;
   }
 
   public void setMotorCoastMode(){
@@ -169,7 +180,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    updateTestingValues();
+    // updateTestingValues();
     
     // TODO: we don't have limit switches on the robot yet
     //if(limitSwitchFront.get() || limitSwitchBack.get()) {
@@ -185,15 +196,15 @@ public class ArmSubsystem extends SubsystemBase {
     // SmartDashboard.putBoolean("Arm limit", );
     SmartDashboard.putNumber("Arm_Subsystem %output", m_armLeadMotor.getAppliedOutput());
     SmartDashboard.putNumber("Arm_Subsystem Current", m_armLeadMotor.getOutputCurrent());
-    SmartDashboard.putNumber("Arm_Subsystem kCPR", kCPR);
+    //SmartDashboard.putNumber("Arm_Subsystem kCPR", kCPR);
     SmartDashboard.putNumber("Arm_Subsystem target Angle", m_targetAngle);
-    SmartDashboard.putNumber("Arm_Subsystem ticks When Strait Up", ticksWhenStraightUp);
+    //SmartDashboard.putNumber("Arm_Subsystem ticks When Strait Up", ticksWhenStraightUp);
     SmartDashboard.putNumber("Arm_Subsystem rpm To Degrees Per Second", rpm2degreesPerSecond);
-    SmartDashboard.putNumber("Arm_Subsystem degrees To Ticks", degrees2ticks);
+    //SmartDashboard.putNumber("Arm_Subsystem degrees To Ticks", degrees2ticks);
     SmartDashboard.putNumber("Arm_Subsystem tolerance Degrees", toleranceDegrees);
-    SmartDashboard.putNumber("Arm_Subsystem encoder To Arm Ratio", m_encoderToArmRatio);
-    SmartDashboard.putNumber("Arm_Subsystem maximum Angle Degree", maxAngleDegree);
-    SmartDashboard.putNumber("Arm_Subsystem minimum Angle Degree", minAngleDegree);
-    SmartDashboard.putNumber("Arm_Subsystem Step Value Deg", m_armStepValueDegrees);
+    //SmartDashboard.putNumber("Arm_Subsystem encoder To Arm Ratio", m_encoderToArmRatio);
+    //SmartDashboard.putNumber("Arm_Subsystem maximum Angle Degree", maxAngleDegree);
+    //SmartDashboard.putNumber("Arm_Subsystem minimum Angle Degree", minAngleDegree);
+    //SmartDashboard.putNumber("Arm_Subsystem Step Value Deg", m_armStepValueDegrees);
   }
 }
