@@ -28,7 +28,8 @@ public class IntakeSubsystem extends SubsystemBase {
     STOP,
     FORWARD, 
     DYNAMIC,
-    REVERSE
+    REVERSE,
+    IDLE
   };
 
   private WPI_TalonFX m_intake = new WPI_TalonFX(canId.CANID18_INTAKE);
@@ -96,14 +97,15 @@ public class IntakeSubsystem extends SubsystemBase {
     //}
     testingRpmValues();
     if(mode == Mode.STOP){
-      m_intake.setVoltage(0);
-      //setIntakeMotorRPM(m_forwardRpmValue); // (if the intake makes contact with the lower belt)
+      setIntakePercentOutput(0);
     } else if(mode == Mode.FORWARD){
       setIntakeMotorRPM(m_forwardRpmValue);
     } else if(mode == Mode.DYNAMIC){
       setIntakeToSpeed();
     } else if(mode == Mode.REVERSE){
       setIntakeMotorRPM(m_reverseRpmValue);
+    else if(mode == Mode.IDLE){
+      setIntakeMotorRPM(Constants.ShooterConstants.m_idle);
     }
 
     SmartDashboard.putNumber("Intake_Subsystem RPM", m_encoder.getIntegratedSensorVelocity() * 600 / 2048);
@@ -203,7 +205,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void stop() {
     setStopMode();
-    m_intake.setVoltage(0.0);
     setIntakeMotorRPM(0.0);
     retractIntake();
   }
@@ -227,5 +228,9 @@ public class IntakeSubsystem extends SubsystemBase {
   public void setReverseMode(){
     mode = Mode.REVERSE;
   }
+  public void setIdleMode(){
+    mode = Mode.IDLE;
+  }
+
 
 }
