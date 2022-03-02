@@ -96,7 +96,7 @@ public class IntakeSubsystem extends SubsystemBase {
     //}
     testingRpmValues();
     if(mode == Mode.STOP){
-      m_intake.setVoltage(0);
+      setIntakePercentOutput(0);
       //setIntakeMotorRPM(m_forwardRpmValue); // (if the intake makes contact with the lower belt)
     } else if(mode == Mode.FORWARD){
       setIntakeMotorRPM(m_forwardRpmValue);
@@ -203,7 +203,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void stop() {
     setStopMode();
-    m_intake.setVoltage(0.0);
+    setIntakePercentOutput(0);
     setIntakeMotorRPM(0.0);
     retractIntake();
   }
