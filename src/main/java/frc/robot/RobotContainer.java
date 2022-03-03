@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.StartPoseConstants;
 import frc.robot.commands.ArmManualControlCommand;
+import frc.robot.commands.ArmZeroCommand;
 import frc.robot.commands.CargoReverseCommand;
 import frc.robot.commands.ClimbManualCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
@@ -188,30 +189,34 @@ public class RobotContainer {
     //   .whenPressed(new ClimbManualCommand(m_arm, m_elevator, m_operatorController));
 
     //Deploy intake while holding 
-    new Button(m_operatorController::getAButton)
-      .whileHeld(new IntakeDeployCommand(m_intake, m_cargoSubsystem));
+    // new Button(m_operatorController::getAButton)
+    //   .whileHeld(new IntakeDeployCommand(m_intake, m_cargoSubsystem));
 
-    new Button(m_operatorController::getYButton)
-      .whileHeld(new IntakeReverseCommand(m_intake, m_cargoSubsystem));
+    // new Button(m_operatorController::getYButton)
+    //   .whileHeld(new IntakeReverseCommand(m_intake, m_cargoSubsystem));
 
-    new Button(m_operatorController::getStartButton)
-      .whenPressed(new InstantCommand(() -> m_elevator.zeroHeight(), m_elevator));
+    // new Button(m_operatorController::getStartButton)
+    //   .whenPressed(new InstantCommand(() -> m_elevator.zeroHeight(), m_elevator));
     
     new Button(m_operatorController::getBackButton)
-      .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(15.6)));
+      .whileHeld(new ArmZeroCommand(m_arm));
 
     // Arm back
     new Button(m_operatorController::getXButton)
-      .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(-6), m_arm));
+      .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(-13), m_arm));
 
     // Arm almost straight up, just a little forward to grab
-    // new Button(m_operatorController::getYButton)
-    //   .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(1), m_arm));
+    new Button(m_operatorController::getYButton)
+       .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(0.0), m_arm));
 
     // Arm forward
     new Button(m_operatorController::getBButton)
-      .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(25), m_arm));
+      .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(22), m_arm));
  
+    // Arm forward
+    new Button(m_operatorController::getAButton)
+    .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(15.6), m_arm));
+
     // disable elevator until it's fixed
     // new Button(m_operatorController::getLeftBumper)
     //    .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);

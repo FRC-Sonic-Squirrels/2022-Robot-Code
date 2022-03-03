@@ -9,7 +9,7 @@ import frc.robot.subsystems.ArmSubsystem;
 
 public class ArmZeroCommand extends CommandBase {
   private ArmSubsystem arm;
-  private double lastPosition = 999999;  // something really big
+  private double lastPosition = 1.0;  // something really big
   private int repeatCount = 0;
 
   public ArmZeroCommand(ArmSubsystem arm) {
@@ -21,21 +21,21 @@ public class ArmZeroCommand extends CommandBase {
   @Override
   public void initialize() {
     lastPosition = arm.getEncoderValue();
-    arm.setArmPercentOutput(-0.05);
+    arm.setArmPercentOutput(-0.45);
+    repeatCount = -10;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     double currentPosition = arm.getEncoderValue();
-    // anything within 5 encoder ticks is close enough to be unchanged
-    if (Math.abs(lastPosition - currentPosition) <= 5) {
+    // anything within 0.2/360 is close enough to be unchanged
+    if (Math.abs(lastPosition - currentPosition) <= 0.1/360.0) {
       repeatCount++;
     }
-    else {
-      repeatCount = 0;
-    }
+
     lastPosition = currentPosition;
+    System.out.println("Arm Zero Command: " + repeatCount);
   }
 
   // Called once the command ends or is interrupted.
@@ -50,6 +50,6 @@ public class ArmZeroCommand extends CommandBase {
    */
   @Override
   public boolean isFinished() {
-    return (repeatCount >= 2);
+    return false;
   }
 }
