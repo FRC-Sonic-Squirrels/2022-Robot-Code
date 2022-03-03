@@ -26,6 +26,7 @@ import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.ElevatorControlCommand;
 import frc.robot.commands.ShootOneCargoCommand;
+import frc.robot.commands.ShootWithSetRPMCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.ShootCargoCommand;
@@ -184,16 +185,16 @@ public class RobotContainer {
     //new Button(m_operatorController::getRightBumper)
     //  .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
-    // toggle climbing mode 
-    // new Button(m_operatorController::getLeftBumper)
-    //   .whenPressed(new ClimbManualCommand(m_arm, m_elevator, m_operatorController));
+    //toggle climbing mode 
+    new Button(m_operatorController::getLeftBumper)
+      .whenPressed(new ClimbManualCommand(m_arm, m_elevator, m_operatorController));
 
     //Deploy intake while holding 
-    // new Button(m_operatorController::getAButton)
-    //   .whileHeld(new IntakeDeployCommand(m_intake, m_cargoSubsystem));
+    new Button(m_operatorController::getAButton)
+      .whileHeld(new IntakeDeployCommand(m_intake, m_cargoSubsystem));
 
-    // new Button(m_operatorController::getYButton)
-    //   .whileHeld(new IntakeReverseCommand(m_intake, m_cargoSubsystem));
+    new Button(m_operatorController::getYButton)
+      .whileHeld(new IntakeReverseCommand(m_intake, m_cargoSubsystem));
 
     new Button(m_operatorController::getStartButton)
        .whenPressed(new InstantCommand(() -> m_elevator.zeroHeight(), m_elevator));
@@ -201,28 +202,14 @@ public class RobotContainer {
     new Button(m_operatorController::getBackButton)
       .whileHeld(new ArmZeroCommand(m_arm));
 
-    // Arm back
     new Button(m_operatorController::getXButton)
-      .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(-13), m_arm));
+      .whenPressed(new ShootWithSetRPMCommand(2000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
-    // Arm almost straight up, just a little forward to grab
-    new Button(m_operatorController::getYButton)
-       .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(-1.0), m_arm));
-
-    // Arm forward
     new Button(m_operatorController::getBButton)
-      .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(22), m_arm));
- 
-    // Arm forward
-    new Button(m_operatorController::getAButton)
-    .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(15.6), m_arm));
+      .whenPressed(new ShootWithSetRPMCommand(3000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
-
-    new Button(m_operatorController::getRightBumper)
-       .whenPressed(new InstantCommand(() -> m_elevator.setElevatorHeight(15), m_elevator));
-
-    new Button(m_operatorController::getLeftBumper)
-       .whenPressed(new InstantCommand(() -> m_elevator.setElevatorHeight(0), m_elevator));
+      new Button(m_operatorController::getRightBumper)
+      .whenPressed(new ShootWithSetRPMCommand(1000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
     // disable elevator until it's fixed
     // new Button(m_operatorController::getLeftBumper)
