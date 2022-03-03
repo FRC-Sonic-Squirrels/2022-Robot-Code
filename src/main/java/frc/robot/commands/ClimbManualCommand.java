@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -39,6 +40,7 @@ public class ClimbManualCommand extends CommandBase {
     if (m_controller.getLeftBumperPressed()) {
       m_isUnlocked = !m_isUnlocked;
       //rumbleSequenceCommand().schedule();
+      rumbleSequence();
 
       if (m_isUnlocked == false) {
         m_arm.setArmPercentOutput(0);
@@ -64,7 +66,19 @@ public class ClimbManualCommand extends CommandBase {
       } else {
         m_elevator.stop();
       }
-    }
+
+      double pov = m_controller.getPOV();
+
+      if(pov == 0){
+        m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE);
+      } else if(pov == 90){
+        m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_FORWARD_ANGLE);
+      } else if(pov == 180){
+        m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_NEXT_BAR_ANGLE);
+      } else if(pov == 270){
+        m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_BACK_ANGLE);
+      }
+  }
   }
 
   // Called once the command ends or is interrupted.
@@ -80,5 +94,10 @@ public class ClimbManualCommand extends CommandBase {
   @Override
   public boolean isFinished() {
     return false;
+  }
+
+  private void rumbleSequence(){
+    m_controller.setRumble(RumbleType.kLeftRumble, 0.3);
+    m_controller.setRumble(RumbleType.kRightRumble, 0.3);
   }
 }
