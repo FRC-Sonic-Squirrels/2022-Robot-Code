@@ -39,11 +39,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final double maxExtensionInches = 21.0;
   private double heightSetpointInches = 0.0;
   private double toleranceInches = 0.2;
-  private double StartingTicks = 0;
   private double feedForwardClimbing = 0.025734; // from JVM calculator
-  private double feedForwardDescending = 0.001;  // TODO: this is just a guess
+  private double feedForwardDescending = 0.001;
   private final double ticks2distance = gearRatio * winchCircumference / 4096;
-  private boolean holding = true;
+
+  // the encoder increase as the elevator moves down, so invert sign of height vs ticks
+  private double sensor_invert = -1.0;
   
   public ElevatorSubsystem() {
     winch_lead_talon.configFactoryDefault();
@@ -91,21 +92,16 @@ public class ElevatorSubsystem extends SubsystemBase {
     // if not, we need to move the elevator down to the lower limit switch (VERY SLOWLY).
     // hitting either limit switch must stop the elevator.
 
-    StartingTicks = winch_lead_talon.getSelectedSensorPosition();
     brakeOn();
     zeroHeight();
  
     // set soft limit on forward movement (down)
-    // winch_lead_talon.configForwardSoftLimitThreshold(StartingTicks);
-    // winch_follow_talon.configForwardSoftLimitThreshold(StartingTicks);
-    // winch_lead_talon.configReverseSoftLimitEnable(true);
-    // winch_follow_talon.configReverseSoftLimitEnable(true);
+    winch_lead_talon.configForwardSoftLimitThreshold(heightToTicks(0.0));
+    winch_lead_talon.configForwardSoftLimitEnable(true);
 
     // set soft limit on reverse movement (Up)
-    // winch_lead_talon.configReverseSoftLimitThreshold(StartingTicks + (maxExtensionInches / ticks2distance));
-    // winch_follow_talon.configReverseSoftLimitThreshold(StartingTicks + (maxExtensionInches / ticks2distance));
-    // winch_lead_talon.configReverseSoftLimitEnable(true);
-    // winch_follow_talon.configReverseSoftLimitEnable(true);
+    winch_lead_talon.configReverseSoftLimitThreshold(heightToTicks(maxExtensionInches));
+    winch_lead_talon.configReverseSoftLimitEnable(true);
   }
 
   public void setElevatorHeight(double heightInches) {
@@ -118,18 +114,34 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     if (heightInches <= heightSetpointInches) {
       // lifting up robot, use more feed forward
-      winch_lead_talon.set(TalonFXControlMode.Position, - heightInches / ticks2distance,
+      winch_lead_talon.set(TalonFXControlMode.Position, heightToTicks(heightInches),
           DemandType.ArbitraryFeedForward, feedForwardClimbing);
     } else {
       // lowering robot, use less feed forward
-      winch_lead_talon.set(TalonFXControlMode.Position, - heightInches / ticks2distance,
+      winch_lead_talon.set(TalonFXControlMode.Position, heightToTicks(heightInches),
           DemandType.ArbitraryFeedForward, feedForwardDescending);
     }
     // NOTE: this is how without arbitrary feed forward
-    // winch_lead_talon.set(TalonFXControlMode.Position, heightInches / ticks2distance);
+    // winch_lead_talon.set(TalonFXControlMode.Position, heightToTicks(heightInches));
 
-    holding = true;
     heightSetpointInches = heightInches;
+  }
+
+
+  public double heightToTicks(double heightInches) {
+    return sensor_invert * heightInches / ticks2distance;
+  }
+
+  public double ticksToHeight(double ticks) {
+    return sensor_invert * ticks * ticks2distance;
+  }
+
+  /**
+   * hold() - hold the elevator at the current height with PID
+   */
+  public void hold() {
+    winch_lead_talon.set(TalonFXControlMode.Position, winch_lead_talon.getSelectedSensorPosition(),
+        DemandType.ArbitraryFeedForward, feedForwardClimbing);
   }
 
   /**
@@ -154,7 +166,11 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return height of the elevator in inches
    */
   public double getHeightInches() {
-    return -(winch_lead_talon.getSelectedSensorPosition() - StartingTicks) * ticks2distance;
+    return  (getHeightTicks() * ticks2distance);
+  }
+
+  public double getHeightTicks() {
+    return sensor_invert * winch_lead_talon.getSelectedSensorPosition();
   }
 
   /**
@@ -164,31 +180,22 @@ public class ElevatorSubsystem extends SubsystemBase {
    * command, that runs the elevator to the lower limit switch. VERY SLOWLY.
    */
   public void zeroHeight() {
-    StartingTicks = winch_lead_talon.getSelectedSensorPosition();
+    winch_lead_talon.getSensorCollection().setIntegratedSensorPosition(0, 0);
   }
 
   /**
    * Manually run elevator motors. USE WITH CAUTION.
    */
   public void setWinchPercentOutput(double percent) {
-    if (Math.abs(percent) > 0.01) {
-      holding = false;
-      brakeOff();
-      winch_lead_talon.set(ControlMode.PercentOutput, percent);
-    }
-    else {
-      brakeOn();
-      setElevatorHeight(getHeightInches());
-      holding = true;
-    }
+    winch_lead_talon.set(ControlMode.PercentOutput, percent);
   }
 
   /**
    * stop() stops the elevator motors and sets the brake.
    */
   public void stop() {
-    brakeOn();
     setWinchPercentOutput(0.0);
+    brakeOn();
   }
 
   /**
@@ -219,22 +226,15 @@ public class ElevatorSubsystem extends SubsystemBase {
       zeroHeight();
     }
 
-    if (holding && isAtHeight()) {
-      brakeOn();
-    }
-    else if (holding && !isAtHeight()) {
-      brakeOff();
-    }
-
     SmartDashboard.putNumber("Elevator Height (inches)", getHeightInches());
-    SmartDashboard.putNumber("Elevator Vel (inches per s)", ticks2distance * winch_lead_talon.getSelectedSensorVelocity() / 10.0);
-    SmartDashboard.putNumber("Elevator SetPoint", heightSetpointInches);
-    SmartDashboard.putNumber("Elevator Error", heightSetpointInches - getHeightInches());
-    SmartDashboard.putBoolean("Elevator limit", atLowerLimit());
+    //SmartDashboard.putNumber("Elevator Height (ticks)", getHeightTicks());
+    //SmartDashboard.putNumber("Elevator Vel (inches per s)", ticks2distance * winch_lead_talon.getSelectedSensorVelocity() / 10.0);
+    //SmartDashboard.putNumber("Elevator SetPoint inches", heightSetpointInches);
+    //SmartDashboard.putNumber("Elevator SetPoint (ticks)", heightToTicks(heightSetpointInches));
+    //SmartDashboard.putNumber("Elevator Error", heightSetpointInches - getHeightInches());
+    //SmartDashboard.putBoolean("Elevator limit", atLowerLimit());
     SmartDashboard.putNumber("Elevator %output", winch_lead_talon.getMotorOutputPercent());
-    SmartDashboard.putNumber("Elevator Current", winch_lead_talon.getSupplyCurrent());
+    //SmartDashboard.putNumber("Elevator Current", winch_lead_talon.getSupplyCurrent());
     SmartDashboard.putBoolean("Elevator Brake On", !frictionBrakeSolenoid.get());
-    SmartDashboard.putBoolean("Elevator Holding", holding);
-
   }
 }
