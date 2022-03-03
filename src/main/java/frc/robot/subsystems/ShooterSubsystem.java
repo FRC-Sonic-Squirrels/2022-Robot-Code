@@ -36,15 +36,15 @@ public class ShooterSubsystem extends SubsystemBase {
   private final double RPMtoTicks = 2048 / 600;
   private double m_testingStaticRPM = 0;
 
-  private double m_configP = 0.13;
+  private double m_configP = 0.2;
   private double m_configI = 0.001;
   private double m_configD = 0.0;
-  private double m_configF = 0.048;
+  private double m_configF = 0.052;
   private double m_configIZ = 100;
 
   // lower number here, slows the rate of change and decreases the power spike
-  private double m_rate_RPMperSecond = 1000;
-  private SlewRateLimiter m_rateLimiter = new SlewRateLimiter(6000);
+  private double m_rate_RPMperSecond = 6000;
+  private SlewRateLimiter m_rateLimiter = new SlewRateLimiter(m_rate_RPMperSecond);
 
   //TODO: add shooting, idle and stop enums use them for logic for setting rpm when shooting, setting motor voltage to 0 when idle and slowing/setting rpm for when stopping
 
