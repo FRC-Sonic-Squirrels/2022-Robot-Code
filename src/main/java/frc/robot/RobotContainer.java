@@ -203,10 +203,10 @@ public class RobotContainer {
       .whileHeld(new ArmZeroCommand(m_arm));
 
     new Button(m_operatorController::getXButton)
-      .whenPressed(new ShootWithSetRPMCommand(2000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+      .whileHeld(new ShootWithSetRPMCommand(2000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
     new Button(m_operatorController::getBButton)
-      .whenPressed(new ShootWithSetRPMCommand(3000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+      .whileHeld(new ShootWithSetRPMCommand(3000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
     new Button(m_operatorController::getRightBumper)
       .whenPressed(new InstantCommand(() -> m_elevator.setElevatorHeight(Constants.ElevatorConstants.ELEVATOR_MAX_HEIGHT), m_elevator));
