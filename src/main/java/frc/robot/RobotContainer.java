@@ -208,8 +208,11 @@ public class RobotContainer {
     new Button(m_operatorController::getBButton)
       .whenPressed(new ShootWithSetRPMCommand(3000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
-      new Button(m_operatorController::getRightBumper)
-      .whenPressed(new ShootWithSetRPMCommand(1000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+    new Button(m_operatorController::getRightBumper)
+      .whenPressed(new InstantCommand(() -> m_elevator.setElevatorHeight(Constants.ElevatorConstants.ELEVATOR_MAX_HEIGHT), m_elevator));
+
+      // new Button(m_operatorController::getRightBumper)
+      // .whenPressed(new ShootWithSetRPMCommand(1000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
     // disable elevator until it's fixed
     // new Button(m_operatorController::getLeftBumper)

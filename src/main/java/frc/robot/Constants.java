@@ -150,6 +150,7 @@ public final class Constants {
 
   public static class ElevatorConstants{
     public static final double elevatorSpeedMultiplier = 0.8;
+    public static final double ELEVATOR_MAX_HEIGHT = 22;
   }
   
   public static class ArmConstants{
