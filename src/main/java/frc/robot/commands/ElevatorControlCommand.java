@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
 
@@ -31,12 +32,19 @@ public class ElevatorControlCommand extends CommandBase {
     
     double elevatorJoyStickValue = controller.getLeftY();
 
-    if(Math.abs(elevatorJoyStickValue) >= 0.1){
-      elevator.brakeOff();
-      elevator.setWinchPercentOutput(elevatorJoyStickValue * gain);
-    } else {
-      elevator.stop();
+    if (controller.getYButton()) {
+      elevator.setElevatorHeight(19.0);
+    } else if (controller.getBButton()) {
+      elevator.setElevatorHeight(6.0);
+    } else if (controller.getAButton()) {
+      elevator.setElevatorHeight(1.0);
+    } else if (controller.getXButton()) {
+      elevator.setElevatorHeight(11.0);
     }
+    else if(elevatorJoyStickValue > 0.1) {
+      elevator.setWinchPercentOutput(elevatorJoyStickValue * gain);
+    }
+
   }
 
   @Override
@@ -44,7 +52,6 @@ public class ElevatorControlCommand extends CommandBase {
     elevator.stop();
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;

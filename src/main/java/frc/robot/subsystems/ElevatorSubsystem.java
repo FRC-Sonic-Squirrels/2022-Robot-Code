@@ -43,6 +43,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double feedForwardClimbing = 0.025734; // from JVM calculator
   private double feedForwardDescending = 0.001;  // TODO: this is just a guess
   private final double ticks2distance = gearRatio * winchCircumference / 4096;
+  private boolean holding = true;
   
   public ElevatorSubsystem() {
     winch_lead_talon.configFactoryDefault();
@@ -52,7 +53,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     leadConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
 
-    
     // Details on elevator motors, gearing and calculated kP and kFF are here
     // https://docs.google.com/spreadsheets/d/1sOS_vM87iaKPZUFSJTqKqaFTxIl3Jj5OEwBgRxc-QGM/edit?usp=sharing
     // this also has suggest trapezoidal velocity profile constants.
@@ -65,6 +65,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     leadConfig.motionAcceleration = 20521;    //  20521 ticks/100ms     = 11 in/s
 		leadConfig.motionCruiseVelocity = 20521;  //  20521 ticks/100ms/sec = 11 in/s^2
+
+    leadConfig.slot0.allowableClosedloopError = toleranceInches / ticks2distance;
 
     // set config
     winch_lead_talon.configAllSettings(leadConfig);
@@ -126,6 +128,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // NOTE: this is how without arbitrary feed forward
     // winch_lead_talon.set(TalonFXControlMode.Position, heightInches / ticks2distance);
 
+    holding = true;
     heightSetpointInches = heightInches;
   }
 
@@ -151,7 +154,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return height of the elevator in inches
    */
   public double getHeightInches() {
-    return (winch_lead_talon.getSelectedSensorPosition() - StartingTicks) * ticks2distance;
+    return -(winch_lead_talon.getSelectedSensorPosition() - StartingTicks) * ticks2distance;
   }
 
   /**
@@ -168,13 +171,16 @@ public class ElevatorSubsystem extends SubsystemBase {
    * Manually run elevator motors. USE WITH CAUTION.
    */
   public void setWinchPercentOutput(double percent) {
-    if (percent != 0.0) {
+    if (Math.abs(percent) > 0.01) {
+      holding = false;
       brakeOff();
+      winch_lead_talon.set(ControlMode.PercentOutput, percent);
     }
     else {
       brakeOn();
+      setElevatorHeight(getHeightInches());
+      holding = true;
     }
-    winch_lead_talon.set(ControlMode.PercentOutput, percent);
   }
 
   /**
@@ -212,6 +218,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     if(atLowerLimit()){
       zeroHeight();
     }
+
+    if (holding && isAtHeight()) {
+      brakeOn();
+    }
+    else if (holding && !isAtHeight()) {
+      brakeOff();
+    }
+
     SmartDashboard.putNumber("Elevator Height (inches)", getHeightInches());
     SmartDashboard.putNumber("Elevator Vel (inches per s)", ticks2distance * winch_lead_talon.getSelectedSensorVelocity() / 10.0);
     SmartDashboard.putNumber("Elevator SetPoint", heightSetpointInches);
@@ -219,5 +233,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Elevator limit", atLowerLimit());
     SmartDashboard.putNumber("Elevator %output", winch_lead_talon.getMotorOutputPercent());
     SmartDashboard.putNumber("Elevator Current", winch_lead_talon.getSupplyCurrent());
+    SmartDashboard.putBoolean("Elevator Brake On", !frictionBrakeSolenoid.get());
+    SmartDashboard.putBoolean("Elevator Holding", holding);
+
   }
 }
