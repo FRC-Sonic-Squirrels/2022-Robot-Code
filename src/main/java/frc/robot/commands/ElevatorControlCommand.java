@@ -4,19 +4,19 @@
 
 package frc.robot.commands;
 
-import java.util.function.Supplier;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorControlCommand extends CommandBase {
-  /** Creates a new ElevatorDeploy. */
-  Supplier<Double> m_controllerSupplier;
-  ElevatorSubsystem m_elevator;
+  ElevatorSubsystem elevator;
+  XboxController controller;
+  double gain = 1.0;
 
-  public ElevatorControlCommand(Supplier<Double> controllerSupplier, ElevatorSubsystem elevator) {
-    m_elevator = elevator;
-    m_controllerSupplier = controllerSupplier;
+  public ElevatorControlCommand(ElevatorSubsystem elevator, XboxController controller, double gain) {
+    this.elevator = elevator;
+    this.controller = controller;
+    this.gain = gain;
     addRequirements(elevator);
   }
 
@@ -29,18 +29,19 @@ public class ElevatorControlCommand extends CommandBase {
   @Override
   public void execute() {
     
-    if(Math.abs(m_controllerSupplier.get()) >= 0.1){
-      m_elevator.brakeOff();
-      m_elevator.setWinchPercentOutput(m_controllerSupplier.get()*ElevatorConstants.elevatorSpeedMultiplier);
+    double elevatorJoyStickValue = controller.getLeftY();
+
+    if(Math.abs(elevatorJoyStickValue) >= 0.1){
+      elevator.brakeOff();
+      elevator.setWinchPercentOutput(elevatorJoyStickValue * gain);
     } else {
-      m_elevator.stop();
+      elevator.stop();
     }
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_elevator.stop();
+    elevator.stop();
   }
 
   // Returns true when the command should end.

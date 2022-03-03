@@ -31,8 +31,6 @@ public class ClimbManualCommand extends CommandBase {
   @Override
   public void initialize() {
     SmartDashboard.putBoolean("CLIMBING MANUAL ACTIVE", m_isUnlocked);
-    m_controller.setRumble(RumbleType.kLeftRumble, 0.0);
-    m_controller.setRumble(RumbleType.kRightRumble, 0.0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -41,11 +39,10 @@ public class ClimbManualCommand extends CommandBase {
 
     if (m_controller.getLeftBumperPressed()) {
       m_isUnlocked = !m_isUnlocked;
-      //rumbleSequenceCommand().schedule();
-      
+      // rumbleSequenceCommand().schedule();
 
       if (m_isUnlocked == false) {
-        m_arm.setArmPercentOutput(0);
+        //m_arm.setArmPercentOutput(0);
         m_elevator.stop();
       }
     }
@@ -55,9 +52,9 @@ public class ClimbManualCommand extends CommandBase {
       // // TODO: check the arm multiplier for changes
       // double armJoyStickValue = m_controller.getRightY();
       // if (Math.abs(armJoyStickValue) > 0.1) {
-      //   m_arm.setArmPercentOutput(armJoyStickValue * 0.3);
+      // m_arm.setArmPercentOutput(armJoyStickValue * 0.3);
       // } else {
-      //   m_arm.setArmPercentOutput(0);
+      // m_arm.setArmPercentOutput(0);
       // }
 
       double elevatorJoyStickValue = m_controller.getLeftY();
@@ -71,16 +68,16 @@ public class ClimbManualCommand extends CommandBase {
 
       double pov = m_controller.getPOV();
 
-      if(pov == 0){
+      if (pov == 0) {
         m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE);
-      } else if(pov == 90){
+      } else if (pov == 90) {
         m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_FORWARD_ANGLE);
-      } else if(pov == 180){
+      } else if (pov == 180) {
         m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_NEXT_BAR_ANGLE);
-      } else if(pov == 270){
+      } else if (pov == 270) {
         m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_BACK_ANGLE);
       }
-  }
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -98,7 +95,7 @@ public class ClimbManualCommand extends CommandBase {
     return false;
   }
 
-  private void rumbleSequence(){
+  private void rumbleSequence() {
     m_controller.setRumble(RumbleType.kLeftRumble, 0.3);
     m_controller.setRumble(RumbleType.kRightRumble, 0.3);
   }

@@ -101,6 +101,30 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   /**
+   * Hold - hold the arm in place using positional control
+   */
+  public void hold() {
+    m_armPID.setReference(getEncoderValue(), ControlType.kSmartMotion);
+  }
+  
+  /**
+   * coastMode - set the arm to coast mode
+   */
+  public void coastMode() {
+    m_armLeadMotor.setIdleMode(IdleMode.kCoast);
+    m_armFollowMotor.setIdleMode(IdleMode.kCoast);
+  }
+ 
+  /**
+  *  brakeMode - set the arm to brake mode
+  */
+  public void brakeMode() {
+    setArmPercentOutput(0.0);
+    m_armLeadMotor.setIdleMode(IdleMode.kBrake);
+    m_armFollowMotor.setIdleMode(IdleMode.kBrake);
+  }
+
+  /**
    * setArmAngle - sets the arm to a specific angle in degrees
    * 
    * @param angleDegrees arm angle in degrees

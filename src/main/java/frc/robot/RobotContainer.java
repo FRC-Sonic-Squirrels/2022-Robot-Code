@@ -61,6 +61,7 @@ public class RobotContainer {
 
   public final XboxController m_controller = new XboxController(0);
   public final XboxController m_operatorController = new XboxController(1);
+  public final XboxController m_climbController = new XboxController(2);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
   public final SendableChooser<Pose2d> startPoseChooser = new SendableChooser<>();
@@ -122,10 +123,11 @@ public class RobotContainer {
       () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
       () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
       () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
-    
-    Command climbManualCommand = new ClimbManualCommand(m_arm, m_elevator, m_operatorController);
-    m_elevator.setDefaultCommand(climbManualCommand);
-    
+
+    m_elevator.setDefaultCommand(new ElevatorControlCommand(m_elevator, m_climbController,
+        Constants.ElevatorConstants.elevatorSpeedMultiplier));
+    m_arm.setDefaultCommand(new ArmManualControlCommand(m_arm, m_climbController, 0.3));
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -196,11 +198,11 @@ public class RobotContainer {
     // new Button(m_operatorController::getYButton)
     //   .whileHeld(new IntakeReverseCommand(m_intake, m_cargoSubsystem));
 
-    new Button(m_operatorController::getStartButton)
+    new Button(m_climbController::getStartButton)
        .whenPressed(new InstantCommand(() -> m_elevator.zeroHeight(), m_elevator));
     
-    // new Button(m_operatorController::getBackButton)
-    //   .whileHeld(new ArmZeroCommand(m_arm));
+    new Button(m_climbController::getBackButton)
+      .whileHeld(new ArmZeroCommand(m_arm));
 
     // new Button(m_operatorController::getXButton)
     //   .whileHeld(new ShootWithSetRPMCommand(2000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
