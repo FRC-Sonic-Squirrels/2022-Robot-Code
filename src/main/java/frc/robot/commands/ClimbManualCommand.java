@@ -31,6 +31,8 @@ public class ClimbManualCommand extends CommandBase {
   @Override
   public void initialize() {
     SmartDashboard.putBoolean("CLIMBING MANUAL ACTIVE", m_isUnlocked);
+    m_controller.setRumble(RumbleType.kLeftRumble, 0.0);
+    m_controller.setRumble(RumbleType.kRightRumble, 0.0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -40,7 +42,7 @@ public class ClimbManualCommand extends CommandBase {
     if (m_controller.getLeftBumperPressed()) {
       m_isUnlocked = !m_isUnlocked;
       //rumbleSequenceCommand().schedule();
-      rumbleSequence();
+      
 
       if (m_isUnlocked == false) {
         m_arm.setArmPercentOutput(0);
@@ -50,13 +52,13 @@ public class ClimbManualCommand extends CommandBase {
     SmartDashboard.putBoolean("CLIMBING MANUAL ACTIVE", m_isUnlocked);
 
     if (m_isUnlocked) {
-      // TODO: check the arm multiplier for changes
-      double armJoyStickValue = m_controller.getRightY();
-      if (Math.abs(armJoyStickValue) > 0.1) {
-        m_arm.setArmPercentOutput(armJoyStickValue * 0.3);
-      } else {
-        m_arm.setArmPercentOutput(0);
-      }
+      // // TODO: check the arm multiplier for changes
+      // double armJoyStickValue = m_controller.getRightY();
+      // if (Math.abs(armJoyStickValue) > 0.1) {
+      //   m_arm.setArmPercentOutput(armJoyStickValue * 0.3);
+      // } else {
+      //   m_arm.setArmPercentOutput(0);
+      // }
 
       double elevatorJoyStickValue = m_controller.getLeftY();
       if (Math.abs(elevatorJoyStickValue) > 0.1) {

@@ -190,27 +190,38 @@ public class RobotContainer {
       .whenPressed(new ClimbManualCommand(m_arm, m_elevator, m_operatorController));
 
     //Deploy intake while holding 
-    new Button(m_operatorController::getAButton)
-      .whileHeld(new IntakeDeployCommand(m_intake, m_cargoSubsystem));
+    // new Button(m_operatorController::getAButton)
+    //   .whileHeld(new IntakeDeployCommand(m_intake, m_cargoSubsystem));
 
-    new Button(m_operatorController::getYButton)
-      .whileHeld(new IntakeReverseCommand(m_intake, m_cargoSubsystem));
+    // new Button(m_operatorController::getYButton)
+    //   .whileHeld(new IntakeReverseCommand(m_intake, m_cargoSubsystem));
 
     new Button(m_operatorController::getStartButton)
        .whenPressed(new InstantCommand(() -> m_elevator.zeroHeight(), m_elevator));
     
-    new Button(m_operatorController::getBackButton)
-      .whileHeld(new ArmZeroCommand(m_arm));
+    // new Button(m_operatorController::getBackButton)
+    //   .whileHeld(new ArmZeroCommand(m_arm));
 
-    new Button(m_operatorController::getXButton)
-      .whileHeld(new ShootWithSetRPMCommand(2000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+    // new Button(m_operatorController::getXButton)
+    //   .whileHeld(new ShootWithSetRPMCommand(2000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
-    new Button(m_operatorController::getBButton)
-      .whileHeld(new ShootWithSetRPMCommand(3000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+    // new Button(m_operatorController::getBButton)
+    //   .whileHeld(new ShootWithSetRPMCommand(3000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
     new Button(m_operatorController::getRightBumper)
       .whenPressed(new InstantCommand(() -> m_elevator.setElevatorHeight(Constants.ElevatorConstants.ELEVATOR_MAX_HEIGHT), m_elevator));
 
+    // new Button(m_operatorController::getXButton)
+    //   .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(-13), m_arm));
+
+    //   new Button(m_operatorController::getYButton)
+    //   .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(-1), m_arm));
+
+    //   new Button(m_operatorController::getBButton)
+    //   .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(22), m_arm));
+
+    //   new Button(m_operatorController::getAButton)
+    //   .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(15.6), m_arm));
       // new Button(m_operatorController::getRightBumper)
       // .whenPressed(new ShootWithSetRPMCommand(1000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
