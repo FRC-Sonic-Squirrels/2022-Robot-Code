@@ -177,7 +177,7 @@ public class RobotContainer {
     // new Button(m_controller::getRightBumper)
     //   .whileHeld(new VisionDriveToCargo(m_visionSubsystem, drivetrain));
 
-    // -------------- OPERATOR CONTROLS DEFINED HERE -------------------------- 
+    // **************** OPERATOR CONTROLS ********************************
 
     // //shoot 1 ball idk if this is useful but its here 
     // new Button(m_operatorController::getBButton)
@@ -188,50 +188,33 @@ public class RobotContainer {
     //  .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
     //Deploy intake while holding 
-    // new Button(m_operatorController::getAButton)
-    //   .whileHeld(new IntakeDeployCommand(m_intake, m_cargoSubsystem));
+    new Button(m_operatorController::getAButton)
+       .whileHeld(new IntakeDeployCommand(m_intake, m_cargoSubsystem));
 
-    // new Button(m_operatorController::getYButton)
-    //   .whileHeld(new IntakeReverseCommand(m_intake, m_cargoSubsystem));
+    new Button(m_operatorController::getYButton)
+       .whileHeld(new IntakeReverseCommand(m_intake, m_cargoSubsystem));
 
-    new Button(m_climbController::getStartButton)
-       .whenPressed(new InstantCommand(() -> m_elevator.zeroHeight(), m_elevator));
-    
-    new Button(m_climbController::getBackButton)
-      .whileHeld(new ArmZeroCommand(m_arm));
+    new Button(m_operatorController::getXButton)
+       .whileHeld(new ShootWithSetRPMCommand(2000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
-    // new Button(m_operatorController::getXButton)
-    //   .whileHeld(new ShootWithSetRPMCommand(2000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
-
-    // new Button(m_operatorController::getBButton)
-    //   .whileHeld(new ShootWithSetRPMCommand(3000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+    new Button(m_operatorController::getBButton)
+       .whileHeld(new ShootWithSetRPMCommand(3000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
     new Button(m_operatorController::getRightBumper)
-      .whenPressed(new InstantCommand(() -> m_elevator.setElevatorHeight(Constants.ElevatorConstants.ELEVATOR_MAX_HEIGHT), m_elevator));
-
-    // new Button(m_operatorController::getXButton)
-    //   .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(-13), m_arm));
-
-    //   new Button(m_operatorController::getYButton)
-    //   .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(-1), m_arm));
-
-    //   new Button(m_operatorController::getBButton)
-    //   .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(22), m_arm));
-
-    //   new Button(m_operatorController::getAButton)
-    //   .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(15.6), m_arm));
-      // new Button(m_operatorController::getRightBumper)
-      // .whenPressed(new ShootWithSetRPMCommand(1000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
-
-    // disable elevator until it's fixed
-    // new Button(m_operatorController::getLeftBumper)
-    //    .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);
-
-    // new Button(m_operatorController::getRightBumper)
-    //   .whileHeld(new ArmManualControlCommand(() -> m_operatorController.getRightX(), m_arm), true);
+     .whenPressed(new ShootWithSetRPMCommand(1000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
     // new Button(m_operatorController::getLeftStickButtonPressed)
     //   .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
+
+    // ******************* Climb Controls ****************************
+
+    new Button(m_climbController::getStartButton)
+      .whenPressed(new InstantCommand(() -> m_elevator.zeroHeight(), m_elevator));
+ 
+    new Button(m_climbController::getBackButton)
+      .whileHeld(new ArmZeroCommand(m_arm));
+
+   // Rest of climb contols are in the default arm and default elevator commands
   }
   
   private static double deadband(double value, double deadband) {
