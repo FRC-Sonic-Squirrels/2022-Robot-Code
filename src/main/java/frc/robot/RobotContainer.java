@@ -187,10 +187,6 @@ public class RobotContainer {
     //new Button(m_operatorController::getRightBumper)
     //  .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
-    //toggle climbing mode 
-    new Button(m_operatorController::getLeftBumper)
-      .whenPressed(new ClimbManualCommand(m_arm, m_elevator, m_operatorController));
-
     //Deploy intake while holding 
     // new Button(m_operatorController::getAButton)
     //   .whileHeld(new IntakeDeployCommand(m_intake, m_cargoSubsystem));

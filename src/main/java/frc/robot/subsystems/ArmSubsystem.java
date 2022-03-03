@@ -37,13 +37,13 @@ public class ArmSubsystem extends SubsystemBase {
   private double m_encoderToArmRatio = 0.428571;
   
   private SparkMaxPIDController m_armPID;
-  private double kP = 4.0;
+  private double kP = 3.5;  // 4.0
   private double kI = 0.0001;
   private double kD = 0.0;
   private double kIz = 0.005;
-  private double kFF = 0.1;
-  private double kMaxOutput = 1;
-  private double kMinOutput = -1;
+  private double kFF = 0.0;
+  private double kMaxOutput = 0.8;
+  private double kMinOutput = -0.8;
   
   //TODO: Find the actual channels if physical limit switches are installed
   // private DigitalInput limitSwitchFront = new DigitalInput(5);
@@ -53,6 +53,9 @@ public class ArmSubsystem extends SubsystemBase {
   private double minAngleDegree = -20.5;
 
   public ArmSubsystem() {
+    m_armLeadMotor.restoreFactoryDefaults();
+    m_armFollowMotor.restoreFactoryDefaults();
+
     m_armLeadMotor.setIdleMode(IdleMode.kBrake);
     m_armFollowMotor.setIdleMode(IdleMode.kBrake);
 
@@ -86,9 +89,9 @@ public class ArmSubsystem extends SubsystemBase {
     // https://www.hi-im.kim/canbus
     MotorUtils.setSparkMaxStatusSlow(m_armFollowMotor);
     // we don't need fast updates of sensor velocity
-    m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 200);
+    //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 200);
     // we do need updates of sensor position
-    m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+    //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
 
     m_throughBoreEncoder.setPositionConversionFactor(1.0);
 
@@ -104,7 +107,7 @@ public class ArmSubsystem extends SubsystemBase {
    * Hold - hold the arm in place using positional control
    */
   public void hold() {
-    m_armPID.setReference(getEncoderValue(), ControlType.kSmartMotion);
+    m_armPID.setReference(getEncoderValue(), ControlType.kPosition);
   }
   
   /**
@@ -119,7 +122,6 @@ public class ArmSubsystem extends SubsystemBase {
   *  brakeMode - set the arm to brake mode
   */
   public void brakeMode() {
-    setArmPercentOutput(0.0);
     m_armLeadMotor.setIdleMode(IdleMode.kBrake);
     m_armFollowMotor.setIdleMode(IdleMode.kBrake);
   }
@@ -157,7 +159,8 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setArmPercentOutput(double percentage){
-    m_armLeadMotor.set(percentage);
+    //m_armLeadMotor.set(percentage)
+    m_armPID.setReference(percentage * 11, ControlType.kVoltage);
   }
 
   public void zeroEncoder(){
