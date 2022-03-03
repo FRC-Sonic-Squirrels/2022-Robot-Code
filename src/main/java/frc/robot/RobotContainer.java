@@ -181,8 +181,8 @@ public class RobotContainer {
     //   .whileHeld(new ShootOneCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake));
  
     //shoot while holding 
-    new Button(m_operatorController::getRightBumper)
-      .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+    //new Button(m_operatorController::getRightBumper)
+    //  .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
     // toggle climbing mode 
     // new Button(m_operatorController::getLeftBumper)
@@ -195,8 +195,8 @@ public class RobotContainer {
     // new Button(m_operatorController::getYButton)
     //   .whileHeld(new IntakeReverseCommand(m_intake, m_cargoSubsystem));
 
-    // new Button(m_operatorController::getStartButton)
-    //   .whenPressed(new InstantCommand(() -> m_elevator.zeroHeight(), m_elevator));
+    new Button(m_operatorController::getStartButton)
+       .whenPressed(new InstantCommand(() -> m_elevator.zeroHeight(), m_elevator));
     
     new Button(m_operatorController::getBackButton)
       .whileHeld(new ArmZeroCommand(m_arm));
@@ -207,7 +207,7 @@ public class RobotContainer {
 
     // Arm almost straight up, just a little forward to grab
     new Button(m_operatorController::getYButton)
-       .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(0.0), m_arm));
+       .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(-1.0), m_arm));
 
     // Arm forward
     new Button(m_operatorController::getBButton)
@@ -216,6 +216,13 @@ public class RobotContainer {
     // Arm forward
     new Button(m_operatorController::getAButton)
     .whenPressed(new InstantCommand(() -> m_arm.setArmAngle(15.6), m_arm));
+
+
+    new Button(m_operatorController::getRightBumper)
+       .whenPressed(new InstantCommand(() -> m_elevator.setElevatorHeight(15), m_elevator));
+
+    new Button(m_operatorController::getLeftBumper)
+       .whenPressed(new InstantCommand(() -> m_elevator.setElevatorHeight(0), m_elevator));
 
     // disable elevator until it's fixed
     // new Button(m_operatorController::getLeftBumper)

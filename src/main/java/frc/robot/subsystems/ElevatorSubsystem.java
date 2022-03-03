@@ -77,8 +77,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         LimitSwitchNormal.NormallyOpen, 0);
 
     winch_follow_talon.follow(winch_lead_talon);
-    winch_lead_talon.setInverted(true);
-    winch_follow_talon.setInverted(true);
+    winch_lead_talon.setInverted(false);
+    winch_follow_talon.setInverted(false);
 
     // Reduce CAN traffic where possible
     // https://docs.ctre-phoenix.com/en/latest/ch18_CommonAPI.html
@@ -94,16 +94,16 @@ public class ElevatorSubsystem extends SubsystemBase {
     zeroHeight();
  
     // set soft limit on forward movement (down)
-    winch_lead_talon.configForwardSoftLimitThreshold(StartingTicks);
-    winch_follow_talon.configForwardSoftLimitThreshold(StartingTicks);
-    winch_lead_talon.configReverseSoftLimitEnable(true);
-    winch_follow_talon.configReverseSoftLimitEnable(true);
+    // winch_lead_talon.configForwardSoftLimitThreshold(StartingTicks);
+    // winch_follow_talon.configForwardSoftLimitThreshold(StartingTicks);
+    // winch_lead_talon.configReverseSoftLimitEnable(true);
+    // winch_follow_talon.configReverseSoftLimitEnable(true);
 
     // set soft limit on reverse movement (Up)
-    winch_lead_talon.configReverseSoftLimitThreshold(StartingTicks + (maxExtensionInches / ticks2distance));
-    winch_follow_talon.configReverseSoftLimitThreshold(StartingTicks + (maxExtensionInches / ticks2distance));
-    winch_lead_talon.configReverseSoftLimitEnable(true);
-    winch_follow_talon.configReverseSoftLimitEnable(true);
+    // winch_lead_talon.configReverseSoftLimitThreshold(StartingTicks + (maxExtensionInches / ticks2distance));
+    // winch_follow_talon.configReverseSoftLimitThreshold(StartingTicks + (maxExtensionInches / ticks2distance));
+    // winch_lead_talon.configReverseSoftLimitEnable(true);
+    // winch_follow_talon.configReverseSoftLimitEnable(true);
   }
 
   public void setElevatorHeight(double heightInches) {
@@ -116,11 +116,11 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     if (heightInches <= heightSetpointInches) {
       // lifting up robot, use more feed forward
-      winch_lead_talon.set(TalonFXControlMode.Position, heightInches / ticks2distance,
+      winch_lead_talon.set(TalonFXControlMode.Position, - heightInches / ticks2distance,
           DemandType.ArbitraryFeedForward, feedForwardClimbing);
     } else {
       // lowering robot, use less feed forward
-      winch_lead_talon.set(TalonFXControlMode.Position, heightInches / ticks2distance,
+      winch_lead_talon.set(TalonFXControlMode.Position, - heightInches / ticks2distance,
           DemandType.ArbitraryFeedForward, feedForwardDescending);
     }
     // NOTE: this is how without arbitrary feed forward
@@ -151,7 +151,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return height of the elevator in inches
    */
   public double getHeightInches() {
-    return -(winch_lead_talon.getSelectedSensorPosition() - StartingTicks) * ticks2distance;
+    return (winch_lead_talon.getSelectedSensorPosition() - StartingTicks) * ticks2distance;
   }
 
   /**
