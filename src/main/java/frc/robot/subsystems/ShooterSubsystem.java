@@ -36,33 +36,15 @@ public class ShooterSubsystem extends SubsystemBase {
   private final double RPMtoTicks = 2048 / 600;
   private double m_testingStaticRPM = 0;
 
-  private double m_configP = 0.13;
-  private double m_configI = 0.001;
-  private double m_configD = 0.0;
-  private double m_configF = 0.048;
-  private double m_configIZ = 100;
+  private double m_configP = 0;
+  private double m_configI = 0;
+  private double m_configD = 0;
+  private double m_configF = 0;
+  private double m_configIZ = 0;
 
   // lower number here, slows the rate of change and decreases the power spike
-  private double m_rate_RPMperSecond = 1000;
+  private double m_rate_RPMperSecond = 2500;
   private SlewRateLimiter m_rateLimiter = new SlewRateLimiter(6000);
-
-  //TODO: add shooting, idle and stop enums use them for logic for setting rpm when shooting, setting motor voltage to 0 when idle and slowing/setting rpm for when stopping
-
-  private double shooterDistances[][] = {
-    //TODO: these values are random, we need to measure the robot's shooting and put the values here {distance (feet), flywheel motor RPM}
-    {4.0, 3700},  // 4 feet 
-    {4.7, 3800},
-    {5.0, 3850},  // 5 feet
-    {5.8, 3850},
-    {6.6, 3900},
-    {9.7, 4675},
-    {11.0, 5000}, 
-    {15.0, 5400}, // 15 feet
-    {16.2, 5500},
-    {20.0, 6000},  // 20 feet
-    {23.3, 6000},
-    {25.0, 6200}
-  };
 
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
@@ -83,21 +65,16 @@ public class ShooterSubsystem extends SubsystemBase {
 
     m_encoder = flywheel_lead.getSensorCollection();
 
-    flywheel_lead.setInverted(false);
-
     flywheel_follow.follow(flywheel_lead);
     flywheel_follow.setInverted(true);
 
-    //set up linear interpolator
-    m_lt_feet = new linearInterpolator(shooterDistances);
-
     MotorUtils.setCtreStatusSlow(flywheel_follow);
 
-    setPID();
+    adjustPID();
   }
 
   public void updateTestingRPM() {
-    m_testingStaticRPM = SmartDashboard.getNumber("static flywheel speed", m_testingStaticRPM);
+    m_testingStaticRPM = SmartDashboard.getNumber("static flywheel speed", 0);
   }
 
   public void stop() {
@@ -108,7 +85,7 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // this is for testing and tuning the pid
-    // setPIDFromSmartDashboard();
+    setPIDFromSmartDashboard();
     updateTestingRPM();
 
     double setPoint = 0;
@@ -158,7 +135,6 @@ public class ShooterSubsystem extends SubsystemBase {
     m_desiredRPM = rpm;
   }
 
-
   public double getCurrentRPM() {
     return m_currentRPM;
   }
@@ -205,19 +181,15 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     if (hasChanged) {
-      setPID();
+      adjustPID();
     }
   }
 
-  private void setPID() {
+  private void adjustPID() {
     flywheel_lead.config_kP(0, m_configP);
     flywheel_lead.config_kI(0, m_configI);
     flywheel_lead.config_kD(0, m_configD);
     flywheel_lead.config_kF(0, m_configF);
     flywheel_lead.config_IntegralZone(0, m_configIZ);
-  }
-  
-  public double getRPMforDistanceFeet(double distanceFeet) {
-    return m_lt_feet.getInterpolatedValue(distanceFeet);
   }
 }
