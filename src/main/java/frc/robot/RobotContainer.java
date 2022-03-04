@@ -11,6 +11,8 @@ import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -19,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.StartPoseConstants;
 import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.CargoReverseCommand;
@@ -65,6 +68,7 @@ public class RobotContainer {
   public final SendableChooser<Command> chooser = new SendableChooser<>();
   public final SendableChooser<Pose2d> startPoseChooser = new SendableChooser<>();
   public final SendableChooser<Command> autonTrajectoryChooser = new SendableChooser<>();
+  public final SendableChooser<Command> simpleAutonChooser = new SendableChooser<>();
 
   public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
 
@@ -74,20 +78,23 @@ public class RobotContainer {
   public RobotContainer(Robot robot) {
 
     m_robot = robot;
-    
-    // set the starting position of the robot on the field
-    startPoseChooser.addOption("1m left of hub", Constants.ROBOT_1M_LEFT_OF_HUB);
-    startPoseChooser.addOption("blue 1", StartPoseConstants.BLUE_20_13);
-    startPoseChooser.addOption("blue 2", StartPoseConstants.BLUE_22_19);
-    startPoseChooser.addOption("blue 3", StartPoseConstants.BLUE_22_8);
-    startPoseChooser.addOption("blue 4", StartPoseConstants.BLUE_27_6); //note: cannot be used in paths starting with ball 3
-    startPoseChooser.addOption("red 1", StartPoseConstants.RED_27_21);
-    startPoseChooser.addOption("red 2", StartPoseConstants.RED_31_14);
-    startPoseChooser.addOption("red 3", StartPoseConstants.RED_32_19);
-    startPoseChooser.addOption("red 4", StartPoseConstants.RED_32_8);
 
     drivetrain.setGyroscopeHeadingDegrees(0);
     drivetrain.setPose(Constants.ROBOT_1M_LEFT_OF_HUB, drivetrain.getGyroscopeRotation());
+
+    simpleAutonChooser.addOption("blue auton 1", SimpleAutonCommandOne.moveOutOfTarmacCommand(StartPoseConstants.BLUE_TOP,
+        new Translation2d(Units.feetToMeters(17), Units.feetToMeters(23))));
+    simpleAutonChooser.addOption("blue auton 2", SimpleAutonCommandTwo.shootAndMoveOutOfTarmacCommand(StartPoseConstants.BLUE_TOP,
+        new Translation2d(Units.feetToMeters(17), Units.feetToMeters(23))));
+    simpleAutonChooser.addOption("blue auton 3", SimpleAutonCommandThree.shootAndMoveToCargoCommand(StartPoseConstants.BLUE_TOP,
+        FieldConstants.BLUE_CARGO_7));
+    
+    simpleAutonChooser.addOption("red auton 1", SimpleAutonCommandOne.moveOutOfTarmacCommand(StartPoseConstants.RED_BOTTOM,
+        new Translation2d(Units.feetToMeters(37), Units.feetToMeters(4))));
+    simpleAutonChooser.addOption("red auton 2", SimpleAutonCommandTwo.shootAndMoveOutOfTarmacCommand(StartPoseConstants.RED_BOTTOM,
+        new Translation2d(Units.feetToMeters(37), Units.feetToMeters(4))));
+    simpleAutonChooser.addOption("blue auton 3", SimpleAutonCommandThree.shootAndMoveToCargoCommand(StartPoseConstants.RED_BOTTOM,
+        FieldConstants.RED_CARGO_7));
 
     // SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooterSubsystem,
     //     m_cargoSubsystem, m_intake, m_robot);
