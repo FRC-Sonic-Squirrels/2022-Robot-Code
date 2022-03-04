@@ -130,12 +130,12 @@ public final class Constants {
     public static final double kDThetaController = 0.02;
 
     // Feed Forward and PID values from SysId
-    public static final double kP = 2.3055;
+    public static final double kP = 2.2941; // test bot = 2.3055;
     public static final double kI = 0;
     public static final double kD = 0;
-    public static final double kA = 0.12817;
-    public static final double kV = 2.3423;
-    public static final double kS = 0.53114;
+    public static final double kA = 0.43516; // test bot = 0.12817;
+    public static final double kV = 2.344;   // test bot = 2.3423;
+    public static final double kS = 0.62811; // test bot = 0.53114;
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
