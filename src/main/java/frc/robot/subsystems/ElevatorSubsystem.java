@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
@@ -82,6 +83,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     winch_follow_talon.follow(winch_lead_talon);
     winch_lead_talon.setInverted(false);
     winch_follow_talon.setInverted(false);
+
+    // JVN calculator predicts 19.25A per motor under load
+    SupplyCurrentLimitConfiguration currentLimit =
+        new SupplyCurrentLimitConfiguration(true, 20, 25, 0.1);
+    winch_lead_talon.configSupplyCurrentLimit(currentLimit);
+    winch_follow_talon.configSupplyCurrentLimit(currentLimit);
+
+    winch_lead_talon.configOpenloopRamp(0.2);
 
     // Reduce CAN traffic where possible
     // https://docs.ctre-phoenix.com/en/latest/ch18_CommonAPI.html
