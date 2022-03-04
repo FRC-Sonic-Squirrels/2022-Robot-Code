@@ -76,7 +76,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     winch_follow_talon.setNeutralMode(NeutralMode.Brake);
 
     // config hard limit switch for full down position
-    winch_lead_talon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
+    winch_lead_talon.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
         LimitSwitchNormal.NormallyOpen, 0);
 
     winch_follow_talon.follow(winch_lead_talon);
@@ -95,9 +95,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     brakeOn();
     zeroHeight();
  
-    // set soft limit on forward movement (down)
-    winch_lead_talon.configForwardSoftLimitThreshold(heightToTicks(0.0));
-    winch_lead_talon.configForwardSoftLimitEnable(true);
+    // // set soft limit on forward movement (down)
+    // winch_lead_talon.configForwardSoftLimitThreshold(heightToTicks(0.0));
+    // winch_lead_talon.configForwardSoftLimitEnable(true);
 
     // set soft limit on reverse movement (Up)
     winch_lead_talon.configReverseSoftLimitThreshold(heightToTicks(maxExtensionInches));
@@ -216,7 +216,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * atLowerLimit() returns true if the lower limit switch is triggered.
    */
   public boolean atLowerLimit() {
-    return (1 == winch_lead_talon.isRevLimitSwitchClosed());
+    return (1 == winch_lead_talon.isFwdLimitSwitchClosed());
   }
 
   @Override
@@ -227,12 +227,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     SmartDashboard.putNumber("Elevator Height (inches)", getHeightInches());
+    SmartDashboard.putNumber("Elevator Height Set Point", heightSetpointInches);
     //SmartDashboard.putNumber("Elevator Height (ticks)", getHeightTicks());
     //SmartDashboard.putNumber("Elevator Vel (inches per s)", ticks2distance * winch_lead_talon.getSelectedSensorVelocity() / 10.0);
     //SmartDashboard.putNumber("Elevator SetPoint inches", heightSetpointInches);
     //SmartDashboard.putNumber("Elevator SetPoint (ticks)", heightToTicks(heightSetpointInches));
     //SmartDashboard.putNumber("Elevator Error", heightSetpointInches - getHeightInches());
-    //SmartDashboard.putBoolean("Elevator limit", atLowerLimit());
+    SmartDashboard.putBoolean("Elevator limit", atLowerLimit());
     SmartDashboard.putNumber("Elevator %output", winch_lead_talon.getMotorOutputPercent());
     //SmartDashboard.putNumber("Elevator Current", winch_lead_talon.getSupplyCurrent());
     SmartDashboard.putBoolean("Elevator Brake On", !frictionBrakeSolenoid.get());
