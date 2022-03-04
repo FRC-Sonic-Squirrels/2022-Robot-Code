@@ -36,7 +36,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final double gearRatio =  0.074;
   private final double winchDiameter_inches = 1.95;   // 1.25 diameter + string windings
   private final double winchCircumference = Math.PI * winchDiameter_inches;
-  private final double maxExtensionInches = 21.0;
+  private final double maxExtensionInches = 24.0;
   private double heightSetpointInches = 0.0;
   private double toleranceInches = 0.2;
   private double feedForwardClimbing = 0.025734; // from JVM calculator
