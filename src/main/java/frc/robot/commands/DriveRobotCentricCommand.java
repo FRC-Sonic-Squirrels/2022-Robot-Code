@@ -12,7 +12,7 @@ import java.util.function.DoubleSupplier;
 
 public class DriveRobotCentricCommand extends CommandBase {
   /** Creates a new RobotCentricDriving. */
-    private final Drivetrain m_drivetrainSubsystem;
+    private final Drivetrain m_Drivetrain;
 
     private final DoubleSupplier m_translationXSupplier;
     private final DoubleSupplier m_translationYSupplier;
@@ -20,17 +20,17 @@ public class DriveRobotCentricCommand extends CommandBase {
 
   
 
-    public DriveRobotCentricCommand(Drivetrain drivetrainSubsystem,
+    public DriveRobotCentricCommand(Drivetrain Drivetrain,
       DoubleSupplier translationXSupplier,
       DoubleSupplier translationYSupplier,
       DoubleSupplier rotationSupplier) {
 
-      this.m_drivetrainSubsystem = drivetrainSubsystem;
+      this.m_Drivetrain = Drivetrain;
       this.m_translationXSupplier = translationXSupplier;
       this.m_translationYSupplier = translationYSupplier;
       this.m_rotationSupplier = rotationSupplier;
 
-      addRequirements(drivetrainSubsystem);
+      addRequirements(Drivetrain);
     // Use addRequirements() here to declare subsystem dependencies.
     }
 
@@ -41,7 +41,7 @@ public class DriveRobotCentricCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drivetrainSubsystem.drive(
+    m_Drivetrain.drive(
       new ChassisSpeeds(
             m_translationXSupplier.getAsDouble(),
             m_translationYSupplier.getAsDouble(),

@@ -8,21 +8,24 @@ package frc.robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.StartPoseConstants;
 import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.CargoReverseCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.ElevatorControlCommand;
-import frc.robot.commands.ShootOneCargoCommand;
 import frc.robot.commands.ShootWithSetRPMCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
@@ -35,6 +38,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.autonomous.SimpleAutonCommandOne;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -58,9 +62,11 @@ public class RobotContainer {
   public final XboxController m_climbController = new XboxController(2);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
-  // public final SendableChooser<Pose2d> startPoseChooser = new SendableChooser<>();
-  // public final SendableChooser<Command> autonTrajectoryChooser = new SendableChooser<>();
 
+  //public final SendableChooser<Pose2d> startPoseChooser = new SendableChooser<>();
+  //public final SendableChooser<Command> autonTrajectoryChooser = new SendableChooser<>();
+  //public final SendableChooser<Command> simpleAutonChooser = new SendableChooser<>();
+  
   public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
 
   private UsbCamera camera;
@@ -71,6 +77,7 @@ public class RobotContainer {
   public RobotContainer(Robot robot) {
 
     m_robot = robot;
+
     
     // set the starting position of the robot on the field
     // startPoseChooser.addOption("1m left of hub", Constants.ROBOT_1M_LEFT_OF_HUB);
@@ -99,6 +106,7 @@ public class RobotContainer {
     camera = CameraServer.startAutomaticCapture();
     camera.setResolution(320, 240);
     camera.setFPS(20);
+
  
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
@@ -188,14 +196,17 @@ public class RobotContainer {
     new Button(m_operatorController::getYButton)
        .whileHeld(new IntakeReverseCommand(m_intake, m_cargoSubsystem));
 
+    // 2000 RPM is good for 5 feet
     new Button(m_operatorController::getXButton)
-       .whileHeld(new ShootWithSetRPMCommand(2000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+       .whileHeld(new ShootWithSetRPMCommand(2500, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
+    // 3000 RPM is good for 10 feet
     new Button(m_operatorController::getBButton)
        .whileHeld(new ShootWithSetRPMCommand(3000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
+    // 1500 RPM is perfecto for right against the hub
     new Button(m_operatorController::getRightBumper)
-     .whenPressed(new ShootWithSetRPMCommand(1000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+     .whenPressed(new ShootWithSetRPMCommand(1500, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
     // new Button(m_operatorController::getLeftStickButtonPressed)
     //   .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));

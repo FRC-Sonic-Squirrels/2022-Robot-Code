@@ -216,7 +216,6 @@ public final class Constants {
     public static final int RED_PIPELINE = 1;
     public static final int BLUE_PIPELINE = 2;
   }
-
   public static class FieldConstants{
     public static Translation2d BLUE_CARGO_1 = new Translation2d( Units.inchesToMeters(42), Units.inchesToMeters(44.4));
     public static Translation2d BLUE_CARGO_2 = new Translation2d( Units.inchesToMeters(198), Units.inchesToMeters(72));
@@ -248,24 +247,18 @@ public final class Constants {
   } 
 
   public static class StartPoseConstants {
-    //TODO: get the angles of start and shoot pose constants
-    public static Pose2d BLUE_27_6  = new Pose2d( Units.feetToMeters(27), Units.feetToMeters(6),  new Rotation2d() );
-    public static Pose2d BLUE_22_8  = new Pose2d( Units.feetToMeters(22), Units.feetToMeters(8),  new Rotation2d() );
-    public static Pose2d BLUE_20_13 = new Pose2d( Units.feetToMeters(20), Units.feetToMeters(13), new Rotation2d() );
-    public static Pose2d BLUE_22_19 = new Pose2d( Units.feetToMeters(22), Units.feetToMeters(19), new Rotation2d() );
+    public static Pose2d ORIGIN          = new Pose2d(0.0, 0.0, new Rotation2d(0));
+    
+    // TODO: make the robot start poses on the edges of the tarmac instead of the center
+    public static Pose2d BLUE_BOTTOM     = new Pose2d( Units.feetToMeters(27), Units.feetToMeters(6),  new Rotation2d(0) );
+    public static Pose2d BLUE_MID_BOTTOM = new Pose2d( Units.feetToMeters(22), Units.feetToMeters(8),  new Rotation2d(7*Math.PI/4) );
+    public static Pose2d BLUE_MID_TOP    = new Pose2d( Units.feetToMeters(20), Units.feetToMeters(13), new Rotation2d(3*Math.PI/2) );
+    public static Pose2d BLUE_TOP        = new Pose2d( Units.feetToMeters(22), Units.feetToMeters(19), new Rotation2d(5*Math.PI/4) );
 
-    public static Pose2d RED_27_21 = new Pose2d( Units.feetToMeters(27), Units.feetToMeters(21), new Rotation2d() );
-    public static Pose2d RED_32_19 = new Pose2d( Units.feetToMeters(32), Units.feetToMeters(19), new Rotation2d() );
-    public static Pose2d RED_31_14 = new Pose2d( Units.feetToMeters(31), Units.feetToMeters(14), new Rotation2d() );
-    public static Pose2d RED_32_8  = new Pose2d( Units.feetToMeters(32), Units.feetToMeters(8),  new Rotation2d() );
+    public static Pose2d RED_TOP         = new Pose2d( Units.feetToMeters(27), Units.feetToMeters(21), new Rotation2d(Math.PI) );
+    public static Pose2d RED_MID_TOP     = new Pose2d( Units.feetToMeters(32), Units.feetToMeters(19), new Rotation2d(3*Math.PI/4) );
+    public static Pose2d RED_MID_BOTTOM  = new Pose2d( Units.feetToMeters(31), Units.feetToMeters(14), new Rotation2d(Math.PI/2) );
+    public static Pose2d RED_BOTTOM      = new Pose2d( Units.feetToMeters(32), Units.feetToMeters(8),  new Rotation2d(Math.PI/4) );
   }
 
-  public static class ShootPoseConstants {
-    public static Pose2d BLUE_UP   = new Pose2d( Units.feetToMeters(25.5), Units.feetToMeters(9.5),  new Rotation2d() );
-    public static Pose2d BLUE_DOWN = new Pose2d( Units.feetToMeters(23.5), Units.feetToMeters(15.5), new Rotation2d() );
-
-    public static Pose2d RED_UP    = new Pose2d( Units.feetToMeters(28.5), Units.feetToMeters(17.5), new Rotation2d() );
-    public static Pose2d RED_DOWN  = new Pose2d( Units.feetToMeters(30.5), Units.feetToMeters(11.5), new Rotation2d() );
-  }
-  
 }
