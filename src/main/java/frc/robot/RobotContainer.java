@@ -7,8 +7,13 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -18,10 +23,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StartPoseConstants;
 import frc.robot.commands.ArmManualControlCommand;
+import frc.robot.commands.CargoMoveToUpperBeltsCommand;
 import frc.robot.commands.CargoReverseCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
@@ -30,6 +42,7 @@ import frc.robot.commands.ShootWithSetRPMCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.ShootCargoCommand;
+import frc.robot.commands.ShootOneCargoCommand;
 import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.subsystems.ArmSubsystem;
@@ -65,11 +78,13 @@ public class RobotContainer {
 
   //public final SendableChooser<Pose2d> startPoseChooser = new SendableChooser<>();
   //public final SendableChooser<Command> autonTrajectoryChooser = new SendableChooser<>();
-  //public final SendableChooser<Command> simpleAutonChooser = new SendableChooser<>();
+  public final SendableChooser<Command> simpleAutonChooser = new SendableChooser<>();
   
   public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
 
   private UsbCamera camera;
+
+  TestTrajectories m_tt;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -78,7 +93,14 @@ public class RobotContainer {
 
     m_robot = robot;
 
+    m_tt = new TestTrajectories(1, 0.75, drivetrain, true);
+
+    simpleAutonChooser.addOption("blue stands start", moveOutOfTarmacCommand(
+      Constants.GPeventConstants.BLUE_TOP, new Translation2d(0, Units.feetToMeters(7.5)))); 
     
+    simpleAutonChooser.addOption("Do nothing", new InstantCommand());
+
+    simpleAutonChooser.setDefaultOption("Do nothing", new InstantCommand());
     // set the starting position of the robot on the field
     // startPoseChooser.addOption("1m left of hub", Constants.ROBOT_1M_LEFT_OF_HUB);
     // startPoseChooser.addOption("blue 1", StartPoseConstants.BLUE_20_13);
@@ -252,6 +274,116 @@ public class RobotContainer {
     } 
     return false;
   }
+
+  //--------------------------------------------------------------------------------------
+  //Auton
+
+  public Command SwerveControllerCommand(Trajectory trajectory, boolean stopAtEnd) {
+
+    // Example from WPILib:
+    // https://github.com/wpilibsuite/allwpilib/blob/main/wpilibjExamples/src/main/java/edu/wpi/first/wpilibj/examples/swervecontrollercommand/RobotContainer.java
+
+    var thetaController =
+        new ProfiledPIDController(AutoConstants.kPThetaController, AutoConstants.kIThetaController,
+            AutoConstants.kDThetaController, AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    Command swerveControllerCommand = new SwerveControllerCommand(trajectory,
+        drivetrain::getPose, drivetrain.kinematics(),
+        new PIDController(AutoConstants.kP, AutoConstants.kI, AutoConstants.kD),
+        new PIDController(AutoConstants.kP, AutoConstants.kI, AutoConstants.kD), thetaController,
+        drivetrain::setModuleStates, drivetrain);
+
+    if (stopAtEnd) {
+      // Stop at the end. A good safe default, but not desireable if running two paths back to back
+      swerveControllerCommand = swerveControllerCommand
+          .andThen(() -> drivetrain.drive(new ChassisSpeeds(0, 0, 0)));
+    }
+
+    return swerveControllerCommand;
+  }
+
+  private Translation2d poseToTranslation(Pose2d pose) {
+    return new Translation2d(pose.getX(), pose.getY());
+  }
+
+
+  public Command moveOutOfTarmacCommand(Pose2d startPos, Translation2d translation) {
+    //odometry reset 
+    drivetrain.setPose(startPos, startPos.getRotation());
+    //gyro reset 
+    drivetrain.setGyroscopeHeadingDegrees(startPos.getRotation().getDegrees());
+  
+    Trajectory startToTarget = m_tt.simpleCurve(translation.getX(), translation.getY())
+      //trajectory thinks its 0,0 so transform it from 0,0 to the current drivetrain pose
+      .transformBy(new Transform2d(new Pose2d(), drivetrain.getPose()));
+
+    return SwerveControllerCommand(startToTarget, true);
+
+  }
+
+  
+  
+  public Command moveOut(double x, double y, double startAngleDegrees){
+    drivetrain.setGyroscopeHeadingDegrees(startAngleDegrees);
+    Trajectory trajectory = m_tt.simpleCurve(x, y);
+
+    return SwerveControllerCommand(trajectory, true);  
+  }
+
+  public Command shootAndMoveOutOfTarmacCommandWithPose(Pose2d startPos, Translation2d targetPos) {
+
+    drivetrain.setPose(startPos, startPos.getRotation());
+    //startToShoot.transformBy(new Transform2d(new Pose2d(shootPos.getX(), shootPos.getY(), shootAngle), drivetrain.getPose()));
+
+    Trajectory trajectory = m_tt.simpleCurve(targetPos.getX(), targetPos.getY());
+    trajectory.transformBy(new Transform2d(new Pose2d(), drivetrain.getPose()));
+    return new SequentialCommandGroup(
+      // 1. move cargo to upper belts, set up flywheel, then move to the shooting location
+      new ParallelCommandGroup(
+        new CargoMoveToUpperBeltsCommand(m_cargoSubsystem),
+        new WaitUntilCommand(() -> m_cargoSubsystem.cargoInUpperBelts()),
+        new InstantCommand(() -> m_shooterSubsystem.setFlywheelRPM(ShooterConstants.m_activated)),
+        new WaitUntilCommand(() -> m_shooterSubsystem.isAtDesiredRPM())
+      ),
+      
+      // 2. shoot the cargo
+      new ShootOneCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake), 
+      
+      // 3. slow down flywheel and move away
+      new ParallelCommandGroup(
+        new InstantCommand(() -> m_shooterSubsystem.setFlywheelRPM(ShooterConstants.m_idle)),
+        SwerveControllerCommand(trajectory, true)
+      )
+    );
+
+  }
+
+   public  Command shootAndMoveOutOfTarmacCommand(double x, double y, double startAngleDegrees) {
+     //startToShoot.transformBy(new Transform2d(new Pose2d(shootPos.getX(), shootPos.getY(), shootAngle), drivetrain.getPose()));
+     drivetrain.setGyroscopeHeadingDegrees(startAngleDegrees);
+    return new SequentialCommandGroup(
+      // 1. move cargo to upper belts, set up flywheel, then move to the shooting location
+      new ParallelCommandGroup(
+        new CargoMoveToUpperBeltsCommand(m_cargoSubsystem),
+        new WaitUntilCommand(() -> m_cargoSubsystem.cargoInUpperBelts()),
+        new InstantCommand(() -> m_shooterSubsystem.setFlywheelRPM(2500)), //TODO: CHECK THIS RPM ALSO IN SHOOT 1 CARGO COMMAND
+        new WaitUntilCommand(() -> m_shooterSubsystem.isAtDesiredRPM())
+      ),
+      
+      // 2. shoot the cargo
+      new ShootOneCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake), 
+      
+      // 3. slow down flywheel and move away
+      new ParallelCommandGroup(
+        new InstantCommand(() -> m_shooterSubsystem.setFlywheelRPM(0)),
+        SwerveControllerCommand(m_tt.simpleCurve(x, y), true)
+      )
+    );
+
+  }
+  
+
 }
 
 

@@ -261,4 +261,9 @@ public final class Constants {
     public static Pose2d RED_BOTTOM      = new Pose2d( Units.feetToMeters(32), Units.feetToMeters(8),  new Rotation2d(Math.PI/4) );
   }
 
+  public static class GPeventConstants {
+    //stands side 0,0 is on blue terminal 
+    public static Pose2d BLUE_TOP = new Pose2d(Units.feetToMeters(23.5), Units.feetToMeters(15), Rotation2d.fromDegrees(156));
+  }
+
 }

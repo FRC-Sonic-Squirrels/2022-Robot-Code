@@ -30,7 +30,7 @@ public class ShootOneCargoCommand extends CommandBase {
   // This command will only be called in autonomous mode, where the ball is already moved to the upper belts.
   @Override
   public void initialize() {
-    m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getDesiredRPM());
+    m_shooterSubsystem.setFlywheelRPM(2500); //TODO: CHECK THIS
   }
 
   // Called every time the scheduler runs while the command is scheduled.
