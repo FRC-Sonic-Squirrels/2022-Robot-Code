@@ -8,12 +8,14 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.CargoSubsystem;
 
 /**
@@ -35,6 +37,7 @@ public class Robot extends TimedRobot {
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
+
   @Override
   public void robotInit() {
 
@@ -50,6 +53,8 @@ public class Robot extends TimedRobot {
 
     // We don't use this
     LiveWindow.disableAllTelemetry();
+
+    
 
   }
 
@@ -94,8 +99,12 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.chooser.getSelected();
-    
+    //m_autonomousCommand = m_robotContainer.chooser.getSelected();
+    m_autonomousCommand = new InstantCommand(
+      () ->m_robotContainer.drivetrain.drive(new ChassisSpeeds()), m_robotContainer.drivetrain)
+        .perpetually();
+
+
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
