@@ -44,13 +44,6 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(this);
 
-    //m_robotContainer.drivetrain.setGyroscopeHeadingDegrees(0);
-    //m_robotContainer.drivetrain.setPose(Constants.ROBOT_1M_LEFT_OF_HUB, m_robotContainer.drivetrain.getGyroscopeRotation());
-
-    // camera = CameraServer.startAutomaticCapture();
-    // camera.setResolution(320, 240);
-    // camera.setFPS(20);
-
     // clear sticky faults
     revPDH.clearStickyFaults();
     revPDH.resetTotalEnergy();
