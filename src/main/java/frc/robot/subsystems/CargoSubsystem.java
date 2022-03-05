@@ -39,7 +39,7 @@ public class CargoSubsystem extends SubsystemBase {
 
   // TODO: find the real percent outputs of the conveyor belts
   private double m_lowerOutput = 0.8;
-  private double m_upperOutput = 0.8;
+  private double m_upperOutput = 0.9;
 
   public CargoSubsystem() {
 
