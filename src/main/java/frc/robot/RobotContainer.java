@@ -6,6 +6,8 @@ package frc.robot;
 
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.CvSink;
+import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -39,6 +41,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.autonomous.SimpleAutonCommandOne;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -101,8 +104,20 @@ public class RobotContainer {
     if (RobotBase.isReal())  {
       //Creates UsbCamera and sets resolution
       camera = CameraServer.startAutomaticCapture();
-      camera.setResolution(320, 240);
-      camera.setFPS(20);
+      // wide angle camera lowest resolution is 30fps@640x320 ?
+      // https://www.uctronics.com/arducam-1080p-low-light-wdr-usb-camera-module-with-metal-case-2mp-1-2-8-cmos-imx291-160-degree-ultra-wide-angle-mini-uvc-webcam-board-with-microphone-3-3ft-1m-cable-for-windows-linux-mac-os-2244-ub020201.html
+      camera.setResolution(640, 320);
+      camera.setFPS(30);
+
+      // Creates UsbCamera and MjpegServer [1] and connects them
+      CameraServer.startAutomaticCapture();
+
+      // Creates the CvSink and connects it to the UsbCamera
+      CvSink cvSink = CameraServer.getVideo();
+
+      // Creates the CvSource and MjpegServer [2] and connects them
+      CvSource outputStream = CameraServer.putVideo("Resized_320x240", 320, 240);
+
     }
  
     // Set up the default command for the drivetrain.
