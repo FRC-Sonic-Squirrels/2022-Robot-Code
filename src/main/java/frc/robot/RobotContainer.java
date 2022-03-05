@@ -193,14 +193,17 @@ public class RobotContainer {
     new Button(m_operatorController::getYButton)
        .whileHeld(new IntakeReverseCommand(m_intake, m_cargoSubsystem));
 
+    // 2000 RPM is good for 5 feet
     new Button(m_operatorController::getXButton)
-       .whileHeld(new ShootWithSetRPMCommand(2000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+       .whileHeld(new ShootWithSetRPMCommand(2500, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
+    // 3000 RPM is good for 10 feet
     new Button(m_operatorController::getBButton)
        .whileHeld(new ShootWithSetRPMCommand(3000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
+    // 1500 RPM is perfecto for right against the hub
     new Button(m_operatorController::getRightBumper)
-     .whenPressed(new ShootWithSetRPMCommand(1000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+     .whenPressed(new ShootWithSetRPMCommand(1500, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
     // new Button(m_operatorController::getLeftStickButtonPressed)
     //   .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
