@@ -98,6 +98,7 @@ public class RobotContainer {
     simpleAutonChooser.addOption("blue stands start", moveOutOfTarmacCommand(
       Constants.GPeventConstants.BLUE_TOP, new Translation2d(0, Units.feetToMeters(7.5)))); 
     
+    simpleAutonChooser.addOption("red left side backup", moveOut(Units.feetToMeters(7.5), 0, -24));
     simpleAutonChooser.addOption("Do nothing", new InstantCommand());
 
     simpleAutonChooser.setDefaultOption("Do nothing", new InstantCommand());
