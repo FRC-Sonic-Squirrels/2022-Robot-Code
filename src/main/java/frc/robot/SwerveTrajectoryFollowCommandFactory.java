@@ -149,27 +149,27 @@ public class SwerveTrajectoryFollowCommandFactory {
 
     TestTrajectories tt = new TestTrajectories(maxVelocity, maxAcceleration, drivetrain, isSwerve);
     
-    //TODO: have the mid poses be different than the cargo poses and find the shoot pose
-    chooser.addOption("4 ball auton 123", fourBallAutonCommand(
-        new Pose2d(FieldConstants.BLUE_CARGO_1, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_1, new Rotation2d()), 
-        null,
-        new Pose2d(FieldConstants.BLUE_CARGO_2, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_2, new Rotation2d()),
-        new Pose2d(FieldConstants.BLUE_CARGO_3, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_3, new Rotation2d()),
-        tt, drivetrain, shooter, cargo, intake, robot));
+    // //TODO: have the mid poses be different than the cargo poses and find the shoot pose
+    // chooser.addOption("4 ball auton 123", fourBallAutonCommand(
+    //     new Pose2d(FieldConstants.BLUE_CARGO_1, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_1, new Rotation2d()), 
+    //     null,
+    //     new Pose2d(FieldConstants.BLUE_CARGO_2, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_2, new Rotation2d()),
+    //     new Pose2d(FieldConstants.BLUE_CARGO_3, new Rotation2d()), new Pose2d(FieldConstants.BLUE_CARGO_3, new Rotation2d()),
+    //     tt, drivetrain, shooter, cargo, intake, robot));
     
-    chooser.addOption("4 ball auton 237", fourBallAutonCommand(
-        null, null,
-        null,
-        null, null,
-        null, null,
-        tt, drivetrain, shooter, cargo, intake, robot));
+    // chooser.addOption("4 ball auton 237", fourBallAutonCommand(
+    //     null, null,
+    //     null,
+    //     null, null,
+    //     null, null,
+    //     tt, drivetrain, shooter, cargo, intake, robot));
 
-    chooser.addOption("4 ball auton 372", fourBallAutonCommand(
-        null, null,
-        null,
-        null, null,
-        null, null,
-        tt, drivetrain, shooter, cargo, intake, robot));
+    // chooser.addOption("4 ball auton 372", fourBallAutonCommand(
+    //     null, null,
+    //     null,
+    //     null, null,
+    //     null, null,
+    //     tt, drivetrain, shooter, cargo, intake, robot));
 
     chooser.addOption("Figure 8", figureEightCommand(tt, drivetrain));
     chooser.addOption("Go Forward 1m", straightForward1mCommand(tt, drivetrain));

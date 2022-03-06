@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+
+import frc.robot.commands.ShootCargoCommand;
+import frc.robot.commands.ShootWithSetRPMCommand;
 import frc.robot.subsystems.CargoSubsystem;
 
 /**
@@ -99,15 +102,17 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    //m_autonomousCommand = m_robotContainer.chooser.getSelected();
-    Pose2d startPos = Constants.StartPoseConstants.BLUE_MID_TOP;
+    m_autonomousCommand = m_robotContainer.chooser.getSelected();
+    //Pose2d startPos = Constants.StartPoseConstants.BLUE_MID_TOP;
 
-    m_robotContainer.drivetrain.setGyroscopeHeadingDegrees(startPos.getRotation().getDegrees());
-    m_robotContainer.drivetrain.setPose(startPos, m_robotContainer.drivetrain.getGyroscopeRotation());
+    // m_robotContainer.drivetrain.setGyroscopeHeadingDegrees(startPos.getRotation().getDegrees());
+    // m_robotContainer.drivetrain.setPose(startPos, startPos.getRotation());
 
-    m_autonomousCommand = new InstantCommand(
-      () ->m_robotContainer.drivetrain.drive(new ChassisSpeeds()), m_robotContainer.drivetrain)
-        .perpetually();
+    // m_autonomousCommand = new InstantCommand(
+    //   () ->m_robotContainer.drivetrain.drive(new ChassisSpeeds()), m_robotContainer.drivetrain)
+    //     .perpetually();
+    //     //.alongWith(new ShootWithSetRPMCommand(1500, m_robotContainer.m_cargoSubsystem, m_robotContainer.m_shooterSubsystem, m_robotContainer.m_intake, this));
+
 
 
     // schedule the autonomous command (example)

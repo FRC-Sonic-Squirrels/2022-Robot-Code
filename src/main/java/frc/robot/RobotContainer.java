@@ -5,10 +5,16 @@
 package frc.robot;
 
 
+import java.util.List;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.constraint.SwerveDriveKinematicsConstraint;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -18,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.StartPoseConstants;
@@ -91,9 +98,9 @@ public class RobotContainer {
     // startPoseChooser.addOption("red 4", StartPoseConstants.RED_32_8);
    
 
-    // SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooterSubsystem,
-    //     m_cargoSubsystem, m_intake, m_robot);
-    // SmartDashboard.putData("Auto Mode (discontinued)", chooser);
+    SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooterSubsystem,
+        m_cargoSubsystem, m_intake, m_robot);
+    SmartDashboard.putData("Auto Mode", chooser);
 
     // // TODO: figure out if getSelected() will work properly or just return null
     // SwerveTrajectoryAutonomousCommandFactory.addAutonTrajectoriesToChooser(autonTrajectoryChooser, 1.0, 0.75,
@@ -249,6 +256,34 @@ public class RobotContainer {
       return true;
     } 
     return false;
+  }
+
+  public Command shootAndDriveAuton(double distanceInMeters, double rpm) {
+
+    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+        new Pose2d(0.0, 0.0, new Rotation2d(0)),
+        List.of(), new Pose2d(distanceInMeters, 0.0, new Rotation2d(0)),
+        getTrajectoryConfig().setReversed(distanceInMeters < 0.0));
+
+    return new SequentialCommandGroup(
+
+    );
+  }
+
+  public TrajectoryConfig getTrajectoryConfig() {
+    //TODO: THESE ARE HARD CODED VALUES
+    TrajectoryConfig config = new TrajectoryConfig(1, 0.75)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(drivetrain.kinematics());
+
+   
+      // Limits the velocity of the robot around turns such that no wheel of a swerve-drive robot
+      // goes over a specified maximum velocity.
+      SwerveDriveKinematicsConstraint swerveConstraint = new SwerveDriveKinematicsConstraint(
+          drivetrain.kinematics(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND);
+      config.addConstraint(swerveConstraint);
+    
+    return config;
   }
 }
 

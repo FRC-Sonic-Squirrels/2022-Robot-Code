@@ -203,7 +203,7 @@ public class Drivetrain extends SubsystemBase {
 
     m_odometry.resetPosition(
         new Pose2d(m_odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(0.0)),
-        getGyroscopeRotation());
+        Rotation2d.fromDegrees(0.0));
   }
 
   public void setGyroscopeHeadingDegrees(double deg) {
