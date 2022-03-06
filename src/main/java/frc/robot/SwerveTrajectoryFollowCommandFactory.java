@@ -91,11 +91,11 @@ public class SwerveTrajectoryFollowCommandFactory {
   }
 
   public static Command straightForward2mCommand(TestTrajectories testTrajectories, Drivetrain drivetrain) {
-    return SwerveControllerCommand(testTrajectories.straightForward(2.0), drivetrain, true);
+    return SwerveControllerCommand(testTrajectories.straightForward(3.0), drivetrain, true);//FIXME
   }
 
   public static Command straightBack1mCommand(TestTrajectories testTrajectories, Drivetrain drivetrain) {
-    return SwerveControllerCommand(testTrajectories.straightForward(-1.0), drivetrain, true);
+    return SwerveControllerCommand(testTrajectories.straightForward(-3.0), drivetrain, true); //FIXME
   }
 
   public static Command sidewaysLeft1mCommand(TestTrajectories testTrajectories, Drivetrain drivetrain) {

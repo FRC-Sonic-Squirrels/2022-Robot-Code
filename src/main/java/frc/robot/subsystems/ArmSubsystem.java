@@ -22,7 +22,7 @@ import frc.robot.Constants.canId;
 
 public class ArmSubsystem extends SubsystemBase {
   private CANSparkMax m_armLeadMotor = new CANSparkMax(canId.CANID19_ARM_LEAD_MOTOR, MotorType.kBrushless);
-  private CANSparkMax m_armFollowMotor = new CANSparkMax(canId.CANID20_ARM_FOLLOW_MOTOR, MotorType.kBrushless);
+  //private CANSparkMax m_armFollowMotor = new CANSparkMax(canId.CANID20_ARM_FOLLOW_MOTOR, MotorType.kBrushless);
 
   private int kCPR = 8192;   // ticks per revolution
   private SparkMaxAlternateEncoder.Type kAltEncType = SparkMaxAlternateEncoder.Type.kQuadrature;
@@ -54,12 +54,12 @@ public class ArmSubsystem extends SubsystemBase {
 
   public ArmSubsystem() {
     m_armLeadMotor.restoreFactoryDefaults();
-    m_armFollowMotor.restoreFactoryDefaults();
+    //m_armFollowMotor.restoreFactoryDefaults();
 
     m_armLeadMotor.setIdleMode(IdleMode.kBrake);
-    m_armFollowMotor.setIdleMode(IdleMode.kBrake);
+    //m_armFollowMotor.setIdleMode(IdleMode.kBrake);
 
-    m_armFollowMotor.follow(m_armLeadMotor);
+    //m_armFollowMotor.follow(m_armLeadMotor);
 
     m_throughBoreEncoder = m_armLeadMotor.getAlternateEncoder(kAltEncType, kCPR);
     
@@ -87,7 +87,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     // Reduce CAN traffic when possible
     // https://www.hi-im.kim/canbus
-    MotorUtils.setSparkMaxStatusSlow(m_armFollowMotor);
+    //MotorUtils.setSparkMaxStatusSlow(m_armFollowMotor);
     // we don't need fast updates of sensor velocity
     //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 200);
     // we do need updates of sensor position
@@ -115,7 +115,7 @@ public class ArmSubsystem extends SubsystemBase {
    */
   public void coastMode() {
     m_armLeadMotor.setIdleMode(IdleMode.kCoast);
-    m_armFollowMotor.setIdleMode(IdleMode.kCoast);
+    //m_armFollowMotor.setIdleMode(IdleMode.kCoast);
   }
  
   /**
@@ -123,7 +123,7 @@ public class ArmSubsystem extends SubsystemBase {
   */
   public void brakeMode() {
     m_armLeadMotor.setIdleMode(IdleMode.kBrake);
-    m_armFollowMotor.setIdleMode(IdleMode.kBrake);
+    //m_armFollowMotor.setIdleMode(IdleMode.kBrake);
   }
 
   /**
@@ -181,12 +181,12 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void setMotorCoastMode(){
     m_armLeadMotor.setIdleMode(IdleMode.kCoast);
-    m_armFollowMotor.setIdleMode(IdleMode.kCoast);
+    //m_armFollowMotor.setIdleMode(IdleMode.kCoast);
   }
 
   public void setMotorBreakMode(){
     m_armLeadMotor.setIdleMode(IdleMode.kBrake);
-    m_armFollowMotor.setIdleMode(IdleMode.kBrake);
+    //m_armFollowMotor.setIdleMode(IdleMode.kBrake);
   }
 
   @Override

@@ -5,6 +5,7 @@
 package frc.robot;
 
 
+import java.time.Instant;
 import java.util.List;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
@@ -24,7 +25,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.StartPoseConstants;
@@ -78,6 +83,8 @@ public class RobotContainer {
 
   private UsbCamera camera;
 
+  TestTrajectories m_tt = new TestTrajectories(1, 0.75, drivetrain, true);
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -100,6 +107,8 @@ public class RobotContainer {
 
     SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooterSubsystem,
         m_cargoSubsystem, m_intake, m_robot);
+
+    chooser.addOption("Auton shoot and pick up test", shootAndDriveAuton());
     SmartDashboard.putData("Auto Mode", chooser);
 
     // // TODO: figure out if getSelected() will work properly or just return null
@@ -258,15 +267,26 @@ public class RobotContainer {
     return false;
   }
 
-  public Command shootAndDriveAuton(double distanceInMeters, double rpm) {
-
-    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0.0, 0.0, new Rotation2d(0)),
-        List.of(), new Pose2d(distanceInMeters, 0.0, new Rotation2d(0)),
-        getTrajectoryConfig().setReversed(distanceInMeters < 0.0));
+  public Command shootAndDriveAuton() {
 
     return new SequentialCommandGroup(
-
+      new InstantCommand(() -> m_shooterSubsystem.setFlywheelRPM(1500), m_shooterSubsystem),
+      new WaitCommand(2),
+      //might cause problems in cargo transition 
+      new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot)
+        .withTimeout(2),
+      new WaitCommand(0.5),
+      new ParallelCommandGroup(
+        SwerveTrajectoryFollowCommandFactory.straightForward2mCommand(m_tt, drivetrain),
+        new IntakeDeployCommand(m_intake, m_cargoSubsystem)
+          .withTimeout(4) //deploy or run? 
+      ),
+      new ParallelCommandGroup(
+         SwerveTrajectoryFollowCommandFactory.straightBack1mCommand(m_tt, drivetrain),
+         new InstantCommand(() -> m_shooterSubsystem.setFlywheelRPM(1500), m_shooterSubsystem)
+      ),
+      new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot)
+        .withTimeout(2)
     );
   }
 
