@@ -251,8 +251,8 @@ public final class Constants {
     
     // TODO: make the robot start poses on the edges of the tarmac instead of the center
     public static Pose2d BLUE_BOTTOM     = new Pose2d( Units.feetToMeters(27), Units.feetToMeters(6),  new Rotation2d(0) );
-    public static Pose2d BLUE_MID_BOTTOM = new Pose2d( Units.feetToMeters(22), Units.feetToMeters(8),  new Rotation2d(7*Math.PI/4) );
-    public static Pose2d BLUE_MID_TOP    = new Pose2d( Units.feetToMeters(20), Units.feetToMeters(13), new Rotation2d(3*Math.PI/2) );
+    public static Pose2d BLUE_MID_BOTTOM = new Pose2d( Units.feetToMeters(22), Units.feetToMeters(8),  new Rotation2d(Math.PI) );
+    public static Pose2d BLUE_MID_TOP    = new Pose2d( Units.feetToMeters(20), Units.feetToMeters(13), new Rotation2d(Math.PI) );
     public static Pose2d BLUE_TOP        = new Pose2d( Units.feetToMeters(22), Units.feetToMeters(19), new Rotation2d(Math.PI) );
 
     public static Pose2d RED_TOP         = new Pose2d( Units.feetToMeters(27), Units.feetToMeters(21), new Rotation2d(Math.PI) );

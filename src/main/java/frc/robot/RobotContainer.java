@@ -89,10 +89,7 @@ public class RobotContainer {
     // startPoseChooser.addOption("red 2", StartPoseConstants.RED_31_14);
     // startPoseChooser.addOption("red 3", StartPoseConstants.RED_32_19);
     // startPoseChooser.addOption("red 4", StartPoseConstants.RED_32_8);
-    Pose2d startPos = Constants.StartPoseConstants.BLUE_MID_TOP;
-
-    drivetrain.setGyroscopeHeadingDegrees(startPos.getRotation().getDegrees());
-    drivetrain.setPose(startPos, drivetrain.getGyroscopeRotation());
+   
 
     // SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooterSubsystem,
     //     m_cargoSubsystem, m_intake, m_robot);

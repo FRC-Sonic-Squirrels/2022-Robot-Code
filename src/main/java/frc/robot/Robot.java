@@ -100,6 +100,11 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     //m_autonomousCommand = m_robotContainer.chooser.getSelected();
+    Pose2d startPos = Constants.StartPoseConstants.BLUE_MID_TOP;
+
+    m_robotContainer.drivetrain.setGyroscopeHeadingDegrees(startPos.getRotation().getDegrees());
+    m_robotContainer.drivetrain.setPose(startPos, m_robotContainer.drivetrain.getGyroscopeRotation());
+
     m_autonomousCommand = new InstantCommand(
       () ->m_robotContainer.drivetrain.drive(new ChassisSpeeds()), m_robotContainer.drivetrain)
         .perpetually();
