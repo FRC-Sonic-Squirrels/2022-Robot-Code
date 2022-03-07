@@ -273,21 +273,23 @@ public class RobotContainer {
       new InstantCommand(() -> m_shooterSubsystem.setFlywheelRPM(1500), m_shooterSubsystem),
       new WaitCommand(2),
       //might cause problems in cargo transition 
-      new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot)
-        .withTimeout(2),
-      new WaitCommand(0.5),
-      new ParallelCommandGroup(
-        SwerveTrajectoryFollowCommandFactory.straightForward2mCommand(m_tt, drivetrain),
-        new IntakeDeployCommand(m_intake, m_cargoSubsystem)
-          .withTimeout(4) //deploy or run? 
-      ),
-      new ParallelCommandGroup(
-         SwerveTrajectoryFollowCommandFactory.straightBack1mCommand(m_tt, drivetrain),
-         new InstantCommand(() -> m_shooterSubsystem.setFlywheelRPM(1500), m_shooterSubsystem)
-      ),
-      new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot)
-        .withTimeout(2)
+      new ShootWithSetRPMCommand(1500, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot)
+        .withTimeout(3),
+        SwerveTrajectoryFollowCommandFactory.straightForward2mCommand(m_tt, drivetrain)
     );
+    //   new WaitCommand(0.5),
+    //   new ParallelCommandGroup(
+    //     SwerveTrajectoryFollowCommandFactory.straightForward2mCommand(m_tt, drivetrain),
+    //     new IntakeDeployCommand(m_intake, m_cargoSubsystem) 
+    //       .withTimeout(4) //deploy or run? 
+    //   ),
+    //   new ParallelCommandGroup(
+    //      SwerveTrajectoryFollowCommandFactory.straightBack1mCommand(m_tt, drivetrain),
+    //      new InstantCommand(() -> m_shooterSubsystem.setFlywheelRPM(1500), m_shooterSubsystem)
+    //   ),
+    //   new ShootWithSetRPMCommand(1500, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot)
+    //     .withTimeout(2)
+    // );
   }
 
   public TrajectoryConfig getTrajectoryConfig() {
