@@ -4,14 +4,15 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
-import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
+import com.ctre.phoenix.sensors.WPI_Pigeon2;
+import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation2d; 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -23,8 +24,10 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Constants.canId;
 import edu.wpi.first.wpilibj.DriverStation;
-
+import edu.wpi.first.wpilibj.drive.Vector2d;
 import static frc.robot.Constants.*;
 
 public class Drivetrain extends SubsystemBase {
@@ -49,8 +52,8 @@ public class Drivetrain extends SubsystemBase {
    * This is a measure of how fast the robot should be able to drive in a straight line.
    */
   public static final double MAX_VELOCITY_METERS_PER_SECOND =
-      6380.0 / 60.0 * SdsModuleConfigurations.MK3_FAST.getDriveReduction()
-          * SdsModuleConfigurations.MK3_FAST.getWheelDiameter() * Math.PI;
+      6380.0 / 60.0 * SdsModuleConfigurations.MK4I_L2.getDriveReduction()
+          * SdsModuleConfigurations.MK4I_L2.getWheelDiameter() * Math.PI;
 
   /**
    * The maximum acceleration of the robot.
@@ -92,10 +95,10 @@ public class Drivetrain extends SubsystemBase {
       new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0));
 
   private final SwerveDriveOdometry m_odometry;
-
+  
   private final Field2d m_field = new Field2d();
 
-  private PigeonIMU m_pigeon = null;
+  private WPI_Pigeon2 m_pigeon = new WPI_Pigeon2(Constants.canId.CANID15_pigeon_imu);
 
   // These are our modules. We initialize them in the constructor.
   private final SwerveModule m_frontLeftModule;
@@ -113,57 +116,68 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain() {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
-    m_pigeon = new PigeonIMU(DRIVETRAIN_PIGEON_ID);
-  
+    //TODO: Explore this, this looks like a good solution for validating the position through the limelight also could just be a better odometry system 
+    // private final SwerveDrivePoseEstimator m_poseEstimator; 
+    // m_poseEstimator = new SwerveDrivePoseEstimator(gyroAngle, initialPoseMeters, kinematics, stateStdDevs, localMeasurementStdDevs, visionMeasurementStdDevs);
+    // m_poseEstimator = new SwerveDrivePoseEstimator(gyroAngle, initialPoseMeters, kinematics, stateStdDevs, localMeasurementStdDevs, visionMeasurementStdDevs, nominalDtSeconds);
+
+    // m_poseEstimator.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds);
+      
     // There are 4 methods you can call to create your swerve modules.
     // The method you use depends on what motors you are using.
     //
-    // Mk3SwerveModuleHelper.createFalcon500(...)
+    // Mk4iSwerveModuleHelper.createFalcon500(...)
     // Your module has two Falcon 500s on it. One for steering and one for driving.
     //
     // Similar helpers also exist for Mk4 modules using the Mk4SwerveModuleHelper class.
     //
     // By default we will use Falcon 500s in standard configuration. But if you use a different
     // configuration or motors you MUST change it. If you do not, your code will crash on startup.
-    m_frontLeftModule = Mk3SwerveModuleHelper.createFalcon500(
+    m_frontLeftModule = Mk4iSwerveModuleHelper.createFalcon500(
         // This parameter is optional, but will allow you to see the current state of the module on
         // the dashboard.
         tab.getLayout("Front Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
         // This can either be STANDARD or FAST depending on your gear configuration
-        Mk3SwerveModuleHelper.GearRatio.FAST,
+        Mk4iSwerveModuleHelper.GearRatio.L2,
         // This is the ID of the drive motor
-        FRONT_LEFT_MODULE_DRIVE_MOTOR,
+        canId.CANID1_FRONT_LEFT_MODULE_DRIVE_MOTOR,
         // This is the ID of the steer motor
-        FRONT_LEFT_MODULE_STEER_MOTOR,
+        canId.CANID11_FRONT_LEFT_MODULE_STEER_MOTOR,
         // This is the ID of the steer encoder
-        FRONT_LEFT_MODULE_STEER_ENCODER,
+        canId.CANID21_FRONT_LEFT_MODULE_STEER_ENCODER,
         // This is how much the steer encoder is offset from true zero (In our case, zero is facing
         // straight forward)
         FRONT_LEFT_MODULE_STEER_OFFSET);
 
     // We will do the same for the other modules
     m_frontRightModule =
-        Mk3SwerveModuleHelper.createFalcon500(
+        Mk4iSwerveModuleHelper.createFalcon500(
             tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2,
                 0),
-            Mk3SwerveModuleHelper.GearRatio.FAST, FRONT_RIGHT_MODULE_DRIVE_MOTOR,
-            FRONT_RIGHT_MODULE_STEER_MOTOR, FRONT_RIGHT_MODULE_STEER_ENCODER,
+            Mk4iSwerveModuleHelper.GearRatio.L2,
+            canId.CANID2_FRONT_RIGHT_MODULE_DRIVE_MOTOR,
+            canId.CANID12_FRONT_RIGHT_MODULE_STEER_MOTOR,
+            canId.CANID22_FRONT_RIGHT_MODULE_STEER_ENCODER,
             FRONT_RIGHT_MODULE_STEER_OFFSET);
 
     m_backLeftModule =
-        Mk3SwerveModuleHelper.createFalcon500(
+        Mk4iSwerveModuleHelper.createFalcon500(
             tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4,
                 0),
-            Mk3SwerveModuleHelper.GearRatio.FAST, BACK_LEFT_MODULE_DRIVE_MOTOR,
-            BACK_LEFT_MODULE_STEER_MOTOR, BACK_LEFT_MODULE_STEER_ENCODER,
+            Mk4iSwerveModuleHelper.GearRatio.L2,
+            canId.CANID4_BACK_LEFT_MODULE_DRIVE_MOTOR,
+            canId.CANID14_BACK_LEFT_MODULE_STEER_MOTOR,
+            canId.CANID24_BACK_LEFT_MODULE_STEER_ENCODER,
             BACK_LEFT_MODULE_STEER_OFFSET);
 
     m_backRightModule =
-        Mk3SwerveModuleHelper.createFalcon500(
+        Mk4iSwerveModuleHelper.createFalcon500(
             tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6,
                 0),
-            Mk3SwerveModuleHelper.GearRatio.FAST, BACK_RIGHT_MODULE_DRIVE_MOTOR,
-            BACK_RIGHT_MODULE_STEER_MOTOR, BACK_RIGHT_MODULE_STEER_ENCODER,
+            Mk4iSwerveModuleHelper.GearRatio.L2,
+            canId.CANID3_BACK_RIGHT_MODULE_DRIVE_MOTOR,
+            canId.CANID13_BACK_RIGHT_MODULE_STEER_MOTOR,
+            canId.CANID23_BACK_RIGHT_MODULE_STEER_ENCODER,
             BACK_RIGHT_MODULE_STEER_OFFSET);
 
     m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
@@ -189,11 +203,11 @@ public class Drivetrain extends SubsystemBase {
 
     m_odometry.resetPosition(
         new Pose2d(m_odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(0.0)),
-        getGyroscopeRotation());
+        Rotation2d.fromDegrees(0.0));
   }
 
   public void setGyroscopeHeadingDegrees(double deg) {
-    m_pigeon.setFusedHeading(deg);
+    m_pigeon.setYaw(deg);
     m_pigeon.setAccumZAngle(deg);
   }
 
@@ -217,7 +231,8 @@ public class Drivetrain extends SubsystemBase {
    * @return gyro angle in Rotation2d
    */
   public Rotation2d getGyroscopeRotation() {
-      return Rotation2d.fromDegrees(m_pigeon.getFusedHeading());
+      // return Rotation2d.fromDegrees(m_pigeon.getFusedHeading());
+      return Rotation2d.fromDegrees(m_pigeon.getYaw());
   }
 
 
@@ -236,6 +251,23 @@ public class Drivetrain extends SubsystemBase {
     return m_odometry.getPoseMeters();
   }
 
+  public double getVelocity(){
+    SwerveModuleState m_actualStates[] = new SwerveModuleState[4];
+    //TODO: check if the angle is in radians
+    SwerveModuleState frontLeft = new SwerveModuleState(m_frontLeftModule.getDriveVelocity(), new Rotation2d(m_frontLeftModule.getSteerAngle()));
+    SwerveModuleState frontRight = new SwerveModuleState(m_frontRightModule.getDriveVelocity(), new Rotation2d(m_frontRightModule.getSteerAngle()));
+    SwerveModuleState backLeft = new SwerveModuleState(m_backLeftModule.getDriveVelocity(), new Rotation2d(m_backLeftModule.getSteerAngle()));
+    SwerveModuleState backRight = new SwerveModuleState(m_backRightModule.getDriveVelocity(), new Rotation2d(m_backRightModule.getSteerAngle()));
+    //new array with size 4, fill array with new module sates in the order : fl, fr, bl, br
+    m_actualStates[0] = frontLeft;
+    m_actualStates[1] = frontRight;
+    m_actualStates[2] = backLeft;
+    m_actualStates[3] = backRight;
+    ChassisSpeeds cs = m_kinematics.toChassisSpeeds(m_actualStates);
+    Vector2d vector =  new Vector2d(cs.vxMetersPerSecond, cs.vyMetersPerSecond);
+      
+    return vector.magnitude(); 
+  }
   /**
    * Sets the swerve ModuleStates.
    *
@@ -304,6 +336,16 @@ public class Drivetrain extends SubsystemBase {
     return m_kinematics;
   }
 
+  public Rotation2d getWheelRotation() {
+    double avgRotation = 0;
+    for (int i = 0; i < 4; i++) {
+      SwerveModuleState state = m_desiredStates[i];
+      avgRotation += state.angle.getRadians();
+    }
+
+    return new Rotation2d(avgRotation / 4);
+  }
+
   @Override
   public void periodic() {
     m_odometry.update(getGyroscopeRotation(),
@@ -322,5 +364,14 @@ public class Drivetrain extends SubsystemBase {
 
     // Update pose in field simulation
     m_field.setRobotPose(m_odometry.getPoseMeters());
+
+    SmartDashboard.putNumber("Drivetrain IMU Yaw", m_pigeon.getYaw());
+    SmartDashboard.putNumber("Drivetrain IMU Roll", m_pigeon.getRoll());
+    SmartDashboard.putNumber("Drivetrain IMU Temp", m_pigeon.getTemp());
+    SmartDashboard.putNumber("Drivetrain IMU Pitch", m_pigeon.getPitch());
+    SmartDashboard.putNumber("Drivetrain IMU Compass_field_strength", m_pigeon.getCompassFieldStrength());
+    SmartDashboard.putNumber("Drivetrain IMU Compass_heading", m_pigeon.getCompassHeading());
+    // SmartDashboard.putNumber("Drivetrain IMU Fused_Heading", m_pigeon.getFusedHeading());
+    SmartDashboard.putNumber("Drivetrain IMU Absolute_compass_heading", m_pigeon.getAbsoluteCompassHeading());
   }
 }

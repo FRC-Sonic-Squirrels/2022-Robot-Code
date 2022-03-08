@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot;
+package frc.robot.autonomous;
 
 import java.util.List;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -148,6 +148,48 @@ public class TestTrajectories {
       new Pose2d(translation.getTranslation(), targetPos.getRotation()),
       getTrajectoryConfig());
   }
+ /**
+   * easily create a trajectory between two translations, makes auton commands easier to read. 
+   * YOU STILL HAVE TO TRANSFORM THE TRAJECTORY TO MAKE IT FIELD CENTRIC! 
+   * 
+   * @param currentPos
+   * @param targetPos
+   * @return trajectory between two translations
+   */
+  public Trajectory driveToPose(Translation2d currentPos, Translation2d targetPos){
+    Pose2d pos1 = new Pose2d(currentPos, new Rotation2d());
+    Pose2d pos2 = new Pose2d(targetPos, new Rotation2d());
+
+    var translation = new Transform2d(pos1, pos2);
+
+    return TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0.0, 0.0, new Rotation2d()), 
+      List.of(),
+      new Pose2d(translation.getTranslation(), new Rotation2d()),
+      getTrajectoryConfig());
+  }
+
+  /**
+   * easily create a trajectory from a translation to a pose, makes auton commands easier to read. 
+   * YOU STILL HAVE TO TRANSFORM THE TRAJECTORY TO MAKE IT FIELD CENTRIC! 
+   * 
+   * @param currentPos
+   * @param targetPos
+   * @return trajectory from a translation to a pose
+   */
+  public Trajectory driveToPose(Translation2d currentPos, Pose2d targetPos){
+    Pose2d pos1 = new Pose2d(currentPos, new Rotation2d());
+
+    var translation = new Transform2d(pos1, targetPos);
+
+    return TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0.0, 0.0, new Rotation2d()), 
+      List.of(),
+      new Pose2d(translation.getTranslation(), targetPos.getRotation()),
+      getTrajectoryConfig());
+  }
+
+
 
   public Trajectory rotateRobot(double angle) {
 
@@ -155,6 +197,15 @@ public class TestTrajectories {
         drivetrain.getPose(),
         List.of(),
         new Pose2d(drivetrain.getPose().getX(), drivetrain.getPose().getY(), new Rotation2d(angle)),
+        getTrajectoryConfig());
+  }
+
+  public Trajectory rotateRobot(Rotation2d angle) {
+
+    return TrajectoryGenerator.generateTrajectory(
+        drivetrain.getPose(),
+        List.of(),
+        new Pose2d(drivetrain.getPose().getX(), drivetrain.getPose().getY(), angle),
         getTrajectoryConfig());
   }
 

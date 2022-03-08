@@ -4,12 +4,22 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+
+import frc.robot.commands.ShootCargoCommand;
+import frc.robot.commands.ShootWithSetRPMCommand;
+import frc.robot.subsystems.CargoSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -22,18 +32,33 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  public final PowerDistribution revPDH = new PowerDistribution();
+
+  private UsbCamera camera;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
+
   @Override
   public void robotInit() {
+
+    SmartDashboard.putNumber("SHOOTING RPM", 2000);
+    
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
+    m_robotContainer = new RobotContainer(this);
 
-    m_robotContainer.drivetrain.setGyroscopeHeadingDegrees(0);
-    m_robotContainer.drivetrain.setPose(Constants.ROBOT_1M_LEFT_OF_HUB, m_robotContainer.drivetrain.getGyroscopeRotation());
+    // clear sticky faults
+    revPDH.clearStickyFaults();
+    revPDH.resetTotalEnergy();
+
+    // We don't use this
+    LiveWindow.disableAllTelemetry();
+
+    
+
   }
 
   /**
@@ -51,16 +76,25 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    SmartDashboard.putNumber("jLeftY", m_robotContainer.m_controller.getLeftY());
-    SmartDashboard.putNumber("jLeftX", m_robotContainer.m_controller.getLeftX());
-    SmartDashboard.putNumber("jRightY", m_robotContainer.m_controller.getRightY());
-    SmartDashboard.putNumber("jRightX", m_robotContainer.m_controller.getRightX());
+    SmartDashboard.putNumber("Joystick_Values jLeftY", m_robotContainer.m_controller.getLeftY());
+    SmartDashboard.putNumber("Joystick_Values jLeftX", m_robotContainer.m_controller.getLeftX());
+    SmartDashboard.putNumber("Joystick_Values jRightY", m_robotContainer.m_controller.getRightY());
+    SmartDashboard.putNumber("Joystick_Values jRightX", m_robotContainer.m_controller.getRightX());
+
+    //SmartDashboard.putNumber("PDH Total Power", revPDH.getTotalPower());
+    // FIXME: getTotalCurrent() throws errors
+    //SmartDashboard.putNumber("PDH Total Current", revPDH.getTotalCurrent());
+    //SmartDashboard.putNumber("PDH Total Energy", revPDH.getTotalEnergy());
+
+    
 
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    m_robotContainer.m_cargoSubsystem.coastMode();
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -69,10 +103,17 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.chooser.getSelected();
+    //Pose2d startPos = Constants.StartPoseConstants.BLUE_MID_TOP;
 
-    m_autonomousCommand.beforeStarting(() -> m_robotContainer.drivetrain.setPose(
-        new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
-        m_robotContainer.drivetrain.getGyroscopeRotation()));
+    // m_robotContainer.drivetrain.setGyroscopeHeadingDegrees(startPos.getRotation().getDegrees());
+    // m_robotContainer.drivetrain.setPose(startPos, startPos.getRotation());
+
+    // m_autonomousCommand = new InstantCommand(
+    //   () ->m_robotContainer.drivetrain.drive(new ChassisSpeeds()), m_robotContainer.drivetrain)
+    //     .perpetually();
+    //     //.alongWith(new ShootWithSetRPMCommand(1500, m_robotContainer.m_cargoSubsystem, m_robotContainer.m_shooterSubsystem, m_robotContainer.m_intake, this));
+
+
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -108,4 +149,5 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+
 }
