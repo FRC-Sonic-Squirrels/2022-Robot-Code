@@ -61,11 +61,9 @@ public class CargoSubsystem extends SubsystemBase {
     UpperBelts.configVoltageCompSaturation(10);
     UpperBelts.enableVoltageCompensation(true);
 
-    // current limits, Max 30A
-    SupplyCurrentLimitConfiguration currentLimit =
-        new SupplyCurrentLimitConfiguration(true, 25, 30, 0.1);
-    LowerBelts.configSupplyCurrentLimit(currentLimit);
-    UpperBelts.configSupplyCurrentLimit(currentLimit);
+    // current limits, Max 20A
+    LowerBelts.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 20, 25, 0.1));
+    UpperBelts.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 20, 25, 0.1));
 
     // ramp rate, how long to take to get to full power
     LowerBelts.configOpenloopRamp(0.2);
