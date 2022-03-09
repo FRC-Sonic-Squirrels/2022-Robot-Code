@@ -72,17 +72,32 @@ public class RobotContainer {
 
     m_robot = robot;
     
-    // add the two auton trajectories to the auton trajectory chooser
+    // add the new auton trajectories to the auton trajectory chooser
     SwerveTrajectoryAutonomousCommandFactory auton = new SwerveTrajectoryAutonomousCommandFactory(
         drivetrain, m_shooter, m_cargo, m_intake, m_robot, 1, 0.75);
+
     Command fourBallAuton_blue = auton.fourBallAutonCommand(StartPoseConstants.BLUE_BOTTOM, FieldConstants.BLUE_CARGO_3,
         FieldConstants.BLUE_CARGO_2, FieldConstants.BLUE_CARGO_1);
     Command fourBallAuton_red = auton.fourBallAutonCommand(StartPoseConstants.RED_TOP, FieldConstants.RED_CARGO_3,
         FieldConstants.RED_CARGO_2, FieldConstants.RED_CARGO_1);
 
-    autonTrajectoryChooser.addOption("blue team", fourBallAuton_blue);
-    autonTrajectoryChooser.addOption("red team", fourBallAuton_red);
-    SmartDashboard.putData("four ball auton commands", autonTrajectoryChooser);
+    Command threeBallAuton_blue = auton.threeBallAutonCommand(StartPoseConstants.BLUE_BOTTOM,
+        FieldConstants.BLUE_CARGO_3, FieldConstants.BLUE_CARGO_2);
+    Command threeBallAuton_red = auton.threeBallAutonCommand(StartPoseConstants.RED_TOP,
+        FieldConstants.RED_CARGO_3, FieldConstants.RED_CARGO_2);
+
+    Command twoBallAuton_blue = auton.twoBallAutonCommand(StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7);
+    Command twoBallAuton_red = auton.twoBallAutonCommand(StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7);
+
+    autonTrajectoryChooser.addOption("blue 4 ball", fourBallAuton_blue);
+    autonTrajectoryChooser.addOption("blue 3 ball", threeBallAuton_blue);
+    autonTrajectoryChooser.addOption("blue 2 ball", twoBallAuton_blue);
+
+    autonTrajectoryChooser.addOption("red 4 ball", fourBallAuton_red);
+    autonTrajectoryChooser.addOption("red 3 ball", threeBallAuton_red);
+    autonTrajectoryChooser.addOption("red 2 ball", twoBallAuton_red);
+
+    SmartDashboard.putData("auton commands", autonTrajectoryChooser);
 
     // the starting position will be based on the chosen trajectory
     // startPoseChooser.addOption("1m left of hub", Constants.ROBOT_1M_LEFT_OF_HUB);
