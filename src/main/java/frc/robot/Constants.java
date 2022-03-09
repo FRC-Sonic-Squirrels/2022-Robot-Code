@@ -26,7 +26,10 @@ public final class Constants {
 
   // Allocate CAN Ids from here.
   // This avoids accidentally assigning the same CAN id to two different devices.
+
   public static final class canId {
+    // RoboRIO Can Ids
+
     // CAN Id 0 is off limits. Typically unconfigured devices default to CAN id zero. This will
     // create problems if you already have a device using CAN id 0 on the CAN bus.
     public static final int DoNotUse_canId0 = 0;
@@ -51,19 +54,33 @@ public final class Constants {
     public static final int CANID14_BACK_LEFT_MODULE_STEER_MOTOR = 14;
     public static final int CANID24_BACK_LEFT_MODULE_STEER_ENCODER = 24;
 
+    public static final int CANID7 = 7;
+    public static final int CANID8 = 8;
+
+
+    public static final int CANID19_ARM_LEAD_MOTOR = 19;
+    public static final int CANID20_ARM_FOLLOW_MOTOR = 20;
+  }
+
+  public static final class CANIVOR_canId {
+    // CANIVOR Can Ids
+    public static final String name = "CANivore";
+
+    // CAN Id 0 is off limits. Typically unconfigured devices default to CAN id zero. This will
+    // create problems if you already have a device using CAN id 0 on the CAN bus.
+    public static final int DoNotUse_canId0 = 0;
+
     public static final int CANID5_LOWER_BELTS = 5;
     public static final int CANID6_UPPER_BELTS = 6;
-    public static final int CANID7 = 7;
-    public static final int CANID8_FRICTION_BRAKE_SOLENOID = 8;
     public static final int CANID9_ELEVATOR_LEAD_TALON = 9;
     public static final int CANID10_ELEVATOR_FOLLOW_TALON = 10;
     public static final int CANID15_pigeon_imu = 15;
     public static final int CANID16_flywheel_lead = 16;
     public static final int CANID17_flywheel_follow = 17;
     public static final int CANID18_INTAKE = 18;
-    public static final int CANID19_ARM_LEAD_MOTOR = 19;
-    public static final int CANID20_ARM_FOLLOW_MOTOR = 20;
+
   }
+
 
   public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(320.2);
   public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(93.3);

@@ -98,7 +98,7 @@ public class Drivetrain extends SubsystemBase {
   
   private final Field2d m_field = new Field2d();
 
-  private WPI_Pigeon2 m_pigeon = new WPI_Pigeon2(Constants.canId.CANID15_pigeon_imu);
+  private WPI_Pigeon2 m_pigeon = new WPI_Pigeon2(Constants.CANIVOR_canId.CANID15_pigeon_imu, CANIVOR_canId.name);
 
   // These are our modules. We initialize them in the constructor.
   private final SwerveModule m_frontLeftModule;
