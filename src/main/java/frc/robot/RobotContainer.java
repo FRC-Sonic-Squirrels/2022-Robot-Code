@@ -72,9 +72,17 @@ public class RobotContainer {
 
     m_robot = robot;
     
-    SwerveTrajectoryAutonomousCommandFactory auton = new SwerveTrajectoryAutonomousCommandFactory(drivetrain, m_shooter, m_cargo, m_intake, m_robot, 1, 0.75);
-    Command autonCommandOne = auton.fourBallAutonCommand(StartPoseConstants.BLUE_MID_TOP, FieldConstants.BLUE_CARGO_1,
-        FieldConstants.BLUE_CARGO_1, FieldConstants.BLUE_CARGO_1);
+    // add the two auton trajectories to the auton trajectory chooser
+    SwerveTrajectoryAutonomousCommandFactory auton = new SwerveTrajectoryAutonomousCommandFactory(
+        drivetrain, m_shooter, m_cargo, m_intake, m_robot, 1, 0.75);
+    Command fourBallAuton_blue = auton.fourBallAutonCommand(StartPoseConstants.BLUE_BOTTOM, FieldConstants.BLUE_CARGO_3,
+        FieldConstants.BLUE_CARGO_2, FieldConstants.BLUE_CARGO_1);
+    Command fourBallAuton_red = auton.fourBallAutonCommand(StartPoseConstants.RED_TOP, FieldConstants.RED_CARGO_3,
+        FieldConstants.RED_CARGO_2, FieldConstants.RED_CARGO_1);
+
+    autonTrajectoryChooser.addOption("blue team", fourBallAuton_blue);
+    autonTrajectoryChooser.addOption("red team", fourBallAuton_red);
+    SmartDashboard.putData("four ball auton commands", autonTrajectoryChooser);
 
     // the starting position will be based on the chosen trajectory
     // startPoseChooser.addOption("1m left of hub", Constants.ROBOT_1M_LEFT_OF_HUB);
