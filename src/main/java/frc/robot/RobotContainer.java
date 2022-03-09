@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.StartPoseConstants;
 import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.CargoReverseCommand;
@@ -48,8 +49,8 @@ public class RobotContainer {
   public final Drivetrain drivetrain = new Drivetrain();
   //public final ArmSubsystem m_arm = new ArmSubsystem();
   //public final VisionSubsystem m_visionSubsystem = new VisionSubsystem(drivetrain);
-  public final CargoSubsystem m_cargoSubsystem = new CargoSubsystem();
-  public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
+  public final CargoSubsystem m_cargo = new CargoSubsystem();
+  public final ShooterSubsystem m_shooter = new ShooterSubsystem();
   public final IntakeSubsystem m_intake = new IntakeSubsystem(drivetrain);
   //public final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
   public final Robot m_robot;
@@ -71,6 +72,10 @@ public class RobotContainer {
 
     m_robot = robot;
     
+    SwerveTrajectoryAutonomousCommandFactory auton = new SwerveTrajectoryAutonomousCommandFactory(drivetrain, m_shooter, m_cargo, m_intake, m_robot, 1, 0.75);
+    Command autonCommandOne = auton.fourBallAutonCommand(StartPoseConstants.BLUE_MID_TOP, FieldConstants.BLUE_CARGO_1,
+        FieldConstants.BLUE_CARGO_1, FieldConstants.BLUE_CARGO_1);
+
     // the starting position will be based on the chosen trajectory
     // startPoseChooser.addOption("1m left of hub", Constants.ROBOT_1M_LEFT_OF_HUB);
     // startPoseChooser.addOption("blue 1", StartPoseConstants.BLUE_20_13);
@@ -92,7 +97,7 @@ public class RobotContainer {
     // SwerveTrajectoryAutonomousCommandFactory.addAutonTrajectoriesToChooser(autonTrajectoryChooser);
     // SmartDashboard.putData("Auto Mode (real)", autonTrajectoryChooser);
 
-    SwerveTrajectoryAutonomousCommandFactory.addSimpleTrajectoriesToChooser(simpleTrajectoryChooser);
+    auton.addSimpleTrajectoriesToChooser(simpleTrajectoryChooser);
     SmartDashboard.putData("Simple auton commands", simpleTrajectoryChooser);
 
     // Creates UsbCamera and MjpegServer [1] and connects them
@@ -184,19 +189,19 @@ public class RobotContainer {
     //   .whileHeld(new VisionDriveToCargo(m_visionSubsystem, drivetrain));
 
     new Button(m_operatorController::getAButton)
-      .whileHeld(new ShootOneCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake));
+      .whileHeld(new ShootOneCargoCommand(m_cargo, m_shooter, m_intake));
 
     new Button(m_operatorController::getBButton)
-      .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+      .whileHeld(new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot));
     
     new Button(m_operatorController::getXButton)
-      .whileHeld(new IntakeDeployCommand(m_intake, m_cargoSubsystem));
+      .whileHeld(new IntakeDeployCommand(m_intake, m_cargo));
 
     new Button(m_operatorController::getYButton)
       .whileHeld(new IntakeReverseCommand(m_intake));
 
     new Button(m_operatorController::getLeftStickButtonPressed)
-      .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
+      .whileHeld(new CargoReverseCommand(m_cargo, m_intake));
  
     // new Button(m_operatorController::getLeftBumper)
     //   .whileHeld(new ElevatorControlCommand(() -> m_operatorController.getLeftY(), m_elevator), true);

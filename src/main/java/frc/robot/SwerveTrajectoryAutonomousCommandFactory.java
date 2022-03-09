@@ -59,48 +59,48 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
   public static void addAutonTrajectoriesToChooser(SendableChooser<Command> chooser) {
     
-    chooser.addOption("4 blue auton 321", fourBallAutonCommand( 
-        StartPoseConstants.BLUE_BOTTOM, FieldConstants.BLUE_CARGO_3,
-        FieldConstants.BLUE_CARGO_2, FieldConstants.BLUE_CARGO_1));
+    // chooser.addOption("4 blue auton 321", fourBallAutonCommand( 
+    //     StartPoseConstants.BLUE_BOTTOM, FieldConstants.BLUE_CARGO_3,
+    //     FieldConstants.BLUE_CARGO_2, FieldConstants.BLUE_CARGO_1));
     
-    chooser.addOption("4 blue auton 712", fourBallAutonCommand(
-        StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7,
-        FieldConstants.BLUE_CARGO_1, FieldConstants.BLUE_CARGO_2));
+    // chooser.addOption("4 blue auton 712", fourBallAutonCommand(
+    //     StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7,
+    //     FieldConstants.BLUE_CARGO_1, FieldConstants.BLUE_CARGO_2));
 
-    chooser.addOption("4 blue auton 723", fourBallAutonCommand(
-        StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7,
-        FieldConstants.BLUE_CARGO_2, FieldConstants.BLUE_CARGO_3));
+    // chooser.addOption("4 blue auton 723", fourBallAutonCommand(
+    //     StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7,
+    //     FieldConstants.BLUE_CARGO_2, FieldConstants.BLUE_CARGO_3));
     
 
-    chooser.addOption("4 red auton 321", fourBallAutonCommand( 
-        StartPoseConstants.RED_TOP, FieldConstants.RED_CARGO_3,
-        FieldConstants.RED_CARGO_2, FieldConstants.RED_CARGO_1));
+    // chooser.addOption("4 red auton 321", fourBallAutonCommand( 
+    //     StartPoseConstants.RED_TOP, FieldConstants.RED_CARGO_3,
+    //     FieldConstants.RED_CARGO_2, FieldConstants.RED_CARGO_1));
     
-    chooser.addOption("4 red auton 712", fourBallAutonCommand(
-        StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7,
-        FieldConstants.RED_CARGO_1, FieldConstants.RED_CARGO_2));
+    // chooser.addOption("4 red auton 712", fourBallAutonCommand(
+    //     StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7,
+    //     FieldConstants.RED_CARGO_1, FieldConstants.RED_CARGO_2));
 
-    chooser.addOption("4 red auton 723", fourBallAutonCommand(
-        StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7,
-        FieldConstants.RED_CARGO_2, FieldConstants.RED_CARGO_3));
+    // chooser.addOption("4 red auton 723", fourBallAutonCommand(
+    //     StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7,
+    //     FieldConstants.RED_CARGO_2, FieldConstants.RED_CARGO_3));
   }
 
-  public static void addSimpleTrajectoriesToChooser(SendableChooser<Command> chooser) {
-    chooser.addOption("blue top", testAutonCommand(StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7));
+  public void addSimpleTrajectoriesToChooser(SendableChooser<Command> chooser) {
+    chooser.addOption("blue top", this.testAutonCommand(StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7));
 
-    chooser.addOption("blue mid-top", testAutonCommand(StartPoseConstants.BLUE_MID_TOP, FieldConstants.BLUE_CARGO_2));
+    chooser.addOption("blue mid-top", this.testAutonCommand(StartPoseConstants.BLUE_MID_TOP, FieldConstants.BLUE_CARGO_2));
 
-    chooser.addOption("blue mid-bottom", testAutonCommand(StartPoseConstants.BLUE_MID_BOTTOM, FieldConstants.BLUE_CARGO_2));
+    chooser.addOption("blue mid-bottom", this.testAutonCommand(StartPoseConstants.BLUE_MID_BOTTOM, FieldConstants.BLUE_CARGO_2));
 
-    chooser.addOption("blue bottom", testAutonCommand(StartPoseConstants.BLUE_BOTTOM, FieldConstants.BLUE_CARGO_3));
+    chooser.addOption("blue bottom", this.testAutonCommand(StartPoseConstants.BLUE_BOTTOM, FieldConstants.BLUE_CARGO_3));
 
-    chooser.addOption("red top", testAutonCommand(StartPoseConstants.RED_TOP, FieldConstants.RED_CARGO_3));
+    chooser.addOption("red top", this.testAutonCommand(StartPoseConstants.RED_TOP, FieldConstants.RED_CARGO_3));
 
-    chooser.addOption("red mid-top", testAutonCommand(StartPoseConstants.RED_MID_TOP, FieldConstants.RED_CARGO_2));
+    chooser.addOption("red mid-top", this.testAutonCommand(StartPoseConstants.RED_MID_TOP, FieldConstants.RED_CARGO_2));
 
-    chooser.addOption("red mid-bottom", testAutonCommand(StartPoseConstants.RED_MID_BOTTOM, FieldConstants.RED_CARGO_2));
+    chooser.addOption("red mid-bottom", this.testAutonCommand(StartPoseConstants.RED_MID_BOTTOM, FieldConstants.RED_CARGO_2));
 
-    chooser.addOption("red bottom", testAutonCommand(StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7));
+    chooser.addOption("red bottom", this.testAutonCommand(StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7));
   }
 
    /**
@@ -157,7 +157,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
 
   // simple command for shooting 1 cargo into hub, then driving to another
-  public static Command testAutonCommand(Pose2d startPos, Translation2d cargoPos) {
+  public Command testAutonCommand(Pose2d startPos, Translation2d cargoPos) {
 
     m_drivetrain.setPose(startPos, startPos.getRotation());
     startPos = m_drivetrain.getPose();
@@ -184,7 +184,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
   
   // command that lets the robot intake 1 cargo without shooting it (parameters have already been converted to meters)
-  public static Command intakeCargoCommand(TestTrajectories testTrajectories, Translation2d targetPos, Pose2d midPos) {
+  public Command intakeCargoCommand(TestTrajectories testTrajectories, Translation2d targetPos, Pose2d midPos) {
     
     // precondition: the robot must have at least one free belt
     if (m_cargo.cargoInLowerBelts() && m_cargo.cargoInUpperBelts()) {
@@ -226,7 +226,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
    * @param cargoPos2 the position of the second wanted cargo (meters)
    * @return a set of actions with the robot shooting its current 2 cargo, then moving and picking up the next 2 cargo
    */
-  public static Command fourBallAutonCommand(Pose2d startPos, Translation2d initCargoPos,
+  public Command fourBallAutonCommand(Pose2d startPos, Translation2d initCargoPos,
       Translation2d cargoPos1, Translation2d cargoPos2) {
 
     m_drivetrain.setPose(startPos, startPos.getRotation());
