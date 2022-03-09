@@ -74,6 +74,8 @@ public class RobotContainer {
   public final XboxController m_climbController = new XboxController(2);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
+  public final SendableChooser<Command> autonTrajectoryChooser = new SendableChooser<>();
+  public final SendableChooser<Command> simpleTrajectoryChooser = new SendableChooser<>();
 
   //public final SendableChooser<Pose2d> startPoseChooser = new SendableChooser<>();
   //public final SendableChooser<Command> autonTrajectoryChooser = new SendableChooser<>();
