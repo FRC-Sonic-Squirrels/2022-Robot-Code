@@ -314,18 +314,77 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     );
   }
 
+  /**
+   * Command for shooting the first cargo, then collecting and shooting two more cargo
+   * @param startPos the initial starting position
+   * @param cargoPos1 position of the first cargo being picked up
+   * @param cargoPos2 position of the second cargo being picked up
+   * @return the trajectory and commands needed to shoot three cargo into the hub
+   */
+  public Command threeBallAutonCommand(Pose2d startPos, Translation2d cargoPos1, Translation2d cargoPos2) {
+
+    m_drivetrain.setPose(startPos, startPos.getRotation());
+
+    Translation2d midPos1 = midPosFinder(poseToTranslation(startPos), cargoPos1);
+    Rotation2d midAngle1 = getTranslationsAngle(poseToTranslation(startPos), cargoPos1);
+
+    Translation2d midPos2 = midPosFinder(cargoPos1, cargoPos2);
+    Rotation2d midAngle2 = getTranslationsAngle(cargoPos1, cargoPos2);
+
+    Translation2d midPos3 = midPosFinder(cargoPos2, poseToTranslation(startPos));
+    //Rotation2d midAngle3 = getTranslationsAngle(cargoPos2, poseToTranslation(startPos));
+
+    Trajectory start_to_cargo1 = TrajectoryGenerator.generateTrajectory(startPos, List.of(midPos1),
+        new Pose2d(cargoPos1, midAngle1), m_tt.getTrajectoryConfig());
+    Trajectory cargo1_to_cargo2 = TrajectoryGenerator.generateTrajectory(new Pose2d(cargoPos1, midAngle1), List.of(midPos2),
+        new Pose2d(cargoPos2, midAngle2), m_tt.getTrajectoryConfig());
+    Trajectory cargo2_to_start = TrajectoryGenerator.generateTrajectory(new Pose2d(cargoPos2, midAngle2), List.of(midPos3),
+        startPos, m_tt.getTrajectoryConfig());
+
+    return new SequentialCommandGroup(
+
+      // 1. start up flywheel and intake
+      new ParallelCommandGroup(
+        new InstantCommand( () -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated)),
+        new IntakeDeployCommand(m_intake, m_cargo),
+        new WaitUntilCommand( () -> m_shooter.isAtDesiredRPM())
+      ),
+
+      // 2. when flywheel is done, shoot pre-loaded cargo
+      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
+
+      // 3. move to first cargo and pick it up
+      SwerveControllerCommand(start_to_cargo1, true),
+      new WaitUntilCommand( () -> m_cargo.cargoInLowerBelts()),
+
+      // 4. move to second cargo and pick it up
+      SwerveControllerCommand(cargo1_to_cargo2, true),
+      new WaitUntilCommand( () -> m_cargo.cargoInLowerBelts()),
+
+      // 5. go back to starting area and shoot cargo (while retracting intake)
+      new ParallelCommandGroup(
+        SwerveControllerCommand(cargo2_to_start, true),
+        new InstantCommand( () -> m_intake.retractIntake())
+      ),
+      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
+
+      // 6. stop flywheel
+      new InstantCommand( () -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle))
+    );
+  }
+
 
   /**
    * Command for shooting the first cargo, then collecting and shooting a second cargo
    * 
    * @param startPos the initial starting position
    * @param cargoPos the position of the cargo to be picked up
-   * @param stopAtEnd
-   * @return
+   * @return the trajectory and commands needed to shoot two cargo into the hub
    */
   public Command twoBallAutonCommand(Pose2d startPos, Translation2d cargoPos) {
 
     m_drivetrain.setPose(startPos, startPos.getRotation());
+
     Translation2d midPos = midPosFinder( poseToTranslation(startPos), cargoPos );
     Rotation2d midAngle = getTranslationsAngle( poseToTranslation(startPos), cargoPos );
 
@@ -338,18 +397,24 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       // 1. start up intake and flywheel
       new ParallelCommandGroup(
         new IntakeDeployCommand(m_intake, m_cargo),
-        new InstantCommand( () -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated) )
+        new InstantCommand( () -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated) ),
+        new WaitUntilCommand( () -> m_shooter.isAtDesiredRPM() )
       ),
 
       // 2. shoot the pre-loaded cargo
       new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
 
       // 3. move to the next cargo and move it to the upper belts
-      SwerveControllerCommand(start_to_cargo, false),
+      new ParallelCommandGroup(
+        SwerveControllerCommand(start_to_cargo, true),
+        new WaitUntilCommand(() -> m_cargo.cargoInUpperBelts())
+      ),
 
       // 4. after cargo is picked up, move back to the start and retract intake
-      SwerveControllerCommand(cargo_to_start, true),
-      new InstantCommand(() -> m_intake.retractIntake()),
+      new ParallelCommandGroup(
+        SwerveControllerCommand(cargo_to_start, true),
+        new InstantCommand(() -> m_intake.retractIntake())
+      ),
 
       // 5. shoot the newly picked up cargo
       new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
