@@ -209,6 +209,7 @@ public final class Constants {
     //TODO: final distance between camera and the center of robot
     public static final Transform2d CAMERA_TO_ROBOT = new Transform2d(new Translation2d(0.5, 0.2), new Rotation2d());
 
+    public static final double HIGH_HUB_RADIUS_FEET = 2;
   }
 
   public static class VisionPipelineIndex {

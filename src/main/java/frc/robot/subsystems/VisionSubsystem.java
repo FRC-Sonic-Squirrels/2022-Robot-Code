@@ -72,6 +72,11 @@ public class VisionSubsystem extends SubsystemBase{
     }
     SmartDashboard.putBoolean("has targets", m_result.hasTargets());
     SmartDashboard.putNumber("pipelineLatency", latency);
+    SmartDashboard.putNumber("target rotation", rotation);
+    SmartDashboard.putNumber("target pitch", pitch);
+    if(target == 1){
+      new VisionGetActualRoboPose(m_drivetrain);
+    }
   }
 
   public Pose2d getRobotPose() {
