@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Relay.InvalidValueException;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -59,30 +60,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
   public static void addAutonTrajectoriesToChooser(SendableChooser<Command> chooser) {
     
-    // chooser.addOption("4 blue auton 321", fourBallAutonCommand( 
-    //     StartPoseConstants.BLUE_BOTTOM, FieldConstants.BLUE_CARGO_3,
-    //     FieldConstants.BLUE_CARGO_2, FieldConstants.BLUE_CARGO_1));
-    
-    // chooser.addOption("4 blue auton 712", fourBallAutonCommand(
-    //     StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7,
-    //     FieldConstants.BLUE_CARGO_1, FieldConstants.BLUE_CARGO_2));
 
-    // chooser.addOption("4 blue auton 723", fourBallAutonCommand(
-    //     StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7,
-    //     FieldConstants.BLUE_CARGO_2, FieldConstants.BLUE_CARGO_3));
-    
-
-    // chooser.addOption("4 red auton 321", fourBallAutonCommand( 
-    //     StartPoseConstants.RED_TOP, FieldConstants.RED_CARGO_3,
-    //     FieldConstants.RED_CARGO_2, FieldConstants.RED_CARGO_1));
-    
-    // chooser.addOption("4 red auton 712", fourBallAutonCommand(
-    //     StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7,
-    //     FieldConstants.RED_CARGO_1, FieldConstants.RED_CARGO_2));
-
-    // chooser.addOption("4 red auton 723", fourBallAutonCommand(
-    //     StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7,
-    //     FieldConstants.RED_CARGO_2, FieldConstants.RED_CARGO_3));
   }
 
   public void addSimpleTrajectoriesToChooser(SendableChooser<Command> chooser) {
@@ -390,6 +368,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     Trajectory start_to_cargo = TrajectoryGenerator.generateTrajectory(startPos, List.of(midPos),
         new Pose2d(cargoPos, midAngle), m_tt.getTrajectoryConfig());
+
     Trajectory cargo_to_start = TrajectoryGenerator.generateTrajectory(new Pose2d(cargoPos, midAngle), List.of(),
         startPos, m_tt.getTrajectoryConfig());
 
@@ -423,6 +402,87 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       new InstantCommand( () -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle))
 
     );
+  }
+
+
+  /**
+   * Specific command for shooting held cargo and cargo 7, then pushing opposing cargo 4 into hangar
+   * @param team for which alliance the robot is on ("red" or "blue", ignoring case)
+   * @return
+   */
+  public static Command complimentaryAutonCommand(String team) {
+
+    Pose2d startPos = null;
+    Translation2d cargo7 = null, oppCargo4 = null, pushPos1 = null, pushPos2 = null;
+    Rotation2d startAngle = null, shootAngle = null;
+    
+    // choose coordinates to drive to based off alliance color
+    if (team.equalsIgnoreCase("blue")) {
+      //TODO: adjust
+      startPos = StartPoseConstants.BLUE_TOP;
+      cargo7 = FieldConstants.BLUE_CARGO_7;
+      oppCargo4 = FieldConstants.RED_CARGO_4;
+      pushPos1 = new Translation2d(21.5, 23.5);
+      pushPos2 = new Translation2d(15, 24.5);
+    }
+    else if (team.equalsIgnoreCase("red")) {
+      startPos = StartPoseConstants.RED_BOTTOM;
+      cargo7 = FieldConstants.RED_CARGO_7;
+      oppCargo4 = FieldConstants.BLUE_CARGO_4;
+      pushPos1 = new Translation2d(32.5, 3.5);
+      pushPos2 = new Translation2d(39, 2.5);
+    }
+    else {
+      // is this the correct argument exception?
+      throw new IllegalArgumentException("String parameter was neither \"red\" nor \"blue\".");
+    }
+
+    startAngle = getTranslationsAngle(poseToTranslation(startPos), cargo7);
+    startPos = setRotation(startPos, startAngle);
+
+    shootAngle = startPos.getRotation();
+    Pose2d shootPos = new Pose2d(poseToTranslation(startPos), shootAngle);
+
+
+    Trajectory start_to_cargo7 = TrajectoryGenerator.generateTrajectory(startPos, List.of(),
+        new Pose2d(cargo7, startPos.getRotation()), m_tt.getTrajectoryConfig());
+
+    Trajectory cargo7_to_shootPos = TrajectoryGenerator.generateTrajectory(new Pose2d(cargo7, startPos.getRotation()),
+        List.of(), shootPos, m_tt.getTrajectoryConfig());
+
+    Trajectory shootPos_to_pushPos1 = TrajectoryGenerator.generateTrajectory(shootPos, List.of(),
+        new Pose2d(pushPos1, shootAngle), m_tt.getTrajectoryConfig());
+
+    Trajectory pushPos1_to_pushPos2 = TrajectoryGenerator.generateTrajectory(new Pose2d(pushPos1, shootAngle),
+        List.of(), new Pose2d(pushPos2, shootAngle), m_tt.getTrajectoryConfig());
+    
+    return new SequentialCommandGroup(
+
+      // 1. deploy intake and flywheel, while moving to first cargo
+      new ParallelCommandGroup(
+        new IntakeDeployCommand(m_intake, m_cargo),
+        new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated)),
+        SwerveControllerCommand(start_to_cargo7, true)
+      ),
+
+      // 2. move back to start then shoot both contained cargo, while retracting intake
+      new ParallelCommandGroup(
+        new InstantCommand(() -> m_intake.retractIntake()),
+        SwerveControllerCommand(cargo7_to_shootPos, true)
+      ),
+      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
+
+      // 3. move to cargo to push, while idling flywheel
+      new ParallelCommandGroup(
+        new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle)),
+        SwerveControllerCommand(shootPos_to_pushPos1, true)
+      ),
+
+      // 4. push cargo
+      SwerveControllerCommand(pushPos1_to_pushPos2, true)
+
+    );
+
   }
 
 
@@ -461,9 +521,9 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   }
 
   // private method that changes the rotation of a Pose2d (because that isn't already included in the class for some reason)
-  // private static Pose2d setRotation(Pose2d pose, Rotation2d rotation) {
-  //   return new Pose2d(pose.getX(), pose.getY(), rotation);
-  // }
+  private static Pose2d setRotation(Pose2d pose, Rotation2d rotation) {
+    return new Pose2d(pose.getX(), pose.getY(), rotation);
+  }
 
   // private method that gets the angle between two Translation2ds
   private static Rotation2d getTranslationsAngle(Translation2d pose1, Translation2d pose2) {
