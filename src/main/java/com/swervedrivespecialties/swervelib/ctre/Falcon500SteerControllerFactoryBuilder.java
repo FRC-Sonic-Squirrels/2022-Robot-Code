@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.swervedrivespecialties.swervelib.*;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import static com.swervedrivespecialties.swervelib.ctre.CtreUtils.checkCtreError;
 
 public final class Falcon500SteerControllerFactoryBuilder {
@@ -118,6 +118,7 @@ public final class Falcon500SteerControllerFactoryBuilder {
             TalonFX motor;
             if (steerConfiguration.useCanivore()) {
                 motor = new TalonFX(steerConfiguration.getMotorPort(), steerConfiguration.getCanivoreName());
+                SmartDashboard.putString("STEER_CANivore" + steerConfiguration.getMotorPort(), steerConfiguration.getCanivoreName());
             } else {
                 motor = new TalonFX(steerConfiguration.getMotorPort());
             }

@@ -66,7 +66,6 @@ public class ModuleConfiguration {
         this.canivoreName = canivoreName;
     }
 
-
     /**
      * Gets name of CANivore to use for this module.
      */

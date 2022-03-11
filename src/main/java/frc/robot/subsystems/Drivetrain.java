@@ -137,6 +137,7 @@ public class Drivetrain extends SubsystemBase {
     Mk4ModuleConfiguration swerveConfig = new Mk4ModuleConfiguration();
     swerveConfig.setDriveCurrentLimit(40);
     swerveConfig.setNominalVoltage(11.5);
+    swerveConfig.setCanivoreName("CANivore");
 
     m_frontLeftModule = Mk4iSwerveModuleHelper.createFalcon500(
         // This parameter is optional, but will allow you to see the current state of the module on
