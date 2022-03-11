@@ -130,13 +130,18 @@ public class RobotContainer {
     Command twoBallAuton_blue = auton.twoBallAutonCommand(StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7);
     Command twoBallAuton_red = auton.twoBallAutonCommand(StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7);
 
+    Command complimentaryAuton_blue = auton.complimentaryAutonCommand("blue");
+    Command complimentaryAuton_red = auton.complimentaryAutonCommand("red");
+
     autonTrajectoryChooser.addOption("blue 4 ball", fourBallAuton_blue);
     autonTrajectoryChooser.addOption("blue 3 ball", threeBallAuton_blue);
     autonTrajectoryChooser.addOption("blue 2 ball", twoBallAuton_blue);
+    autonTrajectoryChooser.addOption("blue helper auton", complimentaryAuton_blue);
 
     autonTrajectoryChooser.addOption("red 4 ball", fourBallAuton_red);
     autonTrajectoryChooser.addOption("red 3 ball", threeBallAuton_red);
     autonTrajectoryChooser.addOption("red 2 ball", twoBallAuton_red);
+    autonTrajectoryChooser.addOption("red helper auton", complimentaryAuton_red);
 
     SmartDashboard.putData("auton commands", autonTrajectoryChooser);
 

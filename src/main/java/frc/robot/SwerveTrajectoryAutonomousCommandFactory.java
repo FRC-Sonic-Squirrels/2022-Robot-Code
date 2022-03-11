@@ -406,11 +406,13 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
 
   /**
-   * Specific command for shooting held cargo and cargo 7, then pushing opposing cargo 4 into hangar
+   * Specific command for shooting held cargo and cargo 7, then pushing opposing cargo 4 into hangar.
+   * When on blue team, the start pose is BLUE_TOP.
+   * When on red team, the start pose is RED_BOTTOM
    * @param team for which alliance the robot is on ("red" or "blue", ignoring case)
    * @return
    */
-  public static Command complimentaryAutonCommand(String team) {
+  public Command complimentaryAutonCommand(String team) {
 
     Pose2d startPos = null;
     Translation2d cargo7 = null, oppCargo4 = null, pushPos1 = null, pushPos2 = null;
