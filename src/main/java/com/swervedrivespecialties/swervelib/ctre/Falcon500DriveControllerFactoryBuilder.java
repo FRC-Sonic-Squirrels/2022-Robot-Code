@@ -19,10 +19,21 @@ public final class Falcon500DriveControllerFactoryBuilder {
 
     private double nominalVoltage = Double.NaN;
     private double currentLimit = Double.NaN;
+    private String canivoreName = "";
 
     public Falcon500DriveControllerFactoryBuilder withVoltageCompensation(double nominalVoltage) {
         this.nominalVoltage = nominalVoltage;
         return this;
+    }
+
+    public Falcon500DriveControllerFactoryBuilder withCanivoreName(String canivoreName){
+        this.canivoreName = canivoreName;
+        return this;
+    }
+
+    public boolean useCanivore() {
+        // null or empty canivore name means don't use canivore
+        return !(canivoreName == null || canivoreName.isEmpty());
     }
 
     public boolean hasVoltageCompensation() {
@@ -60,9 +71,9 @@ public final class Falcon500DriveControllerFactoryBuilder {
             }
 
             TalonFX motor;
-            if (moduleConfiguration.useCanivore()) {
+            if (useCanivore()) {
                 motor = new TalonFX(driveConfiguration, moduleConfiguration.getCanivoreName());
-                SmartDashboard.putString("DRIVE_CANivore" + driveConfiguration, moduleConfiguration.getCanivoreName());
+                SmartDashboard.putString("DRIVE_CANivore" + driveConfiguration, canivoreName);
             } else {
                 motor = new TalonFX(driveConfiguration);
             }

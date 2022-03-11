@@ -27,11 +27,23 @@ public final class Falcon500SteerControllerFactoryBuilder {
     private double nominalVoltage = Double.NaN;
     private double currentLimit = Double.NaN;
 
+    private String canivoreName = "";
+
     public Falcon500SteerControllerFactoryBuilder withPidConstants(double proportional, double integral, double derivative) {
         this.proportionalConstant = proportional;
         this.integralConstant = integral;
         this.derivativeConstant = derivative;
         return this;
+    }
+
+    public Falcon500SteerControllerFactoryBuilder withCanivoreName(String canivoreName){
+        this.canivoreName = canivoreName;
+        return this;
+    }
+
+    public boolean useCanivore() {
+        // null or empty canivore name means don't use canivore
+        return !(canivoreName == null || canivoreName.isEmpty());
     }
 
     public boolean hasPidConstants() {
