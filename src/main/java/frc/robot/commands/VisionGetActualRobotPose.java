@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.ejml.equation.MatrixConstructor;
 import org.photonvision.PhotonUtils;
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
@@ -28,9 +29,9 @@ public class VisionGetActualRobotPose extends CommandBase {
   private double rotation;
   private Pose2d roboPose;
   private final SwerveDriveOdometry m_odometry;
-  private double stdDevs;
-  private double encoderStdDevs;
-  private double visionStdDevs;
+  private Matrix stdDevs = Matrix<>(Nat.N3(), Nat.N1());
+  private Matrix encoderStdDevs = Matrix<>(Nat.N3(), Nat.N1());
+  private Matrix visionStdDevs;
   private SwerveDrivePoseEstimator estimator;
   public VisionGetActualRobotPose(Drivetrain drivetrain, SwerveDriveOdometry odometry) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -61,11 +62,10 @@ public class VisionGetActualRobotPose extends CommandBase {
     estimator = new SwerveDrivePoseEstimator(m_drivetrain.getGyroscopeRotation(),
     m_odometry.getPoseMeters(),
     m_drivetrain.kinematics(),
-    new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.02, 0.02, 0.01), // State measurement standard deviations. X, Y, theta.
-    new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.02, 0.02, 0.01), // Local measurement standard deviations. Left encoder, right encoder, gyro.
-    new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)); // Global measurement standard deviations. X, Y, and theta.
+    new Matrix<>(Nat.N3(), Nat.N1()).fill(0.01), // State measurement standard deviations. X, Y, theta.
+    new Matrix<>(Nat.N3(), Nat.N1()).fill(0.01), // Local measurement standard deviations. Left encoder, right encoder, gyro.
+    new Matrix<>(Nat.N3(), Nat.N1()).fill(0.01)); // Global measurement standard deviations. X, Y, and theta.
     
-
     estimator.update(m_drivetrain.getGyroscopeRotation(), );
     if(target==1){
       //TODO: use Kalman filter instead: https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-observers.html
