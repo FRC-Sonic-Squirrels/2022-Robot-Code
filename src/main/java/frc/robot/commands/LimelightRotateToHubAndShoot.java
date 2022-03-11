@@ -14,7 +14,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class VisionRotateToHubAndShoot extends CommandBase {
+public class LimelightRotateToHubAndShoot extends CommandBase {
   private LimelightSubsystem m_limelight;
   private Drivetrain m_drivetrain;
   private CargoSubsystem m_cargoSubsystem;
@@ -28,7 +28,7 @@ public class VisionRotateToHubAndShoot extends CommandBase {
   private double m_time;
   private double m_targetAngle;
   /** Creates a new VisionTurnToHub. */
-  public VisionRotateToHubAndShoot(double flywheelRPM, LimelightSubsystem limelight, Drivetrain drivetrain, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, Robot robot) {
+  public LimelightRotateToHubAndShoot(double flywheelRPM, LimelightSubsystem limelight, Drivetrain drivetrain, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, Robot robot) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_rpm = flywheelRPM;
     m_limelight = limelight;

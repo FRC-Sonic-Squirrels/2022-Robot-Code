@@ -7,6 +7,7 @@ package frc.robot;
 
 import java.time.Instant;
 import java.util.List;
+import com.team2930.lib.Limelight;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -41,6 +42,7 @@ import frc.robot.commands.ElevatorControlCommand;
 import frc.robot.commands.ShootWithSetRPMCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
+import frc.robot.commands.LimelightRotateToHubAndShoot;
 import frc.robot.commands.ShootCargoCommand;
 import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
@@ -50,6 +52,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.autonomous.SimpleAutonCommandOne;
 
 /**
@@ -68,6 +71,7 @@ public class RobotContainer {
   public final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
   public final ArmSubsystem m_arm = new ArmSubsystem();
   public final Robot m_robot;
+  public final LimelightSubsystem m_limelight = new LimelightSubsystem(drivetrain);
 
   public final XboxController m_controller = new XboxController(0);
   public final XboxController m_operatorController = new XboxController(1);
@@ -186,6 +190,9 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
             () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+
+    new Button(m_controller::getLeftBumper)
+            .whileHeld(new LimelightRotateToHubAndShoot(2000, m_limelight, drivetrain, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
     // new Button(m_controller::getLeftBumper)
     //   .whileHeld(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
