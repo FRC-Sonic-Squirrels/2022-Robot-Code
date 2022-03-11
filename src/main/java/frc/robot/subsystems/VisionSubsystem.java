@@ -33,11 +33,7 @@ public class VisionSubsystem extends SubsystemBase{
     BLUE
   }
 
-  private NetworkTable table;
-  private double pitch;
-  private double latency;
-  private double target;
-  private double rotation;
+  
   //if you want to get pitch, yaw etc. call the getResult method. This will return the latest result 
   //you can check if the result has targets result.hasTargets() 
   //if it does you can do result.getBestTarget()
@@ -48,11 +44,6 @@ public class VisionSubsystem extends SubsystemBase{
   public VisionSubsystem(Drivetrain drivetrain){
    m_drivetrain = drivetrain;
    m_camera = new PhotonCamera("Microsoft_LifeCam_HD-3000");
-   table = NetworkTableInstance.getDefault().getTable("limelight");
-   pitch = table.getEntry("ty").getDouble(0);
-   latency = (table.getEntry("tl").getDouble(0))*1000;
-   target = table.getEntry("tv").getDouble(0);
-   rotation = table.getEntry("ts").getDouble(0);
    //how do we know which index is which i.e red pipeline/blue pipeline
    // index 1 is red, index 2 is blue
    m_camera.setPipelineIndex(0);
@@ -71,26 +62,9 @@ public class VisionSubsystem extends SubsystemBase{
       SmartDashboard.putNumber("yaw", -200);
     }
     SmartDashboard.putBoolean("has targets", m_result.hasTargets());
-    SmartDashboard.putNumber("pipelineLatency", latency);
+    
   }
 
-  public Pose2d getRobotPose() {
-    if(target==1){
-      var roboPose = PhotonUtils.estimateFieldToRobot(
-      Units.inchesToMeters(Constants.VisionConstants.CAMERA_HEIGHT_INCHES), 
-      Units.inchesToMeters(Constants.VisionConstants.TARGET_HEIGHT_INCHES), 
-      Units.degreesToRadians(Constants.VisionConstants.CAMERA_PITCH_DEGREES), 
-      pitch, 
-      Rotation2d.fromDegrees(rotation), 
-      m_drivetrain.getGyroscopeRotation(),
-      Constants.HubCentricConstants.HUB_CENTER_POSE2D, 
-      Constants.VisionConstants.CAMERA_TO_ROBOT
-      );
-      return roboPose;
-    } else {
-      return null;
-    }
-  }
 
   public void setPipelineRed() {
     m_camera.setPipelineIndex(1);
