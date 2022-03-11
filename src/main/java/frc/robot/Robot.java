@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -56,9 +55,6 @@ public class Robot extends TimedRobot {
 
     // We don't use this
     LiveWindow.disableAllTelemetry();
-
-    
-
   }
 
   /**
@@ -85,8 +81,6 @@ public class Robot extends TimedRobot {
     // FIXME: getTotalCurrent() throws errors
     //SmartDashboard.putNumber("PDH Total Current", revPDH.getTotalCurrent());
     //SmartDashboard.putNumber("PDH Total Energy", revPDH.getTotalEnergy());
-
-    
 
   }
 
