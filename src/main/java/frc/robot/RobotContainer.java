@@ -141,21 +141,21 @@ public class RobotContainer {
     Command fiveBallAuton_blue = auton.fiveBallAutonCommand("blue");
     Command fiveBallAuton_red = auton.fiveBallAutonCommand("blue");
 
-    Command testAuton_red = auton.testAutonCommand(StartPoseConstants.RED_DEF_TOP, FieldConstants.RED_CARGO_2);
+    Command autonOne = auton.testAutonCommand(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_2);
 
-    autonTrajectoryChooser.addOption("blue 4 ball", fourBallAuton_blue);
-    autonTrajectoryChooser.addOption("blue 3 ball", threeBallAuton_blue);
-    autonTrajectoryChooser.addOption("blue 2 ball", twoBallAuton_blue);
-    autonTrajectoryChooser.addOption("blue helper auton", complimentaryAuton_blue);
-    autonTrajectoryChooser.addOption("blue 5 ball", fiveBallAuton_blue);
+    // autonTrajectoryChooser.addOption("blue 4 ball", fourBallAuton_blue);
+    // autonTrajectoryChooser.addOption("blue 3 ball", threeBallAuton_blue);
+    // autonTrajectoryChooser.addOption("blue 2 ball", twoBallAuton_blue);
+    // autonTrajectoryChooser.addOption("blue helper auton", complimentaryAuton_blue);
+    // autonTrajectoryChooser.addOption("blue 5 ball", fiveBallAuton_blue);
 
-    autonTrajectoryChooser.addOption("red 4 ball", fourBallAuton_red);
-    autonTrajectoryChooser.addOption("red 3 ball", threeBallAuton_red);
-    autonTrajectoryChooser.addOption("red 2 ball", twoBallAuton_red);
-    autonTrajectoryChooser.addOption("red helper auton", complimentaryAuton_red);
-    autonTrajectoryChooser.addOption("red 5 ball", fiveBallAuton_red);
+    // autonTrajectoryChooser.addOption("red 4 ball", fourBallAuton_red);
+    // autonTrajectoryChooser.addOption("red 3 ball", threeBallAuton_red);
+    // autonTrajectoryChooser.addOption("red 2 ball", twoBallAuton_red);
+    // autonTrajectoryChooser.addOption("red helper auton", complimentaryAuton_red);
+    // autonTrajectoryChooser.addOption("red 5 ball", fiveBallAuton_red);
 
-    autonTrajectoryChooser.addOption("testAuton (red)", testAuton_red);
+    autonTrajectoryChooser.addOption("Auton 1: shoot and move", autonOne);
 
     SmartDashboard.putData("auton commands", autonTrajectoryChooser);
 
