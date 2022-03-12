@@ -202,13 +202,18 @@ public final class Constants {
 }
   
   public static class VisionConstants{
-    public static final double CAMERA_HEIGHT_INCHES = 42.0;
+    
+
+  }
+
+  public static class LimelightConstants{
+    public static final double LIMELIGHT_HEIGHT_INCHES = 29.962;
     public static final double TARGET_HEIGHT_INCHES = 104.0;
-    public static final double CAMERA_PITCH_DEGREES = 34.0;
+    public static final double LIMELIGHT_PITCH_DEGREES = 40;
+    public static final double HIGH_HUB_RADIUS_INCHES = 26.6875;
 
     //TODO: final distance between camera and the center of robot
-    public static final Transform2d CAMERA_TO_ROBOT = new Transform2d(new Translation2d(0.5, 0.2), new Rotation2d());
-
+    public static final Transform2d LIMELIGHT_TO_ROBOT = new Transform2d(new Translation2d(0.5, 0.2), new Rotation2d(0));
   }
 
   public static class VisionPipelineIndex {
@@ -225,23 +230,23 @@ public final class Constants {
     public static Translation2d BLUE_CARGO_6 = new Translation2d( Units.inchesToMeters(290.4), Units.inchesToMeters(312));
     public static Translation2d BLUE_CARGO_7 = new Translation2d( Units.inchesToMeters(196.8), Units.inchesToMeters(246));
     public static Translation2d RED_CARGO_1 = new Translation2d( Units.inchesToMeters(605), Units.inchesToMeters(280));
-    public static Translation2d RED_CARGO_2 = new Translation2d( Units.inchesToMeters(257), Units.inchesToMeters(441));
+    public static Translation2d RED_CARGO_2 = new Translation2d( Units.inchesToMeters(456), Units.inchesToMeters(252));
     public static Translation2d RED_CARGO_3 = new Translation2d( Units.inchesToMeters(350), Units.inchesToMeters(314));
-    public static Translation2d RED_CARGO_4 = new Translation2d( Units.inchesToMeters(235), Units.inchesToMeters(275));
-    public static Translation2d RED_CARGO_5 = new Translation2d( Units.inchesToMeters(174), Units.inchesToMeters(127));
+    public static Translation2d RED_CARGO_4 = new Translation2d( Units.inchesToMeters(240), Units.inchesToMeters(290));
+    public static Translation2d RED_CARGO_5 = new Translation2d( Units.inchesToMeters(176), Units.inchesToMeters(126));
     public static Translation2d RED_CARGO_6 = new Translation2d( Units.inchesToMeters(357), Units.inchesToMeters(12));
-    public static Translation2d RED_CARGO_7 = new Translation2d( Units.inchesToMeters(460), Units.inchesToMeters(246));
-    public static Translation2d HUB_CENTER = new Translation2d( Units.inchesToMeters(324), Units.inchesToMeters(162));
+    public static Translation2d RED_CARGO_7 = new Translation2d( Units.inchesToMeters(456), Units.inchesToMeters(251));
+    public static Translation2d HUB_CENTER = new Translation2d( Units.inchesToMeters(328), Units.inchesToMeters(162));
     public static Translation2d BLUE_LOW = new Translation2d( Units.inchesToMeters(130), Units.inchesToMeters(264));
-    public static Translation2d BLUE_MID = new Translation2d( Units.inchesToMeters(85), Units.inchesToMeters(264));
+    public static Translation2d BLUE_MID = new Translation2d( Units.inchesToMeters(88), Units.inchesToMeters(266));
     public static Translation2d BLUE_HIGH = new Translation2d( Units.inchesToMeters(62), Units.inchesToMeters(264));
     public static Translation2d BLUE_TRANSVERSAL = new Translation2d( Units.inchesToMeters(38), Units.inchesToMeters(264));
     public static Translation2d BLUE_PAD_1 = new Translation2d( Units.inchesToMeters(130), Units.inchesToMeters(216));
     public static Translation2d BLUE_PAD_2 = new Translation2d( Units.inchesToMeters(130), Units.inchesToMeters(312));
-    public static Translation2d RED_LOW = new Translation2d( Units.inchesToMeters(518), Units.inchesToMeters(60));
-    public static Translation2d RED_MID = new Translation2d( Units.inchesToMeters(562), Units.inchesToMeters(60));
-    public static Translation2d RED_HIGH = new Translation2d( Units.inchesToMeters(586), Units.inchesToMeters(60));
-    public static Translation2d RED_TRANSVERSAL = new Translation2d( Units.inchesToMeters(607), Units.inchesToMeters(60));
+    public static Translation2d RED_LOW = new Translation2d( Units.inchesToMeters(520), Units.inchesToMeters(58));//change
+    public static Translation2d RED_MID = new Translation2d( Units.inchesToMeters(562), Units.inchesToMeters(58));//change
+    public static Translation2d RED_HIGH = new Translation2d( Units.inchesToMeters(586), Units.inchesToMeters(58));//change
+    public static Translation2d RED_TRANSVERSAL = new Translation2d( Units.inchesToMeters(607), Units.inchesToMeters(58));//change
     public static Translation2d RED_PAD_1 = new Translation2d( Units.inchesToMeters(518), Units.inchesToMeters(108));
     public static Translation2d RED_PAD_2 = new Translation2d( Units.inchesToMeters(518), Units.inchesToMeters(12));
   } 
