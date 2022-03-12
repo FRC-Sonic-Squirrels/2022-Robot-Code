@@ -52,9 +52,11 @@ public class ShootWithSetRPMCommand extends CommandBase {
     // wait until flywheel is fully revved
     // once it is, turn on upper cargo belt
     // once upper ball has been released, go back to intake mode
+    SmartDashboard.putBoolean("AAA can shoot", false);
 
     if (m_shooterSubsystem.isAtDesiredRPM()) {
-      m_cargoSubsystem.setBothMode();
+      SmartDashboard.putBoolean("AAA can shoot", true);
+      m_cargoSubsystem.setShootMode();
       m_intakeSubsystem.deployIntake();
     }
   }

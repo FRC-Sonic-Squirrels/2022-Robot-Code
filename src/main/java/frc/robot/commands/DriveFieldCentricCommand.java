@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
@@ -29,11 +30,16 @@ public class DriveFieldCentricCommand extends CommandBase {
     @Override
     public void execute() {
         //DO NOT MULTIPLY THESE BY MAX VELOCITY that is already done in robot container
+        double rotationOutput = m_rotationSupplier.getAsDouble() * Constants.DriveFieldCentricConstant.ROTATION_MULTIPLIER;
+        SmartDashboard.putNumber("Drive field centric rotation output", rotationOutput);
+
+        if(Math.abs(rotationOutput) <0.05) { rotationOutput = 0.0; }
+
         m_drivetrainSubsystem.drive(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
                         m_translationXSupplier.getAsDouble() * Constants.DriveFieldCentricConstant.TRANSLATION_MULTIPLIER,
                         m_translationYSupplier.getAsDouble() * Constants.DriveFieldCentricConstant.TRANSLATION_MULTIPLIER,
-                        m_rotationSupplier.getAsDouble() * Constants.DriveFieldCentricConstant.ROTATION_MULTIPLIER,
+                        rotationOutput,
                         m_drivetrainSubsystem.getRotation()
                 )
         );

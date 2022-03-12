@@ -119,6 +119,8 @@ public class ShooterSubsystem extends SubsystemBase {
     // setPIDFromSmartDashboard();
     updateTestingRPM();
 
+    
+
     double setPoint = 0;
     m_currentRPM = m_encoder.getIntegratedSensorVelocity() / RPMtoTicks;
     m_error = m_currentRPM - m_desiredRPM;
@@ -161,6 +163,13 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Shooter  m_configF", m_configF);
     SmartDashboard.putNumber("Shooter  m_configIZ", m_configIZ);
     SmartDashboard.putNumber("Shooter m_rate_RPMperSecond", m_rate_RPMperSecond);
+
+    if(isAtDesiredRPM()){
+      SmartDashboard.putNumber("AAA shooting rpm within error", m_desiredRPM);
+    } else {
+      SmartDashboard.putNumber("AAA shooting rpm within error", 0);
+    }
+
 
   }
 
