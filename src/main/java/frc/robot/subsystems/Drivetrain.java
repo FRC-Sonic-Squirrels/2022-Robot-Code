@@ -110,6 +110,8 @@ public class Drivetrain extends SubsystemBase {
 
   private SimpleMotorFeedforward m_feedForward = new SimpleMotorFeedforward(AutoConstants.kS, AutoConstants.kV, AutoConstants.kA);
 
+  private boolean isOdometrySet = false;
+
   /**
    * Object constructor
    */
@@ -222,7 +224,14 @@ public class Drivetrain extends SubsystemBase {
    * @param rotation
    */
   public void setPose(Pose2d pose, Rotation2d rotation) {
+    if(!isOdometrySet) {
+      isOdometrySet = true; 
+    }
     m_odometry.resetPosition(pose, rotation);
+  }
+
+  public boolean isOdometrySet(){
+    return isOdometrySet;
   }
 
   /**

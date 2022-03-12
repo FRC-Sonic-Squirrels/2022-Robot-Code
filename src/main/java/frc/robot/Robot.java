@@ -125,6 +125,10 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+
+    if(!m_robotContainer.drivetrain.isOdometrySet()){
+      m_robotContainer.drivetrain.resetOdometry(new Pose2d());
+    }
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
@@ -132,7 +136,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    
+  }
 
   @Override
   public void testInit() {
