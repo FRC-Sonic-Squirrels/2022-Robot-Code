@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
 
-    SmartDashboard.putNumber("SHOOTING RPM", 2000);
+    SmartDashboard.putNumber("AAA shooting rpm testing", 2000);
     
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.

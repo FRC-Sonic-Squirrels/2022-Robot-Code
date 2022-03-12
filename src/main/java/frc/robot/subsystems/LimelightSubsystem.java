@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import javax.lang.model.type.UnionType;
 import com.team2930.lib.Limelight;
 import org.photonvision.PhotonUtils;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -32,23 +33,29 @@ public class LimelightSubsystem extends SubsystemBase {
   /** Creates a new Limelight. */
   public LimelightSubsystem(Drivetrain drivetrain) {
     m_drivetrain = drivetrain;
-    this.limelight = new Limelight();
+    this.limelight = new Limelight("limelight-one");
+    limelight.setPipeline(0);
   }
 
   @Override
   public void periodic() {
-    table = NetworkTableInstance.getDefault().getTable("limelight");
+    table = NetworkTableInstance.getDefault().getTable("limelight-one");
     pitch = table.getEntry("ty").getDouble(0);
     latency = (table.getEntry("tl").getDouble(0));
     target = table.getEntry("tv").getDouble(0);
     rotation = table.getEntry("ts").getDouble(0);
 
-    if (limelight.seesTarget()) {
-      distance_meters = distanceRateLimiter.calculate(
-          limelight.getDist(Units.inchesToMeters(Constants.LimelightConstants.TARGET_HEIGHT_INCHES),
-              Units.inchesToMeters(Constants.LimelightConstants.LIMELIGHT_HEIGHT_INCHES),
-              Units.inchesToMeters(Constants.LimelightConstants.LIMELIGHT_PITCH_DEGREES)));
+    SmartDashboard.putBoolean("limelight has target", target==1);
+    SmartDashboard.putNumber("limelight pitch", pitch);
+
+    if (target==1) {
+      distance_meters = limelight.getDist(
+        Units.inchesToMeters(Constants.LimelightConstants.TARGET_HEIGHT_INCHES),
+        Units.inchesToMeters(Constants.LimelightConstants.LIMELIGHT_HEIGHT_INCHES),
+        Constants.LimelightConstants.LIMELIGHT_PITCH_DEGREES) 
+        + Units.inchesToMeters(Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES);
       SmartDashboard.putNumber("distance ft", Units.metersToFeet(distance_meters));
+      SmartDashboard.putNumber("distance inches", Units.metersToInches(distance_meters));
     }
     else {
       // return zero if we don't see the target

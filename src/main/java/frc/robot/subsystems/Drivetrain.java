@@ -388,5 +388,6 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Drivetrain IMU Compass_heading", m_pigeon.getCompassHeading());
     // SmartDashboard.putNumber("Drivetrain IMU Fused_Heading", m_pigeon.getFusedHeading());
     SmartDashboard.putNumber("Drivetrain IMU Absolute_compass_heading", m_pigeon.getAbsoluteCompassHeading());
+    SmartDashboard.putNumber("Drivetrain odometry angle", m_odometry.getPoseMeters().getRotation().getDegrees());
   }
 }

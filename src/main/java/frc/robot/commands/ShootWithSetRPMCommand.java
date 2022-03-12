@@ -38,6 +38,8 @@ public class ShootWithSetRPMCommand extends CommandBase {
   @Override
   public void initialize() {
     //by default from testing on 2/26 2000 works well enough for low goal shots 
+    
+    m_rpm = SmartDashboard.getNumber("AAA shooting rpm testing", 2000);
     SmartDashboard.putNumber("SHOOTING RPM", m_rpm);
     m_shooterSubsystem.setFlywheelRPM(m_rpm);
     m_intakeSubsystem.deployIntake();
