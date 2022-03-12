@@ -16,6 +16,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.CANIVOR_canId;
 import static frc.robot.Constants.currentLimits;
 import static frc.robot.Constants.digitalIOConstants;
 import static frc.robot.Constants.canId;
@@ -43,8 +44,8 @@ public class CargoSubsystem extends SubsystemBase {
 
   public CargoSubsystem() {
 
-    LowerBelts = new WPI_TalonFX(canId.CANID5_LOWER_BELTS);
-    UpperBelts = new WPI_TalonFX(canId.CANID6_UPPER_BELTS);
+    LowerBelts = new WPI_TalonFX(CANIVOR_canId.CANID5_LOWER_BELTS, CANIVOR_canId.name);
+    UpperBelts = new WPI_TalonFX(CANIVOR_canId.CANID6_UPPER_BELTS, CANIVOR_canId.name);
 
     LowerBelts.configFactoryDefault();
     UpperBelts.configFactoryDefault();
