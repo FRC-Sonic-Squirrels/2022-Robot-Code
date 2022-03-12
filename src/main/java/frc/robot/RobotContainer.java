@@ -62,16 +62,18 @@ import frc.robot.autonomous.SimpleAutonCommandOne;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  public final Drivetrain drivetrain = new Drivetrain();
-  //public final VisionSubsystem m_visionSubsystem = new VisionSubsystem(drivetrain);
   public final CargoSubsystem m_cargo = new CargoSubsystem();
   public final ShooterSubsystem m_shooter = new ShooterSubsystem();
-  public final IntakeSubsystem m_intake = new IntakeSubsystem(drivetrain);
   public final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
   public final ArmSubsystem m_arm = new ArmSubsystem();
-  public final Robot m_robot;
+
+  // The robot's subsystems and commands are defined here...
+  public final Drivetrain drivetrain = new Drivetrain();
+  public final IntakeSubsystem m_intake = new IntakeSubsystem(drivetrain);
   public final LimelightSubsystem m_limelight = new LimelightSubsystem(drivetrain);
+
+  //public final VisionSubsystem m_visionSubsystem = new VisionSubsystem(drivetrain);
+  public final Robot m_robot;
 
   public final XboxController m_controller = new XboxController(0);
   public final XboxController m_operatorController = new XboxController(1);
@@ -97,7 +99,6 @@ public class RobotContainer {
   public RobotContainer(Robot robot) {
 
     m_robot = robot;
-
     
     // set the starting position of the robot on the field
     // startPoseChooser.addOption("1m left of hub", Constants.ROBOT_1M_LEFT_OF_HUB);
@@ -137,15 +138,20 @@ public class RobotContainer {
     Command complimentaryAuton_blue = auton.complimentaryAutonCommand("blue");
     Command complimentaryAuton_red = auton.complimentaryAutonCommand("red");
 
+    Command fiveBallAuton_blue = auton.fiveBallAutonCommand("blue");
+    Command fiveBallAuton_red = auton.fiveBallAutonCommand("red");
+
     autonTrajectoryChooser.addOption("blue 4 ball", fourBallAuton_blue);
     autonTrajectoryChooser.addOption("blue 3 ball", threeBallAuton_blue);
     autonTrajectoryChooser.addOption("blue 2 ball", twoBallAuton_blue);
     autonTrajectoryChooser.addOption("blue helper auton", complimentaryAuton_blue);
+    autonTrajectoryChooser.addOption("blue 5 ball", fiveBallAuton_blue);
 
     autonTrajectoryChooser.addOption("red 4 ball", fourBallAuton_red);
     autonTrajectoryChooser.addOption("red 3 ball", threeBallAuton_red);
     autonTrajectoryChooser.addOption("red 2 ball", twoBallAuton_red);
     autonTrajectoryChooser.addOption("red helper auton", complimentaryAuton_red);
+    autonTrajectoryChooser.addOption("red 5 ball", fiveBallAuton_red);
 
     SmartDashboard.putData("auton commands", autonTrajectoryChooser);
 
@@ -155,7 +161,7 @@ public class RobotContainer {
       camera.setResolution(320, 240);
       camera.setFPS(20);
     }
-
+ 
 
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:

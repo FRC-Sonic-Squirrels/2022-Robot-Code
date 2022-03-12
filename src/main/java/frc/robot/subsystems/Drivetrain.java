@@ -5,12 +5,12 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
+import com.swervedrivespecialties.swervelib.Mk4ModuleConfiguration;
 import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d; 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -98,7 +98,7 @@ public class Drivetrain extends SubsystemBase {
   
   private final Field2d m_field = new Field2d();
 
-  private WPI_Pigeon2 m_pigeon = new WPI_Pigeon2(Constants.canId.CANID15_pigeon_imu);
+  private WPI_Pigeon2 m_pigeon = new WPI_Pigeon2(Constants.CANIVOR_canId.CANID15_pigeon_imu, CANIVOR_canId.name);
 
   // These are our modules. We initialize them in the constructor.
   private final SwerveModule m_frontLeftModule;
@@ -135,10 +135,17 @@ public class Drivetrain extends SubsystemBase {
     //
     // By default we will use Falcon 500s in standard configuration. But if you use a different
     // configuration or motors you MUST change it. If you do not, your code will crash on startup.
+
+    Mk4ModuleConfiguration swerveConfig = new Mk4ModuleConfiguration();
+    swerveConfig.setDriveCurrentLimit(40);
+    swerveConfig.setNominalVoltage(11.5);
+
     m_frontLeftModule = Mk4iSwerveModuleHelper.createFalcon500(
         // This parameter is optional, but will allow you to see the current state of the module on
         // the dashboard.
         tab.getLayout("Front Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
+        // set current limit and nominal voltage
+        swerveConfig,
         // This can either be STANDARD or FAST depending on your gear configuration
         Mk4iSwerveModuleHelper.GearRatio.L2,
         // This is the ID of the drive motor
@@ -156,6 +163,7 @@ public class Drivetrain extends SubsystemBase {
         Mk4iSwerveModuleHelper.createFalcon500(
             tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2,
                 0),
+            swerveConfig,
             Mk4iSwerveModuleHelper.GearRatio.L2,
             canId.CANID2_FRONT_RIGHT_MODULE_DRIVE_MOTOR,
             canId.CANID12_FRONT_RIGHT_MODULE_STEER_MOTOR,
@@ -166,6 +174,7 @@ public class Drivetrain extends SubsystemBase {
         Mk4iSwerveModuleHelper.createFalcon500(
             tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4,
                 0),
+            swerveConfig,
             Mk4iSwerveModuleHelper.GearRatio.L2,
             canId.CANID4_BACK_LEFT_MODULE_DRIVE_MOTOR,
             canId.CANID14_BACK_LEFT_MODULE_STEER_MOTOR,
@@ -176,6 +185,7 @@ public class Drivetrain extends SubsystemBase {
         Mk4iSwerveModuleHelper.createFalcon500(
             tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6,
                 0),
+            swerveConfig,
             Mk4iSwerveModuleHelper.GearRatio.L2,
             canId.CANID3_BACK_RIGHT_MODULE_DRIVE_MOTOR,
             canId.CANID13_BACK_RIGHT_MODULE_STEER_MOTOR,

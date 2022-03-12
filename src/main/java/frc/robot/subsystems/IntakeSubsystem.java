@@ -31,7 +31,7 @@ public class IntakeSubsystem extends SubsystemBase {
     REVERSE
   };
 
-  private WPI_TalonFX m_intake = new WPI_TalonFX(canId.CANID18_INTAKE);
+  private WPI_TalonFX m_intake = new WPI_TalonFX(Constants.canId.CANID18_INTAKE);
   private TalonFXSensorCollection m_encoder;
   private Solenoid intakeSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Constants.pneumatics.channel_14_intake);
   private Drivetrain m_drivetrain;

@@ -16,6 +16,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.CANIVOR_canId;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -23,8 +24,8 @@ public class ShooterSubsystem extends SubsystemBase {
     STATIC, DYNAMIC
   };
 
-  private WPI_TalonFX flywheel_lead= new WPI_TalonFX(Constants.canId.CANID16_flywheel_lead);
-  private WPI_TalonFX flywheel_follow = new WPI_TalonFX(Constants.canId.CANID17_flywheel_follow);
+  private WPI_TalonFX flywheel_lead= new WPI_TalonFX(CANIVOR_canId.CANID16_flywheel_lead, CANIVOR_canId.name);
+  private WPI_TalonFX flywheel_follow = new WPI_TalonFX(CANIVOR_canId.CANID17_flywheel_follow, CANIVOR_canId.name);
   private TalonFXSensorCollection m_encoder;
   private double kMaxOutput, kMinOutput;
   private double m_desiredRPM = 0;
