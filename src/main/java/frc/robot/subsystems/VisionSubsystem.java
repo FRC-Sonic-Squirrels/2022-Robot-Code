@@ -65,6 +65,23 @@ public class VisionSubsystem extends SubsystemBase{
     
   }
 
+  public Pose2d getRobotPose() {
+    if(target==1){
+      var roboPose = PhotonUtils.estimateFieldToRobot(
+      Units.inchesToMeters(Constants.VisionConstants.CAMERA_HEIGHT_INCHES), 
+      Units.inchesToMeters(Constants.VisionConstants.TARGET_HEIGHT_INCHES), 
+      Units.degreesToRadians(Constants.VisionConstants.CAMERA_PITCH_DEGREES), 
+      pitch, 
+      Rotation2d.fromDegrees(rotation), 
+      m_drivetrain.getRotation(),
+      Constants.HubCentricConstants.HUB_CENTER_POSE2D, 
+      Constants.VisionConstants.CAMERA_TO_ROBOT
+      );
+      return roboPose;
+    } else {
+      return null;
+    }
+  }
 
   public void setPipelineRed() {
     m_camera.setPipelineIndex(1);

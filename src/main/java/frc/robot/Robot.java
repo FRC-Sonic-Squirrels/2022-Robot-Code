@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -56,9 +55,6 @@ public class Robot extends TimedRobot {
 
     // We don't use this
     LiveWindow.disableAllTelemetry();
-
-    
-
   }
 
   /**
@@ -85,8 +81,6 @@ public class Robot extends TimedRobot {
     // FIXME: getTotalCurrent() throws errors
     //SmartDashboard.putNumber("PDH Total Current", revPDH.getTotalCurrent());
     //SmartDashboard.putNumber("PDH Total Energy", revPDH.getTotalEnergy());
-
-    
 
   }
 
@@ -131,6 +125,12 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+
+    //if testing and just using telop we reset pose and rotation to 0, auton will correct this 
+    //for its own use case and continue working after u switch to teleop
+    if(!m_robotContainer.drivetrain.isOdometrySet()){
+      m_robotContainer.drivetrain.setPose(new Pose2d(), m_robotContainer.drivetrain.getIMURotation());
+    }
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
@@ -138,7 +138,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    
+  }
 
   @Override
   public void testInit() {

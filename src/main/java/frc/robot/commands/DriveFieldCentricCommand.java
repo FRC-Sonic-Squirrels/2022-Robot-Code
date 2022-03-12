@@ -34,7 +34,7 @@ public class DriveFieldCentricCommand extends CommandBase {
                         m_translationXSupplier.getAsDouble() * Constants.DriveFieldCentricConstant.TRANSLATION_MULTIPLIER,
                         m_translationYSupplier.getAsDouble() * Constants.DriveFieldCentricConstant.TRANSLATION_MULTIPLIER,
                         m_rotationSupplier.getAsDouble() * Constants.DriveFieldCentricConstant.ROTATION_MULTIPLIER,
-                        m_drivetrainSubsystem.getGyroscopeRotation()
+                        m_drivetrainSubsystem.getRotation()
                 )
         );
     }

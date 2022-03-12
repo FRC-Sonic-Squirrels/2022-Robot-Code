@@ -55,12 +55,12 @@ public class DriveHubCentricCommand extends CommandBase {
     rotationalController.setTolerance(Math.PI/180); //1 degree of wiggle room
 
     
-    rotationalController.reset(m_drivetrain.getGyroscopeRotation().getRadians());
+    rotationalController.reset(m_drivetrain.getRotation().getRadians());
   }
 
   @Override
   public void execute() {
-    Rotation2d currentHeading = m_drivetrain.getGyroscopeRotation(); 
+    Rotation2d currentHeading = m_drivetrain.getRotation(); 
     Pose2d robotPosition = m_drivetrain.getPose();
     Vector2d robotVector = new Vector2d(m_hubCenter.x - robotPosition.getX(), m_hubCenter.y - robotPosition.getY());
 
