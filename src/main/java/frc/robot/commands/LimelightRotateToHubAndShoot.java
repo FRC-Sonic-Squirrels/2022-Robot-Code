@@ -56,15 +56,18 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_targetYaw = Math.toRadians(m_limelight.hubRotationDegrees());
-    m_targetAngle = m_drivetrain.getPose().getRotation().getDegrees() + m_targetYaw;
-    m_rotationCorrection = rotateController.calculate(m_drivetrain.getGyroscopeRotation().getRadians(), m_targetYaw) 
-    * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
-    //slow down rotation for testing/safety 
-    m_rotationCorrection *= 0.3;
-    if (m_shooterSubsystem.isAtDesiredRPM() & isAtTargetAngle()) {
-      m_cargoSubsystem.setBothMode();
-      m_intakeSubsystem.deployIntake();
+    if (m_limelight.seesTarget()) {
+      m_targetYaw = Math.toRadians(m_limelight.hubRotationDegrees());
+      m_targetAngle = m_drivetrain.getPose().getRotation().getDegrees() + m_targetYaw;
+      m_rotationCorrection =
+          rotateController.calculate(m_drivetrain.getGyroscopeRotation().getRadians(), m_targetYaw)
+              * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+      // slow down rotation for testing/safety
+      m_rotationCorrection *= 0.3;
+      if (m_shooterSubsystem.isAtDesiredRPM() & isAtTargetAngle()) {
+        m_cargoSubsystem.setBothMode();
+        m_intakeSubsystem.deployIntake();
+      }
     }
   }
 
