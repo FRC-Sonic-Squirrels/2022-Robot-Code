@@ -56,8 +56,7 @@ public final class Constants {
 
     public static final int CANID7 = 7;
     public static final int CANID8 = 8;
-
-
+    public static final int CANID18_INTAKE = 18;
     public static final int CANID19_ARM_LEAD_MOTOR = 19;
     public static final int CANID20_ARM_FOLLOW_MOTOR = 20;
   }
@@ -77,7 +76,6 @@ public final class Constants {
     public static final int CANID15_pigeon_imu = 15;
     public static final int CANID16_flywheel_lead = 16;
     public static final int CANID17_flywheel_follow = 17;
-    public static final int CANID18_INTAKE = 18;
 
   }
 
