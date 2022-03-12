@@ -44,7 +44,7 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    SmartDashboard.putNumber("SHOOTING RPM", m_rpm);
+    SmartDashboard.putNumber("SHOOTING RPM", m_shooterSubsystem.getRPMforDistanceFeet(distanceFeet));
     //m_shooterSubsystem.setFlywheelRPM(m_rpm);
     m_intakeSubsystem.deployIntake();
   }
@@ -57,7 +57,8 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getRPMforDistanceFeet(getDistance()));
+    m_shooterSubsystem.setFlywheelRPM(
+    m_shooterSubsystem.getRPMforDistanceFeet(m_limelight.hubDistanceMeters()));
 
     if (m_limelight.seesTarget()) {
       m_targetYaw = Math.toRadians(m_limelight.hubRotationDegrees());
