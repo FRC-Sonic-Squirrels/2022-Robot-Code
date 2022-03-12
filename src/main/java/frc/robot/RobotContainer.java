@@ -116,12 +116,14 @@ public class RobotContainer {
     //     startPoseChooser.getSelected(), drivetrain, true, m_shooterSubsystem, m_cargoSubsystem, m_intake, m_robot);
     // SmartDashboard.putData("Auto Mode (real)", autonTrajectoryChooser);
 
-    //Creates UsbCamera and sets resolution
-    camera = CameraServer.startAutomaticCapture();
-    camera.setResolution(320, 240);
-    camera.setFPS(20);
+    if (m_robot.isReal()) {
+      // Creates UsbCamera and sets resolution
+      camera = CameraServer.startAutomaticCapture();
+      camera.setResolution(320, 240);
+      camera.setFPS(20);
+    }
 
- 
+
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
     // Left stick Y axis -> forward and backwards movement
