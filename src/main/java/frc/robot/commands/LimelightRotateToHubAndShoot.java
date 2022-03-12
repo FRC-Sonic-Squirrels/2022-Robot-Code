@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
@@ -44,7 +45,7 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   @Override
   public void initialize() {
     SmartDashboard.putNumber("SHOOTING RPM", m_rpm);
-    m_shooterSubsystem.setFlywheelRPM(m_rpm);
+    //m_shooterSubsystem.setFlywheelRPM(m_rpm);
     m_intakeSubsystem.deployIntake();
   }
 
@@ -56,11 +57,13 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getRPMforDistanceFeet(getDistance()));
+
     if (m_limelight.seesTarget()) {
       m_targetYaw = Math.toRadians(m_limelight.hubRotationDegrees());
       m_targetAngle = m_drivetrain.getPose().getRotation().getDegrees() + m_targetYaw;
       m_rotationCorrection =
-          rotateController.calculate(m_drivetrain.getGyroscopeRotation().getRadians(), m_targetYaw)
+          rotateController.calculate(m_drivetrain.getRotation().getRadians(), m_targetYaw)
               * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
       // slow down rotation for testing/safety
       m_rotationCorrection *= 0.3;
@@ -97,4 +100,11 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
     // the command will be manually executed and ended by holding a button in teleop
     return false;
   }
+
+  public double getDistance(){
+    return Math.sqrt(
+        Math.pow(Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX() - m_drivetrain.getPose().getX(), 2) + 
+        Math.pow(Constants.HubCentricConstants.HUB_CENTER_POSE2D.getY() - m_drivetrain.getPose().getY(), 2));
+  }
+
 }
