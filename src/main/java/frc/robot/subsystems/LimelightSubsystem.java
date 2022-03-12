@@ -4,9 +4,9 @@
 
 package frc.robot.subsystems;
 
-import java.sql.DriverAction;
 import com.team2930.lib.Limelight;
 import org.photonvision.PhotonUtils;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -26,6 +26,9 @@ public class LimelightSubsystem extends SubsystemBase {
   public double target;
   public double rotation;
 
+  private static double rateMetersPerSecond = 1.0;
+  private static final SlewRateLimiter distanceRateLimiter = new SlewRateLimiter(rateMetersPerSecond, 0.0);
+
   /** Creates a new Limelight. */
   public LimelightSubsystem(Drivetrain drivetrain) {
     m_drivetrain = drivetrain;
@@ -36,18 +39,26 @@ public class LimelightSubsystem extends SubsystemBase {
   public void periodic() {
     table = NetworkTableInstance.getDefault().getTable("limelight");
     pitch = table.getEntry("ty").getDouble(0);
-    latency = (table.getEntry("tl").getDouble(0))*1000;
+    latency = (table.getEntry("tl").getDouble(0));
     target = table.getEntry("tv").getDouble(0);
     rotation = table.getEntry("ts").getDouble(0);
 
     if (limelight.seesTarget()) {
-      distance_meters = limelight.getDist(
-        Constants.LimelightConstants.TARGET_HEIGHT_INCHES, 
-        Constants.LimelightConstants.LIMELIGHT_HEIGHT_INCHES , 
-        Constants.LimelightConstants.LIMELIGHT_PITCH_DEGREES);
-      SmartDashboard.putNumber("distance ft", Units.metersToFeet(distance_meters*12));
+      distance_meters = distanceRateLimiter.calculate(
+          limelight.getDist(Units.inchesToMeters(Constants.LimelightConstants.TARGET_HEIGHT_INCHES),
+              Units.inchesToMeters(Constants.LimelightConstants.LIMELIGHT_HEIGHT_INCHES),
+              Units.inchesToMeters(Constants.LimelightConstants.LIMELIGHT_PITCH_DEGREES)));
+      SmartDashboard.putNumber("distance ft", Units.metersToFeet(distance_meters));
+    }
+    else {
+      // return zero if we don't see the target
+      SmartDashboard.putNumber("distance ft", 0);
     }
     SmartDashboard.putNumber("pipelineLatency", latency);
+  }
+
+  public boolean seesTarget() {
+    return limelight.seesTarget();
   }
 
   /** Returns the distance in meters */
