@@ -131,6 +131,8 @@ public class TestTrajectories {
         List.of(), new Pose2d(forwardInMeters, leftInMeters, new Rotation2d(rotation)),
         getTrajectoryConfig());
   }
+
+
   /**
    * easily create a trajectory between two positions, makes auton commands easier to read. 
    * YOU STILL HAVE TO TRANSFORM THE TRAJECTORY TO MAKE IT FIELD CENTRIC! 
@@ -148,6 +150,49 @@ public class TestTrajectories {
       new Pose2d(translation.getTranslation(), targetPos.getRotation()),
       getTrajectoryConfig());
   }
+
+  /**
+   * easily create a trajectory between two translations, makes auton commands easier to read. 
+   * YOU STILL HAVE TO TRANSFORM THE TRAJECTORY TO MAKE IT FIELD CENTRIC! 
+   * 
+   * @param currentPos
+   * @param targetPos
+   * @return trajectory between two translations
+   */
+  public Trajectory driveToPose(Translation2d currentPos, Translation2d targetPos){
+    Pose2d pos1 = new Pose2d(currentPos, new Rotation2d());
+    Pose2d pos2 = new Pose2d(targetPos, new Rotation2d());
+
+    var translation = new Transform2d(pos1, pos2);
+
+    return TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0.0, 0.0, new Rotation2d()), 
+      List.of(),
+      new Pose2d(translation.getTranslation(), new Rotation2d()),
+      getTrajectoryConfig());
+  }
+
+  /**
+   * easily create a trajectory from a translation to a pose, makes auton commands easier to read. 
+   * YOU STILL HAVE TO TRANSFORM THE TRAJECTORY TO MAKE IT FIELD CENTRIC! 
+   * 
+   * @param currentPos
+   * @param targetPos
+   * @return trajectory from a translation to a pose
+   */
+  public Trajectory driveToPose(Translation2d currentPos, Pose2d targetPos){
+    Pose2d pos1 = new Pose2d(currentPos, new Rotation2d());
+
+    var translation = new Transform2d(pos1, targetPos);
+
+    return TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0.0, 0.0, new Rotation2d()), 
+      List.of(),
+      new Pose2d(translation.getTranslation(), targetPos.getRotation()),
+      getTrajectoryConfig());
+  }
+
+
 
   public Trajectory rotateRobot(double angle) {
 
