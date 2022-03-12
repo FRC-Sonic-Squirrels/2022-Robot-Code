@@ -19,11 +19,10 @@ public class ShootWithSetRPMCommand extends CommandBase {
   private long m_time;
   private double m_rpm;
 
-  public ShootWithSetRPMCommand(int flyWheelRPM, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, Robot robot) {
+  public ShootWithSetRPMCommand(int flyWheelRPM, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, Robot robot) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
-    m_intakeSubsystem = intakeSubsystem;
     m_robot = robot;
     m_rpm = flyWheelRPM;
     m_time = 0;
@@ -31,7 +30,7 @@ public class ShootWithSetRPMCommand extends CommandBase {
 
     // drivetrain is not included in the requirements, as it use in a "read only"
     // fashion, to call getPose(). 
-    addRequirements(cargoSubsystem, shooterSubsystem, intakeSubsystem);
+    addRequirements(cargoSubsystem, shooterSubsystem);
   }
 
   // Called when the command is initially scheduled.

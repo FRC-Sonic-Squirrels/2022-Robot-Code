@@ -54,9 +54,9 @@ public class CargoSubsystem extends SubsystemBase {
 
     // reduce CAN traffic for motors (not using speed control)
     LowerBelts.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
-    LowerBelts.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 200);
+    LowerBelts.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 199);
     UpperBelts.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
-    UpperBelts.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 200);
+    UpperBelts.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 197);
 
     // Voltage limits, percent output is scaled to this new max
     LowerBelts.configVoltageCompSaturation(10);
@@ -101,7 +101,7 @@ public class CargoSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
   
-    updateTestingValues();
+    //updateTestingValues();
   
     if (mode == Mode.STOP) {
       stopIndexer();
@@ -130,9 +130,6 @@ public class CargoSubsystem extends SubsystemBase {
     } 
     else if (mode == Mode.BOTH) {
       // Normal, non-eject mode
-
-
-      // shoot mode releases the upper cargo, then moves the lower cargo to the top
       setUpperBeltPercentOutput(m_upperOutput);
       setLowerBeltPercentOutput(m_lowerOutput);
     } 
@@ -151,7 +148,7 @@ public class CargoSubsystem extends SubsystemBase {
       setLowerBeltPercentOutput(0.6);
     }
     else if (mode == Mode.REVERSE) {
-      setUpperBeltPercentOutput(-m_lowerOutput); //negate percent output to make belts go in reverse
+      setUpperBeltPercentOutput(-m_lowerOutput);
       setLowerBeltPercentOutput(-m_upperOutput);
     }
     else {
