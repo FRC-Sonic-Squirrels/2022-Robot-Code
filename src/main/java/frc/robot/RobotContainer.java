@@ -203,7 +203,7 @@ public class RobotContainer {
     // Back button zeros the gyroscope
     new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
-            .whenPressed(drivetrain::zeroGyroscope);
+            .whenPressed(drivetrain::resetFieldCentric);
 
     new Button(m_controller::getXButton)
             .whenPressed(new DriveHubCentricCommand(drivetrain, 

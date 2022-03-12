@@ -223,6 +223,13 @@ public class Drivetrain extends SubsystemBase {
     m_pigeon.setAccumZAngle(deg);
   }
 
+  public void resetFieldCentric(){
+    Pose2d currentPose = getPose();
+
+    m_odometry.resetPosition(
+      new Pose2d(currentPose.getX(),currentPose.getY(), new Rotation2d(0)), getIMURotation());
+  }
+
   public void setGyroscopeHeadingRadians(double rad) {
     setGyroscopeHeadingDegrees(Math.toDegrees(rad));
   }
@@ -234,9 +241,9 @@ public class Drivetrain extends SubsystemBase {
    * @param rotation
    */
   public void setPose(Pose2d pose, Rotation2d rotation) {
-    if(!isOdometrySet) {
-      isOdometrySet = true; 
-    }
+    
+    isOdometrySet = true; 
+    
     m_odometry.resetPosition(pose, rotation);
   }
 
