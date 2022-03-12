@@ -38,8 +38,8 @@ public class MotorUtils {
    */
   public static void setCtreStatusSlow(BaseMotorController... motors) {
     for (BaseMotorController motor : motors) {
-      motor.setStatusFramePeriod(StatusFrame.Status_1_General, 400 + (Math.random() * 100));
-      motor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 400 + (Math.random() * 100));
+      motor.setStatusFramePeriod(StatusFrame.Status_1_General, 400 + (int)(Math.random() * 100));
+      motor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 400 + (int)(Math.random() * 100));
     }
   }
 
@@ -66,9 +66,9 @@ public class MotorUtils {
    */
   public static void setSparkMaxStatusSlow(CANSparkMax... motors) {
     for (CANSparkMax motor : motors) {
-      motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 50 + (Math.random() * 50));
-      motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 400 + (Math.random() * 100));
-      motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 400 + (Math.random() * 100));
+      motor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 50 + (int)(Math.random() * 50));
+      motor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 400 + (int)(Math.random() * 100));
+      motor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 400 + (int)(Math.random() * 100));
     }
   }
 
