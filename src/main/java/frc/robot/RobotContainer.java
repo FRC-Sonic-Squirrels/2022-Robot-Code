@@ -264,7 +264,7 @@ public class RobotContainer {
 
     // 1500 RPM is perfecto for right against the hub
     new Button(m_operatorController::getRightBumper)
-     .whenPressed(new ShootWithSetRPMCommand(1500, m_cargo, m_shooter, m_intake, m_robot));
+     .whileHeld(new ShootWithSetRPMCommand(1500, m_cargo, m_shooter, m_intake, m_robot));
 
     // new Button(m_operatorController::getLeftStickButtonPressed)
     //   .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
