@@ -16,6 +16,7 @@ public class ShootWithSetRPMCommand extends CommandBase {
   private Robot m_robot;
   private long m_time;
   private double m_rpm;
+  private boolean shooting = false;
 
   public ShootWithSetRPMCommand(int flyWheelRPM, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, Robot robot) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -40,7 +41,7 @@ public class ShootWithSetRPMCommand extends CommandBase {
     SmartDashboard.putNumber("SHOOTING RPM", m_rpm);
 
     m_shooterSubsystem.setFlywheelRPM(m_rpm);
-    //m_intakeSubsystem.deployIntake();
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -51,10 +52,10 @@ public class ShootWithSetRPMCommand extends CommandBase {
     // once upper ball has been released, go back to intake mode
     SmartDashboard.putBoolean("AAA can shoot", false);
 
-    if (m_shooterSubsystem.isAtDesiredRPM()) {
+    if (!shooting && m_shooterSubsystem.isAtDesiredRPM()) {
+      shooting = true;
       SmartDashboard.putBoolean("AAA can shoot", true);
       m_cargoSubsystem.setShootMode();
-      //m_intakeSubsystem.deployIntake();
     }
   }
 
