@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -28,6 +29,12 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   private double m_rpm;
   private double m_time;
   private double m_targetAngle;
+
+  private double target_distance_meters = 0.0;
+  private double target_rpm = 2000;
+
+  private boolean shooting = false;
+
   /** Creates a new VisionTurnToHub. */
   public LimelightRotateToHubAndShoot(double flywheelRPM, LimelightSubsystem limelight, Drivetrain drivetrain, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, Robot robot) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -44,8 +51,17 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    SmartDashboard.putNumber("SHOOTING RPM", m_shooterSubsystem.getRPMforDistanceFeet(distanceFeet));
-    //m_shooterSubsystem.setFlywheelRPM(m_rpm);
+
+    target_distance_meters = m_limelight.getDistanceMeters();
+    target_rpm = m_shooterSubsystem.getRPMforDistanceFeet(Units.metersToFeet(target_distance_meters)); 
+
+    if (target_distance_meters < 0.5){
+      target_rpm = m_rpm;
+    }
+
+    SmartDashboard.putNumber("SHOOTING RPM", target_rpm);
+
+    m_shooterSubsystem.setFlywheelRPM(target_rpm);
     m_intakeSubsystem.deployIntake();
   }
 
@@ -57,9 +73,6 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_shooterSubsystem.setFlywheelRPM(
-    m_shooterSubsystem.getRPMforDistanceFeet(m_limelight.hubDistanceMeters()));
-
     if (m_limelight.seesTarget()) {
       m_targetYaw = Math.toRadians(m_limelight.hubRotationDegrees());
       m_targetAngle = m_drivetrain.getPose().getRotation().getDegrees() + m_targetYaw;
@@ -69,10 +82,13 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
       // slow down rotation for testing/safety
       m_rotationCorrection *= 0.3;
       if (m_shooterSubsystem.isAtDesiredRPM() & isAtTargetAngle()) {
+        shooting = true;
         m_cargoSubsystem.setBothMode();
         m_intakeSubsystem.deployIntake();
       }
     }
+    SmartDashboard.putBoolean("SHOOTING", shooting);
+
   }
 
   // Called once the command ends or is interrupted.
@@ -81,6 +97,7 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
     m_shooterSubsystem.stop();
     m_cargoSubsystem.setStopMode();
     m_intakeSubsystem.retractIntake();
+    SmartDashboard.putBoolean("SHOOTING", false);
   }
 
   // Returns true when the command should end.
@@ -102,7 +119,7 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
     return false;
   }
 
-  public double getDistance(){
+  public double getPoseDistanceToHub(){
     return Math.sqrt(
         Math.pow(Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX() - m_drivetrain.getPose().getX(), 2) + 
         Math.pow(Constants.HubCentricConstants.HUB_CENTER_POSE2D.getY() - m_drivetrain.getPose().getY(), 2));

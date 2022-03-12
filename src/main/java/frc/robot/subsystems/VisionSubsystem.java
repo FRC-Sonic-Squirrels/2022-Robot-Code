@@ -27,6 +27,8 @@ public class VisionSubsystem extends SubsystemBase{
   private PhotonPipelineResult result;
   private VisionPipeline mode;
 
+  private double target, pitch, rotation;
+
   // enum might be unnecessary, still unsure
   public enum VisionPipeline {
     RED,

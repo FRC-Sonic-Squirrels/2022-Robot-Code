@@ -62,7 +62,7 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   /** Returns the distance in meters */
-  public double hubDistanceMeters () {
+  public double getDistanceMeters () {
     return distance_meters;
   }
 
@@ -79,7 +79,7 @@ public class LimelightSubsystem extends SubsystemBase {
       Units.degreesToRadians(Constants.LimelightConstants.LIMELIGHT_PITCH_DEGREES), 
       pitch, 
       Rotation2d.fromDegrees(rotation), 
-      m_drivetrain.getGyroscopeRotation(),
+      m_drivetrain.getPose().getRotation(),  // TODO: double check this, was getGyroAngle()
       new Pose2d(
         Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES * Math.cos(-(rotation+m_drivetrain.getPose().getRotation().getRadians())), 
         Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES * Math.sin(-(rotation+m_drivetrain.getPose().getRotation().getRadians())), 
