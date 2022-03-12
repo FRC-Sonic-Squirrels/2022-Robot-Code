@@ -26,6 +26,7 @@ import frc.robot.commands.CargoMoveToUpperBeltsCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.ShootCargoCommand;
 import frc.robot.commands.ShootOneCargoCommand;
+import frc.robot.commands.ShootWithSetRPMCommand;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -148,13 +149,9 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         List.of(), targetPose, m_tt.getTrajectoryConfig());
 
 
-    return new SequentialCommandGroup(
-      new ParallelCommandGroup(
-        new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated)),
-        new WaitUntilCommand(() -> m_shooter.isAtDesiredRPM())//,
-        //SwerveControllerCommand(rotateToShoot, true)
-      ),
-      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
+    return new SequentialCommandGroup(      
+      new ShootWithSetRPMCommand(2750, m_cargo, m_shooter, m_intake, m_robot)
+        .withTimeout(4),
       SwerveControllerCommand(moveToCargoOne, true)
     );
   }

@@ -34,7 +34,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private int m_idleRPM = 2000;
   private double m_currentRPM = 0;
   private double m_error = 0;
-  private double m_max_RPM_error = 15;
+  private double m_max_RPM_error = 60;
   private final double RPMtoTicks = 2048 / 600;
   private double m_testingStaticRPM = 0;
 
@@ -117,9 +117,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     // this is for testing and tuning the pid
     // setPIDFromSmartDashboard();
-    updateTestingRPM();
-
-    
+    //updateTestingRPM();
 
     double setPoint = 0;
     m_currentRPM = m_encoder.getIntegratedSensorVelocity() / RPMtoTicks;
@@ -136,8 +134,6 @@ public class ShooterSubsystem extends SubsystemBase {
       // we don't rate reduce slowing the robot
       setPoint = m_desiredRPM;
     }
-
-    
 
     if (m_desiredRPM == 0) {
       // special case, turn off power to flywheel
@@ -176,7 +172,6 @@ public class ShooterSubsystem extends SubsystemBase {
   public void setFlywheelRPM(double rpm) {
     m_desiredRPM = rpm;
   }
-
 
   public double getCurrentRPM() {
     return m_currentRPM;
