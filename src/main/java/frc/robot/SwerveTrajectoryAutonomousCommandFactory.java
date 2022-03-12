@@ -417,14 +417,14 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     // choose coordinates to drive to based off alliance color
     if (team.equalsIgnoreCase("blue")) {
       //TODO: adjust
-      startPos = StartPoseConstants.BLUE_TOP;
+      startPos = StartPoseConstants.BLUE_DEF_TOP;
       cargo7 = FieldConstants.BLUE_CARGO_7;
       oppCargo4 = FieldConstants.RED_CARGO_4;
       pushPos1 = new Translation2d(21.5, 23.5);
       pushPos2 = new Translation2d(15, 24.5);
     }
     else if (team.equalsIgnoreCase("red")) {
-      startPos = StartPoseConstants.RED_BOTTOM;
+      startPos = StartPoseConstants.RED_DEF_BOTTOM;
       cargo7 = FieldConstants.RED_CARGO_7;
       oppCargo4 = FieldConstants.BLUE_CARGO_4;
       pushPos1 = new Translation2d(32.5, 3.5);
@@ -498,19 +498,19 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     if (alliance.equalsIgnoreCase("blue")) {
 
-      startPos_and_shootPos = StartPoseConstants.BLUE_BOTTOM;
+      startPos_and_shootPos = StartPoseConstants.BLUE_DEF_BOTTOM;
       cargoPos1 = FieldConstants.BLUE_CARGO_3;
       cargoPos2 = FieldConstants.BLUE_CARGO_2;
-      shootPos2 = StartPoseConstants.BLUE_MID_BOTTOM;
+      shootPos2 = StartPoseConstants.BLUE_DEF_BOTTOM;
       cargoPos3 = FieldConstants.BLUE_CARGO_1;
       playerMidPos = new Pose2d(cargoPos3.getX() + 1, cargoPos3.getY() + 1, new Rotation2d(3*Math.PI/4));
     }
     else if (alliance.equalsIgnoreCase("red")) {
 
-      startPos_and_shootPos = StartPoseConstants.RED_TOP;
+      startPos_and_shootPos = StartPoseConstants.RED_DEF_TOP;
       cargoPos1 = FieldConstants.RED_CARGO_3;
       cargoPos2 = FieldConstants.RED_CARGO_2;
-      shootPos2 = StartPoseConstants.RED_MID_TOP;
+      shootPos2 = StartPoseConstants.RED_DEF_TOP;
       cargoPos3 = FieldConstants.RED_CARGO_1;
       playerMidPos = new Pose2d(cargoPos3.getX() - 1, cargoPos3.getY() - 1, new Rotation2d(7*Math.PI/4));
     } else {

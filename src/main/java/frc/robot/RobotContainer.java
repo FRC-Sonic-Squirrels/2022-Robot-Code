@@ -122,24 +122,26 @@ public class RobotContainer {
     SwerveTrajectoryAutonomousCommandFactory auton = new SwerveTrajectoryAutonomousCommandFactory(
         drivetrain, m_shooter, m_cargo, m_intake, m_robot, 1, 0.75);
 
-    Command fourBallAuton_blue = auton.fourBallAutonCommand(StartPoseConstants.BLUE_BOTTOM, FieldConstants.BLUE_CARGO_3,
+    Command fourBallAuton_blue = auton.fourBallAutonCommand(StartPoseConstants.BLUE_DEF_BOTTOM, FieldConstants.BLUE_CARGO_3,
         FieldConstants.BLUE_CARGO_2, FieldConstants.BLUE_CARGO_1);
-    Command fourBallAuton_red = auton.fourBallAutonCommand(StartPoseConstants.RED_TOP, FieldConstants.RED_CARGO_3,
+    Command fourBallAuton_red = auton.fourBallAutonCommand(StartPoseConstants.RED_DEF_TOP, FieldConstants.RED_CARGO_3,
         FieldConstants.RED_CARGO_2, FieldConstants.RED_CARGO_1);
 
-    Command threeBallAuton_blue = auton.threeBallAutonCommand(StartPoseConstants.BLUE_BOTTOM,
+    Command threeBallAuton_blue = auton.threeBallAutonCommand(StartPoseConstants.BLUE_DEF_BOTTOM,
         FieldConstants.BLUE_CARGO_3, FieldConstants.BLUE_CARGO_2);
-    Command threeBallAuton_red = auton.threeBallAutonCommand(StartPoseConstants.RED_TOP,
+    Command threeBallAuton_red = auton.threeBallAutonCommand(StartPoseConstants.RED_DEF_TOP,
         FieldConstants.RED_CARGO_3, FieldConstants.RED_CARGO_2);
 
-    Command twoBallAuton_blue = auton.twoBallAutonCommand(StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7);
-    Command twoBallAuton_red = auton.twoBallAutonCommand(StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7);
+    Command twoBallAuton_blue = auton.twoBallAutonCommand(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
+    Command twoBallAuton_red = auton.twoBallAutonCommand(StartPoseConstants.RED_DEF_BOTTOM, FieldConstants.RED_CARGO_7);
 
     Command complimentaryAuton_blue = auton.complimentaryAutonCommand("blue");
     Command complimentaryAuton_red = auton.complimentaryAutonCommand("red");
 
     Command fiveBallAuton_blue = auton.fiveBallAutonCommand("blue");
     Command fiveBallAuton_red = auton.fiveBallAutonCommand("red");
+
+    Command testAuton_red = auton.testAutonCommand(StartPoseConstants.RED_DEF_TOP, FieldConstants.RED_CARGO_2);
 
     autonTrajectoryChooser.addOption("blue 4 ball", fourBallAuton_blue);
     autonTrajectoryChooser.addOption("blue 3 ball", threeBallAuton_blue);
@@ -152,6 +154,8 @@ public class RobotContainer {
     autonTrajectoryChooser.addOption("red 2 ball", twoBallAuton_red);
     autonTrajectoryChooser.addOption("red helper auton", complimentaryAuton_red);
     autonTrajectoryChooser.addOption("red 5 ball", fiveBallAuton_red);
+
+    autonTrajectoryChooser.addOption("testAuton (red)", testAuton_red);
 
     SmartDashboard.putData("auton commands", autonTrajectoryChooser);
 
