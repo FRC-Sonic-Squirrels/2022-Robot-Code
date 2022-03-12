@@ -99,7 +99,6 @@ public class RobotContainer {
   public RobotContainer(Robot robot) {
 
     m_robot = robot;
-
     
     // set the starting position of the robot on the field
     // startPoseChooser.addOption("1m left of hub", Constants.ROBOT_1M_LEFT_OF_HUB);
@@ -162,7 +161,7 @@ public class RobotContainer {
       camera.setResolution(320, 240);
       camera.setFPS(20);
     }
-
+ 
 
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:

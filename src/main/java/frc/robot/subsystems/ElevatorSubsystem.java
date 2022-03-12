@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.CANIVOR_canId;
 
 
 // Details on the TalonFX motion profile control can be found here:
@@ -30,8 +31,8 @@ import frc.robot.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
-  private WPI_TalonFX winch_lead_talon = new WPI_TalonFX(Constants.canId.CANID9_ELEVATOR_LEAD_TALON);
-  private WPI_TalonFX winch_follow_talon = new WPI_TalonFX(Constants.canId.CANID10_ELEVATOR_FOLLOW_TALON);
+  private WPI_TalonFX winch_lead_talon = new WPI_TalonFX(CANIVOR_canId.CANID9_ELEVATOR_LEAD_TALON, CANIVOR_canId.name);
+  private WPI_TalonFX winch_follow_talon = new WPI_TalonFX(CANIVOR_canId.CANID10_ELEVATOR_FOLLOW_TALON, CANIVOR_canId.name);
   private Solenoid frictionBrakeSolenoid =
       new Solenoid(PneumaticsModuleType.REVPH, Constants.pneumatics.channel_15_friction_brake);
   private final double gearRatio =  0.074;
