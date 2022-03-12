@@ -136,10 +136,10 @@ public class RobotContainer {
     Command twoBallAuton_red = auton.twoBallAutonCommand(StartPoseConstants.RED_DEF_BOTTOM, FieldConstants.RED_CARGO_7);
 
     Command complimentaryAuton_blue = auton.complimentaryAutonCommand("blue");
-    Command complimentaryAuton_red = auton.complimentaryAutonCommand("red");
+    Command complimentaryAuton_red = auton.complimentaryAutonCommand("blue");
 
     Command fiveBallAuton_blue = auton.fiveBallAutonCommand("blue");
-    Command fiveBallAuton_red = auton.fiveBallAutonCommand("red");
+    Command fiveBallAuton_red = auton.fiveBallAutonCommand("blue");
 
     Command testAuton_red = auton.testAutonCommand(StartPoseConstants.RED_DEF_TOP, FieldConstants.RED_CARGO_2);
 
