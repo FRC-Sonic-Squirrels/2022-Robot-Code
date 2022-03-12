@@ -223,7 +223,7 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
     new Button(m_controller::getLeftBumper)
-            .whileHeld(new LimelightRotateToHubAndShoot(2000, m_limelight, drivetrain, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+            .whileHeld(new LimelightRotateToHubAndShoot(2000, m_limelight, drivetrain, m_cargo, m_shooter, m_intake, m_robot));
 
     // new Button(m_controller::getLeftBumper)
     //   .whileHeld(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
