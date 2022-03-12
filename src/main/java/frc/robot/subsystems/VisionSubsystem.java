@@ -67,7 +67,7 @@ public class VisionSubsystem extends SubsystemBase{
 
   public Pose2d getRobotPose() {
     if(target==1){
-      var roboPose = PhotonUtils.estimateFieldToRobot(
+      Pose2d roboPose = PhotonUtils.estimateFieldToRobot(
       Units.inchesToMeters(Constants.VisionConstants.CAMERA_HEIGHT_INCHES), 
       Units.inchesToMeters(Constants.VisionConstants.TARGET_HEIGHT_INCHES), 
       Units.degreesToRadians(Constants.VisionConstants.CAMERA_PITCH_DEGREES), 

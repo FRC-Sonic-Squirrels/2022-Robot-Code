@@ -202,7 +202,12 @@ public final class Constants {
 }
   
   public static class VisionConstants{
-    
+    public static final double CAMERA_HEIGHT_INCHES = 42.0;
+    public static final double TARGET_HEIGHT_INCHES = 104.0;
+    public static final double CAMERA_PITCH_DEGREES = 34.0;
+
+    //TODO: final distance between camera and the center of robot
+    public static final Transform2d CAMERA_TO_ROBOT = new Transform2d(new Translation2d(0.5, 0.2), new Rotation2d());
 
   }
 
