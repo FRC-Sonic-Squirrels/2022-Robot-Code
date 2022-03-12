@@ -44,7 +44,7 @@ public class LimelightSubsystem extends SubsystemBase {
       distance_meters = limelight.getDist(
         Constants.LimelightConstants.TARGET_HEIGHT_INCHES, 
         Constants.LimelightConstants.LIMELIGHT_HEIGHT_INCHES , 
-        Constants.LimelightConstants.LIMELIGHT_PITCH_DEGREES);
+        Constants.LimelightConstants.LIMELIGHT_ANGLE_DEGREES);
       SmartDashboard.putNumber("distance ft", Units.metersToFeet(distance_meters*12));
     }
     SmartDashboard.putNumber("pipelineLatency", latency);
@@ -69,7 +69,10 @@ public class LimelightSubsystem extends SubsystemBase {
       pitch, 
       Rotation2d.fromDegrees(rotation), 
       m_drivetrain.getGyroscopeRotation(),
-      Constants.HubCentricConstants.HUB_CENTER_POSE2D, 
+      new Pose2d(
+        Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES * Math.cos(-(rotation+m_drivetrain.getPose().getRotation().getRadians())), 
+        Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES * Math.sin(-(rotation+m_drivetrain.getPose().getRotation().getRadians())), 
+        new Rotation2d(Units.degreesToRadians(rotation))),
       Constants.LimelightConstants.LIMELIGHT_TO_ROBOT
       );
       return roboPose;
