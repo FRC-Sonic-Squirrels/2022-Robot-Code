@@ -520,9 +520,9 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     m_drivetrain.setPose(startPos_and_shootPos, startPos_and_shootPos.getRotation());
 
     Trajectory start_to_cargo1 = TrajectoryGenerator.generateTrajectory(startPos_and_shootPos, List.of(),
-        new Pose2d(cargoPos1, startPos_and_shootPos.getRotation()), m_tt.getTrajectoryConfig());
+        new Pose2d(cargoPos1, getTranslationsAngle(poseToTranslation(startPos_and_shootPos), cargoPos1)), m_tt.getTrajectoryConfig());
 
-    Trajectory cargo1_to_shoot = TrajectoryGenerator.generateTrajectory(new Pose2d(cargoPos1, startPos_and_shootPos.getRotation()),
+    Trajectory cargo1_to_shoot = TrajectoryGenerator.generateTrajectory(new Pose2d(cargoPos1, getTranslationsAngle(poseToTranslation(startPos_and_shootPos), cargoPos1)),
         List.of(), startPos_and_shootPos, m_tt.getTrajectoryConfig());
 
     Trajectory shoot_to_cargo2 = TrajectoryGenerator.generateTrajectory(startPos_and_shootPos, List.of(),
@@ -546,18 +546,32 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       // 1. start up intake + flywheel, move to first cargo
       new ParallelCommandGroup(
         new IntakeDeployCommand(m_intake, m_cargo),
-        new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated))
-      )
+        new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated)),
+        SwerveControllerCommand(start_to_cargo1, true)
+      ),
 
       // 2. move back to start then shoot both cargo
+      SwerveControllerCommand(cargo1_to_shoot, true),
+      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
 
-      // 3. pick up next cargo, then go back to shoot that one cargo
+      // 3. move to and pick up next cargo, then go back to shoot that one cargo
+      SwerveControllerCommand(shoot_to_cargo2, true),
+      SwerveControllerCommand(cargo2_to_shoot2, true),
+      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
 
       // 4. go to human player area to pick up two new cargo
+      SwerveControllerCommand(shoot2_to_playerMid, true),
+      SwerveControllerCommand(playerMid_to_cargo3, true),
 
       // 5. move back to shooting area then shoot, while retracting intake
+      new ParallelCommandGroup(
+        SwerveControllerCommand(cargo3_to_shoot2, true),
+        new InstantCommand(() -> m_intake.retractIntake())
+      ),
+      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
 
       // 6. idle flywheel
+      new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle))
     );
   }
 
