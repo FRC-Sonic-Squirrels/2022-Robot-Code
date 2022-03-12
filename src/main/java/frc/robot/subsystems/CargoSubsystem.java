@@ -30,7 +30,8 @@ public class CargoSubsystem extends SubsystemBase {
     UPPERONLY,
     BOTH,
     REVERSE,
-    SHOOT
+    SHOOT,
+    SHOOT_STEP2
   };
 
   private WPI_TalonFX UpperBelts;
@@ -136,6 +137,16 @@ public class CargoSubsystem extends SubsystemBase {
       setLowerBeltPercentOutput(m_lowerOutput);
     } 
     else if(mode == Mode.SHOOT){
+      if (!cargoInUpperBelts()) {
+        stopIndexer();
+        mode = Mode.SHOOT_STEP2;
+      }
+      else {
+        setUpperBeltPercentOutput(-0.5);
+        setLowerBeltPercentOutput(-0.2);
+      }
+    }
+    else if (mode == Mode.SHOOT_STEP2) {
       setUpperBeltPercentOutput(0.9);
       setLowerBeltPercentOutput(0.6);
     }

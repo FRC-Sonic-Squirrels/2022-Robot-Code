@@ -43,7 +43,7 @@ public class ShootWithSetRPMCommand extends CommandBase {
     SmartDashboard.putNumber("SHOOTING RPM", m_rpm);
 
     m_shooterSubsystem.setFlywheelRPM(m_rpm);
-    m_intakeSubsystem.deployIntake();
+    //m_intakeSubsystem.deployIntake();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -57,7 +57,7 @@ public class ShootWithSetRPMCommand extends CommandBase {
     if (m_shooterSubsystem.isAtDesiredRPM()) {
       SmartDashboard.putBoolean("AAA can shoot", true);
       m_cargoSubsystem.setShootMode();
-      m_intakeSubsystem.deployIntake();
+      //m_intakeSubsystem.deployIntake();
     }
   }
 
@@ -66,7 +66,7 @@ public class ShootWithSetRPMCommand extends CommandBase {
   public void end(boolean interrupted) {
     m_shooterSubsystem.stop();
     m_cargoSubsystem.setStopMode();
-    m_intakeSubsystem.retractIntake();
+    //m_intakeSubsystem.retractIntake();
   }
 
   // Returns true when the command should end.
