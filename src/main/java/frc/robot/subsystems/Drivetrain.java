@@ -182,14 +182,14 @@ public class Drivetrain extends SubsystemBase {
             canId.CANID23_BACK_RIGHT_MODULE_STEER_ENCODER,
             BACK_RIGHT_MODULE_STEER_OFFSET);
 
-    m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
+    m_odometry = new SwerveDriveOdometry(m_kinematics, getIMURotation());
 
     // TODO: set starting point on the field accurately
-    m_odometry.resetPosition(new Pose2d(0.0, 0.0, new Rotation2d(0.0)), getGyroscopeRotation());
+    m_odometry.resetPosition(new Pose2d(0.0, 0.0, new Rotation2d(0.0)), getIMURotation());
 
     m_desiredStates = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0.0, 0.0, 0.0));
 
-    tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
+    tab.addNumber("Gyroscope Angle", () -> getIMURotation().getDegrees());
     tab.addNumber("Pose X", () -> m_odometry.getPoseMeters().getX());
     tab.addNumber("Pose Y", () -> m_odometry.getPoseMeters().getY());
 
@@ -236,12 +236,18 @@ public class Drivetrain extends SubsystemBase {
 
   /**
    * get current angle from gyroscope, return Rotation2d object.
+   * ONLY USE THIS IF YOU KNOW WHAT YOU ARE DOING 
+   * FOR MOST CASES USE getRotation() instead
    * 
    * @return gyro angle in Rotation2d
    */
-  public Rotation2d getGyroscopeRotation() {
+  public Rotation2d getIMURotation() {
       // return Rotation2d.fromDegrees(m_pigeon.getFusedHeading());
       return Rotation2d.fromDegrees(m_pigeon.getYaw());
+  }
+
+  public Rotation2d getRotation(){
+    return m_odometry.getPoseMeters().getRotation();
   }
 
 
@@ -324,7 +330,7 @@ public class Drivetrain extends SubsystemBase {
    * @param pose The pose to which to set the odometry.
    */
   public void resetOdometry(Pose2d pose) {
-    m_odometry.resetPosition(pose, getGyroscopeRotation());
+    m_odometry.resetPosition(pose, getIMURotation());
   }
 
   /**
@@ -357,7 +363,7 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    m_odometry.update(getGyroscopeRotation(),
+    m_odometry.update(getIMURotation(),
         new SwerveModuleState(m_frontLeftModule.getDriveVelocity(),
             new Rotation2d(m_frontLeftModule.getSteerAngle())),
         new SwerveModuleState(m_frontRightModule.getDriveVelocity(),

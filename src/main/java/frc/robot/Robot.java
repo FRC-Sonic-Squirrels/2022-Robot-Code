@@ -126,8 +126,10 @@ public class Robot extends TimedRobot {
     // continue until interrupted by another command, remove
     // this line or comment it out.
 
+    //if testing and just using telop we reset pose and rotation to 0, auton will correct this 
+    //for its own use case and continue working after u switch to teleop
     if(!m_robotContainer.drivetrain.isOdometrySet()){
-      m_robotContainer.drivetrain.resetOdometry(new Pose2d());
+      m_robotContainer.drivetrain.setPose(new Pose2d(), m_robotContainer.drivetrain.getIMURotation());
     }
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();

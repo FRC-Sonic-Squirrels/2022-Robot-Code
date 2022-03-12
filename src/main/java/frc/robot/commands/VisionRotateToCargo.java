@@ -69,7 +69,7 @@ public class VisionRotateToCargo extends CommandBase {
       m_rotationCorrection = 0.0;
     }
     m_drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
-      0, 0, m_rotationCorrection, m_drivetrain.getGyroscopeRotation()));
+      0, 0, m_rotationCorrection, m_drivetrain.getRotation()));
 
     SmartDashboard.putNumber("rotation correction", m_rotationCorrection);
   }

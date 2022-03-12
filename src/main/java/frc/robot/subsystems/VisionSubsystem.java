@@ -82,7 +82,7 @@ public class VisionSubsystem extends SubsystemBase{
       Units.degreesToRadians(Constants.VisionConstants.CAMERA_PITCH_DEGREES), 
       pitch, 
       Rotation2d.fromDegrees(rotation), 
-      m_drivetrain.getGyroscopeRotation(),
+      m_drivetrain.getRotation(),
       Constants.HubCentricConstants.HUB_CENTER_POSE2D, 
       Constants.VisionConstants.CAMERA_TO_ROBOT
       );
