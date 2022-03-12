@@ -80,8 +80,8 @@ public class RobotContainer {
   public final XboxController m_climbController = new XboxController(2);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
-  public final SendableChooser<Command> autonTrajectoryChooser = new SendableChooser<>();
-  public final SendableChooser<Command> simpleTrajectoryChooser = new SendableChooser<>();
+  //public final SendableChooser<Command> autonTrajectoryChooser = new SendableChooser<>();
+  //public final SendableChooser<Command> simpleTrajectoryChooser = new SendableChooser<>();
 
   //public final SendableChooser<Pose2d> startPoseChooser = new SendableChooser<>();
   //public final SendableChooser<Command> autonTrajectoryChooser = new SendableChooser<>();
@@ -141,7 +141,8 @@ public class RobotContainer {
     Command fiveBallAuton_blue = auton.fiveBallAutonCommand("blue");
     Command fiveBallAuton_red = auton.fiveBallAutonCommand("blue");
 
-    Command autonOne = auton.testAutonCommand(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_2);
+    Command 
+    autonOne = auton.testAutonCommand(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
 
     // autonTrajectoryChooser.addOption("blue 4 ball", fourBallAuton_blue);
     // autonTrajectoryChooser.addOption("blue 3 ball", threeBallAuton_blue);
@@ -155,9 +156,9 @@ public class RobotContainer {
     // autonTrajectoryChooser.addOption("red helper auton", complimentaryAuton_red);
     // autonTrajectoryChooser.addOption("red 5 ball", fiveBallAuton_red);
 
-    autonTrajectoryChooser.addOption("Auton 1: shoot and move", autonOne);
+    chooser.addOption("Auton 1: shoot and move", autonOne);
 
-    SmartDashboard.putData("auton commands", autonTrajectoryChooser);
+//    SmartDashboard.putData("auton commands", autonTrajectoryChooser);
 
     if (m_robot.isReal()) {
       // Creates UsbCamera and sets resolution
