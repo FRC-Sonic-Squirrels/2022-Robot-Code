@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.team2930.lib.util.MotorUtils;
 import com.team2930.lib.util.linearInterpolator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -47,6 +48,22 @@ public class ShooterSubsystem extends SubsystemBase {
   private double m_rate_RPMperSecond = 6000;
   private SlewRateLimiter m_rateLimiter = new SlewRateLimiter(m_rate_RPMperSecond);
 
+  // TODO: find actual values
+  private double shooterDistances[][] = {
+    {4.0, 3700},  // 4 feet 
+    {4.7, 3800},
+    {5.0, 3850},  // 5 feet
+    {5.8, 3850},
+    {6.6, 3900},
+    {9.7, 4675},
+    {11.0, 5000}, 
+    {15.0, 5400}, // 15 feet
+    {16.2, 5500},
+    {20.0, 6000},  // 20 feet
+    {23.3, 6000},
+    {25.0, 6200}
+  };
+
   //TODO: add shooting, idle and stop enums use them for logic for setting rpm when shooting, setting motor voltage to 0 when idle and slowing/setting rpm for when stopping
 
   /** Creates a new ShooterSubsystem. */
@@ -72,6 +89,15 @@ public class ShooterSubsystem extends SubsystemBase {
 
     flywheel_follow.follow(flywheel_lead);
     flywheel_follow.setInverted(true);
+
+    // Build the linear Interpolator
+    m_lt_feet = new linearInterpolator(shooterDistances);
+    
+    // Be more responsive to changes in the RPM
+    // https://docs.ctre-phoenix.com/en/stable/ch14_MCSensor.html#velocity-measurement-filter
+    // defaults are 100ms, 64 samples
+    flywheel_lead.configVelocityMeasurementPeriod(SensorVelocityMeasPeriod.Period_1Ms);
+    flywheel_lead.configVelocityMeasurementWindow(32);
 
     MotorUtils.setCtreStatusSlow(flywheel_follow);
 
@@ -108,6 +134,8 @@ public class ShooterSubsystem extends SubsystemBase {
       // we don't rate reduce slowing the robot
       setPoint = m_desiredRPM;
     }
+
+    
 
     if (m_desiredRPM == 0) {
       // special case, turn off power to flywheel
@@ -155,6 +183,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public double getIdleRPM() {
     return m_idleRPM;
+  }
+
+  public double getRPMforDistanceFeet(double distanceFeet) {
+    return m_lt_feet.getInterpolatedValue(distanceFeet);
   }
 
   private void setPIDFromSmartDashboard() {
