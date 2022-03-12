@@ -46,6 +46,22 @@ public class ShooterSubsystem extends SubsystemBase {
   private double m_rate_RPMperSecond = 6000;
   private SlewRateLimiter m_rateLimiter = new SlewRateLimiter(m_rate_RPMperSecond);
 
+  // TODO: find actual values
+  private double shooterDistances[][] = {
+    {4.0, 3700},  // 4 feet 
+    {4.7, 3800},
+    {5.0, 3850},  // 5 feet
+    {5.8, 3850},
+    {6.6, 3900},
+    {9.7, 4675},
+    {11.0, 5000}, 
+    {15.0, 5400}, // 15 feet
+    {16.2, 5500},
+    {20.0, 6000},  // 20 feet
+    {23.3, 6000},
+    {25.0, 6200}
+  };
+
   //TODO: add shooting, idle and stop enums use them for logic for setting rpm when shooting, setting motor voltage to 0 when idle and slowing/setting rpm for when stopping
 
   /** Creates a new ShooterSubsystem. */
@@ -71,6 +87,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     flywheel_follow.follow(flywheel_lead);
     flywheel_follow.setInverted(true);
+
+    // Build the linear Interpolator
+    m_lt_feet = new linearInterpolator(shooterDistances);
 
     MotorUtils.setCtreStatusSlow(flywheel_follow);
 
@@ -107,6 +126,8 @@ public class ShooterSubsystem extends SubsystemBase {
       // we don't rate reduce slowing the robot
       setPoint = m_desiredRPM;
     }
+
+    
 
     if (m_desiredRPM == 0) {
       // special case, turn off power to flywheel
@@ -154,6 +175,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public double getIdleRPM() {
     return m_idleRPM;
+  }
+
+  public double getRPMforDistanceFeet(double distanceFeet) {
+    return m_lt_feet.getInterpolatedValue(distanceFeet);
   }
 
   private void setPIDFromSmartDashboard() {
