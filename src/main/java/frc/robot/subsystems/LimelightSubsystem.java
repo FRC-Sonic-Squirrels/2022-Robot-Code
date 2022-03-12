@@ -44,7 +44,7 @@ public class LimelightSubsystem extends SubsystemBase {
       distance_meters = limelight.getDist(
         Constants.LimelightConstants.TARGET_HEIGHT_INCHES, 
         Constants.LimelightConstants.LIMELIGHT_HEIGHT_INCHES , 
-        Constants.LimelightConstants.LIMELIGHT_ANGLE_DEGREES);
+        Constants.LimelightConstants.LIMELIGHT_PITCH_DEGREES);
       SmartDashboard.putNumber("distance ft", Units.metersToFeet(distance_meters*12));
     }
     SmartDashboard.putNumber("pipelineLatency", latency);

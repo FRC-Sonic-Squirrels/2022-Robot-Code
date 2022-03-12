@@ -207,14 +207,13 @@ public final class Constants {
   }
 
   public static class LimelightConstants{
-    public static final double LIMELIGHT_HEIGHT_INCHES = 42.0;
+    public static final double LIMELIGHT_HEIGHT_INCHES = 29.962;
     public static final double TARGET_HEIGHT_INCHES = 104.0;
-    public static final double LIMELIGHT_ANGLE_DEGREES = 34.0;
-    public static final double LIMELIGHT_PITCH_DEGREES = 34.0;
+    public static final double LIMELIGHT_PITCH_DEGREES = 40;
     public static final double HIGH_HUB_RADIUS_INCHES = 26.6875;
 
     //TODO: final distance between camera and the center of robot
-    public static final Transform2d LIMELIGHT_TO_ROBOT = new Transform2d(new Translation2d(0.5, 0.2), new Rotation2d());
+    public static final Transform2d LIMELIGHT_TO_ROBOT = new Transform2d(new Translation2d(0.5, 0.2), new Rotation2d(0));
   }
 
   public static class VisionPipelineIndex {
