@@ -20,7 +20,7 @@ public class ElevatorZeroHeight extends CommandBase {
   @Override
   public void initialize() {
    // TODO:Test if we need higher values for percent  
-    m_elevator.setWinchPercentOutput(-0.01);
+    m_elevator.setWinchPercentOutput(-0.2);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
