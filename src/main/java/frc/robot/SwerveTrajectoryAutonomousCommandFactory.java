@@ -13,16 +13,12 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Relay.InvalidValueException;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.HubCentricConstants;
-//import frc.robot.Constants.ShootPoseConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StartPoseConstants;
 import frc.robot.Constants.FieldConstants;
@@ -439,6 +435,8 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       throw new IllegalArgumentException("String parameter was neither \"red\" nor \"blue\".");
     }
 
+    m_drivetrain.setPose(startPos, startPos.getRotation());
+
     startAngle = getTranslationsAngle(poseToTranslation(startPos), cargo7);
     startPos = setRotation(startPos, startAngle);
 
@@ -485,6 +483,82 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     );
 
+  }
+
+
+  /**
+   * Create a pre-made 5-ball command set
+   * @param alliance "red" or "blue", depending on your team (not case-sensitive)
+   * @return
+   */
+  public Command fiveBallAutonCommand(String alliance) {
+
+    Pose2d startPos_and_shootPos = null, shootPos2 = null, playerMidPos = null;
+    Translation2d cargoPos1 = null, cargoPos2 = null, cargoPos3 = null;
+
+    if (alliance.equalsIgnoreCase("blue")) {
+
+      startPos_and_shootPos = StartPoseConstants.BLUE_BOTTOM;
+      cargoPos1 = FieldConstants.BLUE_CARGO_3;
+      cargoPos2 = FieldConstants.BLUE_CARGO_2;
+      shootPos2 = StartPoseConstants.BLUE_MID_BOTTOM;
+      cargoPos3 = FieldConstants.BLUE_CARGO_1;
+      playerMidPos = new Pose2d(cargoPos3.getX() + 1, cargoPos3.getY() + 1, new Rotation2d(3*Math.PI/4));
+    }
+    else if (alliance.equalsIgnoreCase("red")) {
+
+      startPos_and_shootPos = StartPoseConstants.RED_TOP;
+      cargoPos1 = FieldConstants.RED_CARGO_3;
+      cargoPos2 = FieldConstants.RED_CARGO_2;
+      shootPos2 = StartPoseConstants.RED_MID_TOP;
+      cargoPos3 = FieldConstants.RED_CARGO_1;
+      playerMidPos = new Pose2d(cargoPos3.getX() - 1, cargoPos3.getY() - 1, new Rotation2d(7*Math.PI/4));
+    } else {
+      throw new IllegalArgumentException("argument was neither \"red\" nor \"blue\"");
+    }
+
+    m_drivetrain.setPose(startPos_and_shootPos, startPos_and_shootPos.getRotation());
+
+    Trajectory start_to_cargo1 = TrajectoryGenerator.generateTrajectory(startPos_and_shootPos, List.of(),
+        new Pose2d(cargoPos1, startPos_and_shootPos.getRotation()), m_tt.getTrajectoryConfig());
+
+    Trajectory cargo1_to_shoot = TrajectoryGenerator.generateTrajectory(new Pose2d(cargoPos1, startPos_and_shootPos.getRotation()),
+        List.of(), startPos_and_shootPos, m_tt.getTrajectoryConfig());
+
+    Trajectory shoot_to_cargo2 = TrajectoryGenerator.generateTrajectory(startPos_and_shootPos, List.of(),
+        new Pose2d(cargoPos2, getTranslationsAngle(poseToTranslation(startPos_and_shootPos), cargoPos2)), m_tt.getTrajectoryConfig());
+
+    Trajectory cargo2_to_shoot2 = TrajectoryGenerator.generateTrajectory(
+        new Pose2d(cargoPos2, getTranslationsAngle(poseToTranslation(startPos_and_shootPos), cargoPos2)),
+        List.of(), shootPos2, m_tt.getTrajectoryConfig());
+    
+    Trajectory shoot2_to_playerMid = TrajectoryGenerator.generateTrajectory(shootPos2, List.of(),
+        playerMidPos, m_tt.getTrajectoryConfig());
+    
+    Trajectory playerMid_to_cargo3 = TrajectoryGenerator.generateTrajectory(playerMidPos, List.of(),
+        new Pose2d(cargoPos3, playerMidPos.getRotation()), m_tt.getTrajectoryConfig());
+    
+    Trajectory cargo3_to_shoot2 = TrajectoryGenerator.generateTrajectory(new Pose2d(cargoPos3, playerMidPos.getRotation()),
+        List.of(), shootPos2, m_tt.getTrajectoryConfig());
+
+    return new SequentialCommandGroup(
+
+      // 1. start up intake + flywheel, move to first cargo
+      new ParallelCommandGroup(
+        new IntakeDeployCommand(m_intake, m_cargo),
+        new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated))
+      )
+
+      // 2. move back to start then shoot both cargo
+
+      // 3. pick up next cargo, then go back to shoot that one cargo
+
+      // 4. go to human player area to pick up two new cargo
+
+      // 5. move back to shooting area then shoot, while retracting intake
+
+      // 6. idle flywheel
+    );
   }
 
 
