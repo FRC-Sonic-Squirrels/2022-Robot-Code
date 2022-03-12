@@ -22,7 +22,7 @@ import frc.robot.Constants.canId;
 
 public class ArmSubsystem extends SubsystemBase {
   private CANSparkMax m_armLeadMotor = new CANSparkMax(canId.CANID19_ARM_LEAD_MOTOR, MotorType.kBrushless);
-  //private CANSparkMax m_armFollowMotor = new CANSparkMax(canId.CANID20_ARM_FOLLOW_MOTOR, MotorType.kBrushless);
+  private CANSparkMax m_armFollowMotor = new CANSparkMax(canId.CANID20_ARM_FOLLOW_MOTOR, MotorType.kBrushless);
 
   private int kCPR = 8192;   // ticks per revolution
   private SparkMaxAlternateEncoder.Type kAltEncType = SparkMaxAlternateEncoder.Type.kQuadrature;
@@ -54,12 +54,12 @@ public class ArmSubsystem extends SubsystemBase {
 
   public ArmSubsystem() {
     m_armLeadMotor.restoreFactoryDefaults();
-    //m_armFollowMotor.restoreFactoryDefaults();
+    m_armFollowMotor.restoreFactoryDefaults();
 
     m_armLeadMotor.setIdleMode(IdleMode.kBrake);
-    //m_armFollowMotor.setIdleMode(IdleMode.kBrake);
+    m_armFollowMotor.setIdleMode(IdleMode.kBrake);
 
-    //m_armFollowMotor.follow(m_armLeadMotor);
+    m_armFollowMotor.follow(m_armLeadMotor);
 
     m_throughBoreEncoder = m_armLeadMotor.getAlternateEncoder(kAltEncType, kCPR);
     
@@ -89,7 +89,7 @@ public class ArmSubsystem extends SubsystemBase {
     // https://www.hi-im.kim/canbus
     //MotorUtils.setSparkMaxStatusSlow(m_armFollowMotor);
     // we don't need fast updates of sensor velocity
-    //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 200);
+    //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 101);
     // we do need updates of sensor position
     //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
 
