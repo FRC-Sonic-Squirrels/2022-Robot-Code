@@ -4,10 +4,8 @@
 
 package frc.robot.subsystems;
 
-import javax.lang.model.type.UnionType;
 import com.team2930.lib.Limelight;
 import org.photonvision.PhotonUtils;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -22,13 +20,16 @@ public class LimelightSubsystem extends SubsystemBase {
   private Drivetrain m_drivetrain;
   private double distance_meters = 0.0;
   private NetworkTable table;
-  public double pitch;
-  public double latency;
-  public double target;
-  public double rotation;
+  private double pitch;
+  private double yaw;
+  private double latency;
+  private double seesTarget;
+  private double targetHeading;
+  private Pose2d robotPose = new Pose2d();
 
-  private static double rateMetersPerSecond = 1.0;
-  private static final SlewRateLimiter distanceRateLimiter = new SlewRateLimiter(rateMetersPerSecond, 0.0);
+  // TODO: test and fix filtering change in the distance
+  // private static double rateMetersPerSecond = 1.0;
+  // private static final SlewRateLimiter distanceRateLimiter = new SlewRateLimiter(rateMetersPerSecond, 0.0);
 
   /** Creates a new Limelight. */
   public LimelightSubsystem(Drivetrain drivetrain) {
@@ -41,59 +42,81 @@ public class LimelightSubsystem extends SubsystemBase {
   public void periodic() {
     table = NetworkTableInstance.getDefault().getTable("limelight-one");
     pitch = table.getEntry("ty").getDouble(0);
+    yaw = table.getEntry("tx").getDouble(0);
     latency = (table.getEntry("tl").getDouble(0));
-    target = table.getEntry("tv").getDouble(0);
-    rotation = table.getEntry("ts").getDouble(0);
+    seesTarget = table.getEntry("tv").getDouble(0);
 
-    SmartDashboard.putBoolean("limelight has target", target==1);
-    SmartDashboard.putNumber("limelight pitch", pitch);
+    robotPose = m_drivetrain.getPose();
 
-    if (target==1) {
+    // yaw is reported negative in Counter Clockwise direction, need to reverse it.
+    targetHeading = robotPose.getRotation().getDegrees() - yaw;
+
+    SmartDashboard.putBoolean("LL has target", seesTarget==1);
+    SmartDashboard.putNumber("LL pitch", pitch);
+
+    if (seesTarget==1) {
       distance_meters = limelight.getDist(
         Units.inchesToMeters(Constants.LimelightConstants.TARGET_HEIGHT_INCHES),
         Units.inchesToMeters(Constants.LimelightConstants.LIMELIGHT_HEIGHT_INCHES),
         Constants.LimelightConstants.LIMELIGHT_PITCH_DEGREES) 
         + Units.inchesToMeters(Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES);
-      SmartDashboard.putNumber("distance ft", Units.metersToFeet(distance_meters));
-      SmartDashboard.putNumber("distance inches", Units.metersToInches(distance_meters));
+      SmartDashboard.putNumber("LL distance ft", Units.metersToFeet(distance_meters));
+      SmartDashboard.putNumber("LL distance inches", Units.metersToInches(distance_meters));
+      SmartDashboard.putNumber("LL target heading", targetHeading);
     }
     else {
       // return zero if we don't see the target
-      SmartDashboard.putNumber("distance ft", 0);
+      SmartDashboard.putNumber("LL distance ft", 0);
     }
-    SmartDashboard.putNumber("pipelineLatency", latency);
+    SmartDashboard.putNumber("LL pipelineLatency", latency);
   }
 
   public boolean seesTarget() {
     return limelight.seesTarget();
   }
 
-  /** Returns the distance in meters */
+  /** 
+   * Returns the distance in meters 
+   */
   public double getDistanceMeters () {
     return distance_meters;
   }
 
-  /** Returns the rotation degrees */
-  public double hubRotationDegrees () {
-    return rotation;
+  /** 
+   * Returns the heading of the vision target in Radians.
+   */
+  public double getTargetHeadingRadians() {
+    return Units.degreesToRadians(targetHeading);
   }
 
-  public Pose2d getRobotPose() {
-    if(target==1){
-      var roboPose = PhotonUtils.estimateFieldToRobot(
+  /** 
+   * the angle offset to the vision target
+   */
+  public double hubRotationDegrees () {
+    return yaw;
+  }
+
+  /*
+  * Returns an estimated pose of the robot based on the limelight sighting of the target.
+  *
+  * WARNING: This is UNTESTED.
+  */
+  public Pose2d getEstimatedRobotPose() {
+    if (seesTarget==1) {
+      Pose2d estimatedRobotPose = PhotonUtils.estimateFieldToRobot(
       Units.inchesToMeters(Constants.LimelightConstants.LIMELIGHT_HEIGHT_INCHES), 
       Units.inchesToMeters(Constants.LimelightConstants.TARGET_HEIGHT_INCHES), 
       Units.degreesToRadians(Constants.LimelightConstants.LIMELIGHT_PITCH_DEGREES), 
-      pitch, 
-      Rotation2d.fromDegrees(rotation), 
-      m_drivetrain.getIMURotation(),
+      Units.degreesToRadians(pitch),
+      new Rotation2d(Units.degreesToRadians(-yaw)), 
+      robotPose.getRotation(),
       new Pose2d(
-        Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES * Math.cos(-(rotation+m_drivetrain.getPose().getRotation().getRadians())), 
-        Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES * Math.sin(-(rotation+m_drivetrain.getPose().getRotation().getRadians())), 
-        new Rotation2d(Units.degreesToRadians(rotation))),
+        Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES * Math.cos(-(yaw+robotPose.getRotation().getRadians())), 
+        Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES * Math.sin(-(yaw+robotPose.getRotation().getRadians())), 
+        new Rotation2d(Units.degreesToRadians(yaw))),
       Constants.LimelightConstants.LIMELIGHT_TO_ROBOT
       );
-      return roboPose;
+      return estimatedRobotPose;
     } else {
       return null;
     }
