@@ -6,8 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.constraint.SwerveDriveKinematicsConstraint;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -74,6 +72,10 @@ public class RobotContainer {
       m_elevator = new ElevatorSubsystem();
       m_arm = new ArmSubsystem();
       m_limelight = new LimelightSubsystem(drivetrain);
+
+      // Configure the button bindings
+      configureButtonBindings();
+
       climbSubsystemsEnabled = true;
     }
   }
@@ -122,8 +124,7 @@ public class RobotContainer {
     //   () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / 4)
     // ));
     
-    // Configure the button bindings
-    configureButtonBindings();
+
   }
 
   /**
