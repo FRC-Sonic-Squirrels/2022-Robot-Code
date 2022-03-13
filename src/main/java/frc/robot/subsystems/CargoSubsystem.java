@@ -82,8 +82,8 @@ public class CargoSubsystem extends SubsystemBase {
 
     LowerBelts.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
     UpperBelts.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
-    
- 
+
+
     // TODO: configure PID for lower and upper belts
     // Config PID values to control RPM
     // LowerBelts.config_kP(0, 0.15, 10);
@@ -100,13 +100,12 @@ public class CargoSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-  
-    //updateTestingValues();
-  
+
+    // updateTestingValues();
+
     if (mode == Mode.STOP) {
       stopIndexer();
-    } 
-    else if (mode == Mode.INTAKE) {
+    } else if (mode == Mode.INTAKE) {
       if (cargoInUpperBelts()) {
         stopUpperBelts();
         if (cargoInLowerBelts()) {
@@ -118,40 +117,33 @@ public class CargoSubsystem extends SubsystemBase {
         setLowerBeltPercentOutput(0.9);
         setUpperBeltPercentOutput(0.5);
       }
-      
-    } 
-    else if (mode == Mode.LOWERONLY) {
+
+    } else if (mode == Mode.LOWERONLY) {
       stopUpperBelts();
       setLowerBeltPercentOutput(m_lowerOutput);
-    } 
-    else if (mode == Mode.UPPERONLY) {
+    } else if (mode == Mode.UPPERONLY) {
       stopLowerBelts();
       setUpperBeltPercentOutput(m_upperOutput);
-    } 
-    else if (mode == Mode.BOTH) {
+    } else if (mode == Mode.BOTH) {
       // Normal, non-eject mode
       setUpperBeltPercentOutput(m_upperOutput);
       setLowerBeltPercentOutput(m_lowerOutput);
-    } 
-    else if(mode == Mode.SHOOT){
+    } else if (mode == Mode.SHOOT) {
       if (!cargoInUpperBelts()) {
-        stopIndexer();
+        setUpperBeltPercentOutput(0.9);
+        setLowerBeltPercentOutput(0.6);
         mode = Mode.SHOOT_STEP2;
-      }
-      else {
+      } else {
         setUpperBeltPercentOutput(-0.5);
         setLowerBeltPercentOutput(-0.2);
       }
-    }
-    else if (mode == Mode.SHOOT_STEP2) {
+    } else if (mode == Mode.SHOOT_STEP2) {
       setUpperBeltPercentOutput(0.9);
       setLowerBeltPercentOutput(0.6);
-    }
-    else if (mode == Mode.REVERSE) {
+    } else if (mode == Mode.REVERSE) {
       setUpperBeltPercentOutput(-m_lowerOutput);
       setLowerBeltPercentOutput(-m_upperOutput);
-    }
-    else {
+    } else {
       stopIndexer();
     }
 
