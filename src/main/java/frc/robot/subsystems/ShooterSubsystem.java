@@ -39,10 +39,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private boolean autonPIDset = false;
 
-  private double teleop_configP = 0.25;
+  private double teleop_configP = 0.22;
   private double teleop_configI = 0.002;
   private double teleop_configD = 0.0;
-  private double teleop_configF = 0.06;
+  private double teleop_configF = 0.055;
   private double teleop_configIZ = 100;
 
   private double auton_configP = 0.25;
