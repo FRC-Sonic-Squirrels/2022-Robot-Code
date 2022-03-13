@@ -10,12 +10,10 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
-import com.team2930.lib.util.MotorUtils;
 import com.team2930.lib.util.linearInterpolator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.CANIVOR_canId;
 
@@ -97,7 +95,11 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheel_lead.configVelocityMeasurementPeriod(SensorVelocityMeasPeriod.Period_1Ms);
     flywheel_lead.configVelocityMeasurementWindow(32);
 
-    MotorUtils.setCtreStatusSlow(flywheel_follow);
+    // MotorUtils.setCtreStatusSlow(flywheel_follow);
+
+    // TODO: try this for fixing auton shooting
+    // flywheel_lead.setSafetyEnabled(false);
+    // flywheel_follow.setSafetyEnabled(false);
 
     setPIDteleop();
   }
@@ -114,12 +116,15 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    if (m_robot.isAutonomous() && !autonPIDset) {
-      setPIDauton();
+    if (m_robot.isAutonomous()) {
+      // auton mode, make sure auton PID is set
+      if (!autonPIDset) {
+        setPIDauton();
+      }
     } else if (autonPIDset) {
+      // teleop mode, make sure teleop PID is set
       setPIDteleop();
     }
-
 
     double setPoint = 0;
     m_currentRPM = m_encoder.getIntegratedSensorVelocity() / RPMtoTicks;

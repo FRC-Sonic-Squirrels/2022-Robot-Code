@@ -45,6 +45,8 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   private static Robot m_robot;
   private static TestTrajectories m_tt;
 
+  private static int m_shootRPM = 2750;
+
   public SwerveTrajectoryAutonomousCommandFactory(Drivetrain drivetrain, ShooterSubsystem shooter,
       CargoSubsystem cargo, IntakeSubsystem intake, Robot robot, double maxVelocity, double maxAcceleration) {
 
@@ -151,7 +153,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         List.of(), startPos, m_tt.getTrajectoryConfig());
 
     return new SequentialCommandGroup(      
-      new ShootWithSetRPMCommand(2750, m_cargo, m_shooter, m_robot)
+      new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
         .withTimeout(4),
       new ParallelRaceGroup(
         SwerveControllerCommand(moveToCargoOne, true),
@@ -258,20 +260,22 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     return new SequentialCommandGroup(
       // 1. deploy intake then wait
-      new IntakeDeployCommand(m_intake, m_cargo),
-      new WaitUntilCommand(() -> m_intake.intakeAtDesiredRPM()),
+      
 
       // 2. collect initial cargo
       new ParallelCommandGroup(
-        SwerveControllerCommand(start_to_initCargo, true),
+        new IntakeDeployCommand(m_intake, m_cargo),
+        SwerveControllerCommand(start_to_initCargo, true)
         // 3. set up flywheel then move to the shooting location
-        new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated)),
-        new WaitUntilCommand(() -> m_shooter.isAtDesiredRPM()) ),
+        // new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated)),
+        // new WaitUntilCommand(() -> m_shooter.isAtDesiredRPM()) ),
+      ),
       
       SwerveControllerCommand(initCargo_to_start, false),
       
       // 4. shoot both cargo
-      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
+      new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
+          .withTimeout(4),
       
       // 5. pick up cargo 1, then wait until it is in the upper belts
       SwerveControllerCommand(start_to_cargo1, true),
@@ -290,7 +294,8 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       ),
 
       // 9. shoot the last two cargo
-      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot)
+      new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
+          .withTimeout(4)
       // congratulations you (the robot) did it
     );
   }
@@ -326,13 +331,14 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
       // 1. start up flywheel and intake
       new ParallelCommandGroup(
-        new InstantCommand( () -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated)),
-        new IntakeDeployCommand(m_intake, m_cargo),
-        new WaitUntilCommand( () -> m_shooter.isAtDesiredRPM())
+        //new InstantCommand( () -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated)),
+        new IntakeDeployCommand(m_intake, m_cargo)
+        //new WaitUntilCommand( () -> m_shooter.isAtDesiredRPM())
       ),
 
       // 2. when flywheel is done, shoot pre-loaded cargo
-      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
+      new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
+          .withTimeout(4),
 
       // 3. move to first cargo and pick it up
       SwerveControllerCommand(start_to_cargo1, true),
@@ -347,10 +353,11 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         SwerveControllerCommand(cargo2_to_start, true),
         new InstantCommand( () -> m_intake.retractIntake())
       ),
-      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
+      new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
+          .withTimeout(4)
 
       // 6. stop flywheel
-      new InstantCommand( () -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle))
+      //new InstantCommand( () -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle))
     );
   }
 
@@ -378,13 +385,14 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     return new SequentialCommandGroup(
       // 1. start up intake and flywheel
       new ParallelCommandGroup(
-        new IntakeDeployCommand(m_intake, m_cargo),
-        new InstantCommand( () -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated) ),
-        new WaitUntilCommand( () -> m_shooter.isAtDesiredRPM() )
+        new IntakeDeployCommand(m_intake, m_cargo)
+        // new InstantCommand( () -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated) ),
+        // new WaitUntilCommand( () -> m_shooter.isAtDesiredRPM() )
       ),
 
       // 2. shoot the pre-loaded cargo
-      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
+      new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
+          .withTimeout(4),
 
       // 3. move to the next cargo and move it to the upper belts
       new ParallelCommandGroup(
@@ -399,10 +407,11 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       ),
 
       // 5. shoot the newly picked up cargo
-      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
+      new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
+          .withTimeout(4)
 
       // 6. stop flywheel
-      new InstantCommand( () -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle))
+      //new InstantCommand( () -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle))
 
     );
   }
@@ -468,7 +477,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       // 1. deploy intake and flywheel, while moving to first cargo
       new ParallelCommandGroup(
         new IntakeDeployCommand(m_intake, m_cargo),
-        new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated)),
+        //new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated)),
         SwerveControllerCommand(start_to_cargo7, true)
       ),
 
@@ -477,11 +486,12 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         new InstantCommand(() -> m_intake.retractIntake()),
         SwerveControllerCommand(cargo7_to_shootPos, true)
       ),
-      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
+      new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
+          .withTimeout(4),
 
       // 3. move to cargo to push, while idling flywheel
       new ParallelCommandGroup(
-        new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle)),
+        //new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle)),
         SwerveControllerCommand(shootPos_to_pushPos1, true)
       ),
 
@@ -553,18 +563,20 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       // 1. start up intake + flywheel, move to first cargo
       new ParallelCommandGroup(
         new IntakeDeployCommand(m_intake, m_cargo),
-        new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated)),
+        //new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated)),
         SwerveControllerCommand(start_to_cargo1, true)
       ),
 
       // 2. move back to start then shoot both cargo
       SwerveControllerCommand(cargo1_to_shoot, true),
-      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
+      new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
+          .withTimeout(4),
 
       // 3. move to and pick up next cargo, then go back to shoot that one cargo
       SwerveControllerCommand(shoot_to_cargo2, true),
       SwerveControllerCommand(cargo2_to_shoot2, true),
-      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
+      new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
+          .withTimeout(4),
 
       // 4. go to human player area to pick up two new cargo
       SwerveControllerCommand(shoot2_to_playerMid, true),
@@ -575,10 +587,11 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         SwerveControllerCommand(cargo3_to_shoot2, true),
         new InstantCommand(() -> m_intake.retractIntake())
       ),
-      new ShootCargoCommand(m_cargo, m_shooter, m_intake, m_robot),
+      new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
+          .withTimeout(4)
 
       // 6. idle flywheel
-      new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle))
+      //new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle))
     );
   }
 
