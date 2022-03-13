@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StartPoseConstants;
@@ -149,15 +150,20 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     Trajectory moveToCargoOne =  TrajectoryGenerator.generateTrajectory(startPos,
         List.of(), targetPose, m_tt.getTrajectoryConfig());
 
+        Trajectory moveToHub =  TrajectoryGenerator.generateTrajectory(targetPose,
+        List.of(), startPos, m_tt.getTrajectoryConfig());
+
 
     return new SequentialCommandGroup(      
       new ShootWithSetRPMCommand(2750, m_cargo, m_shooter, m_robot)
         .withTimeout(4),
-      new InstantCommand(() -> m_intake.setForwardMode(), m_intake),
-      new InstantCommand(() -> m_intake.deployIntake(), m_intake),
-      SwerveControllerCommand(moveToCargoOne, true),
-      new InstantCommand(() -> m_intake.setStopMode(), m_intake),
-      new InstantCommand(() -> m_intake.retractIntake(),m_intake)
+      new ParallelRaceGroup(
+        SwerveControllerCommand(moveToCargoOne, true),
+        new IntakeDeployCommand(m_intake, m_cargo)
+      ),
+        SwerveControllerCommand(moveToHub, true),
+        new ShootWithSetRPMCommand(2750, m_cargo, m_shooter, m_robot)
+          .withTimeout(4)
     );
   }
 

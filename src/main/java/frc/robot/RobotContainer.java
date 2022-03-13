@@ -91,7 +91,7 @@ public class RobotContainer {
 
   private UsbCamera camera;
 
-  TestTrajectories m_tt = new TestTrajectories(1, 0.75, drivetrain, true);
+  TestTrajectories m_tt = new TestTrajectories(3.5, 2.5, drivetrain, true);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.

@@ -34,14 +34,14 @@ public class ShooterSubsystem extends SubsystemBase {
   private int m_idleRPM = 2000;
   private double m_currentRPM = 0;
   private double m_error = 0;
-  private double m_max_RPM_error = 60;
+  private double m_max_RPM_error = 30;
   private final double RPMtoTicks = 2048 / 600;
   private double m_testingStaticRPM = 0;
 
-  private double m_configP = 0.2;
-  private double m_configI = 0.001;
+  private double m_configP = 0.25;
+  private double m_configI = 0.002;
   private double m_configD = 0.0;
-  private double m_configF = 0.052;
+  private double m_configF = 0.06;
   private double m_configIZ = 100;
 
   // lower number here, slows the rate of change and decreases the power spike
