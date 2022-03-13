@@ -25,6 +25,7 @@ import frc.robot.Constants.StartPoseConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.CargoMoveToUpperBeltsCommand;
 import frc.robot.commands.IntakeDeployCommand;
+import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.ShootCargoCommand;
 import frc.robot.commands.ShootOneCargoCommand;
 import frc.robot.commands.ShootWithSetRPMCommand;
@@ -212,7 +213,8 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     // get the target pose (slightly in front of the cargo pose)
     Pose2d targetPose = new Pose2d( cargoPos, startPos.getRotation());
-    Pose2d opponentCargoPose = new Pose2d(Constants.FieldConstants.RED_CARGO_4, new Rotation2d(0));
+    Pose2d opponentCargoPose = new Pose2d(Constants.FieldConstants.RED_CARGO_4, new Rotation2d(Math.PI/2));
+    Pose2d backPose = new Pose2d(Constants.FieldConstants.BEHIND_RED_CARGO_4, new Rotation2d(Math.PI));
 
     Trajectory moveToCargoOne =  TrajectoryGenerator.generateTrajectory(startPos,
         List.of(), targetPose, m_tt.getTrajectoryConfig());
@@ -220,9 +222,12 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     Trajectory moveToHub =  TrajectoryGenerator.generateTrajectory(targetPose,
         List.of(), startPos, m_tt.getTrajectoryConfig());
 
-
     Trajectory moveToOpponentCargo =  TrajectoryGenerator.generateTrajectory(startPos,
         List.of(), opponentCargoPose, m_tt.getTrajectoryConfig());
+
+    Trajectory rotateAndMove = TrajectoryGenerator.generateTrajectory(opponentCargoPose,
+    List.of(), backPose, m_tt.getTrajectoryConfig());
+
 
     return new SequentialCommandGroup(      
 
@@ -232,9 +237,14 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       ),
         new InstantCommand(() -> m_shooter.setFlywheelRPM(2750), m_shooter),
         SwerveControllerCommand(moveToHub, true),
-        new ShootWithSetRPMCommand(2750, m_cargo, m_shooter, m_robot)
+        new ShootWithSetRPMCommand(2850, m_cargo, m_shooter, m_robot)
           .withTimeout(6),
-        SwerveControllerCommand(moveToOpponentCargo, true)
+        new ParallelRaceGroup(
+          new IntakeDeployCommand(m_intake, m_cargo),
+          SwerveControllerCommand(moveToOpponentCargo, true)
+        ),
+        SwerveControllerCommand(rotateAndMove, true),
+        new IntakeReverseCommand(m_intake, m_cargo).withTimeout(2)
     );
   }  
 

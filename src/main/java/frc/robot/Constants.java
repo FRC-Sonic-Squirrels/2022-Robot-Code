@@ -272,6 +272,10 @@ public final class Constants {
     public static Translation2d RED_TRANSVERSAL = new Translation2d( Units.inchesToMeters(607), Units.inchesToMeters(58));//change
     public static Translation2d RED_PAD_1 = new Translation2d( Units.inchesToMeters(518), Units.inchesToMeters(108));
     public static Translation2d RED_PAD_2 = new Translation2d( Units.inchesToMeters(518), Units.inchesToMeters(12));
+
+    public static Translation2d INFRONT_RED_CARGO_4 = new Translation2d( Units.inchesToMeters(240), Units.inchesToMeters(300));
+    public static Translation2d BEHIND_RED_CARGO_4 = new Translation2d( Units.inchesToMeters(210), Units.inchesToMeters(290));
+
   } 
 
   public static class StartPoseConstants {
