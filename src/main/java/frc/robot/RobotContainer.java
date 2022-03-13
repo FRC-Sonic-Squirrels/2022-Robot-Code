@@ -105,6 +105,7 @@ public class RobotContainer {
 
     chooser.addOption("Auton 1: shoot and move", autonOne);
     chooser.addOption("Auton 2: move and shoot 2", auton.twoBallAutoShoot2(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7));
+    chooser.addOption("Auton 3: move, shoot 2, push", auton.twoBallAutoShoot2push (StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7));
 
     if (m_robot.isReal()) {
       // Creates UsbCamera and sets resolution
