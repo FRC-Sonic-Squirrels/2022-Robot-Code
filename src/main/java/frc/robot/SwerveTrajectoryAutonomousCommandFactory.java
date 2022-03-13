@@ -31,6 +31,7 @@ import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import pabeles.concurrency.IntOperatorTask.Min;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -152,7 +153,11 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     return new SequentialCommandGroup(      
       new ShootWithSetRPMCommand(2750, m_cargo, m_shooter, m_robot)
         .withTimeout(4),
-      SwerveControllerCommand(moveToCargoOne, true)
+      new InstantCommand(() -> m_intake.setForwardMode(), m_intake),
+      new InstantCommand(() -> m_intake.deployIntake(), m_intake),
+      SwerveControllerCommand(moveToCargoOne, true),
+      new InstantCommand(() -> m_intake.setStopMode(), m_intake),
+      new InstantCommand(() -> m_intake.retractIntake(),m_intake)
     );
   }
 
