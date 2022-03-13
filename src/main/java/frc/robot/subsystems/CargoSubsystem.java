@@ -158,8 +158,8 @@ public class CargoSubsystem extends SubsystemBase {
     SmartDashboard.putString("Cargo: Mode", mode.name());
     SmartDashboard.putBoolean("Cargo in Upper", cargoInUpperBelts());
     SmartDashboard.putBoolean("Cargo in Lower", cargoInLowerBelts());
-    SmartDashboard.putNumber("Cargo Upper Voltage", UpperBelts.getMotorOutputVoltage());
-    SmartDashboard.putNumber("Cargo Lower Voltage", LowerBelts.getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Cargo Upper Voltage", UpperBelts.getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Cargo Lower Voltage", LowerBelts.getMotorOutputVoltage());
 
     // TODO: convert to RPM
     // SmartDashboard.putNumber("Cargo RPM Upper", UpperBelts.getSelectedSensorVelocity());

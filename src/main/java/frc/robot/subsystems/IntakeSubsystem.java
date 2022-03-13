@@ -83,7 +83,8 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    testingRpmValues();
+    //testingRpmValues();
+    
     if(mode == Mode.STOP){
       setIntakePercentOutput(0);
     } else if(mode == Mode.FORWARD){
@@ -96,14 +97,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("Intake_Subsystem RPM", m_encoder.getIntegratedSensorVelocity() * 600 / 2048);
     SmartDashboard.putNumber("Intake_Subsystem desired Motor RPM", m_desiredRPM);
-    SmartDashboard.putNumber("Intake_Subsystem Robot Speed m per s", m_drivetrain.getVelocity());
-    SmartDashboard.putNumber("Intake_Subsystem minimum Intake RPM", minIntakeRPM);
-    SmartDashboard.putNumber("Intake_Subsystem maximum Intake RPM", maxIntakeRPM);
     SmartDashboard.putBoolean("Intake_Subsystem is Deployed", m_isDeployed);
-    SmartDashboard.putNumber("Intake_Subsystem circumference Of Intake", circOfIntake_meters);
-    SmartDashboard.putNumber("Intake_Subsystem forward RPM Value", m_forwardRpmValue);
-    SmartDashboard.putNumber("Intake_Subsystem reverse RPM Value", m_reverseRpmValue);
-    //SmartDashboard.putNumber("Robot Speed m per s", (m_drive.getLeftVelocity() + m_drive.getRightVelocity()) / 2.0);
   }
   
   public void testingRpmValues(){
