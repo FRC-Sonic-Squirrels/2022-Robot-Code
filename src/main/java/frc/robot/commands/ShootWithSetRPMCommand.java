@@ -70,19 +70,19 @@ public class ShootWithSetRPMCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // the command will automatically stop when both cargo are released in autonomous
-    // if (m_robot.isAutonomous()) {
-    //   // the command will stop .5 seconds after no cargo is detected, to let the cargo finish shooting
-    //   if ((! m_cargoSubsystem.cargoInUpperBelts()) && (! m_cargoSubsystem.cargoInLowerBelts())) {
-    //     if (m_time == 0) {
-    //       m_time = System.currentTimeMillis();
-    //     }
-    //     if (System.currentTimeMillis() - m_time >= 500) {
-    //       return true;
-    //     }
-    //   }
-    // }
-    // the command will be manually executed and ended by holding a button in teleop
+    //the command will automatically stop when both cargo are released in autonomous
+    if (m_robot.isAutonomous()) {
+      // the command will stop .5 seconds after no cargo is detected, to let the cargo finish shooting
+      if ((! m_cargoSubsystem.cargoInUpperBelts()) && (! m_cargoSubsystem.cargoInLowerBelts())) {
+        if (m_time == 0) {
+          m_time = System.currentTimeMillis();
+        }
+        if (System.currentTimeMillis() - m_time >= 500) {
+          return true;
+        }
+      }
+    }
+    //the command will be manually executed and ended by holding a button in teleop
     return false;
   }
 }
