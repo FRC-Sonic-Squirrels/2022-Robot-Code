@@ -159,7 +159,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       ),
         SwerveControllerCommand(moveToHub, true),
         new ShootWithSetRPMCommand(2750, m_cargo, m_shooter, m_robot)
-          .withTimeout(4)
+          .withTimeout(6)
     );
   }
 
