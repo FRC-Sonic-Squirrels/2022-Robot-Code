@@ -104,6 +104,7 @@ public class RobotContainer {
     autonOne = auton.twoBallAuto(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
 
     chooser.addOption("Auton 1: shoot and move", autonOne);
+    chooser.addOption("Auton 2: move and shoot 2", auton.twoBallAutoShoot2(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7));
 
     if (m_robot.isReal()) {
       // Creates UsbCamera and sets resolution
@@ -194,7 +195,7 @@ public class RobotContainer {
 
     // 2000 RPM is good for 5 feet
     new Button(m_operatorController::getXButton)
-       .whileHeld(new ShootWithSetRPMCommand(3100, m_cargo, m_shooter, m_robot));
+       .whileHeld(new ShootWithSetRPMCommand(3200, m_cargo, m_shooter, m_robot));
 
     // 3000 RPM is good for 10 feet
     new Button(m_operatorController::getBButton)
