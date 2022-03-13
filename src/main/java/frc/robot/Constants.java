@@ -140,9 +140,9 @@ public final class Constants {
 
   public static final class AutoConstants {
     // This kP worked for the DriveWithSetRotation command
-    public static final double kPThetaController = 3.0;
+    public static final double kPThetaController = 1.5;
     public static final double kIThetaController = 0.0;
-    public static final double kDThetaController = 0.02;
+    public static final double kDThetaController = 0.0;
 
     // Feed Forward and PID values from SysId
     public static final double kP = 2.2941; // test bot = 2.3055;
