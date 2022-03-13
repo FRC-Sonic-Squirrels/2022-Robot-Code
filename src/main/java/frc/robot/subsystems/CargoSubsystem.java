@@ -144,7 +144,7 @@ public class CargoSubsystem extends SubsystemBase {
       setUpperBeltPercentOutput(-m_lowerOutput);
       setLowerBeltPercentOutput(-m_upperOutput);
     } else {
-      stopIndexer();
+      System.out.println("Indexer: unknown mode");
     }
 
     SmartDashboard.putString("Cargo: Mode", mode.name());
