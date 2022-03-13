@@ -139,6 +139,9 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
+    public static final double maxVelocity = 2.0;   // meters per second
+    public static final double maxAcceleration = 1.0; // meters per second per second
+
     // This kP worked for the DriveWithSetRotation command
     public static final double kPThetaController = 1.5;
     public static final double kIThetaController = 0.0;

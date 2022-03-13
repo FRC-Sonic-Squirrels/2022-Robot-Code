@@ -32,7 +32,6 @@ import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
-import pabeles.concurrency.IntOperatorTask.Min;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -62,23 +61,23 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
   }
 
-  public void addSimpleTrajectoriesToChooser(SendableChooser<Command> chooser) {
-    chooser.addOption("blue top", this.testAutonCommand(StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7));
+  // public void addSimpleTrajectoriesToChooser(SendableChooser<Command> chooser) {
+  //   chooser.addOption("blue top", this.testAutonCommand(StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7));
 
-    chooser.addOption("blue mid-top", this.testAutonCommand(StartPoseConstants.BLUE_MID_TOP, FieldConstants.BLUE_CARGO_2));
+  //   chooser.addOption("blue mid-top", this.testAutonCommand(StartPoseConstants.BLUE_MID_TOP, FieldConstants.BLUE_CARGO_2));
 
-    chooser.addOption("blue mid-bottom", this.testAutonCommand(StartPoseConstants.BLUE_MID_BOTTOM, FieldConstants.BLUE_CARGO_2));
+  //   chooser.addOption("blue mid-bottom", this.testAutonCommand(StartPoseConstants.BLUE_MID_BOTTOM, FieldConstants.BLUE_CARGO_2));
 
-    chooser.addOption("blue bottom", this.testAutonCommand(StartPoseConstants.BLUE_BOTTOM, FieldConstants.BLUE_CARGO_3));
+  //   chooser.addOption("blue bottom", this.testAutonCommand(StartPoseConstants.BLUE_BOTTOM, FieldConstants.BLUE_CARGO_3));
 
-    chooser.addOption("red top", this.testAutonCommand(StartPoseConstants.RED_TOP, FieldConstants.RED_CARGO_3));
+  //   chooser.addOption("red top", this.testAutonCommand(StartPoseConstants.RED_TOP, FieldConstants.RED_CARGO_3));
 
-    chooser.addOption("red mid-top", this.testAutonCommand(StartPoseConstants.RED_MID_TOP, FieldConstants.RED_CARGO_2));
+  //   chooser.addOption("red mid-top", this.testAutonCommand(StartPoseConstants.RED_MID_TOP, FieldConstants.RED_CARGO_2));
 
-    chooser.addOption("red mid-bottom", this.testAutonCommand(StartPoseConstants.RED_MID_BOTTOM, FieldConstants.RED_CARGO_2));
+  //   chooser.addOption("red mid-bottom", this.testAutonCommand(StartPoseConstants.RED_MID_BOTTOM, FieldConstants.RED_CARGO_2));
 
-    chooser.addOption("red bottom", this.testAutonCommand(StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7));
-  }
+  //   chooser.addOption("red bottom", this.testAutonCommand(StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7));
+  // }
 
    /**
    * command for autonomously shooting and then moving to the next set of cargo coordinates.
@@ -133,26 +132,23 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   }
 
 
-  // simple command for shooting 1 cargo into hub, then driving to another
-  public Command testAutonCommand(Pose2d startPos, Translation2d cargoPos) {
+  /**
+   * twoBallAuton - Shoot, drive, pickup cargo, drive back, shoot
+   */
+  public Command twoBallAuto(Pose2d startPos, Translation2d cargoPos) {
 
     m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
-    //startPos = m_drivetrain.getPose();
 
     //double shootAngle = getTranslationsAngle(poseToTranslation(startPos), new Translation2d(27, 13.5)).getRadians();
 
-    //Trajectory rotateToShoot = m_tt.rotateRobot(shootAngle);
     // get the target pose (slightly in front of the cargo pose)
     Pose2d targetPose = new Pose2d( cargoPos, startPos.getRotation());
-       // getTranslationsAngle(poseToTranslation(startPos), cargoPos));
 
-    //Trajectory moveToEnd = m_tt.driveToPose(poseToTranslation(startPos), target);
     Trajectory moveToCargoOne =  TrajectoryGenerator.generateTrajectory(startPos,
         List.of(), targetPose, m_tt.getTrajectoryConfig());
 
-        Trajectory moveToHub =  TrajectoryGenerator.generateTrajectory(targetPose,
+    Trajectory moveToHub =  TrajectoryGenerator.generateTrajectory(targetPose,
         List.of(), startPos, m_tt.getTrajectoryConfig());
-
 
     return new SequentialCommandGroup(      
       new ShootWithSetRPMCommand(2750, m_cargo, m_shooter, m_robot)

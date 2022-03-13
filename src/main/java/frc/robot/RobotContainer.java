@@ -4,33 +4,17 @@
 
 package frc.robot;
 
-
-import java.time.Instant;
-import java.util.List;
-import com.team2930.lib.Limelight;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.constraint.SwerveDriveKinematicsConstraint;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.StartPoseConstants;
@@ -53,7 +37,6 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
-import frc.robot.autonomous.SimpleAutonCommandOne;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -62,36 +45,28 @@ import frc.robot.autonomous.SimpleAutonCommandOne;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  public final CargoSubsystem m_cargo = new CargoSubsystem();
-  public final ShooterSubsystem m_shooter = new ShooterSubsystem();
-  public final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
-  public final ArmSubsystem m_arm = new ArmSubsystem();
+
+  public final Robot m_robot;
+
+  public final CargoSubsystem m_cargo;
+  public final ShooterSubsystem m_shooter;
+  public final ElevatorSubsystem m_elevator;
+  public final ArmSubsystem m_arm;
 
   // The robot's subsystems and commands are defined here...
-  public final Drivetrain drivetrain = new Drivetrain();
-  public final IntakeSubsystem m_intake = new IntakeSubsystem(drivetrain);
-  public final LimelightSubsystem m_limelight = new LimelightSubsystem(drivetrain);
-
-  //public final VisionSubsystem m_visionSubsystem = new VisionSubsystem(drivetrain);
-  public final Robot m_robot;
+  public final Drivetrain drivetrain;
+  public final IntakeSubsystem m_intake;
+  public final LimelightSubsystem m_limelight;
 
   public final XboxController m_controller = new XboxController(0);
   public final XboxController m_operatorController = new XboxController(1);
   public final XboxController m_climbController = new XboxController(2);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
-  //public final SendableChooser<Command> autonTrajectoryChooser = new SendableChooser<>();
-  //public final SendableChooser<Command> simpleTrajectoryChooser = new SendableChooser<>();
-
-  //public final SendableChooser<Pose2d> startPoseChooser = new SendableChooser<>();
-  //public final SendableChooser<Command> autonTrajectoryChooser = new SendableChooser<>();
-  //public final SendableChooser<Command> simpleAutonChooser = new SendableChooser<>();
   
   public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
 
   private UsbCamera camera;
-
-  TestTrajectories m_tt = new TestTrajectories(3.5, 2.5, drivetrain, true);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -99,66 +74,32 @@ public class RobotContainer {
   public RobotContainer(Robot robot) {
 
     m_robot = robot;
-    
-    // set the starting position of the robot on the field
-    // startPoseChooser.addOption("1m left of hub", Constants.ROBOT_1M_LEFT_OF_HUB);
-    // startPoseChooser.addOption("blue 1", StartPoseConstants.BLUE_20_13);
-    // startPoseChooser.addOption("blue 2", StartPoseConstants.BLUE_22_19);
-    // startPoseChooser.addOption("blue 3", StartPoseConstants.BLUE_22_8);
-    // startPoseChooser.addOption("blue 4", StartPoseConstants.BLUE_27_6); //note: cannot be used in paths starting with ball 3
-    // startPoseChooser.addOption("red 1", StartPoseConstants.RED_27_21);
-    // startPoseChooser.addOption("red 2", StartPoseConstants.RED_31_14);
-    // startPoseChooser.addOption("red 3", StartPoseConstants.RED_32_19);
-    // startPoseChooser.addOption("red 4", StartPoseConstants.RED_32_8);
-   
 
-    SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooter,
-        m_cargo, m_intake, m_robot);
+    m_cargo = new CargoSubsystem();
+    m_shooter = new ShooterSubsystem(m_robot);
+    m_elevator = new ElevatorSubsystem();
+    m_arm = new ArmSubsystem();
+  
+    // The robot's subsystems and commands are defined here...
+    drivetrain = new Drivetrain();
+    m_intake = new IntakeSubsystem(drivetrain);
+    m_limelight = new LimelightSubsystem(drivetrain);
 
-    chooser.addOption("Auton shoot and pick up test", shootAndDriveAuton());
+    // SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser,
+    //     Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration, drivetrain,
+    //     true, m_shooter, m_cargo, m_intake, m_robot);
+
     SmartDashboard.putData("Auto Mode", chooser);
 
     // add the new auton trajectories to the auton trajectory chooser
-    SwerveTrajectoryAutonomousCommandFactory auton = new SwerveTrajectoryAutonomousCommandFactory(
-        drivetrain, m_shooter, m_cargo, m_intake, m_robot, 1, 0.75);
-
-    Command fourBallAuton_blue = auton.fourBallAutonCommand(StartPoseConstants.BLUE_DEF_BOTTOM, FieldConstants.BLUE_CARGO_3,
-        FieldConstants.BLUE_CARGO_2, FieldConstants.BLUE_CARGO_1);
-    Command fourBallAuton_red = auton.fourBallAutonCommand(StartPoseConstants.RED_DEF_TOP, FieldConstants.RED_CARGO_3,
-        FieldConstants.RED_CARGO_2, FieldConstants.RED_CARGO_1);
-
-    Command threeBallAuton_blue = auton.threeBallAutonCommand(StartPoseConstants.BLUE_DEF_BOTTOM,
-        FieldConstants.BLUE_CARGO_3, FieldConstants.BLUE_CARGO_2);
-    Command threeBallAuton_red = auton.threeBallAutonCommand(StartPoseConstants.RED_DEF_TOP,
-        FieldConstants.RED_CARGO_3, FieldConstants.RED_CARGO_2);
-
-    Command twoBallAuton_blue = auton.twoBallAutonCommand(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
-    Command twoBallAuton_red = auton.twoBallAutonCommand(StartPoseConstants.RED_DEF_BOTTOM, FieldConstants.RED_CARGO_7);
-
-    Command complimentaryAuton_blue = auton.complimentaryAutonCommand("blue");
-    Command complimentaryAuton_red = auton.complimentaryAutonCommand("blue");
-
-    Command fiveBallAuton_blue = auton.fiveBallAutonCommand("blue");
-    Command fiveBallAuton_red = auton.fiveBallAutonCommand("blue");
+    SwerveTrajectoryAutonomousCommandFactory auton =
+        new SwerveTrajectoryAutonomousCommandFactory(drivetrain, m_shooter, m_cargo, m_intake,
+            m_robot, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
 
     Command 
-    autonOne = auton.testAutonCommand(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
-
-    // autonTrajectoryChooser.addOption("blue 4 ball", fourBallAuton_blue);
-    // autonTrajectoryChooser.addOption("blue 3 ball", threeBallAuton_blue);
-    // autonTrajectoryChooser.addOption("blue 2 ball", twoBallAuton_blue);
-    // autonTrajectoryChooser.addOption("blue helper auton", complimentaryAuton_blue);
-    // autonTrajectoryChooser.addOption("blue 5 ball", fiveBallAuton_blue);
-
-    // autonTrajectoryChooser.addOption("red 4 ball", fourBallAuton_red);
-    // autonTrajectoryChooser.addOption("red 3 ball", threeBallAuton_red);
-    // autonTrajectoryChooser.addOption("red 2 ball", twoBallAuton_red);
-    // autonTrajectoryChooser.addOption("red helper auton", complimentaryAuton_red);
-    // autonTrajectoryChooser.addOption("red 5 ball", fiveBallAuton_red);
+    autonOne = auton.twoBallAuto(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
 
     chooser.addOption("Auton 1: shoot and move", autonOne);
-
-//    SmartDashboard.putData("auton commands", autonTrajectoryChooser);
 
     if (m_robot.isReal()) {
       // Creates UsbCamera and sets resolution
@@ -167,7 +108,6 @@ public class RobotContainer {
       camera.setFPS(20);
     }
  
-
     // Set up the default command for the drivetrain.
     // The controls are for field-oriented driving:
     // Left stick Y axis -> forward and backwards movement
@@ -316,46 +256,6 @@ public class RobotContainer {
     return false;
   }
 
-  public Command shootAndDriveAuton() {
-
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> m_shooter.setFlywheelRPM(1500), m_shooter),
-      new WaitCommand(2),
-      //might cause problems in cargo transition 
-      new ShootWithSetRPMCommand(1500, m_cargo, m_shooter, m_robot)
-        .withTimeout(3),
-        SwerveTrajectoryFollowCommandFactory.straightForward2mCommand(m_tt, drivetrain)
-    );
-    //   new WaitCommand(0.5),
-    //   new ParallelCommandGroup(
-    //     SwerveTrajectoryFollowCommandFactory.straightForward2mCommand(m_tt, drivetrain),
-    //     new IntakeDeployCommand(m_intake, m_cargoSubsystem) 
-    //       .withTimeout(4) //deploy or run? 
-    //   ),
-    //   new ParallelCommandGroup(
-    //      SwerveTrajectoryFollowCommandFactory.straightBack1mCommand(m_tt, drivetrain),
-    //      new InstantCommand(() -> m_shooterSubsystem.setFlywheelRPM(1500), m_shooterSubsystem)
-    //   ),
-    //   new ShootWithSetRPMCommand(1500, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot)
-    //     .withTimeout(2)
-    // );
-  }
-
-  public TrajectoryConfig getTrajectoryConfig() {
-    //TODO: THESE ARE HARD CODED VALUES
-    TrajectoryConfig config = new TrajectoryConfig(1, 0.75)
-        // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(drivetrain.kinematics());
-
-   
-      // Limits the velocity of the robot around turns such that no wheel of a swerve-drive robot
-      // goes over a specified maximum velocity.
-      SwerveDriveKinematicsConstraint swerveConstraint = new SwerveDriveKinematicsConstraint(
-          drivetrain.kinematics(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND);
-      config.addConstraint(swerveConstraint);
-    
-    return config;
-  }
 }
 
 

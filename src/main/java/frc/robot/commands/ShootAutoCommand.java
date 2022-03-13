@@ -59,7 +59,7 @@ public class ShootAutoCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getIdleRPM());
+    m_shooterSubsystem.setFlywheelRPM(0);
 
     if (m_intakeSubsystem.isDeployed()) {
       m_cargoSubsystem.setIntakeMode();
