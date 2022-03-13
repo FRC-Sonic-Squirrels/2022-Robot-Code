@@ -150,7 +150,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
 
     return new SequentialCommandGroup(      
-      new ShootWithSetRPMCommand(2750, m_cargo, m_shooter, m_intake, m_robot)
+      new ShootWithSetRPMCommand(2750, m_cargo, m_shooter, m_robot)
         .withTimeout(4),
       SwerveControllerCommand(moveToCargoOne, true)
     );

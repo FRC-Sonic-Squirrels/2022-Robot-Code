@@ -122,13 +122,13 @@ public final class Constants {
    *
    * Should be measured from center to center.
    */
-  public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(19.0);
+  public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(25.0);
   /**
    * The front-to-back distance between the drivetrain wheels.
    *
    * Should be measured from center to center.
    */
-  public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(19.0);
+  public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(24.0);
 
   // Set pigeon ID to -1 to disable and use NAVX on SPI.Port.kMXP
   public static final int DRIVETRAIN_PIGEON_ID = 15;
