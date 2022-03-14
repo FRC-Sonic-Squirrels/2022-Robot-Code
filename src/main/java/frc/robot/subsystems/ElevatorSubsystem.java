@@ -91,7 +91,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     winch_lead_talon.configSupplyCurrentLimit(currentLimit);
     winch_follow_talon.configSupplyCurrentLimit(currentLimit);
 
-    winch_lead_talon.configOpenloopRamp(0.2);
+    winch_lead_talon.configOpenloopRamp(0.1);
 
     // Reduce CAN traffic where possible
     // https://docs.ctre-phoenix.com/en/latest/ch18_CommonAPI.html
