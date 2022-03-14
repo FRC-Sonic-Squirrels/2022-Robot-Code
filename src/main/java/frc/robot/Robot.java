@@ -15,10 +15,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-
+import frc.robot.commands.ArmManualControlCommand;
+import frc.robot.commands.DriveFieldCentricCommand;
+import frc.robot.commands.ElevatorControlCommand;
 import frc.robot.commands.ShootCargoCommand;
 import frc.robot.commands.ShootWithSetRPMCommand;
 import frc.robot.subsystems.CargoSubsystem;
+import frc.robot.subsystems.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -72,10 +75,10 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    SmartDashboard.putNumber("Joystick_Values jLeftY", m_robotContainer.m_controller.getLeftY());
-    SmartDashboard.putNumber("Joystick_Values jLeftX", m_robotContainer.m_controller.getLeftX());
-    SmartDashboard.putNumber("Joystick_Values jRightY", m_robotContainer.m_controller.getRightY());
-    SmartDashboard.putNumber("Joystick_Values jRightX", m_robotContainer.m_controller.getRightX());
+    // SmartDashboard.putNumber("Joystick_Values jLeftY", m_robotContainer.m_controller.getLeftY());
+    // SmartDashboard.putNumber("Joystick_Values jLeftX", m_robotContainer.m_controller.getLeftX());
+    // SmartDashboard.putNumber("Joystick_Values jRightY", m_robotContainer.m_controller.getRightY());
+    // SmartDashboard.putNumber("Joystick_Values jRightX", m_robotContainer.m_controller.getRightX());
 
     //SmartDashboard.putNumber("PDH Total Power", revPDH.getTotalPower());
     // FIXME: getTotalCurrent() throws errors
@@ -134,6 +137,19 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    m_robotContainer.robotInitAddSubsystems();
+
+    m_robotContainer.drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
+      m_robotContainer.drivetrain, 
+      () -> -RobotContainer.modifyAxis(m_robotContainer.m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+      () -> -RobotContainer.modifyAxis(m_robotContainer.m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
+      () -> -RobotContainer.modifyAxis(m_robotContainer.m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
+
+    m_robotContainer.m_elevator.setDefaultCommand(new ElevatorControlCommand(m_robotContainer.m_elevator, m_robotContainer.m_climbController,
+        Constants.ElevatorConstants.elevatorSpeedMultiplier));
+    m_robotContainer.m_arm.setDefaultCommand(new ArmManualControlCommand(m_robotContainer.m_arm, m_robotContainer.m_climbController, 0.3));
+
   }
 
   /** This function is called periodically during operator control. */

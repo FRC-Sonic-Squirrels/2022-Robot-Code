@@ -25,6 +25,7 @@ import frc.robot.Constants.StartPoseConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.CargoMoveToUpperBeltsCommand;
 import frc.robot.commands.IntakeDeployCommand;
+import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.ShootCargoCommand;
 import frc.robot.commands.ShootOneCargoCommand;
 import frc.robot.commands.ShootWithSetRPMCommand;
@@ -58,82 +59,6 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     m_tt = new TestTrajectories(maxVelocity, maxAcceleration, m_drivetrain, true);
   }
 
-  public static void addAutonTrajectoriesToChooser(SendableChooser<Command> chooser) {
-    
-
-  }
-
-  // public void addSimpleTrajectoriesToChooser(SendableChooser<Command> chooser) {
-  //   chooser.addOption("blue top", this.testAutonCommand(StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7));
-
-  //   chooser.addOption("blue mid-top", this.testAutonCommand(StartPoseConstants.BLUE_MID_TOP, FieldConstants.BLUE_CARGO_2));
-
-  //   chooser.addOption("blue mid-bottom", this.testAutonCommand(StartPoseConstants.BLUE_MID_BOTTOM, FieldConstants.BLUE_CARGO_2));
-
-  //   chooser.addOption("blue bottom", this.testAutonCommand(StartPoseConstants.BLUE_BOTTOM, FieldConstants.BLUE_CARGO_3));
-
-  //   chooser.addOption("red top", this.testAutonCommand(StartPoseConstants.RED_TOP, FieldConstants.RED_CARGO_3));
-
-  //   chooser.addOption("red mid-top", this.testAutonCommand(StartPoseConstants.RED_MID_TOP, FieldConstants.RED_CARGO_2));
-
-  //   chooser.addOption("red mid-bottom", this.testAutonCommand(StartPoseConstants.RED_MID_BOTTOM, FieldConstants.RED_CARGO_2));
-
-  //   chooser.addOption("red bottom", this.testAutonCommand(StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7));
-  // }
-
-   /**
-   * command for autonomously shooting and then moving to the next set of cargo coordinates.
-   * @param cargoPos the position of the wanted cargo 
-   * @param shootPos the position of the robot when about to shoot cargo 
-   * @param midPos the position right in front of the wanted cargo 
-   * @return a set of actions with the robot shooting its current cargo, then moving and picking up the next cargo
-   */
-  public static Command shootAndMoveToCargoCommand(Pose2d startPos, Translation2d cargoPos, Pose2d shootPos) {
-
-    m_drivetrain.setPose(startPos, startPos.getRotation());
-
-    Translation2d midPos = midPosFinder(poseToTranslation(shootPos), cargoPos);
-    Pose2d rot_midPos = new Pose2d(midPos, getTranslationsAngle(poseToTranslation(shootPos), cargoPos));
-
-    Trajectory startToShoot = m_tt.driveToPose(startPos, shootPos);
-
-    //startToShoot.transformBy(new Transform2d(new Pose2d(shootPos.getX(), shootPos.getY(), shootAngle), drivetrain.getPose()));
-
-    return new SequentialCommandGroup(
-      // 1. move cargo to upper belts, set up flywheel, then move to the shooting location
-      new ParallelCommandGroup(
-        new CargoMoveToUpperBeltsCommand(m_cargo),
-        new WaitUntilCommand(() -> m_cargo.cargoInUpperBelts()),
-        new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated)),
-        new WaitUntilCommand(() -> m_shooter.isAtDesiredRPM()),
-        SwerveControllerCommand(startToShoot, true)
-      ),
-      
-      // 2. shoot the cargo
-      new ShootOneCargoCommand(m_cargo, m_shooter, m_intake),
-      
-      // 3. slow down flywheel, deploy the intake, then move in front of the next cargo
-      new ParallelCommandGroup(
-        new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle)),
-        SwerveControllerCommand(m_tt.driveToPose(startPos, rot_midPos), true),
-        new IntakeDeployCommand(m_intake, m_cargo),
-        new WaitUntilCommand(() -> m_intake.intakeAtDesiredRPM())
-      ),
-      
-      // 4. collect the cargo, then wait until it is fully in the lower belts
-      SwerveControllerCommand(m_tt.driveToPose(midPos, cargoPos), true),
-      new WaitUntilCommand(() -> m_cargo.cargoInLowerBelts()),
-
-      // 5. retract and deactivate the intake
-      new ParallelCommandGroup(
-        new InstantCommand(() -> m_intake.retractIntake()),
-        new InstantCommand(() -> m_intake.stop())
-      )
-    );
-
-  }
-
-
   /**
    * twoBallAuton - Shoot, drive, pickup cargo, drive back, shoot
    */
@@ -141,9 +66,6 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
 
-    //double shootAngle = getTranslationsAngle(poseToTranslation(startPos), new Translation2d(27, 13.5)).getRadians();
-
-    // get the target pose (slightly in front of the cargo pose)
     Pose2d targetPose = new Pose2d( cargoPos, startPos.getRotation());
 
     Trajectory moveToCargoOne =  TrajectoryGenerator.generateTrajectory(startPos,
@@ -153,19 +75,97 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         List.of(), startPos, m_tt.getTrajectoryConfig());
 
     return new SequentialCommandGroup(      
-      new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
-        .withTimeout(4),
+      new ShootWithSetRPMCommand(2750, m_cargo, m_shooter, m_robot)
+         .withTimeout(4),
       new ParallelRaceGroup(
         SwerveControllerCommand(moveToCargoOne, true),
         new IntakeDeployCommand(m_intake, m_cargo)
       ),
+        new InstantCommand(() -> m_shooter.setFlywheelRPM(2750), m_shooter),
         SwerveControllerCommand(moveToHub, true),
-        new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
-          .withTimeout(4)
+        new ShootWithSetRPMCommand(2750, m_cargo, m_shooter, m_robot)
+          .withTimeout(6)
     );
   }
 
-  
+
+
+  /**
+   * twoBallAutoShoot2 -  drive, pickup cargo, drive back, shoot two
+   */
+  public Command twoBallAutoShoot2(Pose2d startPos, Translation2d cargoPos) {
+
+    m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
+
+    Pose2d targetPose = new Pose2d( cargoPos, startPos.getRotation());
+
+    Trajectory moveToCargoOne =  TrajectoryGenerator.generateTrajectory(startPos,
+        List.of(), targetPose, m_tt.getTrajectoryConfig());
+
+    Trajectory moveToHub =  TrajectoryGenerator.generateTrajectory(targetPose,
+        List.of(), startPos, m_tt.getTrajectoryConfig());
+
+    return new SequentialCommandGroup(      
+      new ParallelRaceGroup(
+        SwerveControllerCommand(moveToCargoOne, true),
+        new IntakeDeployCommand(m_intake, m_cargo)
+      ),
+        new InstantCommand(() -> m_shooter.setFlywheelRPM(2750), m_shooter),
+        SwerveControllerCommand(moveToHub, true),
+        new ShootWithSetRPMCommand(2750, m_cargo, m_shooter, m_robot)
+          .withTimeout(6)
+    );
+  }  
+
+
+ /**
+   * twoBallAutoShoot2Push -  drive, pickup cargo, drive back, shoot two, then push opponent cargo out of the way
+   */
+  public Command twoBallAutoShoot2push(Pose2d startPos, Translation2d cargoPos) {
+
+    m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
+
+    Pose2d targetPose = new Pose2d( cargoPos, startPos.getRotation());
+    Pose2d opponentCargoPose = new Pose2d(Constants.FieldConstants.RED_CARGO_4, new Rotation2d(Math.PI/2));
+    Pose2d backPose = new Pose2d(Constants.FieldConstants.BEHIND_RED_CARGO_4, new Rotation2d(Math.PI));
+
+    Trajectory moveToCargoOne =  TrajectoryGenerator.generateTrajectory(startPos,
+        List.of(), targetPose, m_tt.getTrajectoryConfig());
+
+    Trajectory moveToHub =  TrajectoryGenerator.generateTrajectory(targetPose,
+        List.of(), startPos, m_tt.getTrajectoryConfig());
+
+    Trajectory moveToOpponentCargo =  TrajectoryGenerator.generateTrajectory(startPos,
+        List.of(), opponentCargoPose, m_tt.getTrajectoryConfig());
+
+    Trajectory rotateAndMove = TrajectoryGenerator.generateTrajectory(opponentCargoPose,
+    List.of(), backPose, m_tt.getTrajectoryConfig());
+
+    return new SequentialCommandGroup(      
+
+        new ParallelRaceGroup(
+            SwerveControllerCommand(moveToCargoOne, true),
+            new IntakeDeployCommand(m_intake, m_cargo)
+        ),
+        
+        // set RPM drive back
+        new InstantCommand(() -> m_shooter.setFlywheelRPM(2750), m_shooter),
+        SwerveControllerCommand(moveToHub, true),
+
+        // shoot
+        new ShootWithSetRPMCommand(2850, m_cargo, m_shooter, m_robot).withTimeout(6),
+
+        // pick up opponent ball
+        new ParallelRaceGroup(
+            new IntakeDeployCommand(m_intake, m_cargo),
+            SwerveControllerCommand(moveToOpponentCargo, true)
+        ),
+
+        // turn and eject opponent ball towards our hanger zone
+        SwerveControllerCommand(rotateAndMove, true),
+        new IntakeReverseCommand(m_intake, m_cargo).withTimeout(2));
+  }  
+
   // command that lets the robot intake 1 cargo without shooting it (parameters have already been converted to meters)
   public Command intakeCargoCommand(TestTrajectories testTrajectories, Translation2d targetPos, Pose2d midPos) {
     
@@ -631,7 +631,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   }
 
   // private method that changes the rotation of a Pose2d (because that isn't already included in the class for some reason)
-  private static Pose2d setRotation(Pose2d pose, Rotation2d rotation) {
+  private static Pose2d setRotation(Pose2d pose, Rotation2d rotation) {<
     return new Pose2d(pose.getX(), pose.getY(), rotation);
   }
 

@@ -6,8 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.constraint.SwerveDriveKinematicsConstraint;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -16,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.StartPoseConstants;
 import frc.robot.commands.ArmManualControlCommand;
@@ -50,13 +49,13 @@ public class RobotContainer {
 
   public final CargoSubsystem m_cargo;
   public final ShooterSubsystem m_shooter;
-  public final ElevatorSubsystem m_elevator;
-  public final ArmSubsystem m_arm;
+  public ElevatorSubsystem m_elevator;
+  public ArmSubsystem m_arm;
 
   // The robot's subsystems and commands are defined here...
   public final Drivetrain drivetrain;
   public final IntakeSubsystem m_intake;
-  public final LimelightSubsystem m_limelight;
+  public LimelightSubsystem m_limelight;
 
   public final XboxController m_controller = new XboxController(0);
   public final XboxController m_operatorController = new XboxController(1);
@@ -67,7 +66,19 @@ public class RobotContainer {
   public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
 
   private UsbCamera camera;
+  private boolean climbSubsystemsEnabled = false;
 
+  public void robotInitAddSubsystems() {
+    if (!climbSubsystemsEnabled) {
+      m_elevator = new ElevatorSubsystem();
+      m_arm = new ArmSubsystem();
+      m_limelight = new LimelightSubsystem(drivetrain);
+
+      configureButtonBindings();
+
+      climbSubsystemsEnabled = true;
+    }
+  }
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -77,17 +88,8 @@ public class RobotContainer {
 
     m_cargo = new CargoSubsystem();
     m_shooter = new ShooterSubsystem(m_robot);
-    m_elevator = new ElevatorSubsystem();
-    m_arm = new ArmSubsystem();
-  
-    // The robot's subsystems and commands are defined here...
+    m_intake = new IntakeSubsystem();
     drivetrain = new Drivetrain();
-    m_intake = new IntakeSubsystem(drivetrain);
-    m_limelight = new LimelightSubsystem(drivetrain);
-
-    // SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser,
-    //     Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration, drivetrain,
-    //     true, m_shooter, m_cargo, m_intake, m_robot);
 
     SmartDashboard.putData("Auto Mode", chooser);
 
@@ -100,6 +102,8 @@ public class RobotContainer {
     autonOne = auton.twoBallAuto(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
 
     chooser.addOption("Auton 1: shoot and move", autonOne);
+    chooser.addOption("Auton 2: move and shoot 2", auton.twoBallAutoShoot2(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7));
+    chooser.addOption("Auton 3: move, shoot 2, push", auton.twoBallAutoShoot2push (StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7));
 
     if (m_robot.isReal()) {
       // Creates UsbCamera and sets resolution
@@ -107,31 +111,7 @@ public class RobotContainer {
       camera.setResolution(320, 240);
       camera.setFPS(20);
     }
- 
-    // Set up the default command for the drivetrain.
-    // The controls are for field-oriented driving:
-    // Left stick Y axis -> forward and backwards movement
-    // Left stick X axis -> left and right movement
-    // Right stick X axis -> rotation
-    // drivetrain.setDefaultCommand(new DefaultDriveCommand(
-    //   drivetrain,
-    //   () -> -modifyAxis(m_controller.getLeftY() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND),
-    //   () -> -modifyAxis(m_controller.getLeftX() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND) ,
-    //   () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / 4)
-    // ));
-    
-    drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
-      drivetrain, 
-      () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-      () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
-      () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
 
-    m_elevator.setDefaultCommand(new ElevatorControlCommand(m_elevator, m_climbController,
-        Constants.ElevatorConstants.elevatorSpeedMultiplier));
-    m_arm.setDefaultCommand(new ArmManualControlCommand(m_arm, m_climbController, 0.3));
-
-    // Configure the button bindings
-    configureButtonBindings();
   }
 
   /**
@@ -176,6 +156,10 @@ public class RobotContainer {
     new Button(m_controller::getLeftBumper)
             .whileHeld(new LimelightRotateToHubAndShoot(2000, m_limelight, drivetrain, m_cargo, m_shooter, m_intake, m_robot));
 
+            
+    new Button(() -> (m_controller.getRightTriggerAxis() > 0.05))
+            .toggleWhenActive(new IntakeDeployCommand(m_intake, m_cargo), true);
+
     // new Button(m_controller::getLeftBumper)
     //   .whileHeld(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
 
@@ -194,22 +178,22 @@ public class RobotContainer {
 
     //Deploy intake while holding 
     new Button(m_operatorController::getAButton)
-       .whileHeld(new IntakeDeployCommand(m_intake, m_cargo));
+       .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
 
     new Button(m_operatorController::getYButton)
        .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
     // 2000 RPM is good for 5 feet
     new Button(m_operatorController::getXButton)
-       .whileHeld(new ShootWithSetRPMCommand(2500, m_cargo, m_shooter, m_robot));
+       .whileHeld(new ShootWithSetRPMCommand(3200, m_cargo, m_shooter, m_robot), true);
 
     // 3000 RPM is good for 10 feet
     new Button(m_operatorController::getBButton)
-       .whileHeld(new ShootWithSetRPMCommand(3000, m_cargo, m_shooter, m_robot));
+       .whileHeld(new ShootWithSetRPMCommand(3400, m_cargo, m_shooter, m_robot), true);
 
     // 1500 RPM is perfecto for right against the hub
     new Button(m_operatorController::getRightBumper)
-     .whileHeld(new ShootWithSetRPMCommand(2750, m_cargo, m_shooter, m_robot));
+     .whileActiveOnce(new ShootWithSetRPMCommand(2800, m_cargo, m_shooter, m_robot), true);
 
     // new Button(m_operatorController::getLeftStickButtonPressed)
     //   .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
@@ -238,7 +222,7 @@ public class RobotContainer {
   }
 
   //TODO: check if deadband value needs to be changed  
-  private static double modifyAxis(double value) {
+  public static double modifyAxis(double value) {
     // Deadband
     value = deadband(value, 0.1);
 

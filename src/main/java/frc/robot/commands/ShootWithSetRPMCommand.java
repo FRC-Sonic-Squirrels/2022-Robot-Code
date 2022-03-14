@@ -77,7 +77,7 @@ public class ShootWithSetRPMCommand extends CommandBase {
         if (m_time == 0) {
           m_time = System.currentTimeMillis();
         }
-        if (System.currentTimeMillis() - m_time >= 500) {
+        if (System.currentTimeMillis() - m_time >= 1000) {
           return true;
         }
       }
