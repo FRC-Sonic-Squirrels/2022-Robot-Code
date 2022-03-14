@@ -631,7 +631,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   }
 
   // private method that changes the rotation of a Pose2d (because that isn't already included in the class for some reason)
-  private static Pose2d setRotation(Pose2d pose, Rotation2d rotation) {<
+  private static Pose2d setRotation(Pose2d pose, Rotation2d rotation) {
     return new Pose2d(pose.getX(), pose.getY(), rotation);
   }
 
