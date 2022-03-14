@@ -4,23 +4,18 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.ElevatorControlCommand;
-import frc.robot.commands.ShootCargoCommand;
-import frc.robot.commands.ShootWithSetRPMCommand;
-import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -58,6 +53,13 @@ public class Robot extends TimedRobot {
 
     // We don't use this
     LiveWindow.disableAllTelemetry();
+
+    if (isReal()) {
+      // Creates UsbCamera and sets resolution
+      camera = CameraServer.startAutomaticCapture();
+      camera.setResolution(320, 240);
+      camera.setFPS(20);
+    }
   }
 
   /**
@@ -100,18 +102,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.chooser.getSelected();
-    //Pose2d startPos = Constants.StartPoseConstants.BLUE_MID_TOP;
-
-    // m_robotContainer.drivetrain.setGyroscopeHeadingDegrees(startPos.getRotation().getDegrees());
-    // m_robotContainer.drivetrain.setPose(startPos, startPos.getRotation());
-
-    // m_autonomousCommand = new InstantCommand(
-    //   () ->m_robotContainer.drivetrain.drive(new ChassisSpeeds()), m_robotContainer.drivetrain)
-    //     .perpetually();
-    //     //.alongWith(new ShootWithSetRPMCommand(1500, m_robotContainer.m_cargoSubsystem, m_robotContainer.m_shooterSubsystem, m_robotContainer.m_intake, this));
-
-
-
+ 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -128,17 +119,17 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-
-    //if testing and just using telop we reset pose and rotation to 0, auton will correct this 
-    //for its own use case and continue working after u switch to teleop
-    if(!m_robotContainer.drivetrain.isOdometrySet()){
-      m_robotContainer.drivetrain.setPose(new Pose2d(), m_robotContainer.drivetrain.getIMURotation());
-    }
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
 
-    m_robotContainer.robotInitAddSubsystems();
+    //if testing and just using teleop we reset pose and rotation to 0, auton will correct this 
+    //for its own use case and continue working after u switch to teleop
+    if(!m_robotContainer.drivetrain.isOdometrySet()){
+      m_robotContainer.drivetrain.setPose(new Pose2d(), m_robotContainer.drivetrain.getIMURotation());
+    }
+
+ 
 
     m_robotContainer.drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
       m_robotContainer.drivetrain, 
@@ -148,6 +139,7 @@ public class Robot extends TimedRobot {
 
     m_robotContainer.m_elevator.setDefaultCommand(new ElevatorControlCommand(m_robotContainer.m_elevator, m_robotContainer.m_climbController,
         Constants.ElevatorConstants.elevatorSpeedMultiplier));
+
     m_robotContainer.m_arm.setDefaultCommand(new ArmManualControlCommand(m_robotContainer.m_arm, m_robotContainer.m_climbController, 0.3));
 
   }

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.StartPoseConstants;
@@ -47,16 +48,16 @@ public class RobotContainer {
 
   public final Robot m_robot;
 
+  // Subsystems
   public final CargoSubsystem m_cargo;
   public final ShooterSubsystem m_shooter;
   public ElevatorSubsystem m_elevator;
   public ArmSubsystem m_arm;
-
-  // The robot's subsystems and commands are defined here...
   public final Drivetrain drivetrain;
   public final IntakeSubsystem m_intake;
   public LimelightSubsystem m_limelight;
 
+  // Controllers
   public final XboxController m_controller = new XboxController(0);
   public final XboxController m_operatorController = new XboxController(1);
   public final XboxController m_climbController = new XboxController(2);
@@ -65,20 +66,6 @@ public class RobotContainer {
   
   public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
 
-  private UsbCamera camera;
-  private boolean climbSubsystemsEnabled = false;
-
-  public void robotInitAddSubsystems() {
-    if (!climbSubsystemsEnabled) {
-      m_elevator = new ElevatorSubsystem();
-      m_arm = new ArmSubsystem();
-      m_limelight = new LimelightSubsystem(drivetrain);
-
-      configureButtonBindings();
-
-      climbSubsystemsEnabled = true;
-    }
-  }
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -90,7 +77,10 @@ public class RobotContainer {
     m_shooter = new ShooterSubsystem(m_robot);
     m_intake = new IntakeSubsystem();
     drivetrain = new Drivetrain();
-
+    m_elevator = new ElevatorSubsystem();
+    m_arm = new ArmSubsystem();
+    m_limelight = new LimelightSubsystem(drivetrain);
+    
     SmartDashboard.putData("Auto Mode", chooser);
 
     // add the new auton trajectories to the auton trajectory chooser
@@ -105,12 +95,7 @@ public class RobotContainer {
     chooser.addOption("Auton 2: move and shoot 2", auton.twoBallAutoShoot2(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7));
     chooser.addOption("Auton 3: move, shoot 2, push", auton.twoBallAutoShoot2push (StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7));
 
-    if (m_robot.isReal()) {
-      // Creates UsbCamera and sets resolution
-      camera = CameraServer.startAutomaticCapture();
-      camera.setResolution(320, 240);
-      camera.setFPS(20);
-    }
+    configureButtonBindings();
 
   }
 
