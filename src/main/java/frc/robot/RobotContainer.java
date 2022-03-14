@@ -88,10 +88,8 @@ public class RobotContainer {
 
     m_cargo = new CargoSubsystem();
     m_shooter = new ShooterSubsystem(m_robot);
-  
-    // The robot's subsystems and commands are defined here...
+    m_intake = new IntakeSubsystem();
     drivetrain = new Drivetrain();
-    m_intake = new IntakeSubsystem(drivetrain);
 
     SmartDashboard.putData("Auto Mode", chooser);
 
@@ -113,19 +111,6 @@ public class RobotContainer {
       camera.setResolution(320, 240);
       camera.setFPS(20);
     }
- 
-    // Set up the default command for the drivetrain.
-    // The controls are for field-oriented driving:
-    // Left stick Y axis -> forward and backwards movement
-    // Left stick X axis -> left and right movement
-    // Right stick X axis -> rotation
-    // drivetrain.setDefaultCommand(new DefaultDriveCommand(
-    //   drivetrain,
-    //   () -> -modifyAxis(m_controller.getLeftY() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND),
-    //   () -> -modifyAxis(m_controller.getLeftX() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND) ,
-    //   () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / 4)
-    // ));
-    
 
   }
 
@@ -171,6 +156,9 @@ public class RobotContainer {
     new Button(m_controller::getLeftBumper)
             .whileHeld(new LimelightRotateToHubAndShoot(2000, m_limelight, drivetrain, m_cargo, m_shooter, m_intake, m_robot));
 
+    new Button(m_controller::getRightTriggerAxis)
+            .togglewhenActive(new IntakeCommand(m_intake, m_cargo), true);
+
     // new Button(m_controller::getLeftBumper)
     //   .whileHeld(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
 
@@ -189,22 +177,22 @@ public class RobotContainer {
 
     //Deploy intake while holding 
     new Button(m_operatorController::getAButton)
-       .whileHeld(new IntakeDeployCommand(m_intake, m_cargo));
+       .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
 
     new Button(m_operatorController::getYButton)
        .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
     // 2000 RPM is good for 5 feet
     new Button(m_operatorController::getXButton)
-       .whileHeld(new ShootWithSetRPMCommand(3200, m_cargo, m_shooter, m_robot));
+       .whileHeld(new ShootWithSetRPMCommand(3200, m_cargo, m_shooter, m_robot), true);
 
     // 3000 RPM is good for 10 feet
     new Button(m_operatorController::getBButton)
-       .whileHeld(new ShootWithSetRPMCommand(3400, m_cargo, m_shooter, m_robot));
+       .whileHeld(new ShootWithSetRPMCommand(3400, m_cargo, m_shooter, m_robot), true);
 
     // 1500 RPM is perfecto for right against the hub
     new Button(m_operatorController::getRightBumper)
-     .whileHeld(new ShootWithSetRPMCommand(2750, m_cargo, m_shooter, m_robot));
+     .whileActiveOnce(new ShootWithSetRPMCommand(2800, m_cargo, m_shooter, m_robot), true);
 
     // new Button(m_operatorController::getLeftStickButtonPressed)
     //   .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
