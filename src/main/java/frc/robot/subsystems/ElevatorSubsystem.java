@@ -44,6 +44,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double feedForwardClimbing = 0.025734; // from JVM calculator
   private double feedForwardDescending = 0.001;
   private final double ticks2distance = gearRatio * winchCircumference / 4096;
+  private boolean zeroed = false;
 
   // the encoder increase as the elevator moves down, so invert sign of height vs ticks
   private double sensor_invert = -1.0;
@@ -232,8 +233,16 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // check if we triggered lower limit switch, and reset elevator to zero
-    if(atLowerLimit()){
-      zeroHeight();
+    if(atLowerLimit()) {
+      if (! zeroed) {
+        // only zero height once per time hitting limit switch
+        zeroHeight();
+        zeroed = true;
+      }
+    }
+    else {
+      // not currently on limit switch, zero again next time we hit limit switch
+      zeroed = false;
     }
 
     SmartDashboard.putNumber("Elevator Height (inches)", getHeightInches());
