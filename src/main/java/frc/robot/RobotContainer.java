@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.StartPoseConstants;
 import frc.robot.commands.ArmManualControlCommand;
@@ -73,7 +74,6 @@ public class RobotContainer {
       m_arm = new ArmSubsystem();
       m_limelight = new LimelightSubsystem(drivetrain);
 
-      // Configure the button bindings
       configureButtonBindings();
 
       climbSubsystemsEnabled = true;
@@ -156,8 +156,9 @@ public class RobotContainer {
     new Button(m_controller::getLeftBumper)
             .whileHeld(new LimelightRotateToHubAndShoot(2000, m_limelight, drivetrain, m_cargo, m_shooter, m_intake, m_robot));
 
-    new Button(m_controller::getRightTriggerAxis)
-            .togglewhenActive(new IntakeCommand(m_intake, m_cargo), true);
+            
+    new Button(() -> (m_controller.getRightTriggerAxis() > 0.05))
+            .toggleWhenActive(new IntakeDeployCommand(m_intake, m_cargo), true);
 
     // new Button(m_controller::getLeftBumper)
     //   .whileHeld(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
