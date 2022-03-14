@@ -282,7 +282,6 @@ public class Drivetrain extends SubsystemBase {
 
   public double getVelocity(){
     SwerveModuleState m_actualStates[] = new SwerveModuleState[4];
-    //TODO: check if the angle is in radians
     SwerveModuleState frontLeft = new SwerveModuleState(m_frontLeftModule.getDriveVelocity(), new Rotation2d(m_frontLeftModule.getSteerAngle()));
     SwerveModuleState frontRight = new SwerveModuleState(m_frontRightModule.getDriveVelocity(), new Rotation2d(m_frontRightModule.getSteerAngle()));
     SwerveModuleState backLeft = new SwerveModuleState(m_backLeftModule.getDriveVelocity(), new Rotation2d(m_backLeftModule.getSteerAngle()));
