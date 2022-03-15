@@ -105,7 +105,7 @@ public class LimelightSubsystem extends SubsystemBase {
         m_drivetrain.getPose(),
         m_drivetrain.kinematics(),
         new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.02, 0.02, 0.01), // State measurement standard deviations. X, Y, theta.
-        new MatBuilder<>(Nat.N1(), Nat.N1()).fill(0.02), // Gyro standard dev. theta.
+        new MatBuilder<>(Nat.N1(), Nat.N1()).fill(0.02), // Rotation standard dev. theta.
         new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)); // Vision standard devs. X, Y, and theta.
       
       estimate.addVisionMeasurement(limelightPose, (System.currentTimeMillis() - latency)/1000);
