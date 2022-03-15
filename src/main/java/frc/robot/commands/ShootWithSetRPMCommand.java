@@ -48,40 +48,42 @@ public class ShootWithSetRPMCommand extends CommandBase {
   @Override
   public void execute() {
     // wait until flywheel is fully revved
-    // once it is, turn on upper cargo belt
-    // once upper ball has been released, go back to intake mode
-    SmartDashboard.putBoolean("AAA can shoot", false);
-
+    // once it is, set indexer in shooting mode
     if (!shooting && m_shooterSubsystem.isAtDesiredRPM()) {
       shooting = true;
       SmartDashboard.putBoolean("AAA can shoot", true);
       m_cargoSubsystem.setShootMode();
     }
+    SmartDashboard.putBoolean("AAA shooting", shooting);
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    shooting = false;
     m_shooterSubsystem.stop();
     m_cargoSubsystem.setStopMode();
-    //m_intakeSubsystem.retractIntake();
+    SmartDashboard.putBoolean("AAA shooting", false);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //the command will automatically stop when both cargo are released in autonomous
-    if (m_robot.isAutonomous()) {
-      // the command will stop .5 seconds after no cargo is detected, to let the cargo finish shooting
-      if ((! m_cargoSubsystem.cargoInUpperBelts()) && (! m_cargoSubsystem.cargoInLowerBelts())) {
-        if (m_time == 0) {
-          m_time = System.currentTimeMillis();
-        }
-        if (System.currentTimeMillis() - m_time >= 1000) {
-          return true;
-        }
+    // Command will stop when all the cargo are gone
+    if ((! m_cargoSubsystem.cargoInUpperBelts()) && (! m_cargoSubsystem.cargoInLowerBelts())) {
+      if (m_time == 0) {
+        m_time = System.currentTimeMillis();
+      }
+      else if (System.currentTimeMillis() - m_time >= 1000) {
+        return true;
       }
     }
+    if (m_cargoSubsystem.cargoInUpperBelts() || m_cargoSubsystem.cargoInLowerBelts()) {
+      // reset timer if we see a cargo in the indexer
+      m_time = 0;
+    }
+
     //the command will be manually executed and ended by holding a button in teleop
     return false;
   }
