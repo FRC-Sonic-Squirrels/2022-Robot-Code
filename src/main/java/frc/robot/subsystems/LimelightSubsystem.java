@@ -6,6 +6,9 @@ package frc.robot.subsystems;
 
 import com.team2930.lib.Limelight;
 import org.photonvision.PhotonUtils;
+import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -26,7 +29,8 @@ public class LimelightSubsystem extends SubsystemBase {
   private double seesTarget;
   private double targetHeading;
   private Pose2d robotPose = new Pose2d();
-
+  private SwerveDrivePoseEstimator estimate;
+  private Pose2d limelightPose;
   // TODO: test and fix filtering change in the distance
   // private static double rateMetersPerSecond = 1.0;
   // private static final SlewRateLimiter distanceRateLimiter = new SlewRateLimiter(rateMetersPerSecond, 0.0);
@@ -57,7 +61,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
     if (seesTarget==1) {
       distance_meters = limelight.getDist(
-        Units.inchesToMeters(Constants.LimelightConstants.TARGET_HEIGHT_INCHES),
+        Units.inchesToMeters(Constants.LimelightConstants.HIGH_HUB_HEIGHT_INCHES),
         Units.inchesToMeters(Constants.LimelightConstants.LIMELIGHT_HEIGHT_INCHES),
         Constants.LimelightConstants.LIMELIGHT_PITCH_DEGREES) 
         + Units.inchesToMeters(Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES);
@@ -71,6 +75,41 @@ public class LimelightSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("LL distance ft", 0);
     }
     SmartDashboard.putNumber("LL pipelineLatency", latency);
+
+    
+  }
+
+  public Pose2d getlimelightPose(){
+    if(seesTarget==1){
+      //TODO: should we use IMU rotation?
+      //TODO: put in actual standard devs
+
+      limelightPose = PhotonUtils.estimateFieldToRobot(
+        Constants.LimelightConstants.LIMELIGHT_HEIGHT_INCHES, 
+        Constants.LimelightConstants.HIGH_HUB_HEIGHT_INCHES, 
+        Units.degreesToRadians(Constants.LimelightConstants.LIMELIGHT_PITCH_DEGREES), 
+        Units.degreesToRadians(pitch), 
+        new Rotation2d(Units.degreesToRadians(yaw)), 
+        m_drivetrain.getRotation(), 
+        new Pose2d(
+          Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX() + (Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES * Math.cos(-(m_drivetrain.getRotation().getDegrees()+yaw))),
+          Constants.HubCentricConstants.HUB_CENTER_POSE2D.getY() + (Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES * Math.sin(-(m_drivetrain.getRotation().getDegrees()+yaw))), 
+          Constants.HubCentricConstants.HUB_CENTER_POSE2D.getRotation()), 
+        Constants.LimelightConstants.LIMELIGHT_TO_ROBOT);
+      
+      estimate = new SwerveDrivePoseEstimator(
+        m_drivetrain.getRotation(),
+        m_drivetrain.getPose(),
+        m_drivetrain.kinematics(),
+        new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.02, 0.02, 0.01), // State measurement standard deviations. X, Y, theta.
+        new MatBuilder<>(Nat.N1(), Nat.N1()).fill(0.02), // Gyro standard dev. theta.
+        new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)); // Vision standard devs. X, Y, and theta.
+      
+      estimate.addVisionMeasurement(limelightPose, (System.currentTimeMillis() - latency)/1000);
+      return estimate.update(m_drivetrain.getRotation(), m_drivetrain.getSwerveModuleState());
+    } else {
+      return new Pose2d(0,0, new Rotation2d(0));
+    }
   }
 
   public boolean seesTarget() {
@@ -96,31 +135,5 @@ public class LimelightSubsystem extends SubsystemBase {
    */
   public double hubRotationDegrees () {
     return yaw;
-  }
-
-  /*
-  * Returns an estimated pose of the robot based on the limelight sighting of the target.
-  *
-  * WARNING: This is UNTESTED.
-  */
-  public Pose2d getEstimatedRobotPose() {
-    if (seesTarget==1) {
-      Pose2d estimatedRobotPose = PhotonUtils.estimateFieldToRobot(
-      Units.inchesToMeters(Constants.LimelightConstants.LIMELIGHT_HEIGHT_INCHES), 
-      Units.inchesToMeters(Constants.LimelightConstants.TARGET_HEIGHT_INCHES), 
-      Units.degreesToRadians(Constants.LimelightConstants.LIMELIGHT_PITCH_DEGREES), 
-      Units.degreesToRadians(pitch),
-      new Rotation2d(Units.degreesToRadians(-yaw)), 
-      robotPose.getRotation(),
-      new Pose2d(
-        Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES * Math.cos(-(yaw+robotPose.getRotation().getRadians())), 
-        Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES * Math.sin(-(yaw+robotPose.getRotation().getRadians())), 
-        new Rotation2d(Units.degreesToRadians(yaw))),
-      Constants.LimelightConstants.LIMELIGHT_TO_ROBOT
-      );
-      return estimatedRobotPose;
-    } else {
-      return null;
-    }
   }
 }

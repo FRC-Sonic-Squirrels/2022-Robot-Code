@@ -374,6 +374,20 @@ public class Drivetrain extends SubsystemBase {
     return new Rotation2d(avgRotation / 4);
   }
 
+  public SwerveModuleState[] getSwerveModuleState(){
+    SwerveModuleState[] m_actualStates = new SwerveModuleState[4];
+    SwerveModuleState frontLeft = new SwerveModuleState(m_frontLeftModule.getDriveVelocity(), new Rotation2d(m_frontLeftModule.getSteerAngle()));
+    SwerveModuleState frontRight = new SwerveModuleState(m_frontRightModule.getDriveVelocity(), new Rotation2d(m_frontRightModule.getSteerAngle()));
+    SwerveModuleState backLeft = new SwerveModuleState(m_backLeftModule.getDriveVelocity(), new Rotation2d(m_backLeftModule.getSteerAngle()));
+    SwerveModuleState backRight = new SwerveModuleState(m_backRightModule.getDriveVelocity(), new Rotation2d(m_backRightModule.getSteerAngle()));
+    //new array with size 4, fill array with new module sates in the order : fl, fr, bl, br
+    m_actualStates[0] = frontLeft;
+    m_actualStates[1] = frontRight;
+    m_actualStates[2] = backLeft;
+    m_actualStates[3] = backRight;
+    return m_actualStates;
+  }
+
   @Override
   public void periodic() {
     m_odometry.update(getIMURotation(),
@@ -398,4 +412,5 @@ public class Drivetrain extends SubsystemBase {
     //SmartDashboard.putNumber("Drivetrain IMU Pitch", m_pigeon.getPitch());
     //SmartDashboard.putNumber("Drivetrain odometry angle", m_odometry.getPoseMeters().getRotation().getDegrees());
   }
+
 }
