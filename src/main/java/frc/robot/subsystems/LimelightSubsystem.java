@@ -32,6 +32,8 @@ public class LimelightSubsystem extends SubsystemBase {
   private Pose2d robotPose = new Pose2d();
   private SwerveDrivePoseEstimator estimate;
   private Pose2d limelightPose;
+  private Pose2d kamalLimelightPose;
+
   // private final Field2d m_field = new Field2d();
   // TODO: test and fix filtering change in the distance
   // private static double rateMetersPerSecond = 1.0;
@@ -71,19 +73,7 @@ public class LimelightSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("LL distance ft", Units.metersToFeet(distance_meters));
       SmartDashboard.putNumber("LL distance inches", Units.metersToInches(distance_meters));
       SmartDashboard.putNumber("LL target heading", targetHeading);
-    }
-    else {
-      // return zero if we don't see the target
-      distance_meters = 0;
-      SmartDashboard.putNumber("LL distance ft", 0);
-    }
-    SmartDashboard.putNumber("LL pipelineLatency", latency);
 
-    // m_field.setRobotPose(getLimelightPose());
-  }
-
-  public Pose2d getLimelightPose(){
-    if(seesTarget==1){
       //TODO: should we use IMU rotation?
       //TODO: put in actual standard devs
 
@@ -109,7 +99,24 @@ public class LimelightSubsystem extends SubsystemBase {
         new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)); // Vision standard devs. X, Y, and theta.
       
       estimate.addVisionMeasurement(limelightPose, (System.currentTimeMillis() - latency)/1000);
-      return estimate.update(m_drivetrain.getRotation(), m_drivetrain.getSwerveModuleState());
+      kamalLimelightPose = estimate.update(m_drivetrain.getRotation(), m_drivetrain.getSwerveModuleState());
+
+
+
+    }
+    else {
+      // return zero if we don't see the target
+      distance_meters = 0;
+      SmartDashboard.putNumber("LL distance ft", 0);
+    }
+    SmartDashboard.putNumber("LL pipelineLatency", latency);
+
+    // m_field.setRobotPose(getLimelightPose());
+  }
+
+  public Pose2d getLimelightPose(){
+    if(seesTarget==1){
+      return kamalLimelightPose;
     } else {
       return new Pose2d(0,0, new Rotation2d(0));
     }
