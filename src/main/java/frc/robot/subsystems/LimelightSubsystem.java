@@ -32,7 +32,7 @@ public class LimelightSubsystem extends SubsystemBase {
   private Pose2d robotPose = new Pose2d();
   private SwerveDrivePoseEstimator estimate;
   private Pose2d limelightPose;
-  private Pose2d kamalLimelightPose;
+  private Pose2d kalmanLimelightPose;
 
   // private final Field2d m_field = new Field2d();
   // TODO: test and fix filtering change in the distance
@@ -99,9 +99,11 @@ public class LimelightSubsystem extends SubsystemBase {
         new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)); // Vision standard devs. X, Y, and theta.
       
       estimate.addVisionMeasurement(limelightPose, (System.currentTimeMillis() - latency)/1000);
-      kamalLimelightPose = estimate.update(m_drivetrain.getRotation(), m_drivetrain.getSwerveModuleState());
+      kalmanLimelightPose = estimate.update(m_drivetrain.getRotation(), m_drivetrain.getSwerveModuleState());
 
-
+      SmartDashboard.putNumber("LL pose X meters", kalmanLimelightPose.getX());
+      SmartDashboard.putNumber("LL pose Y meters", kalmanLimelightPose.getY());
+      SmartDashboard.putNumber("LL pose Rotation degrees", kalmanLimelightPose.getRotation().getDegrees());
 
     }
     else {
@@ -116,7 +118,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
   public Pose2d getLimelightPose(){
     if(seesTarget==1){
-      return kamalLimelightPose;
+      return kalmanLimelightPose;
     } else {
       return new Pose2d(0,0, new Rotation2d(0));
     }

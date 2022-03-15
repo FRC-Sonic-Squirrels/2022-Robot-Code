@@ -28,6 +28,7 @@
     "drivetrains",
     "Feedforward",
     "holonomic",
+    "kalman",
     "LOWERONLY",
     "Mjpeg",
     "navx",
