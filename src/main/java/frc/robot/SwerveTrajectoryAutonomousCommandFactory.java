@@ -167,6 +167,36 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         new IntakeReverseCommand(m_intake, m_cargo).withTimeout(2));
   }  
 
+  /**
+   * twoBallAutoShoot2 -  drive, pickup cargo, wait, drive back, shoot two
+   */
+  public Command twoBallAutoWaitShoot2(Double waitTime) {
+
+    Pose2d startPos = StartPoseConstants.BLUE_TOP;
+    Pose2d cargoPos = new Pose2d(FieldConstants.BLUE_CARGO_7, new Rotation2d(Math.PI));
+    Pose2d shootPos = StartPoseConstants.BLUE_DEF_TOP;
+
+    m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
+
+    Trajectory moveToCargoOne =  TrajectoryGenerator.generateTrajectory(startPos,
+        List.of(), cargoPos, m_tt.getTrajectoryConfig());
+
+    Trajectory moveToHub =  TrajectoryGenerator.generateTrajectory(cargoPos,
+        List.of(), shootPos, m_tt.getTrajectoryConfig());
+
+    return new SequentialCommandGroup(      
+      new ParallelRaceGroup(
+        SwerveControllerCommand(moveToCargoOne, true),
+        new IntakeDeployCommand(m_intake, m_cargo)
+      ),
+      new WaitCommand(waitTime),
+      new InstantCommand(() -> m_shooter.setFlywheelRPM(2750), m_shooter),
+      SwerveControllerCommand(moveToHub, true),
+      new ShootWithSetRPMCommand(2750, m_cargo, m_shooter, m_robot)
+        .withTimeout(6)
+    );
+  }  
+
   // command that lets the robot intake 1 cargo without shooting it (parameters have already been converted to meters)
   public Command intakeCargoCommand(TestTrajectories testTrajectories, Translation2d targetPos, Pose2d midPos) {
     
@@ -418,66 +448,6 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   }
 
 
-    /**
-   * Command for shooting the first cargo, then collecting and shooting a second cargo
-   * 
-   * @param startPos the initial starting position
-   * @param cargoPos the position of the cargo to be picked up
-   * @param waitTime the delay for returning to shoot cargo after picking it up
-   * @param shootPos the position the robot will shoot from
-   * @return the trajectory and commands needed to shoot two cargo into the hub
-   */
-  public Command twoBallWaitAutonCommand(Pose2d startPos, Translation2d cargoPos, double waitTime, Pose2d shootPos) {
-
-    m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
-
-    Translation2d midPos = midPosFinder( poseToTranslation(startPos), cargoPos );
-    Rotation2d toCargoAngle = getTranslationsAngle( poseToTranslation(startPos), cargoPos );
-
-    Trajectory start_to_cargo = TrajectoryGenerator.generateTrajectory(startPos, List.of(midPos),
-        new Pose2d(cargoPos, toCargoAngle), m_tt.getTrajectoryConfig());
-
-    Trajectory cargo_to_shoot = TrajectoryGenerator.generateTrajectory(new Pose2d(cargoPos, toCargoAngle), List.of(),
-        shootPos, m_tt.getTrajectoryConfig());
-
-    return new SequentialCommandGroup(
-      // 1. start up intake and flywheel
-      new ParallelCommandGroup(
-        new IntakeDeployCommand(m_intake, m_cargo)
-        // new InstantCommand( () -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated) ),
-        // new WaitUntilCommand( () -> m_shooter.isAtDesiredRPM() )
-      ),
-
-      // 2. shoot the pre-loaded cargo
-      new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
-          .withTimeout(4),
-
-      // 3. move to the next cargo and move it to the upper belts
-      new ParallelCommandGroup(
-        SwerveControllerCommand(start_to_cargo, true),
-        new WaitUntilCommand(() -> m_cargo.cargoInUpperBelts())
-      ),
-
-      // 3.5. wait for the specified amount of time
-      new WaitCommand(waitTime),
-
-      // 4. after wait time is over, move to the shoot position and retract intake
-      new ParallelCommandGroup(
-        SwerveControllerCommand(cargo_to_shoot, true),
-        new InstantCommand(() -> m_intake.retractIntake())
-      ),
-
-      // 5. shoot the newly picked up cargo
-      new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
-          .withTimeout(4)
-
-      // 6. stop flywheel
-      //new InstantCommand( () -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle))
-
-    );
-  }
-
-
   /**
    * Specific command for shooting held cargo and cargo 7, then pushing opposing cargo 4 into hangar.
    * When on blue team, the start pose is BLUE_TOP.
@@ -656,6 +626,44 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     );
   }
 
+  /**
+   * Creates a command that makes the robot rudely replace one of the opposing team's cargo with the robot's team's
+   * @param startPos the beginning position
+   * @param ejectPos the position where the robot ejects its currently contained cargo
+   * @param oppCargo the position of the target opposition cargo
+   * @return
+   */
+  public Command cargoReplaceCommand(Pose2d startPos, Translation2d ejectPos, Translation2d oppCargo) {
+
+    m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
+
+    Rotation2d cargoAngle = new Rotation2d(getTranslationsAngleDouble(ejectPos, oppCargo));
+
+    Trajectory moveToEjectPos = TrajectoryGenerator.generateTrajectory(startPos, List.of(),
+        new Pose2d(ejectPos, cargoAngle), m_tt.getTrajectoryConfig());
+
+    return new SequentialCommandGroup(
+
+      // 1. deploy intake
+      new IntakeDeployCommand(m_intake, m_cargo),
+
+      // 2. move to eject pos
+      SwerveControllerCommand(moveToEjectPos, true),
+
+      // 3. release held cargo in the direction of the other cargo (through the intake) and wait for it being fully released
+      new ParallelRaceGroup(
+        new IntakeReverseCommand(m_intake, m_cargo),
+        new SequentialCommandGroup(
+          new WaitUntilCommand( () -> !m_cargo.cargoInLowerBelts() ),
+          new WaitCommand(2)
+        )
+      ),
+
+      // 4. retract intake
+      new InstantCommand(() -> m_intake.retractIntake())
+    );
+  }
+
 
   /**
    * Create a swerve trajectory follow command. If stopAtEnd is set to true, robot will come to full
@@ -704,6 +712,16 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     double magnitude = vector1.magnitude() * vector2.magnitude();
 
     return new Rotation2d( Math.acos(dotProduct/magnitude) );
+  }
+
+  // private method that gets the angle between two Translation2ds
+  private static double getTranslationsAngleDouble(Translation2d pose1, Translation2d pose2) {
+    Vector2d vector1 = new Vector2d(pose1.getX(), pose1.getY());
+    Vector2d vector2 = new Vector2d(pose2.getX(), pose2.getY());
+    double dotProduct = vector1.dot(vector2);
+    double magnitude = vector1.magnitude() * vector2.magnitude();
+
+    return Math.acos(dotProduct/magnitude);
   }
 
   // private method that gets a midPos between two poses
