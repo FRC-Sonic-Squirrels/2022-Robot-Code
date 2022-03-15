@@ -88,12 +88,19 @@ public class RobotContainer {
         new SwerveTrajectoryAutonomousCommandFactory(drivetrain, m_shooter, m_cargo, m_intake,
             m_robot, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
 
-    Command 
-    autonOne = auton.twoBallAuto(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
+    Command autonOne = auton.twoBallAuto(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
+
+    Command autonTwo = auton.twoBallAutoShoot2(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
+
+    Command autonThree = auton.twoBallAutoShoot2push (StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
+
+    Command autonFour = auton.twoBallWaitAutonCommand(StartPoseConstants.BLUE_TOP,
+        FieldConstants.BLUE_CARGO_7, 4.0, StartPoseConstants.BLUE_DEF_TOP);
 
     chooser.addOption("Auton 1: shoot and move", autonOne);
-    chooser.addOption("Auton 2: move and shoot 2", auton.twoBallAutoShoot2(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7));
-    chooser.addOption("Auton 3: move, shoot 2, push", auton.twoBallAutoShoot2push (StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7));
+    chooser.addOption("Auton 2: move and shoot 2", autonTwo);
+    chooser.addOption("Auton 3: move, shoot 2, push", autonThree);
+    chooser.addOption("Auton 4: move, wait, shoot 2", autonFour);
 
     configureButtonBindings();
 
