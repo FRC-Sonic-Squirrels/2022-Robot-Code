@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -96,11 +97,15 @@ public class RobotContainer {
 
     Command autonFour = auton.twoBallWaitAutonCommand(StartPoseConstants.BLUE_TOP,
         FieldConstants.BLUE_CARGO_7, 4.0, StartPoseConstants.BLUE_DEF_TOP);
+    
+    Command autonFive = auton.cargoReplaceCommand(StartPoseConstants.BLUE_TOP,
+        new Translation2d(21, 22.5), FieldConstants.RED_CARGO_3);
 
     chooser.addOption("Auton 1: shoot and move", autonOne);
     chooser.addOption("Auton 2: move and shoot 2", autonTwo);
     chooser.addOption("Auton 3: move, shoot 2, push", autonThree);
     chooser.addOption("Auton 4: move, wait, shoot 2", autonFour);
+    chooser.addOption("Auton 5: replace one opponent cargo", autonFive);
 
     configureButtonBindings();
 
