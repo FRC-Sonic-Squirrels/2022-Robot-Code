@@ -96,7 +96,7 @@ public class Drivetrain extends SubsystemBase {
 
   private final SwerveDriveOdometry m_odometry;
   
-  private final Field2d m_field = new Field2d();
+  // private final Field2d m_field = new Field2d();
 
   private WPI_Pigeon2 m_pigeon = new WPI_Pigeon2(Constants.CANIVOR_canId.CANID15_pigeon_imu, CANIVOR_canId.name);
 

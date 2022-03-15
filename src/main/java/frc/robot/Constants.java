@@ -236,7 +236,7 @@ public final class Constants {
     public static final double HIGH_HUB_RADIUS_INCHES = 26.6875;
 
     //TODO: final distance between camera and the center of robot
-    public static final Transform2d LIMELIGHT_TO_ROBOT = new Transform2d(new Translation2d(-7.5, 0), new Rotation2d(0));
+    public static final Transform2d LIMELIGHT_TO_ROBOT = new Transform2d(new Translation2d(-7.5, 0), new Rotation2d(180));
   }
 
   public static class VisionPipelineIndex {
