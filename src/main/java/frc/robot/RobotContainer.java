@@ -95,8 +95,7 @@ public class RobotContainer {
 
     Command autonThree = auton.twoBallAutoShoot2push (StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
 
-    Command autonFour = auton.twoBallWaitAutonCommand(StartPoseConstants.BLUE_TOP,
-        FieldConstants.BLUE_CARGO_7, 4.0, StartPoseConstants.BLUE_DEF_TOP);
+    Command autonFour = auton.twoBallAutoWaitShoot2(4.0);
     
     Command autonFive = auton.cargoReplaceCommand(StartPoseConstants.BLUE_TOP,
         new Translation2d(21, 22.5), FieldConstants.RED_CARGO_3);
