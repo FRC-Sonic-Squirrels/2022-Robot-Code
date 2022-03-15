@@ -656,6 +656,44 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     );
   }
 
+  /**
+   * Creates a command that makes the robot rudely replace one of the opposing team's cargo with the robot's team's
+   * @param startPos the beginning position
+   * @param ejectPos the position where the robot ejects its currently contained cargo
+   * @param oppCargo the position of the target opposition cargo
+   * @return
+   */
+  public Command cargoReplaceCommand(Pose2d startPos, Translation2d ejectPos, Translation2d oppCargo) {
+
+    m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
+
+    Rotation2d cargoAngle = new Rotation2d(getTranslationsAngleDouble(ejectPos, oppCargo));
+
+    Trajectory moveToEjectPos = TrajectoryGenerator.generateTrajectory(startPos, List.of(),
+        new Pose2d(ejectPos, cargoAngle), m_tt.getTrajectoryConfig());
+
+    return new SequentialCommandGroup(
+
+      // 1. deploy intake
+      new IntakeDeployCommand(m_intake, m_cargo),
+
+      // 2. move to eject pos
+      SwerveControllerCommand(moveToEjectPos, true),
+
+      // 3. release held cargo in the direction of the other cargo (through the intake) and wait for it being fully released
+      new ParallelRaceGroup(
+        new IntakeReverseCommand(m_intake, m_cargo),
+        new SequentialCommandGroup(
+          new WaitUntilCommand( () -> !m_cargo.cargoInLowerBelts() ),
+          new WaitCommand(2)
+        )
+      ),
+
+      // 4. retract intake
+      new InstantCommand(() -> m_intake.retractIntake())
+    );
+  }
+
 
   /**
    * Create a swerve trajectory follow command. If stopAtEnd is set to true, robot will come to full
@@ -704,6 +742,16 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     double magnitude = vector1.magnitude() * vector2.magnitude();
 
     return new Rotation2d( Math.acos(dotProduct/magnitude) );
+  }
+
+  // private method that gets the angle between two Translation2ds
+  private static double getTranslationsAngleDouble(Translation2d pose1, Translation2d pose2) {
+    Vector2d vector1 = new Vector2d(pose1.getX(), pose1.getY());
+    Vector2d vector2 = new Vector2d(pose2.getX(), pose2.getY());
+    double dotProduct = vector1.dot(vector2);
+    double magnitude = vector1.magnitude() * vector2.magnitude();
+
+    return Math.acos(dotProduct/magnitude);
   }
 
   // private method that gets a midPos between two poses
