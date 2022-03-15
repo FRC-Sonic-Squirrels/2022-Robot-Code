@@ -38,6 +38,7 @@ public class LimelightSubsystem extends SubsystemBase {
     limelight.setPipeline(0);
   }
 
+
   @Override
   public void periodic() {
     table = NetworkTableInstance.getDefault().getTable("limelight-one");
@@ -66,13 +67,14 @@ public class LimelightSubsystem extends SubsystemBase {
     }
     else {
       // return zero if we don't see the target
+      distance_meters = 0;
       SmartDashboard.putNumber("LL distance ft", 0);
     }
     SmartDashboard.putNumber("LL pipelineLatency", latency);
   }
 
   public boolean seesTarget() {
-    return limelight.seesTarget();
+    return seesTarget();
   }
 
   /** 
