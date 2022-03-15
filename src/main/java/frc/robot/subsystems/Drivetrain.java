@@ -376,6 +376,12 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if(this.getCurrentCommand() != null){
+      SmartDashboard.putString("AAA drivetrain current command", this.getCurrentCommand().toString());
+    } else {
+      SmartDashboard.putString("AAA drivetrain current command", "null");
+    }
+
     m_odometry.update(getIMURotation(),
         new SwerveModuleState(m_frontLeftModule.getDriveVelocity(),
             new Rotation2d(m_frontLeftModule.getSteerAngle())),

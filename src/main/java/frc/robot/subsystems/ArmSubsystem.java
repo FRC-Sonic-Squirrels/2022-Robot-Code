@@ -192,6 +192,11 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
+    if(this.getCurrentCommand() != null){
+      SmartDashboard.putString("AAA arm current command", this.getCurrentCommand().toString());
+    } else {
+      SmartDashboard.putString("AAA arm current command", "null");
+    }
     SmartDashboard.putNumber("Arm Angle deg", getArmAngle());
     // SmartDashboard.putNumber("Arm Vel (deg per sec)", m_armLeadMotor.getEncoder().getVelocity()*rpm2degreesPerSecond);
     // SmartDashboard.putNumber("Arm SetPoint", m_targetAngle);

@@ -40,6 +40,7 @@ public class ShootWithSetRPMCommand extends CommandBase {
     //m_rpm = SmartDashboard.getNumber("AAA shooting rpm testing", 2000);
     SmartDashboard.putNumber("SHOOTING RPM", m_rpm);
 
+    SmartDashboard.putString("AAAA Shoot Command State", "Initialized");
     m_shooterSubsystem.setFlywheelRPM(m_rpm);
 
   }
@@ -49,6 +50,7 @@ public class ShootWithSetRPMCommand extends CommandBase {
   public void execute() {
     // wait until flywheel is fully revved
     // once it is, set indexer in shooting mode
+    SmartDashboard.putString("AAAA Shoot Command State", "execute");
     if (!shooting && m_shooterSubsystem.isAtDesiredRPM()) {
       shooting = true;
       SmartDashboard.putBoolean("AAA can shoot", true);
@@ -61,6 +63,7 @@ public class ShootWithSetRPMCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    SmartDashboard.putString("AAAA Shoot Command State", "end");
     shooting = false;
     m_shooterSubsystem.stop();
     m_cargoSubsystem.setStopMode();

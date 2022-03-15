@@ -86,6 +86,11 @@ public class IntakeSubsystem extends SubsystemBase {
       setIntakeMotorRPM(m_reverseRpmValue);
     }
 
+    if(this.getCurrentCommand() != null){
+      SmartDashboard.putString("AAA intake current command", this.getCurrentCommand().toString());
+    } else {
+      SmartDashboard.putString("AAA intake current command", "null");
+    }
     SmartDashboard.putNumber("Intake_Subsystem RPM", m_encoder.getIntegratedSensorVelocity() * 600 / 2048);
     SmartDashboard.putNumber("Intake_Subsystem desired Motor RPM", m_desiredRPM);
     SmartDashboard.putBoolean("Intake_Subsystem is Deployed", m_isDeployed);

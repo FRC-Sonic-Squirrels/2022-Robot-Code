@@ -244,7 +244,11 @@ public class ElevatorSubsystem extends SubsystemBase {
       // not currently on limit switch, zero again next time we hit limit switch
       zeroed = false;
     }
-
+    if(this.getCurrentCommand() != null){
+      SmartDashboard.putString("AAA elevator current command", this.getCurrentCommand().toString());
+    } else {
+      SmartDashboard.putString("AAA elevator current command", "null");
+    }
     SmartDashboard.putNumber("Elevator Height (inches)", getHeightInches());
     SmartDashboard.putNumber("Elevator Height Set Point", heightSetpointInches);
     //SmartDashboard.putNumber("Elevator Height (ticks)", getHeightTicks());
