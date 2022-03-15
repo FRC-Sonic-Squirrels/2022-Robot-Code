@@ -40,6 +40,8 @@ public class IntakeDeployCommand extends CommandBase {
     m_intake.retractIntake();
     m_intake.setStopMode();
     m_cargo.setStopMode();
+    
+    //TODO: cargo mode to idle mode to suck last ball up when intake goes up early 
   }
 
   // Returns true when the command should end.
