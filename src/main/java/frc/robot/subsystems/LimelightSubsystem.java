@@ -85,8 +85,8 @@ public class LimelightSubsystem extends SubsystemBase {
         new Rotation2d(Units.degreesToRadians(yaw)), 
         m_drivetrain.getRotation(), 
         new Pose2d(
-          Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX() + (Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES * Math.cos(-(m_drivetrain.getRotation().getDegrees()+yaw))),
-          Constants.HubCentricConstants.HUB_CENTER_POSE2D.getY() + (Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES * Math.sin(-(m_drivetrain.getRotation().getDegrees()+yaw))), 
+          Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX() + (Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES * Math.cos(-Units.degreesToRadians(m_drivetrain.getRotation().getDegrees()+yaw))),
+          Constants.HubCentricConstants.HUB_CENTER_POSE2D.getY() + (Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES * Math.sin(-Units.degreesToRadians(m_drivetrain.getRotation().getDegrees()+yaw))), 
           Constants.HubCentricConstants.HUB_CENTER_POSE2D.getRotation()), 
         Constants.LimelightConstants.LIMELIGHT_TO_ROBOT);
       
