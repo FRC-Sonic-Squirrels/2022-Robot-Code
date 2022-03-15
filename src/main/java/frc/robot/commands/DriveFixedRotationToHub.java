@@ -5,19 +5,19 @@
 package frc.robot.commands;
 
 import java.util.function.Supplier;
-import edu.wpi.first.math.controller.PIDController;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
+
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
+
 import frc.robot.Constants;
-import frc.robot.Constants.HubCentricConstants;
+
 import frc.robot.subsystems.Drivetrain;
 
 
@@ -27,6 +27,7 @@ public class DriveFixedRotationToHub extends CommandBase {
 
   private Supplier<Double> m_sidewaysSupplier;
   private Supplier<Double> m_forwardSupplier;
+
   private ProfiledPIDController rotationalController = new ProfiledPIDController(3.0, 0.0, 0.02,
   new TrapezoidProfile.Constraints(
       Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
@@ -80,7 +81,6 @@ private Vector2d m_hubCenter = Constants.HubCentricConstants.HUB_CENTER;
         SmartDashboard.putNumberArray("Hub_Centric hubPosition", new double[] {Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX(), Constants.HubCentricConstants.HUB_CENTER_POSE2D.getY()});
     
         SmartDashboard.putNumber("Hub_Centric rotationCorrection", rotationCorrection);
-        SmartDashboard.putNumberArray("Hub_Centric strafe values", new double[] {strafeX, strafeY});
     
         SmartDashboard.putNumber("Hub_Centric sidewaysInput", m_sidewaysSupplier.get());
         SmartDashboard.putNumber("Hub_Centric forwardInput", m_forwardSupplier.get());
@@ -101,4 +101,6 @@ private Vector2d m_hubCenter = Constants.HubCentricConstants.HUB_CENTER;
     double product = robotLocation.dot(hubLocation);
     double magnitudes = robotLocation.magnitude() * hubLocation.magnitude();
     double angle_rad = Math.acos(product / magnitudes);
+    return new Rotation2d(angle_rad);
+}
 }
