@@ -96,15 +96,11 @@ public class RobotContainer {
     Command autonThree = auton.twoBallAutoShoot2push (StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
 
     Command autonFour = auton.twoBallAutoWaitShoot2(4.0);
-    
-    Command autonFive = auton.cargoReplaceCommand(StartPoseConstants.BLUE_TOP,
-        new Translation2d(21, 22.5), FieldConstants.RED_CARGO_3);
 
     chooser.addOption("Auton 1: shoot and move", autonOne);
     chooser.addOption("Auton 2: move and shoot 2", autonTwo);
     chooser.addOption("Auton 3: move, shoot 2, push", autonThree);
     chooser.addOption("Auton 4: move, wait, shoot 2", autonFour);
-    chooser.addOption("Auton 5: replace one opponent cargo", autonFive);
 
     configureButtonBindings();
 
