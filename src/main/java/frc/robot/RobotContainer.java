@@ -106,7 +106,7 @@ public class RobotContainer {
       drivetrain, 
       () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
       () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
-      () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
+      () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
     m_elevator.setDefaultCommand(new ElevatorControlCommand(m_elevator, m_climbController,
       Constants.ElevatorConstants.elevatorSpeedMultiplier));
