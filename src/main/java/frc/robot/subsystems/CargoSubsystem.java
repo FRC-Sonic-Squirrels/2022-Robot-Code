@@ -31,7 +31,8 @@ public class CargoSubsystem extends SubsystemBase {
     BOTH,
     REVERSE,
     SHOOT,
-    SHOOT_STEP2
+    SHOOT_STEP2,
+    IDLE
   };
 
   private WPI_TalonFX UpperBelts;
@@ -39,10 +40,15 @@ public class CargoSubsystem extends SubsystemBase {
   private DigitalInput lowerSensor = new DigitalInput(digitalIOConstants.dio0_indexerSensor1);
   private DigitalInput upperSensor = new DigitalInput(digitalIOConstants.dio1_indexerSensor2);
   private Mode mode = Mode.STOP;
+  private long startTime = 0;
+  private int idleStage = 1;
 
   // TODO: find the real percent outputs of the conveyor belts
   private double m_lowerOutput = 0.8;
   private double m_upperOutput = 0.9;
+
+  private double lowerIntakeModeSpeed = 0.9;
+  private double upperIntakeModeSpeed = 0.5;
 
   public CargoSubsystem() {
 
@@ -111,11 +117,11 @@ public class CargoSubsystem extends SubsystemBase {
         if (cargoInLowerBelts()) {
           stopLowerBelts();
         } else {
-          setLowerBeltPercentOutput(0.9);
+          setLowerBeltPercentOutput(lowerIntakeModeSpeed);
         }
       } else {
-        setLowerBeltPercentOutput(0.9);
-        setUpperBeltPercentOutput(0.5);
+        setLowerBeltPercentOutput(lowerIntakeModeSpeed);
+        setUpperBeltPercentOutput(upperIntakeModeSpeed);
       }
 
     } else if (mode == Mode.LOWERONLY) {
@@ -143,6 +149,51 @@ public class CargoSubsystem extends SubsystemBase {
     } else if (mode == Mode.REVERSE) {
       setUpperBeltPercentOutput(-m_lowerOutput);
       setLowerBeltPercentOutput(-m_upperOutput);
+    } else if (mode == Mode.IDLE) {
+      // 1. keep running lower & upper belts for 0.5s if upper clear
+      // 2. keep running lower belts for 0.5 seconds if lower or upper belts clear
+      // 3. stop if both upper and lower full
+      // 4. back up until upper clear == ready to shoot
+      if (startTime == 0){
+        startTime = System.currentTimeMillis();
+      }
+      else if (System.currentTimeMillis() - startTime > 500) {
+        mode = Mode.STOP;
+        startTime = 0;
+      }
+
+      if (idleStage == 1) {
+        if (cargoInUpperBelts() && cargoInLowerBelts()) {
+          // two cargo onboard, prep for shooting
+          setUpperBeltPercentOutput(0.0);
+          setLowerBeltPercentOutput(0.0);
+          idleStage = 4;
+        } else if (cargoInUpperBelts()) {
+          // room for one more, keep running lower belts
+          setUpperBeltPercentOutput(0.0);
+          setLowerBeltPercentOutput(lowerIntakeModeSpeed);
+        } else {
+          // 
+          
+          idleStage = 2;
+        }
+        if (!cargoInUpperBelts()) {
+          setUpperBeltPercentOutput(m_upperOutput);
+          setLowerBeltPercentOutput(m_lowerOutput);
+        } else {
+          setUpperBeltPercentOutput(0.0);
+          setLowerBeltPercentOutput(0.0);
+        }
+      } else if (idleStage == 2) {
+      } else if (idleStage == 3) {
+      } else if (idleStage == 4) {
+        if (!cargoInUpperBelts()) {
+          mode = Mode.STOP;
+        } else {
+          setUpperBeltPercentOutput(-0.5);
+          setLowerBeltPercentOutput(-0.2);
+        }
+      }
     } else {
       System.out.println("Indexer: unknown mode");
     }
@@ -231,6 +282,11 @@ public class CargoSubsystem extends SubsystemBase {
 
   public void setReverseMode(){
     mode = Mode.REVERSE;
+  }
+
+  public void setIdleMode(){
+    mode = Mode.IDLE;
+    idleStage = 1;
   }
 
   /** 
