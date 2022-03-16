@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.team2930.lib.util.linearInterpolator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
@@ -187,7 +188,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public double getRPMforDistanceFeet(double distanceFeet) {
-    return m_lt_inches.getInterpolatedValue(distanceFeet / 12.0);
+    return m_lt_inches.getInterpolatedValue(distanceFeet * 12);
   }
 
   private void setPIDteleop() {

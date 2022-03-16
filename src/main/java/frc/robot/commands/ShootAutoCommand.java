@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
@@ -35,10 +36,11 @@ public class ShootAutoCommand extends CommandBase {
   @Override
   public void initialize() {
 
+    double distanceMeters = m_limelight.getDistanceMeters();
     //TODO: change to limelight calculated distance, rather than odometry
     if(m_limelight.seesTarget()){
       m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getRPMforDistanceFeet(
-        m_limelight.getDistanceMeters()));
+        Units.metersToFeet(distanceMeters)));
     } else {
       m_shooterSubsystem.setFlywheelRPM(2750);
     }
@@ -52,7 +54,7 @@ public class ShootAutoCommand extends CommandBase {
     // once upper ball has been released, go back to intake mode
 
     if (m_shooterSubsystem.isAtDesiredRPM()) {
-        m_cargoSubsystem.setUpperOnlyMode();
+        m_cargoSubsystem.setShootMode();
     }
 
   }
@@ -67,10 +69,10 @@ public class ShootAutoCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-      if (! m_cargoSubsystem.cargoInUpperBelts()) {
-        new WaitCommand(0.5);
-        return true;
-      }
+      // if (! m_cargoSubsystem.cargoInUpperBelts()) {
+      //   new WaitCommand(0.5);
+      //   return true;
+      // }
       return false;
   }
 }
