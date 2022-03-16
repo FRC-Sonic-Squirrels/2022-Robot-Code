@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.ElevatorControlCommand;
+import frc.robot.commands.ElevatorZeroHeight;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -103,9 +104,11 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.chooser.getSelected();
  
+    new ElevatorZeroHeight(m_robotContainer.m_elevator).schedule(true);
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
+      
     }
   }
 
