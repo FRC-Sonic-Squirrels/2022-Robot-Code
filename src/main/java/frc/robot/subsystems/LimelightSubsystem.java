@@ -124,7 +124,7 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   public boolean seesTarget() {
-    return seesTarget();
+    return limelight.seesTarget();
   }
 
   /** 

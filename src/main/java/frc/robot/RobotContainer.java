@@ -27,6 +27,7 @@ import frc.robot.commands.ShootWithSetRPMCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.LimelightRotateToHubAndShoot;
+import frc.robot.commands.ShootAutoCommand;
 import frc.robot.commands.ShootCargoCommand;
 import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
@@ -179,6 +180,9 @@ public class RobotContainer {
     // 1500 RPM is perfecto for right against the hub
     new Button(m_operatorController::getRightBumper)
      .whileActiveOnce(new ShootWithSetRPMCommand(2800, m_cargo, m_shooter, m_robot), true);
+
+    new Button(m_operatorController::getLeftBumper)
+      .whileActiveOnce(new ShootAutoCommand(m_cargo, m_shooter, drivetrain, m_limelight));
 
     // new Button(m_operatorController::getLeftStickButtonPressed)
     //   .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
