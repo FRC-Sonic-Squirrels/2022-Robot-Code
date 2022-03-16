@@ -113,7 +113,6 @@ public class RobotContainer {
 
     m_arm.setDefaultCommand(new ArmManualControlCommand(m_arm, m_climbController, 0.3));
 
-
     configureButtonBindings();
   }
 
@@ -128,10 +127,14 @@ public class RobotContainer {
 
     //-------------- DRIVER CONTROLS DEFINED HERE --------------------------  
 
-    // Back button zeros the gyroscope
+    // Back button resets field centric, forward is the current heading
     new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
             .whenPressed(drivetrain::resetFieldCentric);
+
+    // start button toggles the LimeLight LEDs
+    new Button(m_controller::getStartButton)
+            .whenPressed(new InstantCommand(() -> m_limelight.toggleLEDs()));
 
     new Button(m_controller::getXButton)
             .whenPressed(new DriveHubCentricCommand(drivetrain, 
@@ -156,8 +159,8 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
-    new Button(m_controller::getLeftBumper)
-            .whileHeld(new LimelightRotateToHubAndShoot(2000, m_limelight, drivetrain, m_cargo, m_shooter, m_intake, m_robot));
+    // new Button(m_controller::getLeftBumper)
+    //         .whileHeld(new LimelightRotateToHubAndShoot(2000, m_limelight, drivetrain, m_cargo, m_shooter, m_intake, m_robot));
 
             
     new Button(() -> (m_controller.getRightTriggerAxis() > 0.05))
@@ -179,22 +182,22 @@ public class RobotContainer {
     //new Button(m_operatorController::getRightBumper)
     //  .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
-    //Deploy intake while holding 
+    //Deploy Intake
     new Button(m_operatorController::getAButton)
        .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
 
     new Button(m_operatorController::getYButton)
        .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
-    // 2000 RPM is good for 5 feet
+    // middle shot to High Hub
     new Button(m_operatorController::getXButton)
        .whileActiveOnce(new ShootWithSetRPMCommand(3200, m_cargo, m_shooter, m_robot), true);
  
-    // 3000 RPM is good for 10 feet
+    // Farthest shot to High Hub
     new Button(m_operatorController::getBButton)
        .whileActiveOnce(new ShootWithSetRPMCommand(3400, m_cargo, m_shooter, m_robot), true);
 
-    // 1500 RPM is perfecto for right against the hub
+    // Bumper Shot to High Hub right against the lower hub
     new Button(m_operatorController::getRightBumper)
      .whileActiveOnce(new ShootWithSetRPMCommand(2800, m_cargo, m_shooter, m_robot), true);
      

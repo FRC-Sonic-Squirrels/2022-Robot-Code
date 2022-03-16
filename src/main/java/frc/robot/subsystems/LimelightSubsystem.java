@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.team2930.lib.Limelight;
+import com.team2930.lib.ll_mode;
 import org.photonvision.PhotonUtils;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,6 +27,7 @@ public class LimelightSubsystem extends SubsystemBase {
   private double seesTarget;
   private double targetHeading;
   private Pose2d robotPose = new Pose2d();
+  private boolean ledsOn = true;
 
   // TODO: test and fix filtering change in the distance
   // private static double rateMetersPerSecond = 1.0;
@@ -99,6 +101,18 @@ public class LimelightSubsystem extends SubsystemBase {
    */
   public double hubRotationDegrees () {
     return yaw;
+  }
+
+  /**
+   * Toggle the LimeLight LEDs on or off
+   */
+  public void toggleLEDs() {
+    ledsOn = !ledsOn;
+    if (ledsOn) {
+      limelight.setLEDMode(ll_mode.led.on);
+    } else {
+      limelight.setLEDMode(ll_mode.led.off);
+    }
   }
 
   /*
