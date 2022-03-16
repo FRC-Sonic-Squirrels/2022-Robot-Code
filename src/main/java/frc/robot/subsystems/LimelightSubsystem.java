@@ -73,6 +73,12 @@ public class LimelightSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("LL distance ft", Units.metersToFeet(distance_meters));
       SmartDashboard.putNumber("LL distance inches", Units.metersToInches(distance_meters));
       SmartDashboard.putNumber("LL target heading", targetHeading);
+    } else {
+      // return zero if we don't see the target
+      distance_meters = 0;
+      SmartDashboard.putNumber("LL distance ft", 0);
+    }
+    SmartDashboard.putNumber("LL pipelineLatency", latency);
 
       //TODO: should we use IMU rotation?
       //TODO: put in actual standard devs
@@ -97,21 +103,14 @@ public class LimelightSubsystem extends SubsystemBase {
         new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.02, 0.02, 0.01), // State measurement standard deviations. X, Y, theta.
         new MatBuilder<>(Nat.N1(), Nat.N1()).fill(0.02), // Rotation standard dev. theta.
         new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)); // Vision standard devs. X, Y, and theta.
-      
-      estimate.addVisionMeasurement(limelightPose, (System.currentTimeMillis() - latency)/1000);
+      if(seesTarget()){
+        estimate.addVisionMeasurement(limelightPose, (System.currentTimeMillis() - latency)/1000);
+      }
       kalmanLimelightPose = estimate.update(m_drivetrain.getRotation(), m_drivetrain.getSwerveModuleState());
 
       SmartDashboard.putNumber("LL pose X meters", kalmanLimelightPose.getX());
       SmartDashboard.putNumber("LL pose Y meters", kalmanLimelightPose.getY());
       SmartDashboard.putNumber("LL pose Rotation degrees", kalmanLimelightPose.getRotation().getDegrees());
-
-    }
-    else {
-      // return zero if we don't see the target
-      distance_meters = 0;
-      SmartDashboard.putNumber("LL distance ft", 0);
-    }
-    SmartDashboard.putNumber("LL pipelineLatency", latency);
 
     // m_field.setRobotPose(getLimelightPose());
   }
