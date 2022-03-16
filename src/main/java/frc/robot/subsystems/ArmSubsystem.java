@@ -192,12 +192,15 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    if(this.getCurrentCommand() != null){
-      SmartDashboard.putString("AAA arm current command", this.getCurrentCommand().toString());
-    } else {
-      SmartDashboard.putString("AAA arm current command", "null");
-    }
-    SmartDashboard.putNumber("Arm Angle deg", getArmAngle());
+    // if(this.getCurrentCommand() != null){
+    //   SmartDashboard.putString("AAA arm current command", this.getCurrentCommand().toString());
+    // } else {
+    //   SmartDashboard.putString("AAA arm current command", "null");
+    // }
+
+    // SmartDashboard.putNumber("Arm Angle deg", getArmAngle());
+
+
     // SmartDashboard.putNumber("Arm Vel (deg per sec)", m_armLeadMotor.getEncoder().getVelocity()*rpm2degreesPerSecond);
     // SmartDashboard.putNumber("Arm SetPoint", m_targetAngle);
     // SmartDashboard.putNumber("Arm Error", m_targetAngle - getArmAngle());
@@ -207,9 +210,9 @@ public class ArmSubsystem extends SubsystemBase {
     // SmartDashboard.putNumber("Arm target Rotations", angleToEncoderRotations(m_targetAngle));
     // SmartDashboard.putNumber("Arm rpm To Degrees Per Second", rpm2degreesPerSecond);
     // SmartDashboard.putNumber("Arm tolerance Degrees", toleranceDegrees);
-    //SmartDashboard.putNumber("Arm encoder To Arm Ratio", m_encoderToArmRatio);
-    //SmartDashboard.putNumber("Arm maximum Angle Degree", maxAngleDegree);
-    //SmartDashboard.putNumber("Arm minimum Angle Degree", minAngleDegree);
+    // SmartDashboard.putNumber("Arm encoder To Arm Ratio", m_encoderToArmRatio);
+    // SmartDashboard.putNumber("Arm maximum Angle Degree", maxAngleDegree);
+    // SmartDashboard.putNumber("Arm minimum Angle Degree", minAngleDegree);
 
   }
 }

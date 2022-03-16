@@ -150,11 +150,11 @@ public class CargoSubsystem extends SubsystemBase {
     SmartDashboard.putString("Cargo: Mode", mode.name());
     SmartDashboard.putBoolean("Cargo in Upper", cargoInUpperBelts());
     SmartDashboard.putBoolean("Cargo in Lower", cargoInLowerBelts());
-    if(this.getCurrentCommand() != null){
-      SmartDashboard.putString("AAA cargosubsystem current command", this.getCurrentCommand().toString());
-    } else {
-      SmartDashboard.putString("AAA Cargosubsystem current command", "null");
-    }
+    // if(this.getCurrentCommand() != null){
+    //   SmartDashboard.putString("AAA cargosubsystem current command", this.getCurrentCommand().toString());
+    // } else {
+    //   SmartDashboard.putString("AAA Cargosubsystem current command", "null");
+    // }
     // SmartDashboard.putNumber("Cargo Upper Voltage", UpperBelts.getMotorOutputVoltage());
     // SmartDashboard.putNumber("Cargo Lower Voltage", LowerBelts.getMotorOutputVoltage());
 

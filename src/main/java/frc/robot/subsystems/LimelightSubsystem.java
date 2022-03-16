@@ -40,11 +40,11 @@ public class LimelightSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if(this.getCurrentCommand() != null){
-      SmartDashboard.putString("AAA limelight current command", this.getCurrentCommand().toString());
-    } else {
-      SmartDashboard.putString("AAA limelight current command", "null");
-    }
+    // if(this.getCurrentCommand() != null){
+    //   SmartDashboard.putString("AAA limelight current command", this.getCurrentCommand().toString());
+    // } else {
+    //   SmartDashboard.putString("AAA limelight current command", "null");
+    // }
     table = NetworkTableInstance.getDefault().getTable("limelight-one");
     pitch = table.getEntry("ty").getDouble(0);
     yaw = table.getEntry("tx").getDouble(0);
