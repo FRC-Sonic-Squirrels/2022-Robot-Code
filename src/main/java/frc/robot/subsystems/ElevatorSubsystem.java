@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -102,6 +103,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     // NOTE: when we power up, we expect the elevator to be full down, triggering the lower limit switch.
     // if not, we need to move the elevator down to the lower limit switch (VERY SLOWLY).
     // hitting either limit switch must stop the elevator.
+
+    // Stagger update frames to reduce congestion
+    winch_follow_talon.setStatusFramePeriod(StatusFrame.Status_1_General, 47);
+    winch_follow_talon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 201);
 
     brakeOn();
     zeroHeight();

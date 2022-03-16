@@ -93,6 +93,10 @@ public class ArmSubsystem extends SubsystemBase {
     // we do need updates of sensor position
     //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
 
+    // don't need frequent updates for follow motor
+    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 396);
+    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 401);
+
     m_throughBoreEncoder.setPositionConversionFactor(1.0);
 
     //because of gear box the encoder is spinning the wrong way
@@ -115,7 +119,7 @@ public class ArmSubsystem extends SubsystemBase {
    */
   public void coastMode() {
     m_armLeadMotor.setIdleMode(IdleMode.kCoast);
-    //m_armFollowMotor.setIdleMode(IdleMode.kCoast);
+    m_armFollowMotor.setIdleMode(IdleMode.kCoast);
   }
  
   /**
@@ -123,7 +127,7 @@ public class ArmSubsystem extends SubsystemBase {
   */
   public void brakeMode() {
     m_armLeadMotor.setIdleMode(IdleMode.kBrake);
-    //m_armFollowMotor.setIdleMode(IdleMode.kBrake);
+    m_armFollowMotor.setIdleMode(IdleMode.kBrake);
   }
 
   /**
@@ -181,12 +185,12 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void setMotorCoastMode(){
     m_armLeadMotor.setIdleMode(IdleMode.kCoast);
-    //m_armFollowMotor.setIdleMode(IdleMode.kCoast);
+    m_armFollowMotor.setIdleMode(IdleMode.kCoast);
   }
 
   public void setMotorBreakMode(){
     m_armLeadMotor.setIdleMode(IdleMode.kBrake);
-    //m_armFollowMotor.setIdleMode(IdleMode.kBrake);
+    m_armFollowMotor.setIdleMode(IdleMode.kBrake);
   }
 
   @Override

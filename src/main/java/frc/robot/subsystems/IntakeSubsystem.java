@@ -62,16 +62,14 @@ public class IntakeSubsystem extends SubsystemBase {
     m_intake.config_kF(kPIDLoopIdx, 0.05);
     m_intake.config_IntegralZone(kPIDLoopIdx, 100);
 
-
-    // Reduce CAN traffic a little, we
-    m_intake.setStatusFramePeriod(StatusFrame.Status_1_General, 40);
-    m_intake.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 40);
+    // Reduce CAN traffic a little, we don't use any feedback
+    m_intake.setStatusFramePeriod(StatusFrame.Status_1_General, 17);
+    m_intake.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 41);
 
     m_encoder = m_intake.getSensorCollection();
     
     intakeRPM = 0.0;
   }
-  // I think the motor, when retracted, is also paired with a stop command
 
   @Override
   public void periodic() {
