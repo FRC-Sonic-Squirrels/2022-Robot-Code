@@ -131,16 +131,16 @@ public class Robot extends TimedRobot {
 
  
 
-    m_robotContainer.drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
-      m_robotContainer.drivetrain, 
-      () -> -RobotContainer.modifyAxis(m_robotContainer.m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-      () -> -RobotContainer.modifyAxis(m_robotContainer.m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
-      () -> -RobotContainer.modifyAxis(m_robotContainer.m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
+    // m_robotContainer.drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
+    //   m_robotContainer.drivetrain, 
+    //   () -> -RobotContainer.modifyAxis(m_robotContainer.m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //   () -> -RobotContainer.modifyAxis(m_robotContainer.m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
+    //   () -> -RobotContainer.modifyAxis(m_robotContainer.m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
 
-    m_robotContainer.m_elevator.setDefaultCommand(new ElevatorControlCommand(m_robotContainer.m_elevator, m_robotContainer.m_climbController,
-        Constants.ElevatorConstants.elevatorSpeedMultiplier));
+    // m_robotContainer.m_elevator.setDefaultCommand(new ElevatorControlCommand(m_robotContainer.m_elevator, m_robotContainer.m_climbController,
+    //     Constants.ElevatorConstants.elevatorSpeedMultiplier));
 
-    m_robotContainer.m_arm.setDefaultCommand(new ArmManualControlCommand(m_robotContainer.m_arm, m_robotContainer.m_climbController, 0.3));
+    // m_robotContainer.m_arm.setDefaultCommand(new ArmManualControlCommand(m_robotContainer.m_arm, m_robotContainer.m_climbController, 0.3));
 
   }
 

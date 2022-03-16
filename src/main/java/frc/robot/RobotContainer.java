@@ -102,8 +102,19 @@ public class RobotContainer {
     chooser.addOption("Auton 3: move, shoot 2, push", autonThree);
     chooser.addOption("Auton 4: move, wait, shoot 2", autonFour);
 
-    configureButtonBindings();
+    drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
+      drivetrain, 
+      () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+      () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
+      () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
 
+    m_elevator.setDefaultCommand(new ElevatorControlCommand(m_elevator, m_climbController,
+      Constants.ElevatorConstants.elevatorSpeedMultiplier));
+
+    m_arm.setDefaultCommand(new ArmManualControlCommand(m_arm, m_climbController, 0.3));
+
+
+    configureButtonBindings();
   }
 
   /**
