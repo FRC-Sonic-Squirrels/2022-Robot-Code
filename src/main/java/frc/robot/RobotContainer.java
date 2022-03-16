@@ -188,11 +188,11 @@ public class RobotContainer {
 
     // 2000 RPM is good for 5 feet
     new Button(m_operatorController::getXButton)
-       .whileHeld(new ShootWithSetRPMCommand(3200, m_cargo, m_shooter, m_robot), true);
+       .whileActiveOnce(new ShootWithSetRPMCommand(3200, m_cargo, m_shooter, m_robot), true);
  
     // 3000 RPM is good for 10 feet
     new Button(m_operatorController::getBButton)
-       .toggleWhenPressed(new ShootWithSetRPMCommand(3400, m_cargo, m_shooter, m_robot), true);
+       .whileActiveOnce(new ShootWithSetRPMCommand(3400, m_cargo, m_shooter, m_robot), true);
 
     // 1500 RPM is perfecto for right against the hub
     new Button(m_operatorController::getRightBumper)
