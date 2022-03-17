@@ -232,7 +232,7 @@ public final class Constants {
   public static class LimelightConstants{
     public static final double LIMELIGHT_HEIGHT_INCHES = 29.962;
     public static final double HIGH_HUB_HEIGHT_INCHES = 104.0;
-    public static final double LIMELIGHT_PITCH_DEGREES = 40;
+    public static final double LIMELIGHT_PITCH_DEGREES = 50;
     public static final double HIGH_HUB_RADIUS_INCHES = 26.6875;
 
     //TODO: final distance between camera and the center of robot
