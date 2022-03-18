@@ -164,11 +164,11 @@ public class RobotContainer {
     //         .whileHeld(new LimelightRotateToHubAndShoot(2000, m_limelight, drivetrain, m_cargo, m_shooter, m_intake, m_robot));
 
             
-    new Button(() -> (m_controller.getRightTriggerAxis() > 0.05))
-            .toggleWhenActive(new IntakeDeployCommand(m_intake, m_cargo), true);
+    // new Button(() -> (m_controller.getRightTriggerAxis() > 0.05))
+    //         .toggleWhenActive(new IntakeDeployCommand(m_intake, m_cargo), true);
 
-    new Button(() -> (m_controller.getLeftTriggerAxis() > 0.05))
-            .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
+    // new Button(() -> (m_controller.getLeftTriggerAxis() > 0.05))
+    //         .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
     // new Button(m_controller::getLeftBumper)
     //   .whileHeld(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
@@ -188,11 +188,11 @@ public class RobotContainer {
 
     //--------------------------------Operator intake)-------------------
     //Deploy Intake
-    // new Button(m_operatorController::getAButton)
-    //    .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
+    new Button(m_operatorController::getAButton)
+       .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
 
-    // new Button(m_operatorController::getYButton)
-    //    .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
+    new Button(m_operatorController::getYButton)
+       .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
     // middle shot to High Hub
     new Button(m_operatorController::getXButton)
