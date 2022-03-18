@@ -39,7 +39,7 @@ public class IntakeDeployCommand extends CommandBase {
   public void end(boolean interrupted) {
     m_intake.retractIntake();
     m_intake.setStopMode();
-    m_cargo.setStopMode();
+    m_cargo.setShootPrepMode();
     
     //TODO: cargo mode to idle mode to suck last ball up when intake goes up early 
   }

@@ -31,7 +31,8 @@ public class CargoSubsystem extends SubsystemBase {
     BOTH,
     REVERSE,
     SHOOT,
-    SHOOT_STEP2
+    SHOOT_STEP2,
+    SHOOT_PREP
   };
 
   private WPI_TalonFX UpperBelts;
@@ -140,6 +141,15 @@ public class CargoSubsystem extends SubsystemBase {
     } else if (mode == Mode.SHOOT_STEP2) {
       setUpperBeltPercentOutput(0.9);
       setLowerBeltPercentOutput(0.6);
+    } else if(mode == Mode.SHOOT_PREP){
+      if(!cargoInUpperBelts()){
+        setStopMode();
+        setUpperBeltPercentOutput(0);
+        setLowerBeltPercentOutput(0);
+      } else {
+        setUpperBeltPercentOutput(-0.5);
+        setLowerBeltPercentOutput(-0.2);
+      }
     } else if (mode == Mode.REVERSE) {
       setUpperBeltPercentOutput(-m_lowerOutput);
       setLowerBeltPercentOutput(-m_upperOutput);
@@ -231,6 +241,10 @@ public class CargoSubsystem extends SubsystemBase {
 
   public void setReverseMode(){
     mode = Mode.REVERSE;
+  }
+
+  public void setShootPrepMode(){
+    mode = Mode.SHOOT_PREP;
   }
 
   /** 
