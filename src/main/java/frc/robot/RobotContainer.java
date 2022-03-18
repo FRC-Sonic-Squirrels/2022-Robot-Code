@@ -56,7 +56,7 @@ public class RobotContainer {
   public ArmSubsystem m_arm;
   public final Drivetrain drivetrain;
   public final IntakeSubsystem m_intake;
-  public LimelightSubsystem m_limelight;
+  //public LimelightSubsystem m_limelight;
 
   // Controllers
   public final XboxController m_controller = new XboxController(0);
@@ -80,7 +80,7 @@ public class RobotContainer {
     drivetrain = new Drivetrain();
     m_elevator = new ElevatorSubsystem();
     m_arm = new ArmSubsystem();
-    m_limelight = new LimelightSubsystem(drivetrain);
+    //m_limelight = new LimelightSubsystem(drivetrain);
     
     SmartDashboard.putData("Auto Mode", chooser);
 
@@ -139,8 +139,8 @@ public class RobotContainer {
             .whenPressed(drivetrain::resetFieldCentric);
 
     // start button toggles the LimeLight LEDs
-    new Button(m_controller::getStartButton)
-            .whenPressed(new InstantCommand(() -> m_limelight.toggleLEDs()));
+    // new Button(m_controller::getStartButton)
+    //         .whenPressed(new InstantCommand(() -> m_limelight.toggleLEDs()));
 
     new Button(m_controller::getXButton)
             .whenPressed(new DriveHubCentricCommand(drivetrain, 
@@ -172,6 +172,9 @@ public class RobotContainer {
     new Button(() -> (m_controller.getRightTriggerAxis() > 0.05))
             .toggleWhenActive(new IntakeDeployCommand(m_intake, m_cargo), true);
 
+    new Button(() -> (m_controller.getLeftTriggerAxis() > 0.05))
+            .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
+
     // new Button(m_controller::getLeftBumper)
     //   .whileHeld(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
 
@@ -188,12 +191,13 @@ public class RobotContainer {
     //new Button(m_operatorController::getRightBumper)
     //  .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
+    //--------------------------------Operator intake)-------------------
     //Deploy Intake
-    new Button(m_operatorController::getAButton)
-       .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
+    // new Button(m_operatorController::getAButton)
+    //    .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
 
-    new Button(m_operatorController::getYButton)
-       .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
+    // new Button(m_operatorController::getYButton)
+    //    .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
     // middle shot to High Hub
     new Button(m_operatorController::getXButton)
