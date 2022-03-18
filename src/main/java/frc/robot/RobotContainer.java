@@ -97,10 +97,16 @@ public class RobotContainer {
 
     Command autonFour = auton.twoBallAutoWaitShoot2(4.0);
 
+    Command auton3BallShootFirst = auton.SundomethreeBallAutonShootFirstCommand();
+    Command auton3BallMoveFirst = auton.SundomethreeBallAutonMoveFirstCommand();
+
     chooser.addOption("Auton 1: shoot and move", autonOne);
     chooser.addOption("Auton 2: move and shoot 2", autonTwo);
     chooser.addOption("Auton 3: move, shoot 2, push", autonThree);
     chooser.addOption("Auton 4: move, wait, shoot 2", autonFour);
+    chooser.addOption("Auton 5: 3Ball Shoot first", auton3BallShootFirst);
+    chooser.addOption("Auton 6: 3ball move first", auton3BallMoveFirst);
+
 
     drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
       drivetrain, 
