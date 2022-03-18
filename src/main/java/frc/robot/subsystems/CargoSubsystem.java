@@ -32,7 +32,8 @@ public class CargoSubsystem extends SubsystemBase {
     REVERSE,
     SHOOT,
     SHOOT_STEP2,
-    SHOOT_PREP
+    SHOOT_PREP,
+    IDLE
   };
 
   private WPI_TalonFX UpperBelts;
@@ -40,6 +41,7 @@ public class CargoSubsystem extends SubsystemBase {
   private DigitalInput lowerSensor = new DigitalInput(digitalIOConstants.dio0_indexerSensor1);
   private DigitalInput upperSensor = new DigitalInput(digitalIOConstants.dio1_indexerSensor2);
   private Mode mode = Mode.STOP;
+  private double m_idleTime = 0;
 
   // TODO: find the real percent outputs of the conveyor belts
   private double m_lowerOutput = 0.8;
@@ -150,7 +152,17 @@ public class CargoSubsystem extends SubsystemBase {
         setUpperBeltPercentOutput(-0.5);
         setLowerBeltPercentOutput(-0.2);
       }
-    } else if (mode == Mode.REVERSE) {
+    } else if(mode == Mode.IDLE){
+      setUpperBeltPercentOutput(0);
+      if(m_idleTime == 0){
+        m_idleTime = System.currentTimeMillis();
+      } else if(System.currentTimeMillis() - m_idleTime > 300){
+        setShootPrepMode();
+        m_idleTime = 0;
+        setLowerBeltPercentOutput(0);
+      }
+      setLowerBeltPercentOutput(0.9);
+    }else if (mode == Mode.REVERSE) {
       setUpperBeltPercentOutput(-m_lowerOutput);
       setLowerBeltPercentOutput(-m_upperOutput);
     } else {
@@ -245,6 +257,10 @@ public class CargoSubsystem extends SubsystemBase {
 
   public void setShootPrepMode(){
     mode = Mode.SHOOT_PREP;
+  }
+
+  public void setIdleMode(){
+    mode = Mode.IDLE;
   }
 
   /** 
