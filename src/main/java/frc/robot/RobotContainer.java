@@ -21,6 +21,7 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.StartPoseConstants;
 import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.CargoReverseCommand;
+import frc.robot.commands.CargoRunIndexer;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.ElevatorControlCommand;
@@ -93,6 +94,7 @@ public class RobotContainer {
     Command autonThree = auton.twoBallAutoShoot2push (StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
 
     Command autonFour = auton.twoBallAutoWaitShoot2(4.0);
+
 
     Command autonRightSide = auton.SundomeRightSideShootAndMove();
     
@@ -204,7 +206,11 @@ public class RobotContainer {
 
     // Bumper Shot to High Hub right against the lower hub
     new Button(m_operatorController::getRightBumper)
-     .whileActiveOnce(new ShootWithSetRPMCommand(2800, m_cargo, m_shooter, m_robot), true);
+     .whileActiveOnce(new ShootWithSetRPMCommand(3000, m_cargo, m_shooter, m_robot), true);
+
+    new Button(() ->  (m_operatorController.getLeftTriggerAxis() > 0.05))
+      .whileHeld(new CargoRunIndexer(m_cargo));
+     
      
 
     // new Button(m_operatorController::getLeftStickButtonPressed)
