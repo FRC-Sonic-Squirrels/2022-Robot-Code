@@ -299,7 +299,7 @@ public final class Constants {
     public static Pose2d BLUE_DEF_BOTTOM= 
         new Pose2d( Units.feetToMeters(25.4), Units.feetToMeters(9.45), new Rotation2d(Math.PI - 0.35));
     public static Pose2d BLUE_DEF_TOP   = 
-        new Pose2d( Units.feetToMeters(22.9), Units.feetToMeters(15),   new Rotation2d(-0.35 + 3*Math.PI/2));
+        new Pose2d( Units.feetToMeters(22.9), Units.feetToMeters(15),   new Rotation2d(Math.PI - Math.toRadians(33)));
     //public static Pose2d RED_DEF_TOP    = new Pose2d( Units.feetToMeters(28.6), Units.feetToMeters(17.55),new Rotation2d(-0.35));
     //public static Pose2d RED_DEF_BOTTOM = new Pose2d( Units.feetToMeters(31.1), Units.feetToMeters(12),   new Rotation2d(3*Math.PI/2-0.35));
   }
