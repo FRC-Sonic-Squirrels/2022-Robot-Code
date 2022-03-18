@@ -499,6 +499,22 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     );
   }
 
+  public Command SundomeRightSideShootAndMove(){
+    Pose2d startPos = Constants.StartPoseConstants.BLUE_DEF_BOTTOM;
+    Translation2d cargoPos = Constants.FieldConstants.BLUE_CARGO_2;
+
+    Trajectory start_to_cargo = TrajectoryGenerator.generateTrajectory(
+      startPos, List.of(), 
+      new Pose2d(cargoPos, startPos.getRotation()), m_tt.getTrajectoryConfig());
+
+    return new SequentialCommandGroup(
+      new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
+        .withTimeout(4),
+
+      SwerveControllerCommand(start_to_cargo, true)
+    );
+  }
+
 
   /**
    * Command for shooting the first cargo, then collecting and shooting a second cargo

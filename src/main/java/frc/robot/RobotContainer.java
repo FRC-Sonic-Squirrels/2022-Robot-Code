@@ -89,23 +89,18 @@ public class RobotContainer {
         new SwerveTrajectoryAutonomousCommandFactory(drivetrain, m_shooter, m_cargo, m_intake,
             m_robot, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
 
-    Command autonOne = auton.twoBallAuto(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
-
-    Command autonTwo = auton.twoBallAutoShoot2(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
 
     Command autonThree = auton.twoBallAutoShoot2push (StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
 
     Command autonFour = auton.twoBallAutoWaitShoot2(4.0);
 
-    Command auton3BallShootFirst = auton.SundomethreeBallAutonShootFirstCommand();
-    Command auton3BallMoveFirst = auton.SundomethreeBallAutonMoveFirstCommand();
-
-    chooser.addOption("Auton 1: shoot and move", autonOne);
-    chooser.addOption("Auton 2: move and shoot 2", autonTwo);
-    chooser.addOption("Auton 3: move, shoot 2, push", autonThree);
-    chooser.addOption("Auton 4: move, wait, shoot 2", autonFour);
-    chooser.addOption("Auton 5: 3Ball Shoot first", auton3BallShootFirst);
-    chooser.addOption("Auton 6: 3ball move first", auton3BallMoveFirst);
+    Command autonRightSide = auton.SundomeRightSideShootAndMove();
+    
+    
+    chooser.addOption(" (Fender) move, shoot 2, push", autonThree);
+    chooser.addOption(" (Top tarmac) move, wait, shoot 2", autonFour);
+    chooser.addOption("Right Side plan C", autonRightSide);
+    
 
 
     drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
