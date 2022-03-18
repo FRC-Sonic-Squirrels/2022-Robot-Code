@@ -135,7 +135,7 @@ public final class Constants {
 
   public static class DriveFieldCentricConstant {
     public static final double TRANSLATION_MULTIPLIER = 0.825; 
-    public static final double ROTATION_MULTIPLIER = 0.5; 
+    public static final double ROTATION_MULTIPLIER = 0.6; 
   }
 
   public static final class AutoConstants {
