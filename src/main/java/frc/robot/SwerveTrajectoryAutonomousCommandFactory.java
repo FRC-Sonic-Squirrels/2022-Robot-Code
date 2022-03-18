@@ -48,7 +48,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   private static Robot m_robot;
   private static TestTrajectories m_tt;
 
-  private static int m_shootRPM = 2800;
+  private static int m_shootRPM = 3000;
 
   public SwerveTrajectoryAutonomousCommandFactory(Drivetrain drivetrain, ShooterSubsystem shooter,
       CargoSubsystem cargo, IntakeSubsystem intake, Robot robot, double maxVelocity, double maxAcceleration) {
