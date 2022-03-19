@@ -104,6 +104,8 @@ public class RobotContainer {
     chooser.addOption(" (Fender) move, shoot 2, push", autonThree);
     chooser.addOption(" (Top tarmac) move, wait, shoot 2", autonFour);
     chooser.addOption("Right Side plan C", autonRightSide);
+
+    chooser.setDefaultOption(" (Top tarmac) move, wait, shoot 2", autonFour);
     
 
 
