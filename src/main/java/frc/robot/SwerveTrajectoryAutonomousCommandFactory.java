@@ -171,7 +171,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   /**
    * twoBallAutoShoot2 -  drive, pickup cargo, wait, drive back, shoot two
    */
-  public Command twoBallAutoWaitShoot2(Double waitTime) {
+  public Command twoBallAutoWaitShoot2() {
 
     Pose2d startPos = StartPoseConstants.BLUE_TOP;
     Pose2d cargoPos = new Pose2d(FieldConstants.BLUE_CARGO_7, new Rotation2d(Math.PI));
@@ -190,7 +190,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         SwerveControllerCommand(moveToCargoOne, true),
         new IntakeDeployCommand(m_intake, m_cargo)
       ),
-      new WaitCommand(waitTime),
+      //new WaitCommand(waitTime),
       new InstantCommand(() -> m_shooter.setFlywheelRPM(2750), m_shooter),
       SwerveControllerCommand(moveToHub, true),
       new ShootWithSetRPMCommand(2750, m_cargo, m_shooter, m_robot)

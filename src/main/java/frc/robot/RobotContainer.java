@@ -68,6 +68,8 @@ public class RobotContainer {
   
   public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
 
+  private double m_bumperRpm = Constants.ShooterConstants.BUMPER_SHOT_RPM;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -93,7 +95,7 @@ public class RobotContainer {
 
     Command autonThree = auton.twoBallAutoShoot2push (StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
 
-    Command autonFour = auton.twoBallAutoWaitShoot2(4.0);
+    Command autonFour = auton.twoBallAutoWaitShoot2();
 
 
     Command autonRightSide = auton.SundomeRightSideShootAndMove();
