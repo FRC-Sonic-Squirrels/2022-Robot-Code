@@ -68,7 +68,7 @@ public class RobotContainer {
   
   public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
 
-  private double m_bumperRpm = Constants.ShooterConstants.BUMPER_SHOT_RPM;
+  public int m_bumperRpm = Constants.ShooterConstants.BUMPER_SHOT_RPM;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -208,7 +208,13 @@ public class RobotContainer {
 
     // Bumper Shot to High Hub right against the lower hub
     new Button(m_operatorController::getRightBumper)
-     .whileActiveOnce(new ShootWithSetRPMCommand(3000, m_cargo, m_shooter, m_robot), true);
+     .whileActiveOnce(new ShootWithSetRPMCommand(m_bumperRpm, m_cargo, m_shooter, m_robot), true);
+
+    new Button(m_operatorController::getBackButton)
+      .whenPressed(new InstantCommand(() -> m_bumperRpm -= 50));
+
+    new Button(m_operatorController::getStartButton)
+      .whenPressed(new InstantCommand(() -> m_bumperRpm += 50));
 
     new Button(() ->  (m_operatorController.getLeftTriggerAxis() > 0.05))
       .whileHeld(new CargoRunIndexer(m_cargo));

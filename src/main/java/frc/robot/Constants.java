@@ -185,6 +185,7 @@ public final class Constants {
     //TODO: find the actual activated and idle values
     public static final double m_activated = 2000;
     public static final double m_idle = 500;
+    public static final int BUMPER_SHOT_RPM = 3000;
   }
   // according to game manual field is 27 ft. (~823 cm) by 54 ft. (~1646 cm)
   public static class HubCentricConstants{
@@ -299,7 +300,7 @@ public final class Constants {
     public static Pose2d BLUE_DEF_BOTTOM= 
         new Pose2d( Units.feetToMeters(25.4), Units.feetToMeters(9.45), new Rotation2d(Math.PI - 0.35));
     public static Pose2d BLUE_DEF_TOP   = 
-        new Pose2d( Units.feetToMeters(22.9), Units.feetToMeters(15),   new Rotation2d(Math.PI - Math.toRadians(33)));
+        new Pose2d( Units.feetToMeters(22.9), Units.feetToMeters(15),   new Rotation2d(Math.toRadians(160)));
     //public static Pose2d RED_DEF_TOP    = new Pose2d( Units.feetToMeters(28.6), Units.feetToMeters(17.55),new Rotation2d(-0.35));
     //public static Pose2d RED_DEF_BOTTOM = new Pose2d( Units.feetToMeters(31.1), Units.feetToMeters(12),   new Rotation2d(3*Math.PI/2-0.35));
   }
