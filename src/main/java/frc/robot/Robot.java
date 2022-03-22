@@ -41,7 +41,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-
+    SmartDashboard.putBoolean("IS CHIMPING", false);
     SmartDashboard.putNumber("AAA shooting rpm testing", 2000);
     
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
