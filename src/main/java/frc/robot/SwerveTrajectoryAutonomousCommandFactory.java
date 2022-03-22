@@ -493,36 +493,19 @@ public class SwerveTrajectoryAutonomousCommandFactory {
    */
   public Command fiveBallAutonCommand(String alliance) {
 
-    Pose2d startPos_and_shootPos = null, shootPos2 = null, playerMidPos = null;
-    Translation2d cargoPos1 = null, cargoPos2 = null, cargoPos3 = null;
+    Pose2d startPos_and_shootPos = StartPoseConstants.BLUE_DEF_BOTTOM;
+    Translation2d cargoPos1 = FieldConstants.BLUE_CARGO_3;
+    Translation2d cargoPos2 = FieldConstants.BLUE_CARGO_2;
+    Pose2d shootPos2 = StartPoseConstants.BLUE_DEF_BOTTOM;
+    Translation2d cargoPos3 = FieldConstants.BLUE_CARGO_1;
+    Pose2d playerMidPos = new Pose2d(cargoPos3.getX() + 1, cargoPos3.getY() + 1, new Rotation2d(3*Math.PI/4));
 
-    if (alliance.equalsIgnoreCase("blue")) {
-
-      startPos_and_shootPos = StartPoseConstants.BLUE_BOTTOM;
-      cargoPos1 = FieldConstants.BLUE_CARGO_3;
-      cargoPos2 = FieldConstants.BLUE_CARGO_2;
-      shootPos2 = StartPoseConstants.BLUE_MID_BOTTOM;
-      cargoPos3 = FieldConstants.BLUE_CARGO_1;
-      playerMidPos = new Pose2d(cargoPos3.getX() + 1, cargoPos3.getY() + 1, new Rotation2d(3*Math.PI/4));
-    }
-    else if (alliance.equalsIgnoreCase("red")) {
-
-      startPos_and_shootPos = StartPoseConstants.RED_TOP;
-      cargoPos1 = FieldConstants.RED_CARGO_3;
-      cargoPos2 = FieldConstants.RED_CARGO_2;
-      shootPos2 = StartPoseConstants.RED_MID_TOP;
-      cargoPos3 = FieldConstants.RED_CARGO_1;
-      playerMidPos = new Pose2d(cargoPos3.getX() - 1, cargoPos3.getY() - 1, new Rotation2d(7*Math.PI/4));
-    } else {
-      throw new IllegalArgumentException("argument was neither \"red\" nor \"blue\"");
-    }
-
-    m_drivetrain.setPose(startPos_and_shootPos, startPos_and_shootPos.getRotation());
+    m_drivetrain.setPose(startPos_and_shootPos, m_drivetrain.getIMURotation());
 
     Trajectory start_to_cargo1 = TrajectoryGenerator.generateTrajectory(startPos_and_shootPos, List.of(),
-        new Pose2d(cargoPos1, startPos_and_shootPos.getRotation()), m_tt.getTrajectoryConfig());
+        new Pose2d(cargoPos1, getTranslationsAngle(poseToTranslation(startPos_and_shootPos), cargoPos1)), m_tt.getTrajectoryConfig());
 
-    Trajectory cargo1_to_shoot = TrajectoryGenerator.generateTrajectory(new Pose2d(cargoPos1, startPos_and_shootPos.getRotation()),
+    Trajectory cargo1_to_shoot = TrajectoryGenerator.generateTrajectory(new Pose2d(cargoPos1, getTranslationsAngle(poseToTranslation(startPos_and_shootPos), cargoPos1)),
         List.of(), startPos_and_shootPos, m_tt.getTrajectoryConfig());
 
     Trajectory shoot_to_cargo2 = TrajectoryGenerator.generateTrajectory(startPos_and_shootPos, List.of(),
@@ -546,18 +529,35 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       // 1. start up intake + flywheel, move to first cargo
       new ParallelCommandGroup(
         new IntakeDeployCommand(m_intake, m_cargo),
-        new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated))
-      )
+        //new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_activated)),
+        SwerveControllerCommand(start_to_cargo1, true)
+      ),
 
       // 2. move back to start then shoot both cargo
+      SwerveControllerCommand(cargo1_to_shoot, true),
+      new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
+          .withTimeout(4),
 
-      // 3. pick up next cargo, then go back to shoot that one cargo
+      // 3. move to and pick up next cargo, then go back to shoot that one cargo
+      SwerveControllerCommand(shoot_to_cargo2, true),
+      SwerveControllerCommand(cargo2_to_shoot2, true),
+      new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
+          .withTimeout(4),
 
       // 4. go to human player area to pick up two new cargo
+      SwerveControllerCommand(shoot2_to_playerMid, true),
+      SwerveControllerCommand(playerMid_to_cargo3, true),
 
       // 5. move back to shooting area then shoot, while retracting intake
+      new ParallelCommandGroup(
+        SwerveControllerCommand(cargo3_to_shoot2, true),
+        new InstantCommand(() -> m_intake.retractIntake())
+      ),
+      new ShootWithSetRPMCommand(m_shootRPM, m_cargo, m_shooter, m_robot)
+          .withTimeout(4)
 
       // 6. idle flywheel
+      //new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle))
     );
   }
 
