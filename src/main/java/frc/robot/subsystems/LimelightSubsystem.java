@@ -33,6 +33,7 @@ public class LimelightSubsystem extends SubsystemBase {
   private SwerveDrivePoseEstimator estimate;
   private Pose2d limelightPose;
   private Pose2d kalmanLimelightPose;
+  private double kalmanHubDistFeet;
 
   // private final Field2d m_field = new Field2d();
   // TODO: test and fix filtering change in the distance
@@ -107,16 +108,21 @@ public class LimelightSubsystem extends SubsystemBase {
         estimate.addVisionMeasurement(limelightPose, (System.currentTimeMillis() - latency)/1000);
       }
       kalmanLimelightPose = estimate.updateWithTime(System.currentTimeMillis()/1000, m_drivetrain.getRotation(), m_drivetrain.getSwerveModuleState());
-      
+      kalmanHubDistFeet = Units.metersToFeet(Math.hypot(Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX() - kalmanLimelightPose.getX(), Constants.HubCentricConstants.HUB_CENTER_POSE2D.getY() - kalmanLimelightPose.getY()));
       SmartDashboard.putNumber("LL pose X meters", kalmanLimelightPose.getX());
       SmartDashboard.putNumber("LL pose Y meters", kalmanLimelightPose.getY());
       SmartDashboard.putNumber("LL pose Rotation degrees", kalmanLimelightPose.getRotation().getDegrees());
+      SmartDashboard.putNumber("LL kalman dist to hub feet", kalmanHubDistFeet);
 
     // m_field.setRobotPose(getLimelightPose());
   }
 
-  public Pose2d getLimelightPose(){
+  public Pose2d getLimelightPoseMeters(){
     return kalmanLimelightPose;
+  }
+
+  public double getKalmanHubDistanceFeet(){
+    return kalmanHubDistFeet;
   }
 
   public boolean seesTarget() {

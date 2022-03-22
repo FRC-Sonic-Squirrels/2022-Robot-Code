@@ -35,15 +35,8 @@ public class ShootAutoCommand extends CommandBase {
   // This command will only be called in autonomous mode, where the ball is already moved to the upper belts.
   @Override
   public void initialize() {
-
-    //double distanceMeters = Math.hypot(Constants.Hub, y)
     //TODO: change to limelight calculated distance, rather than odometry
-    // if(m_limelight.seesTarget()){
-    //   m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getRPMforDistanceFeet(
-    //     //Units.metersToFeet(distanceMeters)));
-    // } else {
-    //   m_shooterSubsystem.setFlywheelRPM(2750);
-    // }
+    m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getRPMforDistanceFeet(m_limelight.getKalmanHubDistanceFeet()));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
