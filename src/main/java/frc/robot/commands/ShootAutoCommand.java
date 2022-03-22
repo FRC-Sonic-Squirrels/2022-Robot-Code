@@ -36,14 +36,14 @@ public class ShootAutoCommand extends CommandBase {
   @Override
   public void initialize() {
 
-    double distanceMeters = m_limelight.getDistanceMeters();
+    //double distanceMeters = Math.hypot(Constants.Hub, y)
     //TODO: change to limelight calculated distance, rather than odometry
-    if(m_limelight.seesTarget()){
-      m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getRPMforDistanceFeet(
-        Units.metersToFeet(distanceMeters)));
-    } else {
-      m_shooterSubsystem.setFlywheelRPM(2750);
-    }
+    // if(m_limelight.seesTarget()){
+    //   m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getRPMforDistanceFeet(
+    //     //Units.metersToFeet(distanceMeters)));
+    // } else {
+    //   m_shooterSubsystem.setFlywheelRPM(2750);
+    // }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
