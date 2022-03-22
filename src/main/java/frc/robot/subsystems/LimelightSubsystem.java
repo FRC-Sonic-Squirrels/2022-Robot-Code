@@ -116,11 +116,7 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   public Pose2d getLimelightPose(){
-    if(seesTarget==1){
-      return kalmanLimelightPose;
-    } else {
-      return new Pose2d(0,0, new Rotation2d(0));
-    }
+    return kalmanLimelightPose;
   }
 
   public boolean seesTarget() {
