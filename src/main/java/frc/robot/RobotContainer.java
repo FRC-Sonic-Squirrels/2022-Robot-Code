@@ -114,34 +114,23 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Mode", chooser);
 
     // add the new auton trajectories to the auton trajectory chooser
-    SwerveTrajectoryAutonomousCommandFactory auton = new SwerveTrajectoryAutonomousCommandFactory(
-        drivetrain, m_shooter, m_cargo, m_intake, m_robot, 1, 0.75);
+    // SwerveTrajectoryAutonomousCommandFactory auton = new SwerveTrajectoryAutonomousCommandFactory(
+    //     drivetrain, m_shooter, m_cargo, m_intake, m_robot, 1, 0.75);
 
-    Command fourBallAuton_blue = auton.fourBallAutonCommand(StartPoseConstants.BLUE_BOTTOM, FieldConstants.BLUE_CARGO_3,
-        FieldConstants.BLUE_CARGO_2, FieldConstants.BLUE_CARGO_1);
-    Command fourBallAuton_red = auton.fourBallAutonCommand(StartPoseConstants.RED_TOP, FieldConstants.RED_CARGO_3,
-        FieldConstants.RED_CARGO_2, FieldConstants.RED_CARGO_1);
+    // Command fourBallAuton_blue = auton.fourBallAutonCommand(StartPoseConstants.BLUE_BOTTOM, FieldConstants.BLUE_CARGO_3,
+    //     FieldConstants.BLUE_CARGO_2, FieldConstants.BLUE_CARGO_1);
 
-    Command threeBallAuton_blue = auton.threeBallAutonCommand(StartPoseConstants.BLUE_BOTTOM,
-        FieldConstants.BLUE_CARGO_3, FieldConstants.BLUE_CARGO_2);
-    Command threeBallAuton_red = auton.threeBallAutonCommand(StartPoseConstants.RED_TOP,
-        FieldConstants.RED_CARGO_3, FieldConstants.RED_CARGO_2);
+    // Command threeBallAuton_blue = auton.threeBallAutonCommand(StartPoseConstants.BLUE_BOTTOM,
+    //     FieldConstants.BLUE_CARGO_3, FieldConstants.BLUE_CARGO_2);
 
-    Command twoBallAuton_blue = auton.twoBallAutonCommand(StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7);
-    Command twoBallAuton_red = auton.twoBallAutonCommand(StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7);
+    // Command twoBallAuton_blue = auton.twoBallAutonCommand(StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7);
 
-    Command complimentaryAuton_blue = auton.complimentaryAutonCommand("blue");
-    Command complimentaryAuton_red = auton.complimentaryAutonCommand("red");
+    // Command complimentaryAuton_blue = auton.complimentaryAutonCommand("blue");
 
-    autonTrajectoryChooser.addOption("blue 4 ball", fourBallAuton_blue);
-    autonTrajectoryChooser.addOption("blue 3 ball", threeBallAuton_blue);
-    autonTrajectoryChooser.addOption("blue 2 ball", twoBallAuton_blue);
-    autonTrajectoryChooser.addOption("blue helper auton", complimentaryAuton_blue);
-
-    autonTrajectoryChooser.addOption("red 4 ball", fourBallAuton_red);
-    autonTrajectoryChooser.addOption("red 3 ball", threeBallAuton_red);
-    autonTrajectoryChooser.addOption("red 2 ball", twoBallAuton_red);
-    autonTrajectoryChooser.addOption("red helper auton", complimentaryAuton_red);
+    // autonTrajectoryChooser.addOption("4 ball", fourBallAuton_blue);
+    // autonTrajectoryChooser.addOption("3 ball", threeBallAuton_blue);
+    // autonTrajectoryChooser.addOption("2 ball", twoBallAuton_blue);
+    // autonTrajectoryChooser.addOption("helper auton", complimentaryAuton_blue);
 
     SmartDashboard.putData("auton commands", autonTrajectoryChooser);
 
@@ -241,15 +230,15 @@ public class RobotContainer {
 
     // 2000 RPM is good for 5 feet
     new Button(m_operatorController::getXButton)
-       .whileHeld(new ShootWithSetRPMCommand(2500, m_cargo, m_shooter, m_intake, m_robot));
+       .whileHeld(new ShootWithSetRPMCommand(2500, m_cargo, m_shooter, m_robot));
 
     // 3000 RPM is good for 10 feet
     new Button(m_operatorController::getBButton)
-       .whileHeld(new ShootWithSetRPMCommand(3000, m_cargo, m_shooter, m_intake, m_robot));
+       .whileHeld(new ShootWithSetRPMCommand(3000, m_cargo, m_shooter, m_robot));
 
     // 1500 RPM is perfecto for right against the hub
     new Button(m_operatorController::getRightBumper)
-     .whenPressed(new ShootWithSetRPMCommand(1500, m_cargo, m_shooter, m_intake, m_robot));
+     .whenPressed(new ShootWithSetRPMCommand(1500, m_cargo, m_shooter, m_robot));
 
     // new Button(m_operatorController::getLeftStickButtonPressed)
     //   .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
@@ -302,7 +291,7 @@ public class RobotContainer {
       new InstantCommand(() -> m_shooter.setFlywheelRPM(1500), m_shooter),
       new WaitCommand(2),
       //might cause problems in cargo transition 
-      new ShootWithSetRPMCommand(1500, m_cargo, m_shooter, m_intake, m_robot)
+      new ShootWithSetRPMCommand(1500, m_cargo, m_shooter, m_robot)
         .withTimeout(3),
         SwerveTrajectoryFollowCommandFactory.straightForward2mCommand(m_tt, drivetrain)
     );

@@ -227,6 +227,18 @@ public class Drivetrain extends SubsystemBase {
 
   /**
    * get current angle from gyroscope, return Rotation2d object.
+   * ONLY USE THIS IF YOU KNOW WHAT YOU ARE DOING 
+   * FOR MOST CASES USE getRotation() instead
+   * 
+   * @return gyro angle in Rotation2d
+   */
+  public Rotation2d getIMURotation() {
+    // return Rotation2d.fromDegrees(m_pigeon.getFusedHeading());
+    return Rotation2d.fromDegrees(m_pigeon.getYaw());
+  }
+
+  /**
+   * get current angle from gyroscope, return Rotation2d object.
    * 
    * @return gyro angle in Rotation2d
    */

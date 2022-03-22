@@ -28,6 +28,8 @@ public class CargoSubsystem extends SubsystemBase {
     LOWERONLY,
     UPPERONLY,
     BOTH,
+    SHOOT,
+    SHOOT_STEP2,
     REVERSE
   };
 
@@ -132,6 +134,18 @@ public class CargoSubsystem extends SubsystemBase {
       // shoot mode releases the upper cargo, then moves the lower cargo to the top
       setUpperBeltPercentOutput(m_upperOutput);
       setLowerBeltPercentOutput(m_lowerOutput);
+    }  else if (mode == Mode.SHOOT) {
+      if (!cargoInUpperBelts()) {
+        setUpperBeltPercentOutput(0.9);
+        setLowerBeltPercentOutput(0.6);
+        mode = Mode.SHOOT_STEP2;
+      } else {
+        setUpperBeltPercentOutput(-0.5);
+        setLowerBeltPercentOutput(-0.2);
+      }
+    } else if (mode == Mode.SHOOT_STEP2) {
+      setUpperBeltPercentOutput(0.9);
+      setLowerBeltPercentOutput(0.6);
     } 
     else if (mode == Mode.REVERSE) {
       setUpperBeltPercentOutput(-m_lowerOutput); //negate percent output to make belts go in reverse
@@ -212,6 +226,10 @@ public class CargoSubsystem extends SubsystemBase {
    */
   public void setBothMode(){
     mode = Mode.BOTH;
+  }
+
+  public void setShootMode(){
+    mode = Mode.SHOOT;
   }
 
   public void setReverseMode(){

@@ -26,6 +26,7 @@ import frc.robot.commands.CargoMoveToUpperBeltsCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.ShootCargoCommand;
 import frc.robot.commands.ShootOneCargoCommand;
+import frc.robot.commands.ShootWithSetRPMCommand;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -43,6 +44,8 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   private static Robot m_robot;
   private static TestTrajectories m_tt;
 
+  private static int m_shootRPM = 2750;
+
   public SwerveTrajectoryAutonomousCommandFactory(Drivetrain drivetrain, ShooterSubsystem shooter,
       CargoSubsystem cargo, IntakeSubsystem intake, Robot robot, double maxVelocity, double maxAcceleration) {
 
@@ -59,23 +62,23 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
   }
 
-  public void addSimpleTrajectoriesToChooser(SendableChooser<Command> chooser) {
-    chooser.addOption("blue top", this.testAutonCommand(StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7));
+  // public void addSimpleTrajectoriesToChooser(SendableChooser<Command> chooser) {
+  //   chooser.addOption("blue top", this.testAutonCommand(StartPoseConstants.BLUE_TOP, FieldConstants.BLUE_CARGO_7));
 
-    chooser.addOption("blue mid-top", this.testAutonCommand(StartPoseConstants.BLUE_MID_TOP, FieldConstants.BLUE_CARGO_2));
+  //   chooser.addOption("blue mid-top", this.testAutonCommand(StartPoseConstants.BLUE_MID_TOP, FieldConstants.BLUE_CARGO_2));
 
-    chooser.addOption("blue mid-bottom", this.testAutonCommand(StartPoseConstants.BLUE_MID_BOTTOM, FieldConstants.BLUE_CARGO_2));
+  //   chooser.addOption("blue mid-bottom", this.testAutonCommand(StartPoseConstants.BLUE_MID_BOTTOM, FieldConstants.BLUE_CARGO_2));
 
-    chooser.addOption("blue bottom", this.testAutonCommand(StartPoseConstants.BLUE_BOTTOM, FieldConstants.BLUE_CARGO_3));
+  //   chooser.addOption("blue bottom", this.testAutonCommand(StartPoseConstants.BLUE_BOTTOM, FieldConstants.BLUE_CARGO_3));
 
-    chooser.addOption("red top", this.testAutonCommand(StartPoseConstants.RED_TOP, FieldConstants.RED_CARGO_3));
+  //   chooser.addOption("red top", this.testAutonCommand(StartPoseConstants.RED_TOP, FieldConstants.RED_CARGO_3));
 
-    chooser.addOption("red mid-top", this.testAutonCommand(StartPoseConstants.RED_MID_TOP, FieldConstants.RED_CARGO_2));
+  //   chooser.addOption("red mid-top", this.testAutonCommand(StartPoseConstants.RED_MID_TOP, FieldConstants.RED_CARGO_2));
 
-    chooser.addOption("red mid-bottom", this.testAutonCommand(StartPoseConstants.RED_MID_BOTTOM, FieldConstants.RED_CARGO_2));
+  //   chooser.addOption("red mid-bottom", this.testAutonCommand(StartPoseConstants.RED_MID_BOTTOM, FieldConstants.RED_CARGO_2));
 
-    chooser.addOption("red bottom", this.testAutonCommand(StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7));
-  }
+  //   chooser.addOption("red bottom", this.testAutonCommand(StartPoseConstants.RED_BOTTOM, FieldConstants.RED_CARGO_7));
+  // }
 
    /**
    * command for autonomously shooting and then moving to the next set of cargo coordinates.
@@ -423,13 +426,13 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       pushPos1 = new Translation2d(21.5, 23.5);
       pushPos2 = new Translation2d(15, 24.5);
     }
-    else if (team.equalsIgnoreCase("red")) {
-      startPos = StartPoseConstants.RED_BOTTOM;
-      cargo7 = FieldConstants.RED_CARGO_7;
-      oppCargo4 = FieldConstants.BLUE_CARGO_4;
-      pushPos1 = new Translation2d(32.5, 3.5);
-      pushPos2 = new Translation2d(39, 2.5);
-    }
+    // else if (team.equalsIgnoreCase("red")) {
+    //   startPos = StartPoseConstants.RED_BOTTOM;
+    //   cargo7 = FieldConstants.RED_CARGO_7;
+    //   oppCargo4 = FieldConstants.BLUE_CARGO_4;
+    //   pushPos1 = new Translation2d(32.5, 3.5);
+    //   pushPos2 = new Translation2d(39, 2.5);
+    // }
     else {
       // is this the correct argument exception?
       throw new IllegalArgumentException("String parameter was neither \"red\" nor \"blue\".");
