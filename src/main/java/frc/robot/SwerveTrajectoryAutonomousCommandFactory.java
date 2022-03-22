@@ -661,42 +661,24 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
   /**
    * Create a pre-made 5-ball command set
-   * @param alliance "red" or "blue", depending on your team (not case-sensitive)
-   * @return
    */
-  public Command fiveBallAutonCommand(String alliance) {
+  public Command fiveBallAutonCommand() {
 
-    Pose2d startPos_and_shootPos = null, shootPos2 = null, playerMidPos = null;
-    Translation2d cargoPos1 = null, cargoPos2 = null, cargoPos3 = null;
-
-    //if (alliance.equalsIgnoreCase("blue")) {
-
-      startPos_and_shootPos = StartPoseConstants.BLUE_DEF_BOTTOM;
-      cargoPos1 = FieldConstants.BLUE_CARGO_3;
-      cargoPos2 = FieldConstants.BLUE_CARGO_2;
-      shootPos2 = StartPoseConstants.BLUE_DEF_BOTTOM;
-      cargoPos3 = FieldConstants.BLUE_CARGO_1;
-      playerMidPos = new Pose2d(cargoPos3.getX() + 1, cargoPos3.getY() + 1, new Rotation2d(3*Math.PI/4));
-    // }
-    // else if (alliance.equalsIgnoreCase("red")) {
-
-    //   startPos_and_shootPos = StartPoseConstants.RED_DEF_TOP;
-    //   cargoPos1 = FieldConstants.RED_CARGO_3;
-    //   cargoPos2 = FieldConstants.RED_CARGO_2;
-    //   shootPos2 = StartPoseConstants.RED_DEF_TOP;
-    //   cargoPos3 = FieldConstants.RED_CARGO_1;
-    //   playerMidPos = new Pose2d(cargoPos3.getX() - 1, cargoPos3.getY() - 1, new Rotation2d(7*Math.PI/4));
-    // } else {
-    //   throw new IllegalArgumentException("argument was neither \"red\" nor \"blue\"");
-    // }
+    Pose2d startPos_and_shootPos = StartPoseConstants.BLUE_DEF_BOTTOM;
+    Pose2d cargoPos1 = new Pose2d(FieldConstants.BLUE_CARGO_3.getX(), FieldConstants.BLUE_CARGO_3.getY(),
+        getTranslationsAngle( poseToTranslation(startPos_and_shootPos), FieldConstants.BLUE_CARGO_3 ));
+    Translation2d cargoPos2 = FieldConstants.BLUE_CARGO_2;
+    Pose2d shootPos2 = StartPoseConstants.BLUE_DEF_BOTTOM;
+    Translation2d cargoPos3 = FieldConstants.BLUE_CARGO_1;
+    Pose2d playerMidPos = new Pose2d(cargoPos3.getX() + 1, cargoPos3.getY() + 1, new Rotation2d(3*Math.PI/4));
 
 
     m_drivetrain.setPose(startPos_and_shootPos, m_drivetrain.getIMURotation());
 
     Trajectory start_to_cargo1 = TrajectoryGenerator.generateTrajectory(startPos_and_shootPos, List.of(),
-        new Pose2d(cargoPos1, getTranslationsAngle(poseToTranslation(startPos_and_shootPos), cargoPos1)), m_tt.getTrajectoryConfig());
+        cargoPos1, m_tt.getTrajectoryConfig());
 
-    Trajectory cargo1_to_shoot = TrajectoryGenerator.generateTrajectory(new Pose2d(cargoPos1, getTranslationsAngle(poseToTranslation(startPos_and_shootPos), cargoPos1)),
+    Trajectory cargo1_to_shoot = TrajectoryGenerator.generateTrajectory(cargoPos1,
         List.of(), startPos_and_shootPos, m_tt.getTrajectoryConfig());
 
     Trajectory shoot_to_cargo2 = TrajectoryGenerator.generateTrajectory(startPos_and_shootPos, List.of(),
