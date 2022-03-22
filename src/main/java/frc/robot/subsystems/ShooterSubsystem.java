@@ -121,7 +121,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    // if(this.getCurrentCommand() != null){
+    //   SmartDashboard.putString("AAA shooter current command", this.getCurrentCommand().toString());
+    // } else {
+    //   SmartDashboard.putString("AAA shooter current command", "null");
+    // }
     if (m_robot.isAutonomous()) {
       // auton mode, make sure auton PID is set
       if (!autonPIDset) {

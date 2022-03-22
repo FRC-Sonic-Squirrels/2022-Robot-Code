@@ -29,6 +29,8 @@
     "Feedforward",
     "holonomic",
     "kalman",
+    "leds",
+
     "LOWERONLY",
     "Mjpeg",
     "navx",

@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.ElevatorControlCommand;
+import frc.robot.commands.ElevatorZeroHeight;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -40,7 +41,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-
+    SmartDashboard.putBoolean("IS CHIMPING", false);
     SmartDashboard.putNumber("AAA shooting rpm testing", 2000);
     
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
@@ -76,6 +77,7 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    SmartDashboard.putNumber("BUMPER SHOT RPM", m_robotContainer.m_bumperRpm);
 
     // SmartDashboard.putNumber("Joystick_Values jLeftY", m_robotContainer.m_controller.getLeftY());
     // SmartDashboard.putNumber("Joystick_Values jLeftX", m_robotContainer.m_controller.getLeftX());
@@ -103,9 +105,11 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.chooser.getSelected();
  
+    new ElevatorZeroHeight(m_robotContainer.m_elevator).schedule(true);
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
+      
     }
   }
 
@@ -131,16 +135,16 @@ public class Robot extends TimedRobot {
 
  
 
-    m_robotContainer.drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
-      m_robotContainer.drivetrain, 
-      () -> -RobotContainer.modifyAxis(m_robotContainer.m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-      () -> -RobotContainer.modifyAxis(m_robotContainer.m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
-      () -> -RobotContainer.modifyAxis(m_robotContainer.m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
+    // m_robotContainer.drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
+    //   m_robotContainer.drivetrain, 
+    //   () -> -RobotContainer.modifyAxis(m_robotContainer.m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //   () -> -RobotContainer.modifyAxis(m_robotContainer.m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
+    //   () -> -RobotContainer.modifyAxis(m_robotContainer.m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
 
-    m_robotContainer.m_elevator.setDefaultCommand(new ElevatorControlCommand(m_robotContainer.m_elevator, m_robotContainer.m_climbController,
-        Constants.ElevatorConstants.elevatorSpeedMultiplier));
+    // m_robotContainer.m_elevator.setDefaultCommand(new ElevatorControlCommand(m_robotContainer.m_elevator, m_robotContainer.m_climbController,
+    //     Constants.ElevatorConstants.elevatorSpeedMultiplier));
 
-    m_robotContainer.m_arm.setDefaultCommand(new ArmManualControlCommand(m_robotContainer.m_arm, m_robotContainer.m_climbController, 0.3));
+    // m_robotContainer.m_arm.setDefaultCommand(new ArmManualControlCommand(m_robotContainer.m_arm, m_robotContainer.m_climbController, 0.3));
 
   }
 

@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.team2930.lib.Limelight;
+import com.team2930.lib.ll_mode;
 import org.photonvision.PhotonUtils;
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
@@ -30,10 +31,12 @@ public class LimelightSubsystem extends SubsystemBase {
   private double seesTarget;
   private double targetHeading;
   private Pose2d robotPose = new Pose2d();
+
   private SwerveDrivePoseEstimator estimate;
   private Pose2d limelightPose;
   private Pose2d kalmanLimelightPose;
   private double kalmanHubDistFeet;
+
 
   // private final Field2d m_field = new Field2d();
   // TODO: test and fix filtering change in the distance
@@ -51,6 +54,11 @@ public class LimelightSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // if(this.getCurrentCommand() != null){
+    //   SmartDashboard.putString("AAA limelight current command", this.getCurrentCommand().toString());
+    // } else {
+    //   SmartDashboard.putString("AAA limelight current command", "null");
+    // }
     table = NetworkTableInstance.getDefault().getTable("limelight-one");
     pitch = table.getEntry("ty").getDouble(0);
     yaw = table.getEntry("tx").getDouble(0);
@@ -149,4 +157,43 @@ public class LimelightSubsystem extends SubsystemBase {
   public double hubRotationDegrees () {
     return yaw;
   }
+
+  /**
+   * Toggle the LimeLight LEDs on or off
+   */
+  public void toggleLEDs() {
+    ledsOn = !ledsOn;
+    if (ledsOn) {
+      limelight.setLEDMode(ll_mode.led.on);
+    } else {
+      limelight.setLEDMode(ll_mode.led.off);
+    }
+  }
+
+  /*
+  * Returns an estimated pose of the robot based on the limelight sighting of the target.
+  *
+  * WARNING: This is UNTESTED.
+  */
+  public Pose2d getEstimatedRobotPose() {
+    if (seesTarget==1) {
+      Pose2d estimatedRobotPose = PhotonUtils.estimateFieldToRobot(
+      Units.inchesToMeters(Constants.LimelightConstants.LIMELIGHT_HEIGHT_INCHES), 
+      Units.inchesToMeters(Constants.LimelightConstants.TARGET_HEIGHT_INCHES), 
+      Units.degreesToRadians(Constants.LimelightConstants.LIMELIGHT_PITCH_DEGREES), 
+      Units.degreesToRadians(pitch),
+      new Rotation2d(Units.degreesToRadians(-yaw)), 
+      robotPose.getRotation(),
+      new Pose2d(
+        Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES * Math.cos(-(yaw+robotPose.getRotation().getRadians())), 
+        Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES * Math.sin(-(yaw+robotPose.getRotation().getRadians())), 
+        new Rotation2d(Units.degreesToRadians(yaw))),
+      Constants.LimelightConstants.LIMELIGHT_TO_ROBOT
+      );
+      return estimatedRobotPose;
+    } else {
+      return null;
+    }
+  }
+
 }

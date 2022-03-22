@@ -187,14 +187,12 @@ public class Drivetrain extends SubsystemBase {
 
     m_odometry = new SwerveDriveOdometry(m_kinematics, getIMURotation());
 
-    // TODO: set starting point on the field accurately
+    // just in case the field position isn't set in teleopInit or autonInit
     m_odometry.resetPosition(new Pose2d(0.0, 0.0, new Rotation2d(0.0)), getIMURotation());
 
     m_desiredStates = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0.0, 0.0, 0.0));
 
-    tab.addNumber("Gyroscope Angle", () -> getIMURotation().getDegrees());
-    tab.addNumber("Pose X", () -> m_odometry.getPoseMeters().getX());
-    tab.addNumber("Pose Y", () -> m_odometry.getPoseMeters().getY());
+
 
     // SmartDashboard.putData("Field", m_field);
   }
@@ -389,6 +387,12 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // if(this.getCurrentCommand() != null){
+    //   SmartDashboard.putString("AAA drivetrain current command", this.getCurrentCommand().toString());
+    // } else {
+    //   SmartDashboard.putString("AAA drivetrain current command", "null");
+    // }
+
     m_odometry.update(getIMURotation(),
         new SwerveModuleState(m_frontLeftModule.getDriveVelocity(),
             new Rotation2d(m_frontLeftModule.getSteerAngle())),

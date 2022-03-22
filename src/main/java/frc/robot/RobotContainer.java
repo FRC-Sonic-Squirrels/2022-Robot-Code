@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -20,6 +21,8 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.StartPoseConstants;
 import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.CargoReverseCommand;
+import frc.robot.commands.CargoRunIndexer;
+import frc.robot.commands.DriveChimpMode;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.ElevatorControlCommand;
@@ -56,7 +59,7 @@ public class RobotContainer {
   public ArmSubsystem m_arm;
   public final Drivetrain drivetrain;
   public final IntakeSubsystem m_intake;
-  public LimelightSubsystem m_limelight;
+  //public LimelightSubsystem m_limelight;
 
   // Controllers
   public final XboxController m_controller = new XboxController(0);
@@ -66,6 +69,8 @@ public class RobotContainer {
   public final SendableChooser<Command> chooser = new SendableChooser<>();
   
   public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
+
+  public int m_bumperRpm = Constants.ShooterConstants.BUMPER_SHOT_RPM;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -80,7 +85,7 @@ public class RobotContainer {
     drivetrain = new Drivetrain();
     m_elevator = new ElevatorSubsystem();
     m_arm = new ArmSubsystem();
-    m_limelight = new LimelightSubsystem(drivetrain);
+    //m_limelight = new LimelightSubsystem(drivetrain);
     
     SmartDashboard.putData("Auto Mode", chooser);
 
@@ -89,15 +94,35 @@ public class RobotContainer {
         new SwerveTrajectoryAutonomousCommandFactory(drivetrain, m_shooter, m_cargo, m_intake,
             m_robot, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
 
-    Command 
-    autonOne = auton.twoBallAuto(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
 
-    chooser.addOption("Auton 1: shoot and move", autonOne);
-    chooser.addOption("Auton 2: move and shoot 2", auton.twoBallAutoShoot2(StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7));
-    chooser.addOption("Auton 3: move, shoot 2, push", auton.twoBallAutoShoot2push (StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7));
+    Command autonThree = auton.twoBallAutoShoot2push (StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
+
+    Command autonFour = auton.twoBallAutoWaitShoot2();
+
+
+    Command autonRightSide = auton.SundomeRightSideShootAndMove();
+    
+    
+    chooser.addOption(" (Fender) move, shoot 2, push", autonThree);
+    chooser.addOption(" (Top tarmac) move, wait, shoot 2", autonFour);
+    chooser.addOption("Right Side plan C", autonRightSide);
+
+    chooser.setDefaultOption(" (Top tarmac) move, wait, shoot 2", autonFour);
+    
+
+
+    drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
+      drivetrain, 
+      () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+      () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
+      () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+
+    m_elevator.setDefaultCommand(new ElevatorControlCommand(m_elevator, m_climbController,
+      Constants.ElevatorConstants.elevatorSpeedMultiplier));
+
+    m_arm.setDefaultCommand(new ArmManualControlCommand(m_arm, m_climbController, 0.3));
 
     configureButtonBindings();
-
   }
 
   /**
@@ -111,10 +136,14 @@ public class RobotContainer {
 
     //-------------- DRIVER CONTROLS DEFINED HERE --------------------------  
 
-    // Back button zeros the gyroscope
+    // Back button resets field centric, forward is the current heading
     new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
             .whenPressed(drivetrain::resetFieldCentric);
+
+    // start button toggles the LimeLight LEDs
+    // new Button(m_controller::getStartButton)
+    //         .whenPressed(new InstantCommand(() -> m_limelight.toggleLEDs()));
 
     new Button(m_controller::getXButton)
             .whenPressed(new DriveHubCentricCommand(drivetrain, 
@@ -139,12 +168,22 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
-    new Button(m_controller::getLeftBumper)
-            .whileHeld(new LimelightRotateToHubAndShoot(2000, m_limelight, drivetrain, m_cargo, m_shooter, m_intake, m_robot));
+    // new Button(m_controller::getLeftBumper)
+    //         .whileHeld(new DriveChimpMode(drivetrain, m_intake,
+    //         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
+    //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+
+              
+    // new Button(m_controller::getLeftBumper)
+    //         .whileHeld(new LimelightRotateToHubAndShoot(2000, m_limelight, drivetrain, m_cargo, m_shooter, m_intake, m_robot));
 
             
-    new Button(() -> (m_controller.getRightTriggerAxis() > 0.05))
-            .toggleWhenActive(new IntakeDeployCommand(m_intake, m_cargo), true);
+    // new Button(() -> (m_controller.getRightTriggerAxis() > 0.05))
+    //         .toggleWhenActive(new IntakeDeployCommand(m_intake, m_cargo), true);
+
+    // new Button(() -> (m_controller.getLeftTriggerAxis() > 0.05))
+    //         .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
     // new Button(m_controller::getLeftBumper)
     //   .whileHeld(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
@@ -162,24 +201,36 @@ public class RobotContainer {
     //new Button(m_operatorController::getRightBumper)
     //  .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
-    //Deploy intake while holding 
+    //--------------------------------Operator intake)-------------------
+    //Deploy Intake
     new Button(m_operatorController::getAButton)
        .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
 
     new Button(m_operatorController::getYButton)
        .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
-    // 2000 RPM is good for 5 feet
+    // middle shot to High Hub
     new Button(m_operatorController::getXButton)
-       .whileHeld(new ShootWithSetRPMCommand(3200, m_cargo, m_shooter, m_robot), true);
-
-    // 3000 RPM is good for 10 feet
+       .whileActiveOnce(new ShootWithSetRPMCommand(3200, m_cargo, m_shooter, m_robot), true);
+ 
+    // Farthest shot to High Hub
     new Button(m_operatorController::getBButton)
-       .whileHeld(new ShootWithSetRPMCommand(3400, m_cargo, m_shooter, m_robot), true);
+       .whileActiveOnce(new ShootWithSetRPMCommand(3400, m_cargo, m_shooter, m_robot), true);
 
-    // 1500 RPM is perfecto for right against the hub
+    // Bumper Shot to High Hub right against the lower hub
     new Button(m_operatorController::getRightBumper)
-     .whileActiveOnce(new ShootWithSetRPMCommand(2800, m_cargo, m_shooter, m_robot), true);
+     .whileActiveOnce(new ShootWithSetRPMCommand(m_bumperRpm, m_cargo, m_shooter, m_robot), true);
+
+    new Button(m_operatorController::getBackButton)
+      .whenPressed(new InstantCommand(() -> m_bumperRpm -= 50));
+
+    new Button(m_operatorController::getStartButton)
+      .whenPressed(new InstantCommand(() -> m_bumperRpm += 50));
+
+    new Button(() ->  (m_operatorController.getLeftTriggerAxis() > 0.05))
+      .whileHeld(new CargoRunIndexer(m_cargo));
+     
+     
 
     new Button(m_operatorController::getLeftBumper)
       .whileActiveOnce(new ShootAutoCommand(m_cargo, m_shooter, drivetrain, m_limelight));

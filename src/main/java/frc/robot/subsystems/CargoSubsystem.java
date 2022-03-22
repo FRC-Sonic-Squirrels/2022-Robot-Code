@@ -31,7 +31,9 @@ public class CargoSubsystem extends SubsystemBase {
     BOTH,
     REVERSE,
     SHOOT,
-    SHOOT_STEP2
+    SHOOT_STEP2,
+    SHOOT_PREP,
+    IDLE
   };
 
   private WPI_TalonFX UpperBelts;
@@ -39,6 +41,7 @@ public class CargoSubsystem extends SubsystemBase {
   private DigitalInput lowerSensor = new DigitalInput(digitalIOConstants.dio0_indexerSensor1);
   private DigitalInput upperSensor = new DigitalInput(digitalIOConstants.dio1_indexerSensor2);
   private Mode mode = Mode.STOP;
+  private double m_idleTime = 0;
 
   // TODO: find the real percent outputs of the conveyor belts
   private double m_lowerOutput = 0.8;
@@ -140,7 +143,26 @@ public class CargoSubsystem extends SubsystemBase {
     } else if (mode == Mode.SHOOT_STEP2) {
       setUpperBeltPercentOutput(0.9);
       setLowerBeltPercentOutput(0.6);
-    } else if (mode == Mode.REVERSE) {
+    } else if(mode == Mode.SHOOT_PREP){
+      if(!cargoInUpperBelts()){
+        setStopMode();
+        setUpperBeltPercentOutput(0);
+        setLowerBeltPercentOutput(0);
+      } else {
+        setUpperBeltPercentOutput(-0.5);
+        setLowerBeltPercentOutput(-0.2);
+      }
+    } else if(mode == Mode.IDLE){
+      setUpperBeltPercentOutput(0);
+      if(m_idleTime == 0){
+        m_idleTime = System.currentTimeMillis();
+      } else if(System.currentTimeMillis() - m_idleTime > 300){
+        setShootPrepMode();
+        m_idleTime = 0;
+        setLowerBeltPercentOutput(0);
+      }
+      setLowerBeltPercentOutput(0.9);
+    }else if (mode == Mode.REVERSE) {
       setUpperBeltPercentOutput(-m_lowerOutput);
       setLowerBeltPercentOutput(-m_upperOutput);
     } else {
@@ -150,6 +172,11 @@ public class CargoSubsystem extends SubsystemBase {
     SmartDashboard.putString("Cargo: Mode", mode.name());
     SmartDashboard.putBoolean("Cargo in Upper", cargoInUpperBelts());
     SmartDashboard.putBoolean("Cargo in Lower", cargoInLowerBelts());
+    // if(this.getCurrentCommand() != null){
+    //   SmartDashboard.putString("AAA cargosubsystem current command", this.getCurrentCommand().toString());
+    // } else {
+    //   SmartDashboard.putString("AAA Cargosubsystem current command", "null");
+    // }
     // SmartDashboard.putNumber("Cargo Upper Voltage", UpperBelts.getMotorOutputVoltage());
     // SmartDashboard.putNumber("Cargo Lower Voltage", LowerBelts.getMotorOutputVoltage());
 
@@ -226,6 +253,14 @@ public class CargoSubsystem extends SubsystemBase {
 
   public void setReverseMode(){
     mode = Mode.REVERSE;
+  }
+
+  public void setShootPrepMode(){
+    mode = Mode.SHOOT_PREP;
+  }
+
+  public void setIdleMode(){
+    mode = Mode.IDLE;
   }
 
   /** 
