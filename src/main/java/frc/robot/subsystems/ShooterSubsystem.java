@@ -63,7 +63,7 @@ public class ShooterSubsystem extends SubsystemBase {
   };
 
   private double distancesInchesWithHoodAngleDegrees[][] = {
-    {15, 2750}
+    {52, 15}
   };
 
   /** Creates a new ShooterSubsystem. */
