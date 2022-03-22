@@ -14,30 +14,24 @@ import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import static frc.robot.Constants.canId;
 
 public class IntakeSubsystem extends SubsystemBase {
 
   enum Mode {
     STOP,
     FORWARD, 
-    DYNAMIC,
     REVERSE
   };
 
   private WPI_TalonFX m_intake = new WPI_TalonFX(Constants.canId.CANID18_INTAKE);
   private TalonFXSensorCollection m_encoder;
   private Solenoid intakeSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Constants.pneumatics.channel_14_intake);
-  private Drivetrain m_drivetrain;
-  private double circOfIntake_meters = (1.4725 * Math.PI) * 0.0254;
-  private double minIntakeRPM = 2500;
-  private double maxIntakeRPM = 6000;
+
   private double intakeRPM = 0.0;
   private double m_desiredRPM = 0.0;
   private boolean m_isDeployed = false;
@@ -51,9 +45,8 @@ public class IntakeSubsystem extends SubsystemBase {
   private SupplyCurrentLimitConfiguration currentLimit =
     new SupplyCurrentLimitConfiguration(true, 20, 25, 0.1);
 
-  public IntakeSubsystem(Drivetrain drivetrain) {
+  public IntakeSubsystem() {
     
-    m_drivetrain = drivetrain;
     m_intake.configFactoryDefault();
     m_intake.setInverted(false);
     m_intake.setNeutralMode(NeutralMode.Coast); 
@@ -69,41 +62,36 @@ public class IntakeSubsystem extends SubsystemBase {
     m_intake.config_kF(kPIDLoopIdx, 0.05);
     m_intake.config_IntegralZone(kPIDLoopIdx, 100);
 
-
-    // Reduce CAN traffic a little, we
-    m_intake.setStatusFramePeriod(StatusFrame.Status_1_General, 40);
-    m_intake.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 40);
+    // Reduce CAN traffic a little, we don't use any feedback
+    m_intake.setStatusFramePeriod(StatusFrame.Status_1_General, 17);
+    m_intake.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 41);
 
     m_encoder = m_intake.getSensorCollection();
     
     intakeRPM = 0.0;
   }
-  // I think the motor, when retracted, is also paired with a stop command
 
   @Override
   public void periodic() {
 
-    testingRpmValues();
+    //testingRpmValues();
+    
     if(mode == Mode.STOP){
       setIntakePercentOutput(0);
     } else if(mode == Mode.FORWARD){
       setIntakeMotorRPM(m_forwardRpmValue);
-    } else if(mode == Mode.DYNAMIC){
-      setIntakeToSpeed();
     } else if(mode == Mode.REVERSE){
       setIntakeMotorRPM(m_reverseRpmValue);
     }
 
+    // if(this.getCurrentCommand() != null){
+    //   SmartDashboard.putString("AAA intake current command", this.getCurrentCommand().toString());
+    // } else {
+    //   SmartDashboard.putString("AAA intake current command", "null");
+    // }
     SmartDashboard.putNumber("Intake_Subsystem RPM", m_encoder.getIntegratedSensorVelocity() * 600 / 2048);
     SmartDashboard.putNumber("Intake_Subsystem desired Motor RPM", m_desiredRPM);
-    SmartDashboard.putNumber("Intake_Subsystem Robot Speed m per s", m_drivetrain.getVelocity());
-    SmartDashboard.putNumber("Intake_Subsystem minimum Intake RPM", minIntakeRPM);
-    SmartDashboard.putNumber("Intake_Subsystem maximum Intake RPM", maxIntakeRPM);
     SmartDashboard.putBoolean("Intake_Subsystem is Deployed", m_isDeployed);
-    SmartDashboard.putNumber("Intake_Subsystem circumference Of Intake", circOfIntake_meters);
-    SmartDashboard.putNumber("Intake_Subsystem forward RPM Value", m_forwardRpmValue);
-    SmartDashboard.putNumber("Intake_Subsystem reverse RPM Value", m_reverseRpmValue);
-    //SmartDashboard.putNumber("Robot Speed m per s", (m_drive.getLeftVelocity() + m_drive.getRightVelocity()) / 2.0);
   }
   
   public void testingRpmValues(){
@@ -128,31 +116,12 @@ public class IntakeSubsystem extends SubsystemBase {
     m_intake.set(ControlMode.Velocity, desiredRPM * 2048 / 600.0);
   }
 
-  /**
-   * Takes the speed at which the Robot moves and makes the Intake move a relative
-   * speed
-   */
-  public void setIntakeToSpeed() {
-    double robotMetersPerSec = m_drivetrain.getVelocity(); //check if m/s 
-    double intakeRotationsPerSec = robotMetersPerSec / circOfIntake_meters;
-    //Going Twice as Fast as the Robot Speed
-    double _intakeRPM = intakeRotationsPerSec * 60 * 4.0;
-    double desiredMotorRPM = _intakeRPM * Constants.IntakeConstants.gearRatio;
-    if (desiredMotorRPM < minIntakeRPM) {
-      desiredMotorRPM = minIntakeRPM;
-    } else if (desiredMotorRPM > maxIntakeRPM) {
-      desiredMotorRPM = maxIntakeRPM;
-    }
-
-    setIntakeMotorRPM(desiredMotorRPM);
-    
-  }
 
   /**
    * returns whether or not the intake motor is at the required speed
    */
   public boolean intakeAtDesiredRPM() {
-    return (intakeRPM == m_desiredRPM);
+    return (Math.abs(intakeRPM - m_desiredRPM) < 50);
   }
 
   /**
@@ -205,10 +174,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void setForwardMode(){
     mode = Mode.FORWARD;
-  }
-
-  public void setDynamicMode(){
-    mode = Mode.DYNAMIC;
   }
 
   public void setReverseMode(){

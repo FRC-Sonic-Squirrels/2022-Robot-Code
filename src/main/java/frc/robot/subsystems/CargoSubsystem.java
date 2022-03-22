@@ -29,7 +29,11 @@ public class CargoSubsystem extends SubsystemBase {
     LOWERONLY,
     UPPERONLY,
     BOTH,
-    REVERSE
+    REVERSE,
+    SHOOT,
+    SHOOT_STEP2,
+    SHOOT_PREP,
+    IDLE
   };
 
   private WPI_TalonFX UpperBelts;
@@ -37,6 +41,7 @@ public class CargoSubsystem extends SubsystemBase {
   private DigitalInput lowerSensor = new DigitalInput(digitalIOConstants.dio0_indexerSensor1);
   private DigitalInput upperSensor = new DigitalInput(digitalIOConstants.dio1_indexerSensor2);
   private Mode mode = Mode.STOP;
+  private double m_idleTime = 0;
 
   // TODO: find the real percent outputs of the conveyor belts
   private double m_lowerOutput = 0.8;
@@ -52,9 +57,9 @@ public class CargoSubsystem extends SubsystemBase {
 
     // reduce CAN traffic for motors (not using speed control)
     LowerBelts.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
-    LowerBelts.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 200);
+    LowerBelts.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 199);
     UpperBelts.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
-    UpperBelts.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 200);
+    UpperBelts.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 197);
 
     // Voltage limits, percent output is scaled to this new max
     LowerBelts.configVoltageCompSaturation(10);
@@ -80,8 +85,8 @@ public class CargoSubsystem extends SubsystemBase {
 
     LowerBelts.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
     UpperBelts.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
-    
- 
+
+
     // TODO: configure PID for lower and upper belts
     // Config PID values to control RPM
     // LowerBelts.config_kP(0, 0.15, 10);
@@ -98,55 +103,82 @@ public class CargoSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-  
-    updateTestingValues();
+
+    // updateTestingValues();
 
     if (mode == Mode.STOP) {
       stopIndexer();
-    } 
-    else if (mode == Mode.INTAKE) {
+    } else if (mode == Mode.INTAKE) {
       if (cargoInUpperBelts()) {
         stopUpperBelts();
         if (cargoInLowerBelts()) {
           stopLowerBelts();
         } else {
-          setLowerBeltPercentOutput(m_lowerOutput);
+          setLowerBeltPercentOutput(0.9);
         }
       } else {
-        setLowerBeltPercentOutput(m_lowerOutput);
-        setUpperBeltPercentOutput(m_upperOutput);
+        setLowerBeltPercentOutput(0.9);
+        setUpperBeltPercentOutput(0.5);
       }
-      
-    } 
-    else if (mode == Mode.LOWERONLY) {
+
+    } else if (mode == Mode.LOWERONLY) {
       stopUpperBelts();
       setLowerBeltPercentOutput(m_lowerOutput);
-    } 
-    else if (mode == Mode.UPPERONLY) {
+    } else if (mode == Mode.UPPERONLY) {
       stopLowerBelts();
       setUpperBeltPercentOutput(m_upperOutput);
-    } 
-    else if (mode == Mode.BOTH) {
+    } else if (mode == Mode.BOTH) {
       // Normal, non-eject mode
-
-
-      // shoot mode releases the upper cargo, then moves the lower cargo to the top
       setUpperBeltPercentOutput(m_upperOutput);
       setLowerBeltPercentOutput(m_lowerOutput);
-    } 
-    else if (mode == Mode.REVERSE) {
-      setUpperBeltPercentOutput(-m_lowerOutput); //negate percent output to make belts go in reverse
+    } else if (mode == Mode.SHOOT) {
+      if (!cargoInUpperBelts()) {
+        setUpperBeltPercentOutput(0.9);
+        setLowerBeltPercentOutput(0.6);
+        mode = Mode.SHOOT_STEP2;
+      } else {
+        setUpperBeltPercentOutput(-0.5);
+        setLowerBeltPercentOutput(-0.2);
+      }
+    } else if (mode == Mode.SHOOT_STEP2) {
+      setUpperBeltPercentOutput(0.9);
+      setLowerBeltPercentOutput(0.6);
+    } else if(mode == Mode.SHOOT_PREP){
+      if(!cargoInUpperBelts()){
+        setStopMode();
+        setUpperBeltPercentOutput(0);
+        setLowerBeltPercentOutput(0);
+      } else {
+        setUpperBeltPercentOutput(-0.5);
+        setLowerBeltPercentOutput(-0.2);
+      }
+    } else if(mode == Mode.IDLE){
+      setUpperBeltPercentOutput(0);
+      if(m_idleTime == 0){
+        m_idleTime = System.currentTimeMillis();
+      } else if(System.currentTimeMillis() - m_idleTime > 300){
+        setShootPrepMode();
+        m_idleTime = 0;
+        setLowerBeltPercentOutput(0);
+      }
+      setLowerBeltPercentOutput(0.9);
+    }else if (mode == Mode.REVERSE) {
+      setUpperBeltPercentOutput(-m_lowerOutput);
       setLowerBeltPercentOutput(-m_upperOutput);
-    }
-    else {
-      stopIndexer();
+    } else {
+      System.out.println("Indexer: unknown mode");
     }
 
     SmartDashboard.putString("Cargo: Mode", mode.name());
     SmartDashboard.putBoolean("Cargo in Upper", cargoInUpperBelts());
     SmartDashboard.putBoolean("Cargo in Lower", cargoInLowerBelts());
-    SmartDashboard.putNumber("Cargo Upper Voltage", UpperBelts.getMotorOutputVoltage());
-    SmartDashboard.putNumber("Cargo Lower Voltage", LowerBelts.getMotorOutputVoltage());
+    // if(this.getCurrentCommand() != null){
+    //   SmartDashboard.putString("AAA cargosubsystem current command", this.getCurrentCommand().toString());
+    // } else {
+    //   SmartDashboard.putString("AAA Cargosubsystem current command", "null");
+    // }
+    // SmartDashboard.putNumber("Cargo Upper Voltage", UpperBelts.getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Cargo Lower Voltage", LowerBelts.getMotorOutputVoltage());
 
     // TODO: convert to RPM
     // SmartDashboard.putNumber("Cargo RPM Upper", UpperBelts.getSelectedSensorVelocity());
@@ -215,8 +247,20 @@ public class CargoSubsystem extends SubsystemBase {
     mode = Mode.BOTH;
   }
 
+  public void setShootMode(){
+    mode = Mode.SHOOT;
+  }
+
   public void setReverseMode(){
     mode = Mode.REVERSE;
+  }
+
+  public void setShootPrepMode(){
+    mode = Mode.SHOOT_PREP;
+  }
+
+  public void setIdleMode(){
+    mode = Mode.IDLE;
   }
 
   /** 

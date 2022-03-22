@@ -28,6 +28,7 @@
     "drivetrains",
     "Feedforward",
     "holonomic",
+    "leds",
     "LOWERONLY",
     "Mjpeg",
     "navx",

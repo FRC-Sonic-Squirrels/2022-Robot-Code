@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -44,6 +45,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double feedForwardClimbing = 0.025734; // from JVM calculator
   private double feedForwardDescending = 0.001;
   private final double ticks2distance = gearRatio * winchCircumference / 4096;
+  private boolean zeroed = false;
 
   // the encoder increase as the elevator moves down, so invert sign of height vs ticks
   private double sensor_invert = -1.0;
@@ -91,7 +93,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     winch_lead_talon.configSupplyCurrentLimit(currentLimit);
     winch_follow_talon.configSupplyCurrentLimit(currentLimit);
 
-    winch_lead_talon.configOpenloopRamp(0.2);
+    winch_lead_talon.configOpenloopRamp(0.1);
 
     // Reduce CAN traffic where possible
     // https://docs.ctre-phoenix.com/en/latest/ch18_CommonAPI.html
@@ -101,6 +103,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     // NOTE: when we power up, we expect the elevator to be full down, triggering the lower limit switch.
     // if not, we need to move the elevator down to the lower limit switch (VERY SLOWLY).
     // hitting either limit switch must stop the elevator.
+
+    // Stagger update frames to reduce congestion
+    winch_follow_talon.setStatusFramePeriod(StatusFrame.Status_1_General, 47);
+    winch_follow_talon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 201);
 
     brakeOn();
     zeroHeight();
@@ -232,9 +238,23 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // check if we triggered lower limit switch, and reset elevator to zero
-    if(atLowerLimit()){
-      zeroHeight();
+    if(atLowerLimit()) {
+      if (! zeroed) {
+        // only zero height once per time hitting limit switch
+        zeroHeight();
+        zeroed = true;
+      }
     }
+    else {
+      // not currently on limit switch, zero again next time we hit limit switch
+      zeroed = false;
+    }
+
+    // if(this.getCurrentCommand() != null){
+    //   SmartDashboard.putString("AAA elevator current command", this.getCurrentCommand().toString());
+    // } else {
+    //   SmartDashboard.putString("AAA elevator current command", "null");
+    // }
 
     SmartDashboard.putNumber("Elevator Height (inches)", getHeightInches());
     SmartDashboard.putNumber("Elevator Height Set Point", heightSetpointInches);

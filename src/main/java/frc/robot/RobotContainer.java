@@ -4,43 +4,32 @@
 
 package frc.robot;
 
-
-import java.time.Instant;
-import java.util.List;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.trajectory.constraint.SwerveDriveKinematicsConstraint;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.StartPoseConstants;
 import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.CargoReverseCommand;
+import frc.robot.commands.CargoRunIndexer;
+import frc.robot.commands.DriveChimpMode;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.ElevatorControlCommand;
 import frc.robot.commands.ShootWithSetRPMCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
+import frc.robot.commands.LimelightRotateToHubAndShoot;
 import frc.robot.commands.ShootCargoCommand;
 import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
@@ -50,7 +39,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.autonomous.SimpleAutonCommandOne;
+import frc.robot.subsystems.LimelightSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -59,31 +48,28 @@ import frc.robot.autonomous.SimpleAutonCommandOne;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  public final Drivetrain drivetrain = new Drivetrain();
-  //public final VisionSubsystem m_visionSubsystem = new VisionSubsystem(drivetrain);
-  public final CargoSubsystem m_cargoSubsystem = new CargoSubsystem();
-  public final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
-  public final IntakeSubsystem m_intake = new IntakeSubsystem(drivetrain);
-  public final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
-  public final ArmSubsystem m_arm = new ArmSubsystem();
+
   public final Robot m_robot;
 
+  // Subsystems
+  public final CargoSubsystem m_cargo;
+  public final ShooterSubsystem m_shooter;
+  public ElevatorSubsystem m_elevator;
+  public ArmSubsystem m_arm;
+  public final Drivetrain drivetrain;
+  public final IntakeSubsystem m_intake;
+  //public LimelightSubsystem m_limelight;
+
+  // Controllers
   public final XboxController m_controller = new XboxController(0);
   public final XboxController m_operatorController = new XboxController(1);
   public final XboxController m_climbController = new XboxController(2);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
-
-  //public final SendableChooser<Pose2d> startPoseChooser = new SendableChooser<>();
-  //public final SendableChooser<Command> autonTrajectoryChooser = new SendableChooser<>();
-  //public final SendableChooser<Command> simpleAutonChooser = new SendableChooser<>();
   
   public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
 
-  private UsbCamera camera;
-
-  TestTrajectories m_tt = new TestTrajectories(1, 0.75, drivetrain, true);
+  public int m_bumperRpm = Constants.ShooterConstants.BUMPER_SHOT_RPM;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -91,61 +77,50 @@ public class RobotContainer {
   public RobotContainer(Robot robot) {
 
     m_robot = robot;
+
+    m_cargo = new CargoSubsystem();
+    m_shooter = new ShooterSubsystem(m_robot);
+    m_intake = new IntakeSubsystem();
+    drivetrain = new Drivetrain();
+    m_elevator = new ElevatorSubsystem();
+    m_arm = new ArmSubsystem();
+    //m_limelight = new LimelightSubsystem(drivetrain);
     
-    // set the starting position of the robot on the field
-    // startPoseChooser.addOption("1m left of hub", Constants.ROBOT_1M_LEFT_OF_HUB);
-    // startPoseChooser.addOption("blue 1", StartPoseConstants.BLUE_20_13);
-    // startPoseChooser.addOption("blue 2", StartPoseConstants.BLUE_22_19);
-    // startPoseChooser.addOption("blue 3", StartPoseConstants.BLUE_22_8);
-    // startPoseChooser.addOption("blue 4", StartPoseConstants.BLUE_27_6); //note: cannot be used in paths starting with ball 3
-    // startPoseChooser.addOption("red 1", StartPoseConstants.RED_27_21);
-    // startPoseChooser.addOption("red 2", StartPoseConstants.RED_31_14);
-    // startPoseChooser.addOption("red 3", StartPoseConstants.RED_32_19);
-    // startPoseChooser.addOption("red 4", StartPoseConstants.RED_32_8);
-   
-
-    SwerveTrajectoryFollowCommandFactory.addTestTrajectoriesToChooser(chooser, 1.0, 0.75, drivetrain, true, m_shooterSubsystem,
-        m_cargoSubsystem, m_intake, m_robot);
-
-    chooser.addOption("Auton shoot and pick up test", shootAndDriveAuton());
     SmartDashboard.putData("Auto Mode", chooser);
 
-    // // TODO: figure out if getSelected() will work properly or just return null
-    // SwerveTrajectoryAutonomousCommandFactory.addAutonTrajectoriesToChooser(autonTrajectoryChooser, 1.0, 0.75,
-    //     startPoseChooser.getSelected(), drivetrain, true, m_shooterSubsystem, m_cargoSubsystem, m_intake, m_robot);
-    // SmartDashboard.putData("Auto Mode (real)", autonTrajectoryChooser);
+    // add the new auton trajectories to the auton trajectory chooser
+    SwerveTrajectoryAutonomousCommandFactory auton =
+        new SwerveTrajectoryAutonomousCommandFactory(drivetrain, m_shooter, m_cargo, m_intake,
+            m_robot, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
 
-    if (m_robot.isReal()) {
-      // Creates UsbCamera and sets resolution
-      camera = CameraServer.startAutomaticCapture();
-      camera.setResolution(320, 240);
-      camera.setFPS(20);
-    }
- 
 
-    // Set up the default command for the drivetrain.
-    // The controls are for field-oriented driving:
-    // Left stick Y axis -> forward and backwards movement
-    // Left stick X axis -> left and right movement
-    // Right stick X axis -> rotation
-    // drivetrain.setDefaultCommand(new DefaultDriveCommand(
-    //   drivetrain,
-    //   () -> -modifyAxis(m_controller.getLeftY() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND),
-    //   () -> -modifyAxis(m_controller.getLeftX() * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND) ,
-    //   () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / 4)
-    // ));
+    Command autonThree = auton.twoBallAutoShoot2push (StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
+
+    Command autonFour = auton.twoBallAutoWaitShoot2();
+
+
+    Command autonRightSide = auton.SundomeRightSideShootAndMove();
     
+    
+    chooser.addOption(" (Fender) move, shoot 2, push", autonThree);
+    chooser.addOption(" (Top tarmac) move, wait, shoot 2", autonFour);
+    chooser.addOption("Right Side plan C", autonRightSide);
+
+    chooser.setDefaultOption(" (Top tarmac) move, wait, shoot 2", autonFour);
+    
+
+
     drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
       drivetrain, 
       () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
       () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
-      () -> -modifyAxis(m_controller.getRightX() * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)));
+      () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
     m_elevator.setDefaultCommand(new ElevatorControlCommand(m_elevator, m_climbController,
-        Constants.ElevatorConstants.elevatorSpeedMultiplier));
+      Constants.ElevatorConstants.elevatorSpeedMultiplier));
+
     m_arm.setDefaultCommand(new ArmManualControlCommand(m_arm, m_climbController, 0.3));
 
-    // Configure the button bindings
     configureButtonBindings();
   }
 
@@ -160,10 +135,14 @@ public class RobotContainer {
 
     //-------------- DRIVER CONTROLS DEFINED HERE --------------------------  
 
-    // Back button zeros the gyroscope
+    // Back button resets field centric, forward is the current heading
     new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
-            .whenPressed(drivetrain::zeroGyroscope);
+            .whenPressed(drivetrain::resetFieldCentric);
+
+    // start button toggles the LimeLight LEDs
+    // new Button(m_controller::getStartButton)
+    //         .whenPressed(new InstantCommand(() -> m_limelight.toggleLEDs()));
 
     new Button(m_controller::getXButton)
             .whenPressed(new DriveHubCentricCommand(drivetrain, 
@@ -189,6 +168,23 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
     // new Button(m_controller::getLeftBumper)
+    //         .whileHeld(new DriveChimpMode(drivetrain, m_intake,
+    //         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
+    //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+
+              
+    // new Button(m_controller::getLeftBumper)
+    //         .whileHeld(new LimelightRotateToHubAndShoot(2000, m_limelight, drivetrain, m_cargo, m_shooter, m_intake, m_robot));
+
+            
+    // new Button(() -> (m_controller.getRightTriggerAxis() > 0.05))
+    //         .toggleWhenActive(new IntakeDeployCommand(m_intake, m_cargo), true);
+
+    // new Button(() -> (m_controller.getLeftTriggerAxis() > 0.05))
+    //         .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
+
+    // new Button(m_controller::getLeftBumper)
     //   .whileHeld(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
 
     // new Button(m_controller::getRightBumper)
@@ -204,24 +200,36 @@ public class RobotContainer {
     //new Button(m_operatorController::getRightBumper)
     //  .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
 
-    //Deploy intake while holding 
+    //--------------------------------Operator intake)-------------------
+    //Deploy Intake
     new Button(m_operatorController::getAButton)
-       .whileHeld(new IntakeDeployCommand(m_intake, m_cargoSubsystem));
+       .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
 
     new Button(m_operatorController::getYButton)
-       .whileHeld(new IntakeReverseCommand(m_intake, m_cargoSubsystem));
+       .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
-    // 2000 RPM is good for 5 feet
+    // middle shot to High Hub
     new Button(m_operatorController::getXButton)
-       .whileHeld(new ShootWithSetRPMCommand(2500, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
-
-    // 3000 RPM is good for 10 feet
+       .whileActiveOnce(new ShootWithSetRPMCommand(3200, m_cargo, m_shooter, m_robot), true);
+ 
+    // Farthest shot to High Hub
     new Button(m_operatorController::getBButton)
-       .whileHeld(new ShootWithSetRPMCommand(3000, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+       .whileActiveOnce(new ShootWithSetRPMCommand(3400, m_cargo, m_shooter, m_robot), true);
 
-    // 1500 RPM is perfecto for right against the hub
+    // Bumper Shot to High Hub right against the lower hub
     new Button(m_operatorController::getRightBumper)
-     .whenPressed(new ShootWithSetRPMCommand(1500, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
+     .whileActiveOnce(new ShootWithSetRPMCommand(m_bumperRpm, m_cargo, m_shooter, m_robot), true);
+
+    new Button(m_operatorController::getBackButton)
+      .whenPressed(new InstantCommand(() -> m_bumperRpm -= 50));
+
+    new Button(m_operatorController::getStartButton)
+      .whenPressed(new InstantCommand(() -> m_bumperRpm += 50));
+
+    new Button(() ->  (m_operatorController.getLeftTriggerAxis() > 0.05))
+      .whileHeld(new CargoRunIndexer(m_cargo));
+     
+     
 
     // new Button(m_operatorController::getLeftStickButtonPressed)
     //   .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
@@ -250,7 +258,7 @@ public class RobotContainer {
   }
 
   //TODO: check if deadband value needs to be changed  
-  private static double modifyAxis(double value) {
+  public static double modifyAxis(double value) {
     // Deadband
     value = deadband(value, 0.1);
 
@@ -268,46 +276,6 @@ public class RobotContainer {
     return false;
   }
 
-  public Command shootAndDriveAuton() {
-
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> m_shooterSubsystem.setFlywheelRPM(1500), m_shooterSubsystem),
-      new WaitCommand(2),
-      //might cause problems in cargo transition 
-      new ShootWithSetRPMCommand(1500, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot)
-        .withTimeout(3),
-        SwerveTrajectoryFollowCommandFactory.straightForward2mCommand(m_tt, drivetrain)
-    );
-    //   new WaitCommand(0.5),
-    //   new ParallelCommandGroup(
-    //     SwerveTrajectoryFollowCommandFactory.straightForward2mCommand(m_tt, drivetrain),
-    //     new IntakeDeployCommand(m_intake, m_cargoSubsystem) 
-    //       .withTimeout(4) //deploy or run? 
-    //   ),
-    //   new ParallelCommandGroup(
-    //      SwerveTrajectoryFollowCommandFactory.straightBack1mCommand(m_tt, drivetrain),
-    //      new InstantCommand(() -> m_shooterSubsystem.setFlywheelRPM(1500), m_shooterSubsystem)
-    //   ),
-    //   new ShootWithSetRPMCommand(1500, m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot)
-    //     .withTimeout(2)
-    // );
-  }
-
-  public TrajectoryConfig getTrajectoryConfig() {
-    //TODO: THESE ARE HARD CODED VALUES
-    TrajectoryConfig config = new TrajectoryConfig(1, 0.75)
-        // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(drivetrain.kinematics());
-
-   
-      // Limits the velocity of the robot around turns such that no wheel of a swerve-drive robot
-      // goes over a specified maximum velocity.
-      SwerveDriveKinematicsConstraint swerveConstraint = new SwerveDriveKinematicsConstraint(
-          drivetrain.kinematics(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND);
-      config.addConstraint(swerveConstraint);
-    
-    return config;
-  }
 }
 
 

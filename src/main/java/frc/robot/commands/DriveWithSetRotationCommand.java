@@ -63,7 +63,7 @@ public class DriveWithSetRotationCommand extends CommandBase {
 
     SmartDashboard.putNumber("TargetAngle", Math.toDegrees(m_setRotationRadians));
     SmartDashboard.putNumber("RobotAngleRadians",
-        m_drivetrainSubsystem.getGyroscopeRotation().getRadians());
+        m_drivetrainSubsystem.getRotation().getRadians());
     SmartDashboard.putNumber("RobotAngleVelRadians",
         m_drivetrainSubsystem.getGyroscopeRotationVelocity().getRadians());
     SmartDashboard.putNumber("RotationOutput", 0.0);
@@ -79,7 +79,7 @@ public class DriveWithSetRotationCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    rotationController.reset(m_drivetrainSubsystem.getGyroscopeRotation().getRadians());
+    rotationController.reset(m_drivetrainSubsystem.getRotation().getRadians());
     rotationController.setGoal(m_setRotationRadians);
 
     SmartDashboard.putNumber("DriveWithRationAngle", m_setRotationRadians);
@@ -112,11 +112,11 @@ public class DriveWithSetRotationCommand extends CommandBase {
     }
 
     double rotationOutput = rotationController
-        .calculate(m_drivetrainSubsystem.getGyroscopeRotation().getRadians(), m_setRotationRadians);
+        .calculate(m_drivetrainSubsystem.getRotation().getRadians(), m_setRotationRadians);
 
     SmartDashboard.putNumber("Drive w/ setRotation TargetAngle", Math.toDegrees(m_setRotationRadians));
     SmartDashboard.putNumber("Drive w/ setRotation RobotAngleRadians",
-        m_drivetrainSubsystem.getGyroscopeRotation().getRadians());
+        m_drivetrainSubsystem.getRotation().getRadians());
     SmartDashboard.putNumber("Drive w/ setRotation RobotAngleVelRadians",
         m_drivetrainSubsystem.getGyroscopeRotationVelocity().getRadians());
     SmartDashboard.putNumber("Drive w/ setRotation RotationOutput", rotationOutput);
@@ -131,8 +131,10 @@ public class DriveWithSetRotationCommand extends CommandBase {
     }
 
     m_drivetrainSubsystem.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
-        m_translationXSupplier.getAsDouble(), m_translationYSupplier.getAsDouble(), rotationOutput,
-        m_drivetrainSubsystem.getGyroscopeRotation()));
+        m_translationXSupplier.getAsDouble(),
+        m_translationYSupplier.getAsDouble(), 
+        rotationOutput,
+        m_drivetrainSubsystem.getRotation()));
 
   }
 

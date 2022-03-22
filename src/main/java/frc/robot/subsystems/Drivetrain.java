@@ -110,6 +110,8 @@ public class Drivetrain extends SubsystemBase {
 
   private SimpleMotorFeedforward m_feedForward = new SimpleMotorFeedforward(AutoConstants.kS, AutoConstants.kV, AutoConstants.kA);
 
+  private boolean isOdometrySet = false;
+
   /**
    * Object constructor
    */
@@ -141,7 +143,7 @@ public class Drivetrain extends SubsystemBase {
     m_frontLeftModule = Mk4iSwerveModuleHelper.createFalcon500(
         // This parameter is optional, but will allow you to see the current state of the module on
         // the dashboard.
-        tab.getLayout("Front Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
+        // tab.getLayout("Front Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
         // set current limit and nominal voltage
         swerveConfig,
         // This can either be STANDARD or FAST depending on your gear configuration
@@ -159,8 +161,7 @@ public class Drivetrain extends SubsystemBase {
     // We will do the same for the other modules
     m_frontRightModule =
         Mk4iSwerveModuleHelper.createFalcon500(
-            tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2,
-                0),
+            //tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2,0),
             swerveConfig,
             Mk4iSwerveModuleHelper.GearRatio.L2,
             canId.CANID2_FRONT_RIGHT_MODULE_DRIVE_MOTOR,
@@ -170,8 +171,7 @@ public class Drivetrain extends SubsystemBase {
 
     m_backLeftModule =
         Mk4iSwerveModuleHelper.createFalcon500(
-            tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4,
-                0),
+            //tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4,0),
             swerveConfig,
             Mk4iSwerveModuleHelper.GearRatio.L2,
             canId.CANID4_BACK_LEFT_MODULE_DRIVE_MOTOR,
@@ -181,8 +181,7 @@ public class Drivetrain extends SubsystemBase {
 
     m_backRightModule =
         Mk4iSwerveModuleHelper.createFalcon500(
-            tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6,
-                0),
+            //tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6,0),
             swerveConfig,
             Mk4iSwerveModuleHelper.GearRatio.L2,
             canId.CANID3_BACK_RIGHT_MODULE_DRIVE_MOTOR,
@@ -190,18 +189,15 @@ public class Drivetrain extends SubsystemBase {
             canId.CANID23_BACK_RIGHT_MODULE_STEER_ENCODER,
             BACK_RIGHT_MODULE_STEER_OFFSET);
 
-    m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
+    m_odometry = new SwerveDriveOdometry(m_kinematics, getIMURotation());
 
-    // TODO: set starting point on the field accurately
-    m_odometry.resetPosition(new Pose2d(0.0, 0.0, new Rotation2d(0.0)), getGyroscopeRotation());
+    // just in case the field position isn't set in teleopInit or autonInit
+    m_odometry.resetPosition(new Pose2d(0.0, 0.0, new Rotation2d(0.0)), getIMURotation());
 
     m_desiredStates = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0.0, 0.0, 0.0));
 
-    tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
-    tab.addNumber("Pose X", () -> m_odometry.getPoseMeters().getX());
-    tab.addNumber("Pose Y", () -> m_odometry.getPoseMeters().getY());
-
-    SmartDashboard.putData("Field", m_field);
+    // TODO: enabling this uses too much CPU in auton
+    // SmartDashboard.putData("Field", m_field);
   }
 
   /**
@@ -221,6 +217,13 @@ public class Drivetrain extends SubsystemBase {
     m_pigeon.setAccumZAngle(deg);
   }
 
+  public void resetFieldCentric(){
+    Pose2d currentPose = getPose();
+
+    m_odometry.resetPosition(
+      new Pose2d(currentPose.getX(),currentPose.getY(), new Rotation2d(0)), getIMURotation());
+  }
+
   public void setGyroscopeHeadingRadians(double rad) {
     setGyroscopeHeadingDegrees(Math.toDegrees(rad));
   }
@@ -232,17 +235,30 @@ public class Drivetrain extends SubsystemBase {
    * @param rotation
    */
   public void setPose(Pose2d pose, Rotation2d rotation) {
+    
+    isOdometrySet = true; 
+    
     m_odometry.resetPosition(pose, rotation);
+  }
+
+  public boolean isOdometrySet(){
+    return isOdometrySet;
   }
 
   /**
    * get current angle from gyroscope, return Rotation2d object.
+   * ONLY USE THIS IF YOU KNOW WHAT YOU ARE DOING 
+   * FOR MOST CASES USE getRotation() instead
    * 
    * @return gyro angle in Rotation2d
    */
-  public Rotation2d getGyroscopeRotation() {
+  public Rotation2d getIMURotation() {
       // return Rotation2d.fromDegrees(m_pigeon.getFusedHeading());
       return Rotation2d.fromDegrees(m_pigeon.getYaw());
+  }
+
+  public Rotation2d getRotation(){
+    return m_odometry.getPoseMeters().getRotation();
   }
 
 
@@ -263,7 +279,6 @@ public class Drivetrain extends SubsystemBase {
 
   public double getVelocity(){
     SwerveModuleState m_actualStates[] = new SwerveModuleState[4];
-    //TODO: check if the angle is in radians
     SwerveModuleState frontLeft = new SwerveModuleState(m_frontLeftModule.getDriveVelocity(), new Rotation2d(m_frontLeftModule.getSteerAngle()));
     SwerveModuleState frontRight = new SwerveModuleState(m_frontRightModule.getDriveVelocity(), new Rotation2d(m_frontRightModule.getSteerAngle()));
     SwerveModuleState backLeft = new SwerveModuleState(m_backLeftModule.getDriveVelocity(), new Rotation2d(m_backLeftModule.getSteerAngle()));
@@ -325,7 +340,7 @@ public class Drivetrain extends SubsystemBase {
    * @param pose The pose to which to set the odometry.
    */
   public void resetOdometry(Pose2d pose) {
-    m_odometry.resetPosition(pose, getGyroscopeRotation());
+    m_odometry.resetPosition(pose, getIMURotation());
   }
 
   /**
@@ -358,7 +373,13 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    m_odometry.update(getGyroscopeRotation(),
+    // if(this.getCurrentCommand() != null){
+    //   SmartDashboard.putString("AAA drivetrain current command", this.getCurrentCommand().toString());
+    // } else {
+    //   SmartDashboard.putString("AAA drivetrain current command", "null");
+    // }
+
+    m_odometry.update(getIMURotation(),
         new SwerveModuleState(m_frontLeftModule.getDriveVelocity(),
             new Rotation2d(m_frontLeftModule.getSteerAngle())),
         new SwerveModuleState(m_frontRightModule.getDriveVelocity(),
@@ -373,15 +394,11 @@ public class Drivetrain extends SubsystemBase {
     setModuleStates(m_desiredStates);
 
     // Update pose in field simulation
-    m_field.setRobotPose(m_odometry.getPoseMeters());
+    // m_field.setRobotPose(m_odometry.getPoseMeters());
 
-    SmartDashboard.putNumber("Drivetrain IMU Yaw", m_pigeon.getYaw());
-    SmartDashboard.putNumber("Drivetrain IMU Roll", m_pigeon.getRoll());
-    SmartDashboard.putNumber("Drivetrain IMU Temp", m_pigeon.getTemp());
-    SmartDashboard.putNumber("Drivetrain IMU Pitch", m_pigeon.getPitch());
-    SmartDashboard.putNumber("Drivetrain IMU Compass_field_strength", m_pigeon.getCompassFieldStrength());
-    SmartDashboard.putNumber("Drivetrain IMU Compass_heading", m_pigeon.getCompassHeading());
-    // SmartDashboard.putNumber("Drivetrain IMU Fused_Heading", m_pigeon.getFusedHeading());
-    SmartDashboard.putNumber("Drivetrain IMU Absolute_compass_heading", m_pigeon.getAbsoluteCompassHeading());
+    //SmartDashboard.putNumber("Drivetrain IMU Yaw", m_pigeon.getYaw());
+    //SmartDashboard.putNumber("Drivetrain IMU Roll", m_pigeon.getRoll());
+    //SmartDashboard.putNumber("Drivetrain IMU Pitch", m_pigeon.getPitch());
+    //SmartDashboard.putNumber("Drivetrain odometry angle", m_odometry.getPoseMeters().getRotation().getDegrees());
   }
 }

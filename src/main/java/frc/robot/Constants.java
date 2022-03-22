@@ -122,27 +122,30 @@ public final class Constants {
    *
    * Should be measured from center to center.
    */
-  public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(19.0);
+  public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(25.0);
   /**
    * The front-to-back distance between the drivetrain wheels.
    *
    * Should be measured from center to center.
    */
-  public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(19.0);
+  public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(24.0);
 
   // Set pigeon ID to -1 to disable and use NAVX on SPI.Port.kMXP
   public static final int DRIVETRAIN_PIGEON_ID = 15;
 
   public static class DriveFieldCentricConstant {
     public static final double TRANSLATION_MULTIPLIER = 0.825; 
-    public static final double ROTATION_MULTIPLIER = 0.5; 
+    public static final double ROTATION_MULTIPLIER = 0.6; 
   }
 
   public static final class AutoConstants {
+    public static final double maxVelocity = 2.5;     // meters per second
+    public static final double maxAcceleration = 2.5; // meters per second per second
+
     // This kP worked for the DriveWithSetRotation command
-    public static final double kPThetaController = 3.0;
+    public static final double kPThetaController = 1.5;
     public static final double kIThetaController = 0.0;
-    public static final double kDThetaController = 0.02;
+    public static final double kDThetaController = 0.0;
 
     // Feed Forward and PID values from SysId
     public static final double kP = 2.2941; // test bot = 2.3055;
@@ -164,7 +167,7 @@ public final class Constants {
   }
 
   public static class ElevatorConstants{
-    public static final double elevatorSpeedMultiplier = 0.8;
+    public static final double elevatorSpeedMultiplier = 1.0;
     public static final double ELEVATOR_MAX_HEIGHT = 22;
   }
   
@@ -182,6 +185,7 @@ public final class Constants {
     //TODO: find the actual activated and idle values
     public static final double m_activated = 2000;
     public static final double m_idle = 500;
+    public static final int BUMPER_SHOT_RPM = 3000;
   }
   // according to game manual field is 27 ft. (~823 cm) by 54 ft. (~1646 cm)
   public static class HubCentricConstants{
@@ -226,6 +230,16 @@ public final class Constants {
 
   }
 
+  public static class LimelightConstants{
+    public static final double LIMELIGHT_HEIGHT_INCHES = 29.962;
+    public static final double TARGET_HEIGHT_INCHES = 104.0;
+    public static final double LIMELIGHT_PITCH_DEGREES = 40;
+    public static final double HIGH_HUB_RADIUS_INCHES = 26.6875;
+
+    //TODO: final distance between camera and the center of robot
+    public static final Transform2d LIMELIGHT_TO_ROBOT = new Transform2d(new Translation2d(0.5, 0.2), new Rotation2d(0));
+  }
+
   public static class VisionPipelineIndex {
     // TODO: find out what values the red and blue pipelines need to be
     public static final int RED_PIPELINE = 1;
@@ -240,40 +254,55 @@ public final class Constants {
     public static Translation2d BLUE_CARGO_6 = new Translation2d( Units.inchesToMeters(290.4), Units.inchesToMeters(312));
     public static Translation2d BLUE_CARGO_7 = new Translation2d( Units.inchesToMeters(196.8), Units.inchesToMeters(246));
     public static Translation2d RED_CARGO_1 = new Translation2d( Units.inchesToMeters(605), Units.inchesToMeters(280));
-    public static Translation2d RED_CARGO_2 = new Translation2d( Units.inchesToMeters(257), Units.inchesToMeters(441));
+    public static Translation2d RED_CARGO_2 = new Translation2d( Units.inchesToMeters(456), Units.inchesToMeters(252));
     public static Translation2d RED_CARGO_3 = new Translation2d( Units.inchesToMeters(350), Units.inchesToMeters(314));
-    public static Translation2d RED_CARGO_4 = new Translation2d( Units.inchesToMeters(235), Units.inchesToMeters(275));
-    public static Translation2d RED_CARGO_5 = new Translation2d( Units.inchesToMeters(174), Units.inchesToMeters(127));
+    public static Translation2d RED_CARGO_4 = new Translation2d( Units.inchesToMeters(240), Units.inchesToMeters(290));
+    public static Translation2d RED_CARGO_5 = new Translation2d( Units.inchesToMeters(176), Units.inchesToMeters(126));
     public static Translation2d RED_CARGO_6 = new Translation2d( Units.inchesToMeters(357), Units.inchesToMeters(12));
-    public static Translation2d RED_CARGO_7 = new Translation2d( Units.inchesToMeters(460), Units.inchesToMeters(246));
-    public static Translation2d HUB_CENTER = new Translation2d( Units.inchesToMeters(324), Units.inchesToMeters(162));
+    public static Translation2d RED_CARGO_7 = new Translation2d( Units.inchesToMeters(456), Units.inchesToMeters(251));
+    public static Translation2d HUB_CENTER = new Translation2d( Units.inchesToMeters(328), Units.inchesToMeters(162));
     public static Translation2d BLUE_LOW = new Translation2d( Units.inchesToMeters(130), Units.inchesToMeters(264));
-    public static Translation2d BLUE_MID = new Translation2d( Units.inchesToMeters(85), Units.inchesToMeters(264));
+    public static Translation2d BLUE_MID = new Translation2d( Units.inchesToMeters(88), Units.inchesToMeters(266));
     public static Translation2d BLUE_HIGH = new Translation2d( Units.inchesToMeters(62), Units.inchesToMeters(264));
     public static Translation2d BLUE_TRANSVERSAL = new Translation2d( Units.inchesToMeters(38), Units.inchesToMeters(264));
     public static Translation2d BLUE_PAD_1 = new Translation2d( Units.inchesToMeters(130), Units.inchesToMeters(216));
     public static Translation2d BLUE_PAD_2 = new Translation2d( Units.inchesToMeters(130), Units.inchesToMeters(312));
-    public static Translation2d RED_LOW = new Translation2d( Units.inchesToMeters(518), Units.inchesToMeters(60));
-    public static Translation2d RED_MID = new Translation2d( Units.inchesToMeters(562), Units.inchesToMeters(60));
-    public static Translation2d RED_HIGH = new Translation2d( Units.inchesToMeters(586), Units.inchesToMeters(60));
-    public static Translation2d RED_TRANSVERSAL = new Translation2d( Units.inchesToMeters(607), Units.inchesToMeters(60));
+    public static Translation2d RED_LOW = new Translation2d( Units.inchesToMeters(520), Units.inchesToMeters(58));//change
+    public static Translation2d RED_MID = new Translation2d( Units.inchesToMeters(562), Units.inchesToMeters(58));//change
+    public static Translation2d RED_HIGH = new Translation2d( Units.inchesToMeters(586), Units.inchesToMeters(58));//change
+    public static Translation2d RED_TRANSVERSAL = new Translation2d( Units.inchesToMeters(607), Units.inchesToMeters(58));//change
     public static Translation2d RED_PAD_1 = new Translation2d( Units.inchesToMeters(518), Units.inchesToMeters(108));
     public static Translation2d RED_PAD_2 = new Translation2d( Units.inchesToMeters(518), Units.inchesToMeters(12));
+
+    public static Translation2d INFRONT_RED_CARGO_4 = new Translation2d( Units.inchesToMeters(240), Units.inchesToMeters(300));
+    public static Translation2d BEHIND_RED_CARGO_4 = new Translation2d( Units.inchesToMeters(210), Units.inchesToMeters(290));
+
   } 
 
   public static class StartPoseConstants {
     public static Pose2d ORIGIN          = new Pose2d(0.0, 0.0, new Rotation2d(0));
     
-    // TODO: make the robot start poses on the edges of the tarmac instead of the center
-    public static Pose2d BLUE_BOTTOM     = new Pose2d( Units.feetToMeters(27), Units.feetToMeters(6),  new Rotation2d(0) );
-    public static Pose2d BLUE_MID_BOTTOM = new Pose2d( Units.feetToMeters(22), Units.feetToMeters(8),  new Rotation2d(Math.PI) );
-    public static Pose2d BLUE_MID_TOP    = new Pose2d( Units.feetToMeters(20), Units.feetToMeters(13), new Rotation2d(Math.PI) );
-    public static Pose2d BLUE_TOP        = new Pose2d( Units.feetToMeters(22), Units.feetToMeters(19), new Rotation2d(Math.PI) );
+    // TODO: make new starting poses right against the hub
+    public static Pose2d BLUE_BOTTOM    = 
+        new Pose2d( Units.feetToMeters(26.8), Units.feetToMeters(5.64),   new Rotation2d(0.05 + 3*Math.PI/2) );
+    public static Pose2d BLUE_MID_BOTTOM= 
+        new Pose2d( Units.feetToMeters(21.87), Units.feetToMeters(7.52),  new Rotation2d(-0.75 + 3*Math.PI/2) );
+    public static Pose2d BLUE_MID_TOP   = 
+        new Pose2d( Units.feetToMeters(19.18), Units.feetToMeters(13.72), new Rotation2d(0.05 + Math.PI) );
+    public static Pose2d BLUE_TOP       = 
+        new Pose2d( Units.feetToMeters(21.01), Units.feetToMeters(18.48), new Rotation2d(0.75 + Math.PI/2) );
 
-    public static Pose2d RED_TOP         = new Pose2d( Units.feetToMeters(27), Units.feetToMeters(21), new Rotation2d(Math.PI) );
-    public static Pose2d RED_MID_TOP     = new Pose2d( Units.feetToMeters(32), Units.feetToMeters(19), new Rotation2d(3*Math.PI/4) );
-    public static Pose2d RED_MID_BOTTOM  = new Pose2d( Units.feetToMeters(31), Units.feetToMeters(14), new Rotation2d(Math.PI/2) );
-    public static Pose2d RED_BOTTOM      = new Pose2d( Units.feetToMeters(32), Units.feetToMeters(8),  new Rotation2d(Math.PI/4) );
+    //public static Pose2d RED_TOP        = new Pose2d( Units.feetToMeters(27.2), Units.feetToMeters(21.35),  new Rotation2d(0.05+Math.PI) );
+    //public static Pose2d RED_MID_TOP    = new Pose2d( Units.feetToMeters(32.13), Units.feetToMeters(19.48), new Rotation2d(-0.75+Math.PI) );
+    //public static Pose2d RED_MID_BOTTOM = new Pose2d( Units.feetToMeters(34.82), Units.feetToMeters(13.28), new Rotation2d(3*Math.PI/2+0.05+Math.PI) );
+    //public static Pose2d RED_BOTTOM     = new Pose2d( Units.feetToMeters(32.99), Units.feetToMeters(8.52),  new Rotation2d(Math.PI+0.75+Math.PI) );
+
+    public static Pose2d BLUE_DEF_BOTTOM= 
+        new Pose2d( Units.feetToMeters(25.4), Units.feetToMeters(9.45), new Rotation2d(Math.PI - 0.35));
+    public static Pose2d BLUE_DEF_TOP   = 
+        new Pose2d( Units.feetToMeters(22.9), Units.feetToMeters(15),   new Rotation2d(Math.toRadians(160)));
+    //public static Pose2d RED_DEF_TOP    = new Pose2d( Units.feetToMeters(28.6), Units.feetToMeters(17.55),new Rotation2d(-0.35));
+    //public static Pose2d RED_DEF_BOTTOM = new Pose2d( Units.feetToMeters(31.1), Units.feetToMeters(12),   new Rotation2d(3*Math.PI/2-0.35));
   }
 
 }

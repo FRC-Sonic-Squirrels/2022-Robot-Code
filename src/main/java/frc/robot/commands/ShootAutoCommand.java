@@ -9,24 +9,20 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class ShootAutoCommand extends CommandBase {
   /** Creates a new ShootOneCargoCommand. */
   private CargoSubsystem m_cargoSubsystem;
   private ShooterSubsystem m_shooterSubsystem;
-  private IntakeSubsystem m_intakeSubsystem;
   private Drivetrain m_drivetrain;
 
-  public ShootAutoCommand(CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, Drivetrain drivetrain) {
+  public ShootAutoCommand(CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, Drivetrain drivetrain) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
-    m_intakeSubsystem = intakeSubsystem;
     m_drivetrain = drivetrain;
 
-    //TODO: is drivetrain required in "add requirements"?
     addRequirements(cargoSubsystem, shooterSubsystem);
   }
 
@@ -59,14 +55,8 @@ public class ShootAutoCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getIdleRPM());
-
-    if (m_intakeSubsystem.isDeployed()) {
-      m_cargoSubsystem.setIntakeMode();
-    }
-    else {
-      m_cargoSubsystem.setStopMode();
-    }
+    m_shooterSubsystem.setFlywheelRPM(0);
+    m_cargoSubsystem.setStopMode();
   }
 
   // Returns true when the command should end.
