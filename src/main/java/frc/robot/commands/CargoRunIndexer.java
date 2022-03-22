@@ -4,24 +4,24 @@
 
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
+import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.CargoSubsystem;
 
-public class ElevatorZeroHeight extends CommandBase {
-  private ElevatorSubsystem m_elevator;
-
-  /** Creates a new ElevatorZeroHeight. */
-  public ElevatorZeroHeight(ElevatorSubsystem elevator) {
-    m_elevator = elevator;
-    addRequirements(elevator);
+public class CargoRunIndexer extends CommandBase {
+  /** Creates a new CargoRunIndexer. */
+  CargoSubsystem m_cargo;
+  public CargoRunIndexer(CargoSubsystem cargoSubsystem) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    m_cargo = cargoSubsystem;
+    addRequirements(cargoSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-   // TODO:Test if we need higher values for percent  
-    m_elevator.setWinchPercentOutput(0.2);
-    m_elevator.brakeOff();
+    m_cargo.setIntakeMode();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -31,13 +31,12 @@ public class ElevatorZeroHeight extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_elevator.stop();
-    m_elevator.brakeOn();
+    m_cargo.setStopMode();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_elevator.atLowerLimit();
+    return false;
   }
 }

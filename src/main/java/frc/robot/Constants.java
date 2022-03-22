@@ -135,7 +135,7 @@ public final class Constants {
 
   public static class DriveFieldCentricConstant {
     public static final double TRANSLATION_MULTIPLIER = 0.825; 
-    public static final double ROTATION_MULTIPLIER = 0.5; 
+    public static final double ROTATION_MULTIPLIER = 0.6; 
   }
 
   public static final class AutoConstants {
@@ -185,6 +185,7 @@ public final class Constants {
     //TODO: find the actual activated and idle values
     public static final double m_activated = 2000;
     public static final double m_idle = 500;
+    public static final int BUMPER_SHOT_RPM = 3000;
   }
   // according to game manual field is 27 ft. (~823 cm) by 54 ft. (~1646 cm)
   public static class HubCentricConstants{
@@ -282,20 +283,26 @@ public final class Constants {
     public static Pose2d ORIGIN          = new Pose2d(0.0, 0.0, new Rotation2d(0));
     
     // TODO: make new starting poses right against the hub
-    public static Pose2d BLUE_BOTTOM    = new Pose2d( Units.feetToMeters(26.8), Units.feetToMeters(5.64),   new Rotation2d(0.05) );
-    public static Pose2d BLUE_MID_BOTTOM= new Pose2d( Units.feetToMeters(21.87), Units.feetToMeters(7.52),  new Rotation2d(-0.75) );
-    public static Pose2d BLUE_MID_TOP   = new Pose2d( Units.feetToMeters(19.18), Units.feetToMeters(13.72), new Rotation2d(3*Math.PI/2+0.05) );
-    public static Pose2d BLUE_TOP       = new Pose2d( Units.feetToMeters(21.01), Units.feetToMeters(18.48), new Rotation2d(Math.PI+0.75) );
+    public static Pose2d BLUE_BOTTOM    = 
+        new Pose2d( Units.feetToMeters(26.8), Units.feetToMeters(5.64),   new Rotation2d(0.05 + 3*Math.PI/2) );
+    public static Pose2d BLUE_MID_BOTTOM= 
+        new Pose2d( Units.feetToMeters(21.87), Units.feetToMeters(7.52),  new Rotation2d(-0.75 + 3*Math.PI/2) );
+    public static Pose2d BLUE_MID_TOP   = 
+        new Pose2d( Units.feetToMeters(19.18), Units.feetToMeters(13.72), new Rotation2d(0.05 + Math.PI) );
+    public static Pose2d BLUE_TOP       = 
+        new Pose2d( Units.feetToMeters(21.01), Units.feetToMeters(18.48), new Rotation2d(0.75 + Math.PI/2) );
 
-    public static Pose2d RED_TOP        = new Pose2d( Units.feetToMeters(27.2), Units.feetToMeters(21.35),  new Rotation2d(0.05+Math.PI) );
-    public static Pose2d RED_MID_TOP    = new Pose2d( Units.feetToMeters(32.13), Units.feetToMeters(19.48), new Rotation2d(-0.75+Math.PI) );
-    public static Pose2d RED_MID_BOTTOM = new Pose2d( Units.feetToMeters(34.82), Units.feetToMeters(13.28), new Rotation2d(3*Math.PI/2+0.05+Math.PI) );
-    public static Pose2d RED_BOTTOM     = new Pose2d( Units.feetToMeters(32.99), Units.feetToMeters(8.52),  new Rotation2d(Math.PI+0.75+Math.PI) );
+    //public static Pose2d RED_TOP        = new Pose2d( Units.feetToMeters(27.2), Units.feetToMeters(21.35),  new Rotation2d(0.05+Math.PI) );
+    //public static Pose2d RED_MID_TOP    = new Pose2d( Units.feetToMeters(32.13), Units.feetToMeters(19.48), new Rotation2d(-0.75+Math.PI) );
+    //public static Pose2d RED_MID_BOTTOM = new Pose2d( Units.feetToMeters(34.82), Units.feetToMeters(13.28), new Rotation2d(3*Math.PI/2+0.05+Math.PI) );
+    //public static Pose2d RED_BOTTOM     = new Pose2d( Units.feetToMeters(32.99), Units.feetToMeters(8.52),  new Rotation2d(Math.PI+0.75+Math.PI) );
 
-    public static Pose2d BLUE_DEF_BOTTOM= new Pose2d( Units.feetToMeters(25.4), Units.feetToMeters(9.45), new Rotation2d(Math.PI-0.35));
-    public static Pose2d BLUE_DEF_TOP   = new Pose2d( Units.feetToMeters(22.9), Units.feetToMeters(15),   new Rotation2d(Math.PI-0.35));
-    public static Pose2d RED_DEF_TOP    = new Pose2d( Units.feetToMeters(28.6), Units.feetToMeters(17.55),new Rotation2d(-0.35));
-    public static Pose2d RED_DEF_BOTTOM = new Pose2d( Units.feetToMeters(31.1), Units.feetToMeters(12),   new Rotation2d(3*Math.PI/2-0.35));
+    public static Pose2d BLUE_DEF_BOTTOM= 
+        new Pose2d( Units.feetToMeters(25.4), Units.feetToMeters(9.45), new Rotation2d(Math.PI - 0.35));
+    public static Pose2d BLUE_DEF_TOP   = 
+        new Pose2d( Units.feetToMeters(22.9), Units.feetToMeters(15),   new Rotation2d(Math.toRadians(160)));
+    //public static Pose2d RED_DEF_TOP    = new Pose2d( Units.feetToMeters(28.6), Units.feetToMeters(17.55),new Rotation2d(-0.35));
+    //public static Pose2d RED_DEF_BOTTOM = new Pose2d( Units.feetToMeters(31.1), Units.feetToMeters(12),   new Rotation2d(3*Math.PI/2-0.35));
   }
 
 }
