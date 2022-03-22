@@ -4,11 +4,13 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class ShootAutoCommand extends CommandBase {
@@ -16,12 +18,14 @@ public class ShootAutoCommand extends CommandBase {
   private CargoSubsystem m_cargoSubsystem;
   private ShooterSubsystem m_shooterSubsystem;
   private Drivetrain m_drivetrain;
+  private LimelightSubsystem m_limelight;
 
-  public ShootAutoCommand(CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, Drivetrain drivetrain) {
+  public ShootAutoCommand(CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, Drivetrain drivetrain, LimelightSubsystem limelight) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
     m_drivetrain = drivetrain;
+    m_limelight = limelight;
 
     addRequirements(cargoSubsystem, shooterSubsystem);
   }
@@ -31,12 +35,8 @@ public class ShootAutoCommand extends CommandBase {
   // This command will only be called in autonomous mode, where the ball is already moved to the upper belts.
   @Override
   public void initialize() {
-
     //TODO: change to limelight calculated distance, rather than odometry
-    m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getRPMforDistanceFeet(
-      Math.sqrt(
-        Math.pow(Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX() - m_drivetrain.getPose().getX(), 2) + 
-        Math.pow(Constants.HubCentricConstants.HUB_CENTER_POSE2D.getY() - m_drivetrain.getPose().getY(), 2))));
+    m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getRPMforDistanceFeet(m_limelight.getKalmanHubDistanceFeet()));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -47,7 +47,7 @@ public class ShootAutoCommand extends CommandBase {
     // once upper ball has been released, go back to intake mode
 
     if (m_shooterSubsystem.isAtDesiredRPM()) {
-        m_cargoSubsystem.setUpperOnlyMode();
+        m_cargoSubsystem.setShootMode();
     }
 
   }
@@ -62,10 +62,10 @@ public class ShootAutoCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-      if (! m_cargoSubsystem.cargoInUpperBelts()) {
-        new WaitCommand(0.5);
-        return true;
-      }
+      // if (! m_cargoSubsystem.cargoInUpperBelts()) {
+      //   new WaitCommand(0.5);
+      //   return true;
+      // }
       return false;
   }
 }

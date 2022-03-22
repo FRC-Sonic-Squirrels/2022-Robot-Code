@@ -30,6 +30,7 @@ import frc.robot.commands.ShootWithSetRPMCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.LimelightRotateToHubAndShoot;
+import frc.robot.commands.ShootAutoCommand;
 import frc.robot.commands.ShootCargoCommand;
 import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
@@ -230,6 +231,9 @@ public class RobotContainer {
       .whileHeld(new CargoRunIndexer(m_cargo));
      
      
+
+    new Button(m_operatorController::getLeftBumper)
+      .whileActiveOnce(new ShootAutoCommand(m_cargo, m_shooter, drivetrain, m_limelight));
 
     // new Button(m_operatorController::getLeftStickButtonPressed)
     //   .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
