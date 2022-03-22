@@ -89,6 +89,7 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Mode", chooser);
 
     // add the new auton trajectories to the auton trajectory chooser
+
     SwerveTrajectoryAutonomousCommandFactory auton =
         new SwerveTrajectoryAutonomousCommandFactory(drivetrain, m_shooter, m_cargo, m_intake,
             m_robot, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
@@ -210,6 +211,7 @@ public class RobotContainer {
 
     // middle shot to High Hub
     new Button(m_operatorController::getXButton)
+
        .whileActiveOnce(new ShootWithSetRPMCommand(3200, m_cargo, m_shooter, m_robot), true);
  
     // Farthest shot to High Hub
@@ -218,6 +220,7 @@ public class RobotContainer {
 
     // Bumper Shot to High Hub right against the lower hub
     new Button(m_operatorController::getRightBumper)
+
      .whileActiveOnce(new ShootWithSetRPMCommand(m_bumperRpm, m_cargo, m_shooter, m_robot), true);
 
     new Button(m_operatorController::getBackButton)
@@ -228,7 +231,6 @@ public class RobotContainer {
 
     new Button(() ->  (m_operatorController.getLeftTriggerAxis() > 0.05))
       .whileHeld(new CargoRunIndexer(m_cargo));
-     
      
 
     // new Button(m_operatorController::getLeftStickButtonPressed)
@@ -275,6 +277,7 @@ public class RobotContainer {
     } 
     return false;
   }
+
 
 }
 

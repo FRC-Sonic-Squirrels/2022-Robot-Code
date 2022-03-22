@@ -132,6 +132,7 @@ public class CargoSubsystem extends SubsystemBase {
       setUpperBeltPercentOutput(m_upperOutput);
       setLowerBeltPercentOutput(m_lowerOutput);
     } else if (mode == Mode.SHOOT) {
+
       if (!cargoInUpperBelts()) {
         setUpperBeltPercentOutput(0.9);
         setLowerBeltPercentOutput(0.6);

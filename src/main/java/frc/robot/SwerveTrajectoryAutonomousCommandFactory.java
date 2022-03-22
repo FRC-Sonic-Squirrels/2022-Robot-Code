@@ -50,6 +50,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
   private static int m_shootRPM = 3000;
 
+
   public SwerveTrajectoryAutonomousCommandFactory(Drivetrain drivetrain, ShooterSubsystem shooter,
       CargoSubsystem cargo, IntakeSubsystem intake, Robot robot, double maxVelocity, double maxAcceleration) {
 
@@ -89,7 +90,6 @@ public class SwerveTrajectoryAutonomousCommandFactory {
           .withTimeout(6)
     );
   }
-
 
 
   /**
@@ -592,6 +592,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       oppCargo4 = FieldConstants.RED_CARGO_4;
       pushPos1 = new Translation2d(21.5, 23.5);
       pushPos2 = new Translation2d(15, 24.5);
+
     // }
     // else if (team.equalsIgnoreCase("red")) {
     //   startPos = StartPoseConstants.RED_DEF_BOTTOM;
@@ -600,6 +601,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     //   pushPos1 = new Translation2d(32.5, 3.5);
     //   pushPos2 = new Translation2d(39, 2.5);
     // }
+
     // else {
     //   // is this the correct argument exception?
     //   throw new IllegalArgumentException("String parameter was neither \"red\" nor \"blue\".");
@@ -688,6 +690,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     //   throw new IllegalArgumentException("argument was neither \"red\" nor \"blue\"");
     // }
 
+
     m_drivetrain.setPose(startPos_and_shootPos, m_drivetrain.getIMURotation());
 
     Trajectory start_to_cargo1 = TrajectoryGenerator.generateTrajectory(startPos_and_shootPos, List.of(),
@@ -746,6 +749,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
       // 6. idle flywheel
       //new InstantCommand(() -> m_shooter.setFlywheelRPM(ShooterConstants.m_idle))
+
     );
   }
 
@@ -784,6 +788,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
       // 4. retract intake
       new InstantCommand(() -> m_intake.retractIntake())
+
     );
   }
 
