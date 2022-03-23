@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import com.team2930.lib.Limelight;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
@@ -16,12 +17,14 @@ public class ShootAutoCommand extends CommandBase {
   private CargoSubsystem m_cargoSubsystem;
   private ShooterSubsystem m_shooterSubsystem;
   private Drivetrain m_drivetrain;
+  private Limelight m_limelight;
 
-  public ShootAutoCommand(CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, Drivetrain drivetrain) {
+  public ShootAutoCommand(CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, Drivetrain drivetrain, Limelight limelight) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
     m_drivetrain = drivetrain;
+    m_limelight = limelight;
 
     addRequirements(cargoSubsystem, shooterSubsystem);
   }
@@ -31,12 +34,11 @@ public class ShootAutoCommand extends CommandBase {
   // This command will only be called in autonomous mode, where the ball is already moved to the upper belts.
   @Override
   public void initialize() {
-
-    //TODO: change to limelight calculated distance, rather than odometry
-    m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getRPMforDistanceFeet(
-      Math.sqrt(
-        Math.pow(Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX() - m_drivetrain.getPose().getX(), 2) + 
-        Math.pow(Constants.HubCentricConstants.HUB_CENTER_POSE2D.getY() - m_drivetrain.getPose().getY(), 2))));
+    // m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getRPMforDistanceFeet(
+    //   Math.sqrt(
+    //     Math.pow(Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX() - m_drivetrain.getPose().getX(), 2) + 
+    //     Math.pow(Constants.HubCentricConstants.HUB_CENTER_POSE2D.getY() - m_drivetrain.getPose().getY(), 2))));
+    m_shooterSubsystem.setFlywheelRPM(m_shooterSubsystem.getRPMforDistanceFeet(m_limelight.);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
