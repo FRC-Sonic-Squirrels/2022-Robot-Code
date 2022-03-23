@@ -37,6 +37,7 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
@@ -58,6 +59,7 @@ public class RobotContainer {
   public ArmSubsystem m_arm;
   public final Drivetrain drivetrain;
   public final IntakeSubsystem m_intake;
+  public final HoodSubsystem m_hood;
   //public LimelightSubsystem m_limelight;
 
   // Controllers
@@ -84,6 +86,7 @@ public class RobotContainer {
     drivetrain = new Drivetrain();
     m_elevator = new ElevatorSubsystem();
     m_arm = new ArmSubsystem();
+    m_hood = new HoodSubsystem();
     //m_limelight = new LimelightSubsystem(drivetrain);
     
     SmartDashboard.putData("Auto Mode", chooser);
