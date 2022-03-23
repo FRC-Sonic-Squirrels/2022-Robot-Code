@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.util.List;
+import com.team2930.lib.util.SwerveTestTrajectories;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -46,7 +47,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   private static CargoSubsystem m_cargo;
   private static IntakeSubsystem m_intake;
   private static Robot m_robot;
-  private static TestTrajectories m_tt;
+  private static SwerveTestTrajectories m_tt;
 
   private static int m_shootRPM = 3000;
 
@@ -58,7 +59,9 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     m_cargo = cargo;
     m_intake = intake;
     m_robot = robot;
-    m_tt = new TestTrajectories(maxVelocity, maxAcceleration, m_drivetrain, true);
+
+    m_tt = new SwerveTestTrajectories(maxVelocity, maxAcceleration,
+        Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, drivetrain.kinematics());
   }
 
   /**
@@ -199,7 +202,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   }  
 
   // command that lets the robot intake 1 cargo without shooting it (parameters have already been converted to meters)
-  public Command intakeCargoCommand(TestTrajectories testTrajectories, Translation2d targetPos, Pose2d midPos) {
+  public Command intakeCargoCommand(SwerveTestTrajectories testTrajectories, Translation2d targetPos, Pose2d midPos) {
     
     // precondition: the robot must have at least one free belt
     if (m_cargo.cargoInLowerBelts() && m_cargo.cargoInUpperBelts()) {

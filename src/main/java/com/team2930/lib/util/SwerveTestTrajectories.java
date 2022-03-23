@@ -2,63 +2,60 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot;
+package com.team2930.lib.util;
 
 import java.util.List;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.constraint.SwerveDriveKinematicsConstraint;
-import frc.robot.subsystems.Drivetrain;
-
-// TODO: change this class to not require drivetrain subsystem, then it will be more generic
 
 /**
  * This class is for generating trajectories. It includes several trajectories for calibrating
  * trajectory following.
  */
-public class TestTrajectories {
+public class SwerveTestTrajectories {
 
   private boolean isSwerve = true;
 
   // These are very tame velocity and acceleration values. Relatively safe for testing.
   private double maxVelocity = 1.0;
   private double maxAcceleration = 0.75;
-
-  private Drivetrain drivetrain = null;
+  private SwerveDriveKinematics swerveKinematics = null;
+  private double maxCornerVelocity = 1.0;
 
   /**
    * Constructor for Test Trajectory factory.
    * 
-   * @param maxVelocity
-   * @param maxAcceleration
-   * @param drivetrain
-   * @param isSwerve
+   * @param maxVelocity - maximum velocity to limit trajectories to
+   * @param maxAcceleration - maximum acceleration to limit trajectories to
+   * @param maxCornerVelocity - max velocity of a single swerve module
+   * @param swerveKinematics - kinematics for the swerve drive
    */
-  public TestTrajectories(double maxVelocity, double maxAcceleration,
-      Drivetrain drivetrain, boolean isSwerve) {
+  public SwerveTestTrajectories(double maxVelocity, double maxAcceleration,
+      double maxCornerVelocity, SwerveDriveKinematics swerveKinematics) {
     this.maxVelocity = maxVelocity;
     this.maxAcceleration = maxAcceleration;
-    this.drivetrain = drivetrain;
-    this.isSwerve = isSwerve;
+    this.swerveKinematics = swerveKinematics;
+    this.maxCornerVelocity = maxCornerVelocity;
   }
 
   public TrajectoryConfig getTrajectoryConfig() {
     TrajectoryConfig config = new TrajectoryConfig(maxVelocity, maxAcceleration)
         // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(drivetrain.kinematics());
+        .setKinematics(swerveKinematics);
 
-    if (isSwerve) {
-      // Limits the velocity of the robot around turns such that no wheel of a swerve-drive robot
-      // goes over a specified maximum velocity.
-      SwerveDriveKinematicsConstraint swerveConstraint = new SwerveDriveKinematicsConstraint(
-          drivetrain.kinematics(), Drivetrain.MAX_VELOCITY_METERS_PER_SECOND);
-      config.addConstraint(swerveConstraint);
-    }
+    // Limits the velocity of the robot around turns such that no wheel of a swerve-drive robot
+    // goes over a specified maximum velocity.
+    SwerveDriveKinematicsConstraint swerveConstraint =
+        new SwerveDriveKinematicsConstraint(swerveKinematics, maxCornerVelocity);
+    config.addConstraint(swerveConstraint);
+
     return config;
   }
 
@@ -74,8 +71,7 @@ public class TestTrajectories {
 
     // setReversed(true) if we are traveling backwards
 
-    return TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0.0, 0.0, new Rotation2d(0)),
+    return TrajectoryGenerator.generateTrajectory(new Pose2d(0.0, 0.0, new Rotation2d(0)),
         List.of(), new Pose2d(distanceInMeters, 0.0, new Rotation2d(0)),
         getTrajectoryConfig().setReversed(distanceInMeters < 0.0));
 
@@ -93,17 +89,14 @@ public class TestTrajectories {
    */
   public Trajectory strafeSideways(double distanceInMeters) {
 
-    if( isSwerve ) {
+    if (isSwerve) {
       return TrajectoryGenerator.generateTrajectory(new Pose2d(0.0, 0.0, new Rotation2d(0)),
-          List.of(), new Pose2d(0.0, distanceInMeters, new Rotation2d(0)),
-          getTrajectoryConfig());
-    }
-    else {
+          List.of(), new Pose2d(0.0, distanceInMeters, new Rotation2d(0)), getTrajectoryConfig());
+    } else {
       // instead we return a do nothing trajectory (0,0) -> (0,0)
       System.out.println("WARNING: non holonomic drive can't drive sideways!");
       return TrajectoryGenerator.generateTrajectory(new Pose2d(0.0, 0.0, new Rotation2d(0)),
-      List.of(), new Pose2d(0.0, 0.0, new Rotation2d(0)),
-      getTrajectoryConfig());
+          List.of(), new Pose2d(0.0, 0.0, new Rotation2d(0)), getTrajectoryConfig());
     }
 
   }
@@ -134,62 +127,53 @@ public class TestTrajectories {
 
 
   /**
-   * easily create a trajectory between two positions, makes auton commands easier to read. 
-   * YOU STILL HAVE TO TRANSFORM THE TRAJECTORY TO MAKE IT FIELD CENTRIC! 
+   * easily create a trajectory between two positions, makes auton commands easier to read. YOU
+   * STILL HAVE TO TRANSFORM THE TRAJECTORY TO MAKE IT FIELD CENTRIC!
    * 
    * @param currentPos
    * @param targetPos
-   * @return trajectory between two poses 
+   * @return trajectory between two poses
    */
-  public Trajectory driveToPose(Pose2d currentPos, Pose2d targetPos){
+  public Trajectory driveToPose(Pose2d currentPos, Pose2d targetPos) {
     var translation = new Transform2d(currentPos, targetPos);
 
-    return TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0.0, 0.0, new Rotation2d()), 
-      List.of(),
-      new Pose2d(translation.getTranslation(), targetPos.getRotation()),
-      getTrajectoryConfig());
+    return TrajectoryGenerator.generateTrajectory(new Pose2d(0.0, 0.0, new Rotation2d()), List.of(),
+        new Pose2d(translation.getTranslation(), targetPos.getRotation()), getTrajectoryConfig());
   }
 
   /**
-   * easily create a trajectory between two translations, makes auton commands easier to read. 
-   * YOU STILL HAVE TO TRANSFORM THE TRAJECTORY TO MAKE IT FIELD CENTRIC! 
+   * easily create a trajectory between two translations, makes auton commands easier to read. YOU
+   * STILL HAVE TO TRANSFORM THE TRAJECTORY TO MAKE IT FIELD CENTRIC!
    * 
    * @param currentPos
    * @param targetPos
    * @return trajectory between two translations
    */
-  public Trajectory driveToPose(Translation2d currentPos, Translation2d targetPos){
+  public Trajectory driveToPose(Translation2d currentPos, Translation2d targetPos) {
     Pose2d pos1 = new Pose2d(currentPos, new Rotation2d());
     Pose2d pos2 = new Pose2d(targetPos, new Rotation2d());
 
     var translation = new Transform2d(pos1, pos2);
 
-    return TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0.0, 0.0, new Rotation2d()), 
-      List.of(),
-      new Pose2d(translation.getTranslation(), new Rotation2d()),
-      getTrajectoryConfig());
+    return TrajectoryGenerator.generateTrajectory(new Pose2d(0.0, 0.0, new Rotation2d()), List.of(),
+        new Pose2d(translation.getTranslation(), new Rotation2d()), getTrajectoryConfig());
   }
 
   /**
-   * easily create a trajectory from a translation to a pose, makes auton commands easier to read. 
-   * YOU STILL HAVE TO TRANSFORM THE TRAJECTORY TO MAKE IT FIELD CENTRIC! 
+   * easily create a trajectory from a translation to a pose, makes auton commands easier to read.
+   * YOU STILL HAVE TO TRANSFORM THE TRAJECTORY TO MAKE IT FIELD CENTRIC!
    * 
    * @param currentPos
    * @param targetPos
    * @return trajectory from a translation to a pose
    */
-  public Trajectory driveToPose(Translation2d currentPos, Pose2d targetPos){
+  public Trajectory driveToPose(Translation2d currentPos, Pose2d targetPos) {
     Pose2d pos1 = new Pose2d(currentPos, new Rotation2d());
 
     var translation = new Transform2d(pos1, targetPos);
 
-    return TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0.0, 0.0, new Rotation2d()), 
-      List.of(),
-      new Pose2d(translation.getTranslation(), targetPos.getRotation()),
-      getTrajectoryConfig());
+    return TrajectoryGenerator.generateTrajectory(new Pose2d(0.0, 0.0, new Rotation2d()), List.of(),
+        new Pose2d(translation.getTranslation(), targetPos.getRotation()), getTrajectoryConfig());
   }
 
 
@@ -210,55 +194,46 @@ public class TestTrajectories {
         new Pose2d(0.0, 0.0, new Rotation2d(0)), getTrajectoryConfig());
   }
 
+  //
   // These three triangle trajectories were just practice and are not used in the robot
+  //
+  // TODO: test the below trajectories
+  //
   public Trajectory isoscelesTriangle(double movement) {
 
     return TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)),
-      List.of(new Translation2d(movement, 0),
-              new Translation2d(-movement/2, movement),
-              new Translation2d(-movement/2, -movement)),
-      new Pose2d(0, 0, new Rotation2d(0)), getTrajectoryConfig());
+        List.of(new Translation2d(movement, 0), new Translation2d(-movement / 2, movement),
+            new Translation2d(-movement / 2, -movement)),
+        new Pose2d(0, 0, new Rotation2d(0)), getTrajectoryConfig());
   }
 
   public Trajectory rightTriangle(double movement) {
 
     return TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)),
-      List.of(new Translation2d(movement, 0),
-              new Translation2d(0, movement),
-              new Translation2d(-movement, -movement)),
-      new Pose2d(0, 0, new Rotation2d(0)), getTrajectoryConfig());
+        List.of(new Translation2d(movement, 0), new Translation2d(0, movement),
+            new Translation2d(-movement, -movement)),
+        new Pose2d(0, 0, new Rotation2d(0)), getTrajectoryConfig());
   }
 
   public Trajectory equilateralTriangle(double movement) {
 
     return TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)),
-      List.of(new Translation2d(movement, 0),
-              new Translation2d(-movement/2, Math.sin(Math.PI/3)*movement),
-              new Translation2d(-movement/2, -Math.sin(Math.PI/3)*movement)),
-      new Pose2d(0, 0, new Rotation2d()), getTrajectoryConfig());
+        List.of(new Translation2d(movement, 0),
+            new Translation2d(-movement / 2, Math.sin(Math.PI / 3) * movement),
+            new Translation2d(-movement / 2, -Math.sin(Math.PI / 3) * movement)),
+        new Pose2d(0, 0, new Rotation2d()), getTrajectoryConfig());
   }
 
   public Trajectory straightUp(double distance) {
-    return TrajectoryGenerator.generateTrajectory(
-    new Pose2d(0.0, 0.0, new Rotation2d(0)),
-    List.of(),
-    new Pose2d(distance, 0.0, new Rotation2d(0)), 
-    getTrajectoryConfig());
-  } //testing
+    return TrajectoryGenerator.generateTrajectory(new Pose2d(0.0, 0.0, new Rotation2d(0)),
+        List.of(), new Pose2d(distance, 0.0, new Rotation2d(0)), getTrajectoryConfig());
+  }
 
   public Trajectory drawSquare(double length) {
     return TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)),
-    List.of(new Translation2d(length, 0),
-        new Translation2d(0, length),
-        new Translation2d(-length, 0)),
-    new Pose2d(0, 0, new Rotation2d(0)), 
-    getTrajectoryConfig());
-  } //testing
-  
-  public Trajectory test(Pose2d start, Pose2d end, Translation2d[] trajectories){
-
-  
-
-    return null;
+        List.of(new Translation2d(length, 0), new Translation2d(0, length),
+            new Translation2d(-length, 0)),
+        new Pose2d(0, 0, new Rotation2d(0)), getTrajectoryConfig());
   }
+
 }

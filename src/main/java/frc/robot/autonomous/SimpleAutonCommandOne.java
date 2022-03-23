@@ -4,6 +4,7 @@
 
 package frc.robot.autonomous;
 
+import com.team2930.lib.util.SwerveTestTrajectories;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -11,6 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
@@ -22,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 // simply moving out of the tarmac
 public class SimpleAutonCommandOne {
 
-  private TestTrajectories m_tt;
+  private SwerveTestTrajectories m_tt;
   private Drivetrain drivetrain = null;
   private CargoSubsystem cargo = null;
   private ShooterSubsystem shoot = null;
@@ -36,7 +38,8 @@ public class SimpleAutonCommandOne {
         this.intake = intake;
         this.shoot = shoot;
 
-    m_tt = new TestTrajectories(maxV, maxA, drive, isSwerve);
+        m_tt = new SwerveTestTrajectories(maxV, maxA, Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+            drivetrain.kinematics());
 
   }
 
