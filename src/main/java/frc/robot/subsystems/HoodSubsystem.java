@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.math.controller.PIDController;
@@ -33,12 +34,13 @@ public class HoodSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     m_currentAngle = ticksToDegrees(m_encoder.getIntegratedSensorAbsolutePosition());
 
-    if(Math.abs(m_currentAngle - m_desiredAngle)<=2.5){
+    if(Math.abs(m_currentAngle - m_desiredAngle)<=0.25){
       m_atDesiredAngle = true;
     }
     else{
       m_atDesiredAngle = false;
-      //if(m_pidController.getSetpoint();
+      double controllerOutput = m_pidController.calculate(m_currentAngle, m_desiredAngle);
+      m_hood.set(ControlMode.PercentOutput, controllerOutput);
     }
 
     
@@ -65,6 +67,8 @@ public class HoodSubsystem extends SubsystemBase {
     return 0.0;
   }
 
-
+  public double angleToEncoder(double angle){
+    return angle*m_ticksPerDegree;
+  }
 
 }
