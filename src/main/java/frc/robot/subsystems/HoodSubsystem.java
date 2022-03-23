@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.team2930.lib.util.linearInterpolator;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -25,10 +26,19 @@ public class HoodSubsystem extends SubsystemBase {
   private double m_desiredAngle;
   private boolean m_atDesiredAngle;
 
-
+  private linearInterpolator hoodInterpolator;
+  private double distancesInchesWithHoodAngleDegrees[][] = {
+    {52, 15},
+  };
   
-  public HoodSubsystem() {}
+  
+  public HoodSubsystem() {
+    // Build the linear Interpolator
+    hoodInterpolator = new linearInterpolator(distancesInchesWithHoodAngleDegrees);
+  }
+
 //set point
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -63,8 +73,8 @@ public class HoodSubsystem extends SubsystemBase {
     return ticks/m_ticksPerDegree;
   }
 
-  public double getAngleForDistance(double distance){
-    return 0.0;
+  public double getAngleForDistance(double distanceFeet){
+    return hoodInterpolator.getInterpolatedValue(distanceFeet * 12.0);
   }
 
   public double angleToEncoder(double angle){
