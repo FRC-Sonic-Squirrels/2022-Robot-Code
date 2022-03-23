@@ -12,6 +12,7 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -22,6 +23,7 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   private CargoSubsystem m_cargoSubsystem;
   private ShooterSubsystem m_shooterSubsystem;
   private IntakeSubsystem m_intakeSubsystem;
+  private HoodSubsystem m_hoodSubsystem;
   private Robot m_robot;
   private PIDController rotateController = new PIDController(3.0, 0.0, 0.02);
   private double m_targetYaw;
@@ -37,13 +39,14 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
 
   private boolean setDistance = true;
   /** Creates a new VisionTurnToHub. */
-  public LimelightRotateToHubAndShoot(LimelightSubsystem limelight, Drivetrain drivetrain, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, Robot robot) {
+  public LimelightRotateToHubAndShoot(LimelightSubsystem limelight, Drivetrain drivetrain, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, HoodSubsystem hoodSubsystem, Robot robot) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_limelight = limelight;
     m_drivetrain = drivetrain;
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
     m_intakeSubsystem = intakeSubsystem;
+    m_hoodSubsystem = hoodSubsystem;
     m_robot = robot;
     m_time = 0;
   }
@@ -73,6 +76,7 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
         if(setDistance){
           target_distance_meters = m_limelight.getDistanceMeters();
           target_rpm = m_shooterSubsystem.getRPMforDistanceFeet(Units.metersToFeet(target_distance_meters));
+          m_targetAngle = m_hoodSubsystem.getAngleForDistance(Units.metersToFeet(target_distance_meters));
           setDistance = false;
         }
         if(Math.abs(m_limelight.getDistanceMeters()-target_distance_meters) > 0.5){
@@ -80,8 +84,9 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
         }
         SmartDashboard.putNumber("SHOOTING RPM", target_rpm); 
         m_shooterSubsystem.setFlywheelRPM(target_rpm);
+        m_hoodSubsystem.setDesiredAngle(m_targetAngle);
         m_intakeSubsystem.deployIntake();
-        if (m_shooterSubsystem.isAtDesiredRPM()) {
+        if (m_shooterSubsystem.isAtDesiredRPM() & m_hoodSubsystem.isAtAngle()) {
           shooting = true;
           m_cargoSubsystem.setBothMode();
           m_intakeSubsystem.deployIntake();
