@@ -66,8 +66,8 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   }
 
   public boolean isAtTargetAngle(){
-    return m_drivetrain.getPose().getRotation().getDegrees() + 2 >= m_targetAngle || 
-    m_drivetrain.getPose().getRotation().getDegrees() - 2 <= m_targetAngle;
+    return m_drivetrain.getRotation().getDegrees() + 2 >= m_targetAngle || 
+    m_drivetrain.getRotation().getDegrees() - 2 <= m_targetAngle;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -88,7 +88,7 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
       }
     }
     SmartDashboard.putBoolean("SHOOTING", shooting);
-
+    SmartDashboard.putBoolean("LL facing toward hub", isAtTargetAngle());
   }
 
   // Called once the command ends or is interrupted.
@@ -119,10 +119,6 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
     return false;
   }
 
-  public double getPoseDistanceToHub(){
-    return Math.sqrt(
-        Math.pow(Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX() - m_drivetrain.getPose().getX(), 2) + 
-        Math.pow(Constants.HubCentricConstants.HUB_CENTER_POSE2D.getY() - m_drivetrain.getPose().getY(), 2));
-  }
+  
 
 }
