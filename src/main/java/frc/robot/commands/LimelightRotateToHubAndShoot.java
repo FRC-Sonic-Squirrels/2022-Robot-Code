@@ -35,10 +35,10 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
 
   private boolean shooting = false;
 
+  private boolean setDistance = true;
   /** Creates a new VisionTurnToHub. */
-  public LimelightRotateToHubAndShoot(double flywheelRPM, LimelightSubsystem limelight, Drivetrain drivetrain, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, Robot robot) {
+  public LimelightRotateToHubAndShoot(LimelightSubsystem limelight, Drivetrain drivetrain, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, Robot robot) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_rpm = flywheelRPM;
     m_limelight = limelight;
     m_drivetrain = drivetrain;
     m_cargoSubsystem = cargoSubsystem;
@@ -51,18 +51,6 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
-    target_distance_meters = m_limelight.getDistanceMeters();
-    target_rpm = m_shooterSubsystem.getRPMforDistanceFeet(Units.metersToFeet(target_distance_meters)); 
-
-    if (target_distance_meters < 0.5){
-      target_rpm = m_rpm;
-    }
-
-    SmartDashboard.putNumber("SHOOTING RPM", target_rpm);
-
-    m_shooterSubsystem.setFlywheelRPM(target_rpm);
-    m_intakeSubsystem.deployIntake();
   }
 
   public boolean isAtTargetAngle(){
@@ -81,10 +69,23 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
               * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
       // slow down rotation for testing/safety
       m_rotationCorrection *= 0.3;
-      if (m_shooterSubsystem.isAtDesiredRPM() & isAtTargetAngle()) {
-        shooting = true;
-        m_cargoSubsystem.setBothMode();
+      if(isAtTargetAngle()){
+        if(setDistance){
+          target_distance_meters = m_limelight.getDistanceMeters();
+          target_rpm = m_shooterSubsystem.getRPMforDistanceFeet(Units.metersToFeet(target_distance_meters));
+          setDistance = false;
+        }
+        if(Math.abs(m_limelight.getDistanceMeters()-target_distance_meters) > 0.5){
+          setDistance = true;
+        }
+        SmartDashboard.putNumber("SHOOTING RPM", target_rpm); 
+        m_shooterSubsystem.setFlywheelRPM(target_rpm);
         m_intakeSubsystem.deployIntake();
+        if (m_shooterSubsystem.isAtDesiredRPM()) {
+          shooting = true;
+          m_cargoSubsystem.setBothMode();
+          m_intakeSubsystem.deployIntake();
+        }
       }
     }
     SmartDashboard.putBoolean("SHOOTING", shooting);
