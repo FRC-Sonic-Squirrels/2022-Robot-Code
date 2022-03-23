@@ -225,6 +225,13 @@ public class CargoSubsystem extends SubsystemBase {
     UpperBelts.set(ControlMode.PercentOutput, percent);
   }
 
+  public void setEjectOpponentCargo (boolean eject) {
+    ejectOpponentCargo = eject;
+  }
+  public boolean getEjectOpponentCargo (){
+    return ejectOpponentCargo;
+  }
+
   /**
    * enable Stop mode, conveyor motors are off
    */
