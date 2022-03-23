@@ -42,6 +42,7 @@ public class CargoSubsystem extends SubsystemBase {
   private DigitalInput upperSensor = new DigitalInput(digitalIOConstants.dio1_indexerSensor2);
   private Mode mode = Mode.STOP;
   private double m_idleTime = 0;
+  private boolean ejectOpponentCargo = true;
 
   // TODO: find the real percent outputs of the conveyor belts
   private double m_lowerOutput = 0.8;
@@ -104,22 +105,41 @@ public class CargoSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    // updateTestingValues();
-
     if (mode == Mode.STOP) {
       stopIndexer();
     } else if (mode == Mode.INTAKE) {
       if (cargoInUpperBelts()) {
         stopUpperBelts();
-        if (cargoInLowerBelts()) {
-          stopLowerBelts();
-        } else {
-          setLowerBeltPercentOutput(0.9);
-        }
-      } else {
-        setLowerBeltPercentOutput(0.9);
+      }
+      else {
         setUpperBeltPercentOutput(0.5);
       }
+
+      if (cargoInLowerBelts()) {
+        stopLowerBelts();
+      }
+      else {
+        // if color sensor, sees opponent color ball, stop
+        if (ejectOpponentCargo && colorSensorIntake.opponentCargoDetected()) {
+          stopLowerBelts();
+        }
+        else {
+          setLowerBeltPercentOutput(0.9);
+        }
+      }
+
+
+      // if (cargoInUpperBelts()) {
+      //   stopUpperBelts();
+      //   if (cargoInLowerBelts()) {
+      //     stopLowerBelts();
+      //   } else {
+      //     setLowerBeltPercentOutput(0.9);
+      //   }
+      // } else {
+      //   setLowerBeltPercentOutput(0.9);
+      //   setUpperBeltPercentOutput(0.5);
+      // }
 
     } else if (mode == Mode.LOWERONLY) {
       stopUpperBelts();
