@@ -4,19 +4,67 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class HoodSubsystem extends SubsystemBase {
   /** Creates a new HoodSubsystem. */
 
-  private WPI_TalonFX m_hood = new WPI_TalonFX(Constants.canId.CANID18_INTAKE);
+  private WPI_TalonFX m_hood = new WPI_TalonFX(Constants.CANIVOR_canId.CANID7_HOOD);
+  private TalonFXSensorCollection m_encoder;
+  private double m_gearRatio;
+  private double m_ticksPerDegree = 5.689;
+  //TODO: fix the parameter values
+  private PIDController m_pidController = new PIDController(0, 0, 0); 
+
+  private double m_currentAngle;
+  private double m_desiredAngle;
+  private boolean m_atDesiredAngle;
+
+
   
   public HoodSubsystem() {}
-
+//set point
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    m_currentAngle = ticksToDegrees(m_encoder.getIntegratedSensorAbsolutePosition());
+
+    if(Math.abs(m_currentAngle - m_desiredAngle)<=2.5){
+      m_atDesiredAngle = true;
+    }
+    else{
+      m_atDesiredAngle = false;
+      //if(m_pidController.getSetpoint();
+    }
+
+    
+
   }
+
+  public double getCurrentAngle(){
+    return m_currentAngle;
+  }
+
+  public void setDesiredAngle(double angle){
+    m_desiredAngle = angle;
+  }
+
+  public boolean isAtAngle(){
+    return m_atDesiredAngle;
+  }
+
+  public double ticksToDegrees(double ticks){
+    return ticks/m_ticksPerDegree;
+  }
+
+  public double getAngleForDistance(double distance){
+    return 0.0;
+  }
+
+
+
 }
