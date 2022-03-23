@@ -4,10 +4,15 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class HoodSubsystem extends SubsystemBase {
   /** Creates a new HoodSubsystem. */
+
+  private WPI_TalonFX m_hood = new WPI_TalonFX(Constants.canId.CANID18_INTAKE);
+  
   public HoodSubsystem() {}
 
   @Override
