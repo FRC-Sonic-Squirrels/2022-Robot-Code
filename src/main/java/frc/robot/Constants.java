@@ -54,7 +54,7 @@ public final class Constants {
     public static final int CANID14_BACK_LEFT_MODULE_STEER_MOTOR = 14;
     public static final int CANID24_BACK_LEFT_MODULE_STEER_ENCODER = 24;
 
-    public static final int CANID7 = 7;
+    
     public static final int CANID8 = 8;
     public static final int CANID18_INTAKE = 18;
     public static final int CANID19_ARM_LEAD_MOTOR = 19;
@@ -71,12 +71,13 @@ public final class Constants {
 
     public static final int CANID5_LOWER_BELTS = 5;
     public static final int CANID6_UPPER_BELTS = 6;
+    public static final int CANID7_HOOD = 7;
     public static final int CANID9_ELEVATOR_LEAD_TALON = 9;
     public static final int CANID10_ELEVATOR_FOLLOW_TALON = 10;
     public static final int CANID15_pigeon_imu = 15;
     public static final int CANID16_flywheel_lead = 16;
     public static final int CANID17_flywheel_follow = 17;
-
+    
   }
 
 
@@ -236,8 +237,8 @@ public final class Constants {
     public static final double LIMELIGHT_PITCH_DEGREES = 50;
     public static final double HIGH_HUB_RADIUS_INCHES = 26.6875;
 
-    //TODO: final distance between camera and the center of robot
     public static final Transform2d LIMELIGHT_TO_ROBOT = new Transform2d(new Translation2d(-7.5, 0), new Rotation2d(180));
+    //TODO: final distance between camera and the center of robot
   }
 
   public static class VisionPipelineIndex {
