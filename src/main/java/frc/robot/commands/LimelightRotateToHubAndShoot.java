@@ -57,8 +57,7 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   }
 
   public boolean isAtTargetAngle(){
-    return m_drivetrain.getRotation().getDegrees() + 2 >= m_targetAngle || 
-    m_drivetrain.getRotation().getDegrees() - 2 <= m_targetAngle;
+    return Math.abs(m_drivetrain.getRotation().getDegrees() - m_targetAngle) < 2;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -75,21 +74,20 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
       if(isAtTargetAngle()){
         if(setDistance){
           target_distance_meters = m_limelight.getDistanceMeters();
-          target_rpm = m_shooterSubsystem.getRPMforDistanceFeet(Units.metersToFeet(target_distance_meters));
-          m_targetAngle = m_hoodSubsystem.getAngleForDistance(Units.metersToFeet(target_distance_meters));
           setDistance = false;
         }
         if(Math.abs(m_limelight.getDistanceMeters()-target_distance_meters) > 0.5){
           setDistance = true;
         }
         SmartDashboard.putNumber("SHOOTING RPM", target_rpm); 
+        target_rpm = m_shooterSubsystem.getRPMforDistanceFeet(Units.metersToFeet(target_distance_meters));
+        m_targetAngle = m_hoodSubsystem.getAngleForDistance(Units.metersToFeet(target_distance_meters));
         m_shooterSubsystem.setFlywheelRPM(target_rpm);
         m_hoodSubsystem.setDesiredAngle(m_targetAngle);
         m_intakeSubsystem.deployIntake();
         if (m_shooterSubsystem.isAtDesiredRPM() & m_hoodSubsystem.isAtAngle()) {
           shooting = true;
           m_cargoSubsystem.setBothMode();
-          m_intakeSubsystem.deployIntake();
         }
       }
     }
