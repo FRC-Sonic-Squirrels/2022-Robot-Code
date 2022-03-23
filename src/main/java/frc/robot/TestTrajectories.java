@@ -193,16 +193,6 @@ public class TestTrajectories {
   }
 
 
-
-  public Trajectory rotateRobot(double angle) {
-
-    return TrajectoryGenerator.generateTrajectory(
-        drivetrain.getPose(),
-        List.of(),
-        new Pose2d(drivetrain.getPose().getX(), drivetrain.getPose().getY(), new Rotation2d(angle)),
-        getTrajectoryConfig());
-  }
-
   /**
    * 
    * Return a trajectory that drives a figure eight pattern. Define the radius of curves in meters.
