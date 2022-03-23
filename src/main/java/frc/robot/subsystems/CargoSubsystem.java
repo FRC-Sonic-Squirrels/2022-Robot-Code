@@ -117,7 +117,7 @@ public class CargoSubsystem extends SubsystemBase {
         setUpperBeltPercentOutput(0.5);
       }
 
-      if (cargoInLowerBelts()
+      if ((cargoInLowerBelts() && cargoInUpperBelts())
           || (ejectOpponentCargo && colorSensorIntake.opponentCargoDetected())) {
         stopLowerBelts();
       } else {
