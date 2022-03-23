@@ -19,34 +19,41 @@ public class ColorSensorIntake extends SubsystemBase {
   private final I2C.Port i2cPort = I2C.Port.kMXP;
   private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
   private final ColorMatch m_colorMatcher = new ColorMatch();
- 
-  
-  // TODO: determine exact CMY and RGB colors for cargo. 
-  private final Color kBlueTarget = new Color(0.0, 0.5, 0.5);
-  private final Color kRedTarget = new Color(0.5454, 0.0908, 0.36352);
-  
+
+  // TODO: determine exact CMY and RGB colors for cargo.
+  private final Color kBlueTarget = new Color(0.25, 0.45, 0.32);
+  private final Color kRedTarget = new Color(0.41, 0.41, 0.17);
+  private final Color kNothing = new Color(0.32, 0.48, 0.19);
+
   public ColorSensorIntake() {
+
+    //m_colorMatcher.setConfidenceThreshold(0.8);
+
     // colors we want to match
     m_colorMatcher.addColorMatch(kBlueTarget);
     m_colorMatcher.addColorMatch(kRedTarget);
-    
-    SmartDashboard.putNumber("Red", 0.0);
-    SmartDashboard.putNumber("Green", 0.0);
-    SmartDashboard.putNumber("Blue", 0.0);
-    SmartDashboard.putNumber("Confidence", 0.0);
-    SmartDashboard.putString("Detected Color", "Initializing");
+    m_colorMatcher.addColorMatch(kNothing);
+
+    SmartDashboard.putNumber("ColorSensor Red", 0.0);
+    SmartDashboard.putNumber("ColorSensor Green", 0.0);
+    SmartDashboard.putNumber("ColorSensor Blue", 0.0);
+    SmartDashboard.putNumber("ColorSensor Confidence", 0.0);
+    SmartDashboard.putString("ColorSensor Detected Color", "Initializing");
   }
 
-public boolean opponentCargoDetected(){
-  if (senseCargoColor() == "Blue") {
-    return true;
-  } 
-  return false;
+  @Override
+  public void periodic() {
+    senseCargoColor();
+  }
 
-}
+  public boolean opponentCargoDetected() {
+    if (senseCargoColor() == "Blue") {
+      return true;
+    }
+    return false;
+  }
 
-  
-  // TODO: What happens if there is no cargo in front of the sensor? 
+  // TODO: What happens if there is no cargo in front of the sensor?
   /**
    * Run cargo sensor, red or blue
    */
@@ -64,20 +71,21 @@ public boolean opponentCargoDetected(){
       colorString = "Blue";
     } else if (match.color == kRedTarget) {
       colorString = "Red";
-    }
-    else {
+    } else if (match.color == kNothing) {
+      colorString = "Nothing";
+    } else {
       colorString = "Unknown";
     }
 
-    SmartDashboard.putNumber("Red", detectedColor.red);
-    SmartDashboard.putNumber("Green", detectedColor.green);
-    SmartDashboard.putNumber("Blue", detectedColor.blue);
-    SmartDashboard.putNumber("Confidence", match.confidence);
-    SmartDashboard.putString("Detected Color", colorString);
-  
+    SmartDashboard.putNumber("ColorSensor Red", detectedColor.red);
+    SmartDashboard.putNumber("ColorSensor Green", detectedColor.green);
+    SmartDashboard.putNumber("ColorSensor Blue", detectedColor.blue);
+    SmartDashboard.putNumber("ColorSensor Confidence", match.confidence);
+    SmartDashboard.putString("ColorSensor Detected Color", colorString);
+
     int proximity = m_colorSensor.getProximity();
     SmartDashboard.putNumber("Proximity", proximity);
-    
+
     return colorString;
   }
 }
