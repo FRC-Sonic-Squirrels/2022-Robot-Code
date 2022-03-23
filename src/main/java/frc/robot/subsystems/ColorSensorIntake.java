@@ -37,12 +37,20 @@ public class ColorSensorIntake extends SubsystemBase {
     SmartDashboard.putString("Detected Color", "Initializing");
   }
 
+public boolean opponentCargoDetected(){
+  if (senseCargoColor() == "Blue") {
+    return true;
+  } 
+  return false;
+
+}
+
   
   // TODO: What happens if there is no cargo in front of the sensor? 
   /**
    * Run cargo sensor, red or blue
    */
-  public void senseCargoColor() {
+  public String senseCargoColor() {
     // This method will be called once per scheduler run
     Color detectedColor = m_colorSensor.getColor();
 
@@ -69,5 +77,7 @@ public class ColorSensorIntake extends SubsystemBase {
   
     int proximity = m_colorSensor.getProximity();
     SmartDashboard.putNumber("Proximity", proximity);
+    
+    return colorString;
   }
 }

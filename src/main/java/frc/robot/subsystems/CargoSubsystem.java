@@ -43,13 +43,15 @@ public class CargoSubsystem extends SubsystemBase {
   private Mode mode = Mode.STOP;
   private double m_idleTime = 0;
   private boolean ejectOpponentCargo = true;
+  private ColorSensorIntake colorSensorIntake;
 
   // TODO: find the real percent outputs of the conveyor belts
   private double m_lowerOutput = 0.8;
   private double m_upperOutput = 0.9;
 
-  public CargoSubsystem() {
-
+  public CargoSubsystem(ColorSensorIntake colorSensorIntake) {
+    this.colorSensorIntake = colorSensorIntake;
+    
     LowerBelts = new WPI_TalonFX(CANIVOR_canId.CANID5_LOWER_BELTS, CANIVOR_canId.name);
     UpperBelts = new WPI_TalonFX(CANIVOR_canId.CANID6_UPPER_BELTS, CANIVOR_canId.name);
 

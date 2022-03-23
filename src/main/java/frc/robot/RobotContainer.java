@@ -35,6 +35,7 @@ import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CargoSubsystem;
+import frc.robot.subsystems.ColorSensorIntake;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -53,6 +54,7 @@ public class RobotContainer {
 
   // Subsystems
   public final CargoSubsystem m_cargo;
+  public final ColorSensorIntake m_colorSensorIntake;
   public final ShooterSubsystem m_shooter;
   public ElevatorSubsystem m_elevator;
   public ArmSubsystem m_arm;
@@ -77,8 +79,8 @@ public class RobotContainer {
   public RobotContainer(Robot robot) {
 
     m_robot = robot;
-
-    m_cargo = new CargoSubsystem();
+    m_colorSensorIntake = new ColorSensorIntake();
+    m_cargo = new CargoSubsystem(m_colorSensorIntake);
     m_shooter = new ShooterSubsystem(m_robot);
     m_intake = new IntakeSubsystem();
     drivetrain = new Drivetrain();
