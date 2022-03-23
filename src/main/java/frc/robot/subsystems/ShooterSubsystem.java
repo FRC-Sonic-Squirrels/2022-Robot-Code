@@ -31,7 +31,6 @@ public class ShooterSubsystem extends SubsystemBase {
   private double m_desiredRPM = 0;
   private boolean m_atSpeed = false;
   private linearInterpolator RPMinterpolator;
-  private linearInterpolator hoodInterpolator;
   private double m_currentRPM = 0;
   private double m_error = 0;
   private double m_max_RPM_error = 30;
@@ -61,10 +60,6 @@ public class ShooterSubsystem extends SubsystemBase {
     {73, 3400}
   };
 
-  private double distancesInchesWithHoodAngleDegrees[][] = {
-    {52, 15}
-  };
-
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem(Robot robot) {
     m_robot = robot;
@@ -92,7 +87,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // Build the linear Interpolator
     RPMinterpolator = new linearInterpolator(distancesInchesWithRPM);
-    hoodInterpolator = new linearInterpolator(distancesInchesWithHoodAngleDegrees);
+    
     // Be more responsive to changes in the RPM
     // https://docs.ctre-phoenix.com/en/stable/ch14_MCSensor.html#velocity-measurement-filter
     // defaults are 100ms, 64 samples
@@ -196,7 +191,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public double getRPMforDistanceFeet(double distanceFeet) {
-    return RPMinterpolator.getInterpolatedValue(distanceFeet / 12.0);
+    return RPMinterpolator.getInterpolatedValue(distanceFeet * 12.0);
   }
 
   private void setPIDteleop() {
