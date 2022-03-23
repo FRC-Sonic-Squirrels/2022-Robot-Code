@@ -22,8 +22,8 @@ public class ColorSensorIntake extends SubsystemBase {
  
   
   // TODO: determine exact CMY and RGB colors for cargo. 
-  private final Color kBlueTarget = ColorMatch.makeColor(0.0, 0.5, 0.5);
-  private final Color kRedTarget = ColorMatch.makeColor(0.5454, 0.0908, 0.36352);
+  private final Color kBlueTarget = new Color(0.0, 0.5, 0.5);
+  private final Color kRedTarget = new Color(0.5454, 0.0908, 0.36352);
   
   public ColorSensorIntake() {
     // colors we want to match
