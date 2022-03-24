@@ -8,28 +8,33 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.CargoSubsystem;
+import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class ShootWithSetRPMCommand extends CommandBase {
+public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
   private CargoSubsystem m_cargoSubsystem;
   private ShooterSubsystem m_shooterSubsystem;
+  private HoodSubsystem m_hoodSubsystem;
   private Robot m_robot;
   private long m_time;
   private double m_rpm;
+  private double m_hoodAngle;
   private boolean shooting = false;
 
-  public ShootWithSetRPMCommand(int flyWheelRPM, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, Robot robot) {
+  public ShootWithSetRPMandSetHoodCommand(int flyWheelRPM, double hoodAngleDegrees, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem, Robot robot) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
+    m_hoodSubsystem = hoodSubsystem;
     m_robot = robot;
     m_rpm = flyWheelRPM;
+    m_hoodAngle = hoodAngleDegrees;
     m_time = 0;
 
 
     // drivetrain is not included in the requirements, as it use in a "read only"
     // fashion, to call getPose(). 
-    addRequirements(cargoSubsystem, shooterSubsystem);
+    addRequirements(cargoSubsystem, shooterSubsystem, hoodSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -42,6 +47,7 @@ public class ShootWithSetRPMCommand extends CommandBase {
 
     SmartDashboard.putString("AAAA Shoot Command State", "Initialized");
     m_shooterSubsystem.setFlywheelRPM(m_rpm);
+    m_hoodSubsystem.setDesiredAngle(m_hoodAngle);
 
   }
 
@@ -51,7 +57,7 @@ public class ShootWithSetRPMCommand extends CommandBase {
     // wait until flywheel is fully revved
     // once it is, set indexer in shooting mode
     SmartDashboard.putString("AAAA Shoot Command State", "execute");
-    if (!shooting && m_shooterSubsystem.isAtDesiredRPM()) {
+    if (!shooting && m_shooterSubsystem.isAtDesiredRPM() && m_hoodSubsystem.isAtAngle()) {
       shooting = true;
       SmartDashboard.putBoolean("AAA can shoot", true);
       m_cargoSubsystem.setShootMode();

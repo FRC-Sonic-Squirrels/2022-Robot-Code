@@ -26,7 +26,7 @@ import frc.robot.commands.DriveChimpMode;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.ElevatorControlCommand;
-import frc.robot.commands.ShootWithSetRPMCommand;
+import frc.robot.commands.ShootWithSetRPMandSetHoodCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.LimelightRotateToHubAndShoot;
@@ -93,7 +93,7 @@ public class RobotContainer {
 
     // add the new auton trajectories to the auton trajectory chooser
     SwerveTrajectoryAutonomousCommandFactory auton =
-        new SwerveTrajectoryAutonomousCommandFactory(drivetrain, m_shooter, m_cargo, m_intake,
+        new SwerveTrajectoryAutonomousCommandFactory(drivetrain, m_shooter, m_cargo, m_intake, m_hood,
             m_robot, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
 
 
@@ -213,15 +213,15 @@ public class RobotContainer {
 
     // middle shot to High Hub
     new Button(m_operatorController::getXButton)
-       .whileActiveOnce(new ShootWithSetRPMCommand(3200, m_cargo, m_shooter, m_robot), true);
+       .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(3200, 15, m_cargo, m_shooter, m_hood, m_robot), true);
  
     // Farthest shot to High Hub
     new Button(m_operatorController::getBButton)
-       .whileActiveOnce(new ShootWithSetRPMCommand(3400, m_cargo, m_shooter, m_robot), true);
+       .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(3400, 15, m_cargo, m_shooter, m_hood, m_robot), true);
 
     // Bumper Shot to High Hub right against the lower hub
     new Button(m_operatorController::getRightBumper)
-     .whileActiveOnce(new ShootWithSetRPMCommand(m_bumperRpm, m_cargo, m_shooter, m_robot), true);
+     .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(m_bumperRpm, 15, m_cargo, m_shooter, m_hood, m_robot), true);
 
     new Button(m_operatorController::getBackButton)
       .whenPressed(new InstantCommand(() -> m_bumperRpm -= 50));
