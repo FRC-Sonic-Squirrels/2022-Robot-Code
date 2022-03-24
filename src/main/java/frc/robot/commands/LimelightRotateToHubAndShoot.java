@@ -49,6 +49,8 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
     m_hoodSubsystem = hoodSubsystem;
     m_robot = robot;
     m_time = 0;
+
+    addRequirements(cargoSubsystem, shooterSubsystem, hoodSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -85,7 +87,7 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
         m_shooterSubsystem.setFlywheelRPM(target_rpm);
         m_hoodSubsystem.setDesiredAngle(m_targetAngle);
         m_intakeSubsystem.deployIntake();
-        if (m_shooterSubsystem.isAtDesiredRPM() & m_hoodSubsystem.isAtAngle()) {
+        if (!shooting && m_shooterSubsystem.isAtDesiredRPM() & m_hoodSubsystem.isAtAngle()) {
           shooting = true;
           m_cargoSubsystem.setBothMode();
         }
