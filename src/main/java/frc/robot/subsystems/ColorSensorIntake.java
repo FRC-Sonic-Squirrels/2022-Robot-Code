@@ -35,17 +35,10 @@ public class ColorSensorIntake extends SubsystemBase {
 
     //m_colorMatcher.setConfidenceThreshold(0.8);
 
-    DriverStation.Alliance alliance = DriverStation.getAlliance();
-
-    if (alliance == DriverStation.Alliance.Blue) {
-      opponentColor = "Red";
-    } else {
-      opponentColor = "Blue";
-    }
-
     m_colorSensor.configureColorSensor(ColorSensorResolution.kColorSensorRes16bit,
         ColorSensorMeasurementRate.kColorRate25ms, GainFactor.kGain6x);
 
+    setOpponentColor();
 
     // colors we want to match
     m_colorMatcher.addColorMatch(kBlueTarget);
@@ -57,6 +50,7 @@ public class ColorSensorIntake extends SubsystemBase {
     SmartDashboard.putNumber("ColorSensor Green", 0.0);
     SmartDashboard.putNumber("ColorSensor Blue", 0.0);
     SmartDashboard.putNumber("ColorSensor Confidence", 0.0);
+    SmartDashboard.putString("ColorSensor Opponent color", opponentColor);
     SmartDashboard.putString("ColorSensor Detected Color", "Initializing");
   }
 
@@ -64,6 +58,17 @@ public class ColorSensorIntake extends SubsystemBase {
   public void periodic() {
     senseCargoColor();
   }
+
+  public void setOpponentColor() {
+    DriverStation.Alliance alliance = DriverStation.getAlliance();
+
+    if (alliance == DriverStation.Alliance.Blue) {
+      opponentColor = "Red";
+    } else {
+      opponentColor = "Blue";
+    }
+  }
+
 
   public boolean opponentCargoDetected() {
     if (senseCargoColor() == opponentColor) {

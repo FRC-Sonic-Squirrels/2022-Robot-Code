@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import javax.swing.colorchooser.ColorSelectionModel;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,6 +18,7 @@ import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.ElevatorControlCommand;
 import frc.robot.commands.ElevatorZeroHeight;
+import frc.robot.subsystems.ColorSensorIntake;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -133,7 +135,7 @@ public class Robot extends TimedRobot {
       m_robotContainer.drivetrain.setPose(new Pose2d(), m_robotContainer.drivetrain.getIMURotation());
     }
 
- 
+    m_robotContainer.m_colorSensorIntake.setOpponentColor();
 
     // m_robotContainer.drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
     //   m_robotContainer.drivetrain, 
