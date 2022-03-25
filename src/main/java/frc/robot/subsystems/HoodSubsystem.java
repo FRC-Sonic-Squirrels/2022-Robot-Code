@@ -24,7 +24,7 @@ public class HoodSubsystem extends SubsystemBase {
 
   //TODO: CHECK these values
   private double gearRatio = 1.0 / 84.0;
-  private double ticksPerDegree = (gearRatio / 4096.0) / 360.0;
+  private double ticksPerDegree = (gearRatio / 4096.0) * 360.0;
 
   // min and max from Beau
   private double minHoodAngle = 15.0;
