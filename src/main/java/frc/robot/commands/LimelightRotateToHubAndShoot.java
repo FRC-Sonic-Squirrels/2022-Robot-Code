@@ -5,6 +5,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -22,7 +24,10 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   private CargoSubsystem m_cargoSubsystem;
   private ShooterSubsystem m_shooterSubsystem;
   private HoodSubsystem m_hoodSubsystem;
-  private PIDController rotateController = new PIDController(3.0, 0.0, 0.02);
+  private ProfiledPIDController rotationalController = new ProfiledPIDController(3.0, 0.0, 0.02,
+      new TrapezoidProfile.Constraints(
+          Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 5,
+          Drivetrain.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED * 0.4));
   private double m_targetYaw;
   private double m_rotationCorrection;
   private double m_rpm;
@@ -64,8 +69,7 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
       m_targetYaw = Math.toRadians(m_limelight.hubRotationDegrees());
       m_targetAngle = m_drivetrain.getPose().getRotation().getRadians() + m_targetYaw;
       m_rotationCorrection =
-          rotateController.calculate(m_drivetrain.getRotation().getRadians(), m_targetYaw)
-              * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+          rotationalController.calculate(m_drivetrain.getRotation().getRadians(), m_targetAngle);
       // slow down rotation for testing/safety
       m_rotationCorrection *= 0.3;
       if(isAtTargetAngle()){
