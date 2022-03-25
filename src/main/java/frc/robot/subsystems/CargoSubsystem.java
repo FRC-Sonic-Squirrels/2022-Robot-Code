@@ -48,6 +48,7 @@ public class CargoSubsystem extends SubsystemBase {
   // TODO: find the real percent outputs of the conveyor belts
   private double m_lowerOutput = 0.8;
   private double m_upperOutput = 0.9;
+  private long ejectTime = 0;
 
   public CargoSubsystem(ColorSensorIntake colorSensorIntake) {
     this.colorSensorIntake = colorSensorIntake;
@@ -118,23 +119,25 @@ public class CargoSubsystem extends SubsystemBase {
       }
 
       if ((cargoInLowerBelts() && cargoInUpperBelts())
+          || (ejectTime != 0)
           || (ejectOpponentCargo && colorSensorIntake.opponentCargoDetected())) {
-        stopLowerBelts();
+
+        if (ejectOpponentCargo && colorSensorIntake.opponentCargoDetected()) {
+          ejectTime = System.currentTimeMillis();
+        }
+
+        if (System.currentTimeMillis() - ejectTime < 200) {
+          // eject opponent cargo mode
+          setLowerBeltPercentOutput(-0.2);
+        }
+        else {
+          ejectTime = 0;
+          stopLowerBelts();
+        }
       } else {
+        ejectTime = 0;
         setLowerBeltPercentOutput(0.9);
       }
-
-      // if (cargoInUpperBelts()) {
-      //   stopUpperBelts();
-      //   if (cargoInLowerBelts()) {
-      //     stopLowerBelts();
-      //   } else {
-      //     setLowerBeltPercentOutput(0.9);
-      //   }
-      // } else {
-      //   setLowerBeltPercentOutput(0.9);
-      //   setUpperBeltPercentOutput(0.5);
-      // }
 
     } else if (mode == Mode.LOWERONLY) {
       stopUpperBelts();
@@ -230,6 +233,7 @@ public class CargoSubsystem extends SubsystemBase {
   public void setEjectOpponentCargo (boolean eject) {
     ejectOpponentCargo = eject;
   }
+
   public boolean getEjectOpponentCargo (){
     return ejectOpponentCargo;
   }
@@ -237,7 +241,8 @@ public class CargoSubsystem extends SubsystemBase {
   /**
    * enable Stop mode, conveyor motors are off
    */
-  public void setStopMode(){
+  public void setStopMode() {
+    ejectTime = 0;
     mode = Mode.STOP;
   }
 
@@ -245,6 +250,7 @@ public class CargoSubsystem extends SubsystemBase {
    * enable Intake mode, motors are on but no cargo is loaded
    */
   public void setIntakeMode(){
+    ejectTime = 0;
     mode = Mode.INTAKE;
   }
 
@@ -252,6 +258,7 @@ public class CargoSubsystem extends SubsystemBase {
    * enable LowerOnly mode, one cargo loaded (in the top belt)
    */
   public void setLowerOnlyMode(){
+    ejectTime = 0;
     mode = Mode.LOWERONLY;
   }
 
@@ -259,6 +266,7 @@ public class CargoSubsystem extends SubsystemBase {
    * enable UpperOnly mode - two cargo loaded
    */
   public void setUpperOnlyMode(){
+    ejectTime = 0;
     mode = Mode.UPPERONLY;
   }
 
@@ -266,22 +274,27 @@ public class CargoSubsystem extends SubsystemBase {
    * enable Both mode - release one cargo from the conveyor belts
    */
   public void setBothMode(){
+    ejectTime = 0;
     mode = Mode.BOTH;
   }
 
   public void setShootMode(){
+    ejectTime = 0;
     mode = Mode.SHOOT;
   }
 
   public void setReverseMode(){
+    ejectTime = 0;
     mode = Mode.REVERSE;
   }
 
   public void setShootPrepMode(){
+    ejectTime = 0;
     mode = Mode.SHOOT_PREP;
   }
 
   public void setIdleMode(){
+    ejectTime = 0;
     mode = Mode.IDLE;
   }
 
@@ -289,6 +302,7 @@ public class CargoSubsystem extends SubsystemBase {
    * Stop all motors
    */
   public void stopIndexer() {
+    ejectTime = 0;
     mode = Mode.STOP;
     setLowerBeltPercentOutput(0.0);
     setUpperBeltPercentOutput(0.0);

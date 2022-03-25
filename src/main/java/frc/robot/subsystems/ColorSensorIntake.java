@@ -5,11 +5,15 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 
 import com.revrobotics.ColorSensorV3;
+import com.revrobotics.ColorSensorV3.ColorSensorMeasurementRate;
+import com.revrobotics.ColorSensorV3.ColorSensorResolution;
+import com.revrobotics.ColorSensorV3.GainFactor;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorMatch;
 
@@ -19,20 +23,35 @@ public class ColorSensorIntake extends SubsystemBase {
   private final I2C.Port i2cPort = I2C.Port.kMXP;
   private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
   private final ColorMatch m_colorMatcher = new ColorMatch();
+  private String opponentColor = "";
 
   // TODO: determine exact CMY and RGB colors for cargo.
-  private final Color kBlueTarget = new Color(0.25, 0.45, 0.32);
-  private final Color kRedTarget = new Color(0.41, 0.41, 0.17);
-  private final Color kNothing = new Color(0.32, 0.48, 0.19);
+  private final Color kBlueTarget = new Color(0.15, 0.4, 0.5);
+  private final Color kRedTarget = new Color(0.5, 0.32, 0.1);
+  private final Color kNothing = new Color(0.32, 0.44, 0.3);
+  private final Color kYellow = new Color(0.27, 0.6, 0.11);
 
   public ColorSensorIntake() {
 
     //m_colorMatcher.setConfidenceThreshold(0.8);
 
+    DriverStation.Alliance alliance = DriverStation.getAlliance();
+
+    if (alliance == DriverStation.Alliance.Blue) {
+      opponentColor = "Red";
+    } else {
+      opponentColor = "Blue";
+    }
+
+    m_colorSensor.configureColorSensor(ColorSensorResolution.kColorSensorRes16bit,
+        ColorSensorMeasurementRate.kColorRate25ms, GainFactor.kGain6x);
+
+
     // colors we want to match
     m_colorMatcher.addColorMatch(kBlueTarget);
     m_colorMatcher.addColorMatch(kRedTarget);
     m_colorMatcher.addColorMatch(kNothing);
+    m_colorMatcher.addColorMatch(kYellow);
 
     SmartDashboard.putNumber("ColorSensor Red", 0.0);
     SmartDashboard.putNumber("ColorSensor Green", 0.0);
@@ -47,7 +66,7 @@ public class ColorSensorIntake extends SubsystemBase {
   }
 
   public boolean opponentCargoDetected() {
-    if (senseCargoColor() == "Blue") {
+    if (senseCargoColor() == opponentColor) {
       return true;
     }
     return false;
@@ -71,6 +90,8 @@ public class ColorSensorIntake extends SubsystemBase {
       colorString = "Blue";
     } else if (match.color == kRedTarget) {
       colorString = "Red";
+    } else if (match.color == kYellow) {
+      colorString = "Yellow";
     } else if (match.color == kNothing) {
       colorString = "Nothing";
     } else {
