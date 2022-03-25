@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
@@ -21,9 +22,9 @@ public class HoodSubsystem extends SubsystemBase {
 
   private WPI_TalonFX hoodMotor = new WPI_TalonFX(Constants.CANIVOR_canId.CANID7_HOOD, Constants.CANIVOR_canId.name);
 
-  //TODO: give these values
+  //TODO: CHECK these values
   private double gearRatio = 1.0 / 84.0;
-  private double ticksPerDegree = 1.0;
+  private double ticksPerDegree = (gearRatio / 4096.0) / 360.0;
 
   // min and max from Beau
   private double minHoodAngle = 15.0;
@@ -37,11 +38,14 @@ public class HoodSubsystem extends SubsystemBase {
   private double m_desiredAngle;
   private boolean m_atDesiredAngle;
 
-  private static final double kP = 0.2;
+  private static final double kP = 0.21;
   private static final double kI = 0.0;
   private static final double kD = 0.0;
-  private static final double kF = 0.2;
+  private static final double kF = 0.23;
   private static final double kIzone = 0;
+
+  // Smoothing factor for motion control. 0 = trapazoidal, 1-8 for greater smoothing
+  private static final int kSmoothing = 0;
 
   private linearInterpolator hoodInterpolator;
   private double distancesInchesWithHoodAngleDegrees[][] = {
@@ -85,10 +89,13 @@ public class HoodSubsystem extends SubsystemBase {
 
     zeroEncoder();
 
-		/* Set acceleration and cruise velocity - see documentation */
+		// Set acceleration and cruise velocity 
     // TODO: get these values from Howdybots JVN
-		hoodMotor.configMotionCruiseVelocity(15000, kTimeoutMs);
-		hoodMotor.configMotionAcceleration(6000, kTimeoutMs);
+    // https://docs.google.com/spreadsheets/d/1sOS_vM87iaKPZUFSJTqKqaFTxIl3Jj5OEwBgRxc-QGM/edit#gid=852230499
+		hoodMotor.configMotionCruiseVelocity(9600, kTimeoutMs);
+		hoodMotor.configMotionAcceleration(10000, kTimeoutMs);
+
+    hoodMotor.configMotionSCurveStrength(kSmoothing);
 
 		/* Zero the sensor once on robot boot up */
 		hoodMotor.setSelectedSensorPosition(0, kPIDLoopIdx, kTimeoutMs);
@@ -100,7 +107,6 @@ public class HoodSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-
     // This method will be called once per scheduler run
     m_currentAngle = ticksToDegrees(hoodMotor.getSelectedSensorPosition());
 
@@ -109,8 +115,9 @@ public class HoodSubsystem extends SubsystemBase {
     }
     else {
       m_atDesiredAngle = false;
-      hoodMotor.set(ControlMode.Position, angleToTicks(m_desiredAngle));
     }
+    
+    hoodMotor.set(TalonFXControlMode.MotionMagic, angleToTicks(m_desiredAngle));
 
     SmartDashboard.putNumber("Hood ticks", hoodMotor.getSelectedSensorPosition(kPIDLoopIdx));
     SmartDashboard.putNumber("Hood ticks/s", hoodMotor.getSelectedSensorVelocity(kPIDLoopIdx) * 10);
