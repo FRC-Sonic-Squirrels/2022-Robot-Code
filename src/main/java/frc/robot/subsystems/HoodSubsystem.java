@@ -48,6 +48,7 @@ public class HoodSubsystem extends SubsystemBase {
   private static final int kSmoothing = 0;
 
   private linearInterpolator hoodInterpolator;
+  
   private double distancesInchesWithHoodAngleDegrees[][] = {
     {52, 15},
   };
@@ -61,9 +62,8 @@ public class HoodSubsystem extends SubsystemBase {
 		hoodMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, kPIDLoopIdx,
 				kTimeoutMs);
     
-    // set deadband to super small 0.005 (0.5 %).
-	  // The default deadband is 0.04 (4 %)
-		hoodMotor.configNeutralDeadband(0.005, kTimeoutMs);
+    // set deadband to 2%. The default deadband is 0.04 (4 %)
+		// hoodMotor.configNeutralDeadband(0.02, kTimeoutMs);
 
     // TalonFX integrated sensor is always in phase with the motor.
     hoodMotor.setSensorPhase(false);
