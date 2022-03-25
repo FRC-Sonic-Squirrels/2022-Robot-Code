@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -15,18 +14,16 @@ public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
   private CargoSubsystem m_cargoSubsystem;
   private ShooterSubsystem m_shooterSubsystem;
   private HoodSubsystem m_hoodSubsystem;
-  private Robot m_robot;
   private long m_time;
   private double m_rpm;
   private double m_hoodAngle;
   private boolean shooting = false;
 
-  public ShootWithSetRPMandSetHoodCommand(int flyWheelRPM, double hoodAngleDegrees, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem, Robot robot) {
+  public ShootWithSetRPMandSetHoodCommand(int flyWheelRPM, double hoodAngleDegrees, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
     m_hoodSubsystem = hoodSubsystem;
-    m_robot = robot;
     m_rpm = flyWheelRPM;
     m_hoodAngle = hoodAngleDegrees;
     m_time = 0;
