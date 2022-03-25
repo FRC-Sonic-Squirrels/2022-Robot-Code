@@ -132,18 +132,21 @@ public class SwerveTrajectoryAutonomousCommandFactory {
  /**
    * twoBallAutoShoot2Push -  drive, pickup cargo, drive back, shoot two, then push opponent cargo out of the way
    */
-  public Command twoBallAutoShoot2push(Pose2d startPos, Translation2d cargoPos) {
+  public Command twoBallAutoShoot2push() {
+
+    Pose2d startPos = StartPoseConstants.BLUE_DEF_TOP;
+    Translation2d cargoPos = FieldConstants.BLUE_CARGO_7;
 
     m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
 
-    Pose2d targetPose = new Pose2d( cargoPos, startPos.getRotation());
+    Pose2d ourCargoPose = new Pose2d( cargoPos, new Rotation2d(3*Math.PI/4) );
     Pose2d opponentCargoPose = new Pose2d(Constants.FieldConstants.RED_CARGO_4, new Rotation2d(Math.PI/2));
     Pose2d backPose = new Pose2d(Constants.FieldConstants.BEHIND_RED_CARGO_4, new Rotation2d(Math.PI));
 
     Trajectory moveToCargoOne =  TrajectoryGenerator.generateTrajectory(startPos,
-        List.of(), targetPose, m_tt.getTrajectoryConfig());
+        List.of(), ourCargoPose, m_tt.getTrajectoryConfig());
 
-    Trajectory moveToHub =  TrajectoryGenerator.generateTrajectory(targetPose,
+    Trajectory moveToHub =  TrajectoryGenerator.generateTrajectory(ourCargoPose,
         List.of(), startPos, m_tt.getTrajectoryConfig());
 
     Trajectory moveToOpponentCargo =  TrajectoryGenerator.generateTrajectory(startPos,
@@ -159,12 +162,10 @@ public class SwerveTrajectoryAutonomousCommandFactory {
             new IntakeDeployCommand(m_intake, m_cargo)
         ),
         
-        // set RPM drive back
-        new InstantCommand(() -> m_shooter.setFlywheelRPM(2750), m_shooter),
         SwerveControllerCommand(moveToHub, true),
 
         // shoot
-        new ShootWithSetRPMandSetHoodCommand(2850, 15, m_cargo, m_shooter, m_hood).withTimeout(6),
+        new LimelightRotateToHubAndShoot(m_limelight, m_drivetrain, m_cargo, m_shooter, m_hood),
 
         // pick up opponent ball
         new ParallelRaceGroup(
@@ -608,6 +609,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
 
+    // get the angle between the pose of the robot and the location of the cargo
     Rotation2d cargoAngle = new Rotation2d(getTranslationsAngleDouble(ejectPos, oppCargo));
 
     Trajectory moveToEjectPos = TrajectoryGenerator.generateTrajectory(startPos, List.of(),
@@ -615,22 +617,17 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     return new SequentialCommandGroup(
 
-      new ParallelRaceGroup(
-        new IntakeDeployCommand(m_intake, m_cargo),
-        SwerveControllerCommand(moveToEjectPos, true)
-      ),
+      SwerveControllerCommand(moveToEjectPos, true),
 
-      // 3. release held cargo in the direction of the other cargo (through the intake) and wait for it being fully released
       new ParallelRaceGroup(
         new IntakeReverseCommand(m_intake, m_cargo),
-        new SequentialCommandGroup(
-          new WaitUntilCommand( () -> !m_cargo.cargoInLowerBelts() ),
-          new WaitCommand(2)
-        )
+        new WaitCommand(4)
       )
 
     );
   }
+
+  
 
 
   /**
