@@ -58,7 +58,7 @@ public class Robot extends TimedRobot {
     if (isReal()) {
       // Creates UsbCamera and sets resolution
       camera = CameraServer.startAutomaticCapture();
-      camera.setResolution(320, 240);
+      camera.setResolution(160, 120);
       camera.setFPS(20);
     }
   }
