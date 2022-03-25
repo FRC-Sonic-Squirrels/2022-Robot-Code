@@ -6,6 +6,8 @@ package frc.robot;
 
 import java.util.List;
 import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -568,31 +570,30 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     // drivetrain.setPose();
     //Trajectory test = PathPlanner.loadPath("5ball_part1", 1.0, 0.75);
 
-    Trajectory traject1 = null;
-    Trajectory traject2 = null;
-    Trajectory traject3 = null;
-    Trajectory traject4 = null;
+    PathPlannerTrajectory traject1 = PathPlanner.loadPath("5ball_part1", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
+    PathPlannerTrajectory traject2 = PathPlanner.loadPath("5ball_part2", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
+    PathPlannerTrajectory traject3 = PathPlanner.loadPath("5ball_part3", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
+    PathPlannerTrajectory traject4 = PathPlanner.loadPath("5ball_part4", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
 
     return new SequentialCommandGroup(
 
       new ParallelRaceGroup(
         new IntakeDeployCommand(m_intake, m_cargo),
-        SwerveControllerCommand(traject1, true)
+        PPSwerveControlCommand(traject1)
       ),
       new LimelightRotateToHubAndShoot(m_limelight, m_drivetrain, m_cargo, m_shooter, m_hood),
 
       new ParallelRaceGroup(
         new IntakeDeployCommand(m_intake, m_cargo),
-        SwerveControllerCommand(traject2, true)
+        PPSwerveControlCommand(traject2)
       ),
       new LimelightRotateToHubAndShoot(m_limelight, m_drivetrain, m_cargo, m_shooter, m_hood),
 
-      SwerveControllerCommand(traject3, true),
+      PPSwerveControlCommand(traject3),
       new IntakeDeployCommand(m_intake, m_cargo).withTimeout(4),
 
-      SwerveControllerCommand(traject4, true),
+      PPSwerveControlCommand(traject4),
       new LimelightRotateToHubAndShoot(m_limelight, m_drivetrain, m_cargo, m_shooter, m_hood)
-
     );
   }
 
@@ -664,6 +665,23 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     
     return swerveControllerCommand;
+  }
+
+  public static Command PPSwerveControlCommand(PathPlannerTrajectory trajectory){
+
+    var thetaController =
+        new ProfiledPIDController(AutoConstants.kPThetaController, AutoConstants.kIThetaController,
+            AutoConstants.kDThetaController, AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    return new PPSwerveControllerCommand(trajectory,
+     m_drivetrain::getPose,
+     m_drivetrain.kinematics(), 
+     new PIDController(AutoConstants.kP, AutoConstants.kI, AutoConstants.kD),
+     new PIDController(AutoConstants.kP, AutoConstants.kI, AutoConstants.kD),
+     thetaController,
+     m_drivetrain::setModuleStates, 
+     m_drivetrain);
   }
 
   // private method that changes the rotation of a Pose2d (because that isn't already included in the class for some reason)
