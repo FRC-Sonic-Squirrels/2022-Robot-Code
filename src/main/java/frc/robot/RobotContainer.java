@@ -213,15 +213,15 @@ public class RobotContainer {
 
     // middle shot to High Hub
     new Button(m_operatorController::getXButton)
-       .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(3200, 15, m_cargo, m_shooter, m_hood, m_robot), true);
+       .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(3200, 15, m_cargo, m_shooter, m_hood), true);
  
     // Farthest shot to High Hub
     new Button(m_operatorController::getBButton)
-       .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(3400, 15, m_cargo, m_shooter, m_hood, m_robot), true);
+       .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(3400, 15, m_cargo, m_shooter, m_hood), true);
 
     // Bumper Shot to High Hub right against the lower hub
     new Button(m_operatorController::getRightBumper)
-     .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(m_bumperRpm, 15, m_cargo, m_shooter, m_hood, m_robot), true);
+     .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(m_bumperRpm, 15, m_cargo, m_shooter, m_hood), true);
 
     new Button(m_operatorController::getBackButton)
       .whenPressed(new InstantCommand(() -> m_bumperRpm -= 50));

@@ -85,7 +85,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         List.of(), startPos, m_tt.getTrajectoryConfig());
 
     return new SequentialCommandGroup(      
-      new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood, m_robot)
+      new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood)
          .withTimeout(4),
       new ParallelRaceGroup(
         SwerveControllerCommand(moveToCargoOne, true),
@@ -93,7 +93,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       ),
         new InstantCommand(() -> m_shooter.setFlywheelRPM(2750), m_shooter),
         SwerveControllerCommand(moveToHub, true),
-        new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood, m_robot)
+        new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood)
           .withTimeout(6)
     );
   }
@@ -121,7 +121,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       ),
         new InstantCommand(() -> m_shooter.setFlywheelRPM(2750), m_shooter),
         SwerveControllerCommand(moveToHub, true),
-        new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood, m_robot)
+        new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood)
           .withTimeout(6)
     );
   }  
@@ -162,7 +162,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         SwerveControllerCommand(moveToHub, true),
 
         // shoot
-        new ShootWithSetRPMandSetHoodCommand(2850, 15, m_cargo, m_shooter, m_hood, m_robot).withTimeout(6),
+        new ShootWithSetRPMandSetHoodCommand(2850, 15, m_cargo, m_shooter, m_hood).withTimeout(6),
 
         // pick up opponent ball
         new ParallelRaceGroup(
@@ -200,7 +200,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       //new WaitCommand(waitTime),
       new InstantCommand(() -> m_shooter.setFlywheelRPM(2750), m_shooter),
       SwerveControllerCommand(moveToHub, true),
-      new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood, m_robot)
+      new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood)
         .withTimeout(6)
     );
   }  
@@ -275,7 +275,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       ),
       SwerveControllerCommand(cargo1_to_shoot, true),
 
-      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood, m_robot)
+      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
         .withTimeout(4),
 
       new ParallelRaceGroup(
@@ -290,7 +290,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
       SwerveControllerCommand(cargo3_to_shoot, true),
 
-      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood, m_robot)
+      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
         .withTimeout(4)
     );
   }
@@ -326,7 +326,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       startPos, m_tt.getTrajectoryConfig());
 
     return new SequentialCommandGroup(
-      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood, m_robot)
+      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
           .withTimeout(4),
       
       new ParallelRaceGroup(
@@ -342,7 +342,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
      SwerveControllerCommand(cargo2_to_start, true),
         
-      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood, m_robot)
+      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
           .withTimeout(4)
     );
   }
@@ -391,7 +391,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
       SwerveControllerCommand(cargo1_to_shoot, true),
       
-      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood, m_robot)
+      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
         .withTimeout(4),
 
       new ParallelRaceGroup(
@@ -401,7 +401,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
       SwerveControllerCommand(cargo2_to_shoot, true),
 
-      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood, m_robot)
+      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
           .withTimeout(4)
     );
   }
@@ -415,7 +415,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       new Pose2d(cargoPos, startPos.getRotation()), m_tt.getTrajectoryConfig());
 
     return new SequentialCommandGroup(
-      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood, m_robot)
+      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
         .withTimeout(4),
 
       SwerveControllerCommand(start_to_cargo, true)
