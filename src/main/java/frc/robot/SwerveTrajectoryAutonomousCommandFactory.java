@@ -608,6 +608,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
 
+    // get the angle between the pose of the robot and the location of the cargo
     Rotation2d cargoAngle = new Rotation2d(getTranslationsAngleDouble(ejectPos, oppCargo));
 
     Trajectory moveToEjectPos = TrajectoryGenerator.generateTrajectory(startPos, List.of(),
