@@ -304,6 +304,9 @@ public final class Constants {
         new Pose2d( Units.feetToMeters(22.9), Units.feetToMeters(15),   new Rotation2d(Math.toRadians(160)));
     //public static Pose2d RED_DEF_TOP    = new Pose2d( Units.feetToMeters(28.6), Units.feetToMeters(17.55),new Rotation2d(-0.35));
     //public static Pose2d RED_DEF_BOTTOM = new Pose2d( Units.feetToMeters(31.1), Units.feetToMeters(12),   new Rotation2d(3*Math.PI/2-0.35));
+  
+    public static Pose2d FIVE_BALL_START = new Pose2d(
+      Units.feetToMeters(24.95), Units.feetToMeters(5.85), new Rotation2d(3*Math.PI/2));
   }
 
 }

@@ -60,7 +60,7 @@ public class RobotContainer {
   public final Drivetrain drivetrain;
   public final IntakeSubsystem m_intake;
   public final HoodSubsystem m_hood;
-  //public LimelightSubsystem m_limelight;
+  public LimelightSubsystem m_limelight;
 
   // Controllers
   public final XboxController m_controller = new XboxController(0);
@@ -87,14 +87,14 @@ public class RobotContainer {
     m_elevator = new ElevatorSubsystem();
     m_arm = new ArmSubsystem();
     m_hood = new HoodSubsystem();
-    //m_limelight = new LimelightSubsystem(drivetrain);
+    m_limelight = new LimelightSubsystem(drivetrain);
     
     SmartDashboard.putData("Auto Mode", chooser);
 
     // add the new auton trajectories to the auton trajectory chooser
     SwerveTrajectoryAutonomousCommandFactory auton =
         new SwerveTrajectoryAutonomousCommandFactory(drivetrain, m_shooter, m_cargo, m_intake, m_hood,
-            m_robot, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
+            m_robot, m_limelight, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
 
 
     Command autonThree = auton.twoBallAutoShoot2push (StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
