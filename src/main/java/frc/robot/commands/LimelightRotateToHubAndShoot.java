@@ -9,7 +9,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.HoodSubsystem;
@@ -23,7 +22,6 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   private CargoSubsystem m_cargoSubsystem;
   private ShooterSubsystem m_shooterSubsystem;
   private HoodSubsystem m_hoodSubsystem;
-  private Robot m_robot;
   private PIDController rotateController = new PIDController(3.0, 0.0, 0.02);
   private double m_targetYaw;
   private double m_rotationCorrection;
@@ -38,14 +36,13 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
 
   private boolean setDistance = true;
   /** Creates a new VisionTurnToHub. */
-  public LimelightRotateToHubAndShoot(LimelightSubsystem limelight, Drivetrain drivetrain, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem, Robot robot) {
+  public LimelightRotateToHubAndShoot(LimelightSubsystem limelight, Drivetrain drivetrain, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_limelight = limelight;
     m_drivetrain = drivetrain;
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
     m_hoodSubsystem = hoodSubsystem;
-    m_robot = robot;
     m_time = 0;
 
     addRequirements(cargoSubsystem, shooterSubsystem, hoodSubsystem);
