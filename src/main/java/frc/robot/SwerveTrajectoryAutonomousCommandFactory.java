@@ -578,19 +578,19 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         new IntakeDeployCommand(m_intake, m_cargo),
         SwerveControllerCommand(traject1, true)
       ),
-      new LimelightRotateToHubAndShoot(m_limelight, m_drivetrain, m_cargo, m_shooter, m_hood, m_robot),
+      new LimelightRotateToHubAndShoot(m_limelight, m_drivetrain, m_cargo, m_shooter, m_hood),
 
       new ParallelRaceGroup(
         new IntakeDeployCommand(m_intake, m_cargo),
         SwerveControllerCommand(traject2, true)
       ),
-      new LimelightRotateToHubAndShoot(m_limelight, m_drivetrain, m_cargo, m_shooter, m_hood, m_robot),
+      new LimelightRotateToHubAndShoot(m_limelight, m_drivetrain, m_cargo, m_shooter, m_hood),
 
       SwerveControllerCommand(traject3, true),
       new IntakeDeployCommand(m_intake, m_cargo).withTimeout(4),
 
       SwerveControllerCommand(traject4, true),
-      new LimelightRotateToHubAndShoot(m_limelight, m_drivetrain, m_cargo, m_shooter, m_hood, m_robot)
+      new LimelightRotateToHubAndShoot(m_limelight, m_drivetrain, m_cargo, m_shooter, m_hood)
 
     );
   }
