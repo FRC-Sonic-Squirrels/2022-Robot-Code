@@ -22,7 +22,6 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   private Drivetrain m_drivetrain;
   private CargoSubsystem m_cargoSubsystem;
   private ShooterSubsystem m_shooterSubsystem;
-  private IntakeSubsystem m_intakeSubsystem;
   private HoodSubsystem m_hoodSubsystem;
   private Robot m_robot;
   private PIDController rotateController = new PIDController(3.0, 0.0, 0.02);
@@ -39,13 +38,12 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
 
   private boolean setDistance = true;
   /** Creates a new VisionTurnToHub. */
-  public LimelightRotateToHubAndShoot(LimelightSubsystem limelight, Drivetrain drivetrain, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, HoodSubsystem hoodSubsystem, Robot robot) {
+  public LimelightRotateToHubAndShoot(LimelightSubsystem limelight, Drivetrain drivetrain, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem, Robot robot) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_limelight = limelight;
     m_drivetrain = drivetrain;
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
-    m_intakeSubsystem = intakeSubsystem;
     m_hoodSubsystem = hoodSubsystem;
     m_robot = robot;
     m_time = 0;
@@ -67,7 +65,7 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   public void execute() {
     if (m_limelight.seesTarget()) {
       m_targetYaw = Math.toRadians(m_limelight.hubRotationDegrees());
-      m_targetAngle = m_drivetrain.getPose().getRotation().getDegrees() + m_targetYaw;
+      m_targetAngle = m_drivetrain.getPose().getRotation().getRadians() + m_targetYaw;
       m_rotationCorrection =
           rotateController.calculate(m_drivetrain.getRotation().getRadians(), m_targetYaw)
               * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
@@ -86,7 +84,6 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
         m_targetAngle = m_hoodSubsystem.getAngleForDistance(Units.metersToFeet(target_distance_meters));
         m_shooterSubsystem.setFlywheelRPM(target_rpm);
         m_hoodSubsystem.setDesiredAngle(m_targetAngle);
-        m_intakeSubsystem.deployIntake();
         if (!shooting && m_shooterSubsystem.isAtDesiredRPM() & m_hoodSubsystem.isAtAngle()) {
           shooting = true;
           m_cargoSubsystem.setBothMode();
@@ -102,26 +99,27 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   public void end(boolean interrupted) {
     m_shooterSubsystem.stop();
     m_cargoSubsystem.setStopMode();
-    m_intakeSubsystem.retractIntake();
     SmartDashboard.putBoolean("SHOOTING", false);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // the command will automatically stop when both cargo are released in autonomous
-    if (m_robot.isAutonomous()) {
-      // the command will stop .5 seconds after no cargo is detected, to let the cargo finish shooting
-      if ((! m_cargoSubsystem.cargoInUpperBelts()) && (! m_cargoSubsystem.cargoInLowerBelts())) {
-        if (m_time == 0) {
-          m_time = System.currentTimeMillis();
-        }
-        if (System.currentTimeMillis() - m_time >= 500) {
-          return true;
-        }
+    // Command will stop when all the cargo are gone
+    if ((! m_cargoSubsystem.cargoInUpperBelts()) && (! m_cargoSubsystem.cargoInLowerBelts())) {
+      if (m_time == 0) {
+        m_time = System.currentTimeMillis();
+      }
+      else if (System.currentTimeMillis() - m_time >= 1000) {
+        return true;
       }
     }
-    // the command will be manually executed and ended by holding a button in teleop
+    if (m_cargoSubsystem.cargoInUpperBelts() || m_cargoSubsystem.cargoInLowerBelts()) {
+      // reset timer if we see a cargo in the indexer
+      m_time = 0;
+    }
+
+    //the command will be manually executed and ended by holding a button in teleop
     return false;
   }
 
