@@ -18,10 +18,11 @@ public class HoodSubsystem extends SubsystemBase {
 
   private WPI_TalonFX m_hood = new WPI_TalonFX(Constants.CANIVOR_canId.CANID7_HOOD);
   private TalonFXSensorCollection m_encoder;
+  //TODO: give these values
   private double m_gearRatio = 0;
   private double m_ticksPerDegree = 0;
   //TODO: fix the parameter values
-  private PIDController m_pidController = new PIDController(0, 0, 0); 
+  
 
   private double m_currentAngle;
   private double m_desiredAngle;

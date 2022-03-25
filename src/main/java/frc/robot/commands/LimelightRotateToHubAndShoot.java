@@ -26,7 +26,7 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   private HoodSubsystem m_hoodSubsystem;
   private ProfiledPIDController rotationalController = new ProfiledPIDController(3.0, 0.0, 0.02,
       new TrapezoidProfile.Constraints(
-          Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 5,
+          Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 0.5,
           Drivetrain.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED * 0.4));
   private double m_targetYaw;
   private double m_rotationCorrection;
@@ -70,8 +70,9 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
       m_targetAngle = m_drivetrain.getPose().getRotation().getRadians() + m_targetYaw;
       m_rotationCorrection =
           rotationalController.calculate(m_drivetrain.getRotation().getRadians(), m_targetAngle);
-      // slow down rotation for testing/safety
+    
       m_rotationCorrection *= 0.3;
+
       if(isAtTargetAngle()){
         if(setDistance){
           target_distance_meters = m_limelight.getDistanceMeters();
@@ -80,14 +81,14 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
         if(Math.abs(m_limelight.getDistanceMeters()-target_distance_meters) > 0.5){
           setDistance = true;
         }
-        SmartDashboard.putNumber("SHOOTING RPM", target_rpm); 
+      
         target_rpm = m_shooterSubsystem.getRPMforDistanceFeet(Units.metersToFeet(target_distance_meters));
         m_targetAngle = m_hoodSubsystem.getAngleForDistance(Units.metersToFeet(target_distance_meters));
         m_shooterSubsystem.setFlywheelRPM(target_rpm);
         m_hoodSubsystem.setDesiredAngle(m_targetAngle);
         if (!shooting && m_shooterSubsystem.isAtDesiredRPM() & m_hoodSubsystem.isAtAngle()) {
           shooting = true;
-          m_cargoSubsystem.setBothMode();
+          m_cargoSubsystem.setShootMode();
         }
       }
     }
@@ -100,7 +101,7 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   public void end(boolean interrupted) {
     m_shooterSubsystem.stop();
     m_cargoSubsystem.setStopMode();
-    SmartDashboard.putBoolean("SHOOTING", false);
+
   }
 
   // Returns true when the command should end.

@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.util.List;
+import com.pathplanner.lib.PathPlanner;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -28,7 +29,6 @@ import frc.robot.commands.CargoMoveToUpperBeltsCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.LimelightRotateToHubAndShoot;
-import frc.robot.commands.ShootCargoCommand;
 import frc.robot.commands.ShootOneCargoCommand;
 import frc.robot.commands.ShootWithSetRPMandSetHoodCommand;
 import frc.robot.subsystems.CargoSubsystem;
@@ -567,6 +567,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   public Command better5BallAuton() {
 
     // drivetrain.setPose();
+    //Trajectory test = PathPlanner.loadPath("5ball_part1", 1.0, 0.75);
 
     Trajectory traject1 = null;
     Trajectory traject2 = null;
