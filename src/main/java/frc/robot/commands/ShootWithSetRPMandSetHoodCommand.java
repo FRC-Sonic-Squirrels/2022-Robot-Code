@@ -40,9 +40,6 @@ public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
     //by default from testing on 2/26 2000 works well enough for low goal shots 
     
     //m_rpm = SmartDashboard.getNumber("AAA shooting rpm testing", 2000);
-    SmartDashboard.putNumber("SHOOTING RPM", m_rpm);
-
-    SmartDashboard.putString("AAAA Shoot Command State", "Initialized");
     m_shooterSubsystem.setFlywheelRPM(m_rpm);
     m_hoodSubsystem.setDesiredAngle(m_hoodAngle);
 
@@ -53,24 +50,19 @@ public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
   public void execute() {
     // wait until flywheel is fully revved
     // once it is, set indexer in shooting mode
-    SmartDashboard.putString("AAAA Shoot Command State", "execute");
     if (!shooting && m_shooterSubsystem.isAtDesiredRPM() && m_hoodSubsystem.isAtAngle()) {
       shooting = true;
-      SmartDashboard.putBoolean("AAA can shoot", true);
       m_cargoSubsystem.setShootMode();
     }
-    SmartDashboard.putBoolean("AAA shooting", shooting);
 
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    SmartDashboard.putString("AAAA Shoot Command State", "end");
     shooting = false;
     m_shooterSubsystem.stop();
     m_cargoSubsystem.setStopMode();
-    SmartDashboard.putBoolean("AAA shooting", false);
   }
 
   // Returns true when the command should end.
