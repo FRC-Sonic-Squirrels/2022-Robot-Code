@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.util.List;
+import com.pathplanner.lib.PathPlanner;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -565,6 +566,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   public Command better5BallAuton() {
 
     // drivetrain.setPose();
+    //Trajectory test = PathPlanner.loadPath("5ball_part1", 1.0, 0.75);
 
     Trajectory traject1 = null;
     Trajectory traject2 = null;
