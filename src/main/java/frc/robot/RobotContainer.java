@@ -97,7 +97,7 @@ public class RobotContainer {
             m_robot, m_limelight, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
 
 
-    Command autonThree = auton.twoBallAutoShoot2push (StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
+    Command autonThree = auton.twoBallAutoShoot2push ();
 
     Command autonFour = auton.twoBallAutoWaitShoot2();
 
