@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.team2930.lib.util.linearInterpolator;
 import edu.wpi.first.math.controller.PIDController;
@@ -17,8 +18,8 @@ public class HoodSubsystem extends SubsystemBase {
 
   private WPI_TalonFX m_hood = new WPI_TalonFX(Constants.CANIVOR_canId.CANID7_HOOD);
   private TalonFXSensorCollection m_encoder;
-  private double m_gearRatio;
-  private double m_ticksPerDegree = 5.689;
+  private double m_gearRatio = 0;
+  private double m_ticksPerDegree = 0;
   //TODO: fix the parameter values
   private PIDController m_pidController = new PIDController(0, 0, 0); 
 
@@ -33,7 +34,17 @@ public class HoodSubsystem extends SubsystemBase {
   
   
   public HoodSubsystem() {
-    // Build the linear Interpolator
+    m_encoder.setIntegratedSensorPosition(0, 0);
+
+    TalonFXConfiguration config = new TalonFXConfiguration();
+    config.slot0.kF = 0.0; 
+		config.slot0.kP = 0.0;
+		config.slot0.kI = 0.0;
+		config.slot0.kD = 0.0;
+
+    m_hood.configAllSettings(config);
+
+    
     hoodInterpolator = new linearInterpolator(distancesInchesWithHoodAngleDegrees);
   }
 
@@ -49,8 +60,7 @@ public class HoodSubsystem extends SubsystemBase {
     }
     else{
       m_atDesiredAngle = false;
-      double controllerOutput = m_pidController.calculate(m_currentAngle, m_desiredAngle);
-      m_hood.set(ControlMode.PercentOutput, controllerOutput);
+      m_hood.set(ControlMode.Position, angleToEncoder(m_desiredAngle));
     }
 
     
