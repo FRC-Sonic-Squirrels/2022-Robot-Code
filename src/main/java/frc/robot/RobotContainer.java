@@ -70,7 +70,8 @@ public class RobotContainer {
   
   public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
 
-  public int m_bumperRpm = Constants.ShooterConstants.BUMPER_SHOT_RPM;
+  public int m_shootingRpm = Constants.ShooterConstants.BUMPER_SHOT_RPM;
+  public int m_hoodAngle = Constants.ShooterConstants.HOOD_ANGLE;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -218,18 +219,25 @@ public class RobotContainer {
     new Button(m_operatorController::getBButton)
        .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(3400, 15, m_cargo, m_shooter, m_hood), true);
 
-    // Bumper Shot to High Hub right against the lower hub
+    //Using this for debuging and tuning the hood at the prac field 
     new Button(m_operatorController::getRightBumper)
-     .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(m_bumperRpm, 15, m_cargo, m_shooter, m_hood), true);
+     .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(m_shootingRpm, m_hoodAngle, m_cargo, m_shooter, m_hood), true);
 
     new Button(m_operatorController::getBackButton)
-      .whenPressed(new InstantCommand(() -> m_bumperRpm -= 50));
+      .whenPressed(new InstantCommand(() -> m_shootingRpm -= 50));
 
     new Button(m_operatorController::getStartButton)
-      .whenPressed(new InstantCommand(() -> m_bumperRpm += 50));
+      .whenPressed(new InstantCommand(() -> m_shootingRpm += 50));
 
-    new Button(() ->  (m_operatorController.getLeftTriggerAxis() > 0.05))
-      .whileHeld(new CargoRunIndexer(m_cargo));
+    new Button(() -> m_operatorController.getLeftTriggerAxis() >= 0.05)
+      .whenPressed(new InstantCommand(() -> m_hoodAngle -= 1));
+
+      new Button(() -> m_operatorController.getRightTriggerAxis() >= 0.05)
+      .whenPressed(new InstantCommand(() -> m_hoodAngle += 1));
+
+
+    // new Button(() ->  (m_operatorController.getLeftTriggerAxis() > 0.05))
+    //   .whileHeld(new CargoRunIndexer(m_cargo));
      
      
 

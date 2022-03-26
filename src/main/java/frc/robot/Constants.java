@@ -187,6 +187,7 @@ public final class Constants {
     public static final double m_activated = 2000;
     public static final double m_idle = 500;
     public static final int BUMPER_SHOT_RPM = 3000;
+    public static final int HOOD_ANGLE = 15;
   }
   // according to game manual field is 27 ft. (~823 cm) by 54 ft. (~1646 cm)
   public static class HubCentricConstants{
