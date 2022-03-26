@@ -64,65 +64,65 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     m_tt = new TestTrajectories(maxVelocity, maxAcceleration, m_drivetrain, true);
   }
 
+  // /**
+  //  * twoBallAuton - Shoot, drive, pickup cargo, drive back, shoot
+  //  */
+  // public Command twoBallAuto(Pose2d startPos, Translation2d cargoPos) {
+
+  //   m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
+
+  //   Pose2d targetPose = new Pose2d( cargoPos, startPos.getRotation());
+
+  //   Trajectory moveToCargoOne =  TrajectoryGenerator.generateTrajectory(startPos,
+  //       List.of(), targetPose, m_tt.getTrajectoryConfig());
+
+  //   Trajectory moveToHub =  TrajectoryGenerator.generateTrajectory(targetPose,
+  //       List.of(), startPos, m_tt.getTrajectoryConfig());
+
+  //   return new SequentialCommandGroup(      
+  //     new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood)
+  //        .withTimeout(4),
+  //     new ParallelRaceGroup(
+  //       SwerveControllerCommand(moveToCargoOne, true),
+  //       new IntakeDeployCommand(m_intake, m_cargo)
+  //     ),
+  //       new InstantCommand(() -> m_shooter.setFlywheelRPM(2750), m_shooter),
+  //       SwerveControllerCommand(moveToHub, true),
+  //       new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood)
+  //         .withTimeout(6)
+  //   );
+  // }
+
+
+  // /**
+  //  * twoBallAutoShoot2 -  drive, pickup cargo, drive back, shoot two
+  //  */
+  // public Command twoBallAutoShoot2(Pose2d startPos, Translation2d cargoPos) {
+
+  //   m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
+
+  //   Pose2d targetPose = new Pose2d( cargoPos, startPos.getRotation());
+
+  //   Trajectory moveToCargoOne =  TrajectoryGenerator.generateTrajectory(startPos,
+  //       List.of(), targetPose, m_tt.getTrajectoryConfig());
+
+  //   Trajectory moveToHub =  TrajectoryGenerator.generateTrajectory(targetPose,
+  //       List.of(), startPos, m_tt.getTrajectoryConfig());
+
+  //   return new SequentialCommandGroup(      
+  //     new ParallelRaceGroup(
+  //       SwerveControllerCommand(moveToCargoOne, true),
+  //       new IntakeDeployCommand(m_intake, m_cargo)
+  //     ),
+  //       new InstantCommand(() -> m_shooter.setFlywheelRPM(2750), m_shooter),
+  //       SwerveControllerCommand(moveToHub, true),
+  //       new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood)
+  //         .withTimeout(6)
+  //   );
+  // }  
+
+
   /**
-   * twoBallAuton - Shoot, drive, pickup cargo, drive back, shoot
-   */
-  public Command twoBallAuto(Pose2d startPos, Translation2d cargoPos) {
-
-    m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
-
-    Pose2d targetPose = new Pose2d( cargoPos, startPos.getRotation());
-
-    Trajectory moveToCargoOne =  TrajectoryGenerator.generateTrajectory(startPos,
-        List.of(), targetPose, m_tt.getTrajectoryConfig());
-
-    Trajectory moveToHub =  TrajectoryGenerator.generateTrajectory(targetPose,
-        List.of(), startPos, m_tt.getTrajectoryConfig());
-
-    return new SequentialCommandGroup(      
-      new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood)
-         .withTimeout(4),
-      new ParallelRaceGroup(
-        SwerveControllerCommand(moveToCargoOne, true),
-        new IntakeDeployCommand(m_intake, m_cargo)
-      ),
-        new InstantCommand(() -> m_shooter.setFlywheelRPM(2750), m_shooter),
-        SwerveControllerCommand(moveToHub, true),
-        new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood)
-          .withTimeout(6)
-    );
-  }
-
-
-  /**
-   * twoBallAutoShoot2 -  drive, pickup cargo, drive back, shoot two
-   */
-  public Command twoBallAutoShoot2(Pose2d startPos, Translation2d cargoPos) {
-
-    m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
-
-    Pose2d targetPose = new Pose2d( cargoPos, startPos.getRotation());
-
-    Trajectory moveToCargoOne =  TrajectoryGenerator.generateTrajectory(startPos,
-        List.of(), targetPose, m_tt.getTrajectoryConfig());
-
-    Trajectory moveToHub =  TrajectoryGenerator.generateTrajectory(targetPose,
-        List.of(), startPos, m_tt.getTrajectoryConfig());
-
-    return new SequentialCommandGroup(      
-      new ParallelRaceGroup(
-        SwerveControllerCommand(moveToCargoOne, true),
-        new IntakeDeployCommand(m_intake, m_cargo)
-      ),
-        new InstantCommand(() -> m_shooter.setFlywheelRPM(2750), m_shooter),
-        SwerveControllerCommand(moveToHub, true),
-        new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood)
-          .withTimeout(6)
-    );
-  }  
-
-
- /**
    * twoBallAutoShoot2Push -  drive, pickup cargo, drive back, shoot two, then push opponent cargo out of the way
    */
   public Command twoBallAutoShoot2push() {
@@ -235,172 +235,172 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
   // }
 
-  public Command SundomefourBallAutonCommand() {
+  // public Command SundomefourBallAutonCommand() {
 
-    Pose2d startPos = Constants.StartPoseConstants.BLUE_BOTTOM;
-    Pose2d shootPos = Constants.StartPoseConstants.BLUE_DEF_BOTTOM;
+  //   Pose2d startPos = Constants.StartPoseConstants.BLUE_BOTTOM;
+  //   Pose2d shootPos = Constants.StartPoseConstants.BLUE_DEF_BOTTOM;
 
-    Translation2d cargoPos1 = Constants.FieldConstants.BLUE_CARGO_3;
-    Translation2d cargoPos2 = Constants.FieldConstants.BLUE_CARGO_2;
-    Translation2d cargoPos3 = Constants.FieldConstants.BLUE_CARGO_1;
+  //   Translation2d cargoPos1 = Constants.FieldConstants.BLUE_CARGO_3;
+  //   Translation2d cargoPos2 = Constants.FieldConstants.BLUE_CARGO_2;
+  //   Translation2d cargoPos3 = Constants.FieldConstants.BLUE_CARGO_1;
 
-    m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
+  //   m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
 
     
-    Trajectory start_to_cargo1 = TrajectoryGenerator.generateTrajectory(
-        startPos, List.of(), new Pose2d(cargoPos1, startPos.getRotation()), m_tt.getTrajectoryConfig());
+  //   Trajectory start_to_cargo1 = TrajectoryGenerator.generateTrajectory(
+  //       startPos, List.of(), new Pose2d(cargoPos1, startPos.getRotation()), m_tt.getTrajectoryConfig());
 
-    Trajectory cargo1_to_shoot = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(cargoPos1, startPos.getRotation()), List.of(), shootPos, m_tt.getTrajectoryConfig());
+  //   Trajectory cargo1_to_shoot = TrajectoryGenerator.generateTrajectory(
+  //       new Pose2d(cargoPos1, startPos.getRotation()), List.of(), shootPos, m_tt.getTrajectoryConfig());
 
-    Trajectory shoot_to_cargo2 = TrajectoryGenerator.generateTrajectory(
-        shootPos, List.of(), new Pose2d(cargoPos2, Rotation2d.fromDegrees(180)), m_tt.getTrajectoryConfig());
+  //   Trajectory shoot_to_cargo2 = TrajectoryGenerator.generateTrajectory(
+  //       shootPos, List.of(), new Pose2d(cargoPos2, Rotation2d.fromDegrees(180)), m_tt.getTrajectoryConfig());
 
-    Trajectory cargo2_to_cargo3 = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(cargoPos2, Rotation2d.fromDegrees(180)), List.of(), 
-      new Pose2d(cargoPos3, Rotation2d.fromDegrees(180)), m_tt.getTrajectoryConfig());
+  //   Trajectory cargo2_to_cargo3 = TrajectoryGenerator.generateTrajectory(
+  //     new Pose2d(cargoPos2, Rotation2d.fromDegrees(180)), List.of(), 
+  //     new Pose2d(cargoPos3, Rotation2d.fromDegrees(180)), m_tt.getTrajectoryConfig());
 
-    Trajectory cargo3_to_shoot = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(cargoPos3, Rotation2d.fromDegrees(180)), List.of(), shootPos, m_tt.getTrajectoryConfig());
+  //   Trajectory cargo3_to_shoot = TrajectoryGenerator.generateTrajectory(
+  //     new Pose2d(cargoPos3, Rotation2d.fromDegrees(180)), List.of(), shootPos, m_tt.getTrajectoryConfig());
     
 
-    return new SequentialCommandGroup(
-      new ParallelRaceGroup(
-        SwerveControllerCommand(start_to_cargo1, true),
-        new IntakeDeployCommand(m_intake, m_cargo)
-      ),
-      SwerveControllerCommand(cargo1_to_shoot, true),
+  //   return new SequentialCommandGroup(
+  //     new ParallelRaceGroup(
+  //       SwerveControllerCommand(start_to_cargo1, true),
+  //       new IntakeDeployCommand(m_intake, m_cargo)
+  //     ),
+  //     SwerveControllerCommand(cargo1_to_shoot, true),
 
-      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
-        .withTimeout(4),
+  //     new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
+  //       .withTimeout(4),
 
-      new ParallelRaceGroup(
-        SwerveControllerCommand(shoot_to_cargo2, true),
-        new IntakeDeployCommand(m_intake, m_cargo)
-      ),
+  //     new ParallelRaceGroup(
+  //       SwerveControllerCommand(shoot_to_cargo2, true),
+  //       new IntakeDeployCommand(m_intake, m_cargo)
+  //     ),
         
-      new ParallelRaceGroup(
-        SwerveControllerCommand(cargo2_to_cargo3, true),
-        new IntakeDeployCommand(m_intake, m_cargo)
-      ),
+  //     new ParallelRaceGroup(
+  //       SwerveControllerCommand(cargo2_to_cargo3, true),
+  //       new IntakeDeployCommand(m_intake, m_cargo)
+  //     ),
 
-      SwerveControllerCommand(cargo3_to_shoot, true),
+  //     SwerveControllerCommand(cargo3_to_shoot, true),
 
-      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
-        .withTimeout(4)
-    );
-  }
+  //     new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
+  //       .withTimeout(4)
+  //   );
+  // }
 
-  /**
-   * Command for shooting the first cargo, then collecting and shooting two more cargo
-   * @param startPos the initial starting position
-   * @param cargoPos1 position of the first cargo being picked up
-   * @param cargoPos2 position of the second cargo being picked up
-   * @return the trajectory and commands needed to shoot three cargo into the hub
-   */
-  public Command SundomethreeBallAutonShootFirstCommand() {
-    Pose2d startPos = Constants.StartPoseConstants.BLUE_DEF_BOTTOM; //bottom fender
-    Translation2d cargoPos1 = new Translation2d( Units.inchesToMeters(297.6), Units.inchesToMeters(7.2) + 25);
-    Translation2d cargoPos2 = Constants.FieldConstants.BLUE_CARGO_2;
+  // /**
+  //  * Command for shooting the first cargo, then collecting and shooting two more cargo
+  //  * @param startPos the initial starting position
+  //  * @param cargoPos1 position of the first cargo being picked up
+  //  * @param cargoPos2 position of the second cargo being picked up
+  //  * @return the trajectory and commands needed to shoot three cargo into the hub
+  //  */
+  // public Command SundomethreeBallAutonShootFirstCommand() {
+  //   Pose2d startPos = Constants.StartPoseConstants.BLUE_DEF_BOTTOM; //bottom fender
+  //   Translation2d cargoPos1 = new Translation2d( Units.inchesToMeters(297.6), Units.inchesToMeters(7.2) + 25);
+  //   Translation2d cargoPos2 = Constants.FieldConstants.BLUE_CARGO_2;
 
 
-    m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
+  //   m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
 
-    Trajectory start_to_cargo1 = TrajectoryGenerator.generateTrajectory(
-      startPos, 
-      List.of(),
-      new Pose2d(cargoPos1, Rotation2d.fromDegrees(270)), m_tt.getTrajectoryConfig());
+  //   Trajectory start_to_cargo1 = TrajectoryGenerator.generateTrajectory(
+  //     startPos, 
+  //     List.of(),
+  //     new Pose2d(cargoPos1, Rotation2d.fromDegrees(270)), m_tt.getTrajectoryConfig());
 
-    Trajectory cargo1_to_cargo2 = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(cargoPos1, Rotation2d.fromDegrees(270)), 
-      List.of(),
-      new Pose2d(cargoPos2, Rotation2d.fromDegrees(135)), m_tt.getTrajectoryConfig());
+  //   Trajectory cargo1_to_cargo2 = TrajectoryGenerator.generateTrajectory(
+  //     new Pose2d(cargoPos1, Rotation2d.fromDegrees(270)), 
+  //     List.of(),
+  //     new Pose2d(cargoPos2, Rotation2d.fromDegrees(135)), m_tt.getTrajectoryConfig());
 
-    Trajectory cargo2_to_start = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(cargoPos2, Rotation2d.fromDegrees(135)), 
-      List.of(new Translation2d(Units.feetToMeters(4), 0)),
-      startPos, m_tt.getTrajectoryConfig());
+  //   Trajectory cargo2_to_start = TrajectoryGenerator.generateTrajectory(
+  //     new Pose2d(cargoPos2, Rotation2d.fromDegrees(135)), 
+  //     List.of(new Translation2d(Units.feetToMeters(4), 0)),
+  //     startPos, m_tt.getTrajectoryConfig());
 
-    return new SequentialCommandGroup(
-      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
-          .withTimeout(4),
+  //   return new SequentialCommandGroup(
+  //     new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
+  //         .withTimeout(4),
       
-      new ParallelRaceGroup(
-        new IntakeDeployCommand(m_intake, m_cargo),
-        SwerveControllerCommand(start_to_cargo1, true)
-      ),
+  //     new ParallelRaceGroup(
+  //       new IntakeDeployCommand(m_intake, m_cargo),
+  //       SwerveControllerCommand(start_to_cargo1, true)
+  //     ),
       
-      new ParallelCommandGroup(
-        new IntakeDeployCommand(m_intake, m_cargo),
-        SwerveControllerCommand(cargo1_to_cargo2, true)
-      ),
+  //     new ParallelCommandGroup(
+  //       new IntakeDeployCommand(m_intake, m_cargo),
+  //       SwerveControllerCommand(cargo1_to_cargo2, true)
+  //     ),
 
 
-     SwerveControllerCommand(cargo2_to_start, true),
+  //    SwerveControllerCommand(cargo2_to_start, true),
         
-      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
-          .withTimeout(4)
-    );
-  }
+  //     new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
+  //         .withTimeout(4)
+  //   );
+  // }
 
-  /**
-   * Command for shooting the first cargo, then collecting and shooting two more cargo
-   * @param startPos the initial starting position
-   * @param cargoPos1 position of the first cargo being picked up
-   * @param cargoPos2 position of the second cargo being picked up
-   * @return the trajectory and commands needed to shoot three cargo into the hub
-   */
-  public Command SundomethreeBallAutonMoveFirstCommand() {
-    Pose2d startPos = Constants.StartPoseConstants.BLUE_BOTTOM;
-    Pose2d shootingPos = Constants.StartPoseConstants.BLUE_DEF_BOTTOM;
-    //cargo pos -16 inches y-axis to avoid intake hitting the wall 
-    Translation2d cargoPos1 = new Translation2d( Units.inchesToMeters(297.6), Units.inchesToMeters(7.2) + 25); 
-    Translation2d cargoPos2 = Constants.FieldConstants.BLUE_CARGO_2;
+  // /**
+  //  * Command for shooting the first cargo, then collecting and shooting two more cargo
+  //  * @param startPos the initial starting position
+  //  * @param cargoPos1 position of the first cargo being picked up
+  //  * @param cargoPos2 position of the second cargo being picked up
+  //  * @return the trajectory and commands needed to shoot three cargo into the hub
+  //  */
+  // public Command SundomethreeBallAutonMoveFirstCommand() {
+  //   Pose2d startPos = Constants.StartPoseConstants.BLUE_BOTTOM;
+  //   Pose2d shootingPos = Constants.StartPoseConstants.BLUE_DEF_BOTTOM;
+  //   //cargo pos -16 inches y-axis to avoid intake hitting the wall 
+  //   Translation2d cargoPos1 = new Translation2d( Units.inchesToMeters(297.6), Units.inchesToMeters(7.2) + 25); 
+  //   Translation2d cargoPos2 = Constants.FieldConstants.BLUE_CARGO_2;
 
-    m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
+  //   m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
 
-    Trajectory start_to_cargo1 = TrajectoryGenerator.generateTrajectory(
-      startPos, 
-      List.of(),
-      new Pose2d(cargoPos1, startPos.getRotation()), m_tt.getTrajectoryConfig());
+  //   Trajectory start_to_cargo1 = TrajectoryGenerator.generateTrajectory(
+  //     startPos, 
+  //     List.of(),
+  //     new Pose2d(cargoPos1, startPos.getRotation()), m_tt.getTrajectoryConfig());
 
-    Trajectory cargo1_to_shoot = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(cargoPos1, shootingPos.getRotation()),
-      List.of(), 
-      startPos, m_tt.getTrajectoryConfig());
+  //   Trajectory cargo1_to_shoot = TrajectoryGenerator.generateTrajectory(
+  //     new Pose2d(cargoPos1, shootingPos.getRotation()),
+  //     List.of(), 
+  //     startPos, m_tt.getTrajectoryConfig());
 
-    Trajectory shoot_to_cargo2 = TrajectoryGenerator.generateTrajectory(
-    shootingPos,
-    List.of(), 
-    new Pose2d(cargoPos2, Rotation2d.fromDegrees(210)), m_tt.getTrajectoryConfig());
+  //   Trajectory shoot_to_cargo2 = TrajectoryGenerator.generateTrajectory(
+  //   shootingPos,
+  //   List.of(), 
+  //   new Pose2d(cargoPos2, Rotation2d.fromDegrees(210)), m_tt.getTrajectoryConfig());
 
-    Trajectory cargo2_to_shoot = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(cargoPos2, Rotation2d.fromDegrees(210)), 
-      List.of(),
-      shootingPos, m_tt.getTrajectoryConfig());
+  //   Trajectory cargo2_to_shoot = TrajectoryGenerator.generateTrajectory(
+  //     new Pose2d(cargoPos2, Rotation2d.fromDegrees(210)), 
+  //     List.of(),
+  //     shootingPos, m_tt.getTrajectoryConfig());
 
-    return new SequentialCommandGroup(
-      new ParallelRaceGroup(
-        new IntakeDeployCommand(m_intake, m_cargo),
-        SwerveControllerCommand(start_to_cargo1, true)
-      ),
+  //   return new SequentialCommandGroup(
+  //     new ParallelRaceGroup(
+  //       new IntakeDeployCommand(m_intake, m_cargo),
+  //       SwerveControllerCommand(start_to_cargo1, true)
+  //     ),
 
-      SwerveControllerCommand(cargo1_to_shoot, true),
+  //     SwerveControllerCommand(cargo1_to_shoot, true),
       
-      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
-        .withTimeout(4),
+  //     new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
+  //       .withTimeout(4),
 
-      new ParallelRaceGroup(
-        SwerveControllerCommand(shoot_to_cargo2, true),
-        new IntakeDeployCommand(m_intake, m_cargo)
-      ),
+  //     new ParallelRaceGroup(
+  //       SwerveControllerCommand(shoot_to_cargo2, true),
+  //       new IntakeDeployCommand(m_intake, m_cargo)
+  //     ),
 
-      SwerveControllerCommand(cargo2_to_shoot, true),
+  //     SwerveControllerCommand(cargo2_to_shoot, true),
 
-      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
-          .withTimeout(4)
-    );
-  }
+  //     new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
+  //         .withTimeout(4)
+  //   );
+  // }
 
   public Command SundomeRightSideShootAndMove(){
     Pose2d startPos = Constants.StartPoseConstants.BLUE_DEF_BOTTOM;
