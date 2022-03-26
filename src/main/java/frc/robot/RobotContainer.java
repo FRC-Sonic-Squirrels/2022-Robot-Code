@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.team2930.lib.Limelight;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -23,6 +24,7 @@ import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.CargoReverseCommand;
 import frc.robot.commands.CargoRunIndexer;
 import frc.robot.commands.DriveChimpMode;
+import frc.robot.commands.DriveFieldCentricAimCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.ElevatorControlCommand;
@@ -147,10 +149,16 @@ public class RobotContainer {
     // new Button(m_controller::getStartButton)
     //         .whenPressed(new InstantCommand(() -> m_limelight.toggleLEDs()));
 
+    // new Button(m_controller::getXButton)
+    //         .whenPressed(new DriveHubCentricCommand(drivetrain, 
+    //         () -> -modifyAxis(m_controller.getRightX()), 
+    //         () -> -modifyAxis(m_controller.getLeftY())));
+
     new Button(m_controller::getXButton)
-            .whenPressed(new DriveHubCentricCommand(drivetrain, 
-            () -> -modifyAxis(m_controller.getRightX()), 
-            () -> -modifyAxis(m_controller.getLeftY())));
+        .whenPressed(new DriveFieldCentricAimCommand(drivetrain,
+            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+            m_limelight));
 
     new Button(m_controller::getYButton)
             .whenPressed(new DriveWithSetRotationCommand(drivetrain,
