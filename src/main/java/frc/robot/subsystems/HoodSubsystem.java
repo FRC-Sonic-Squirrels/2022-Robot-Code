@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
@@ -124,6 +125,8 @@ public class HoodSubsystem extends SubsystemBase {
     // config hard limit switch for full down position
     hoodMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
         LimitSwitchNormal.NormallyOpen, 0);
+
+    hoodMotor.setNeutralMode(NeutralMode.Coast);
   
     hoodInterpolator = new linearInterpolator(distancesInchesWithHoodAngleDegrees);
 
@@ -171,6 +174,7 @@ public class HoodSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Hood desired angle", desiredAngleDeg);
     SmartDashboard.putNumber("Hood motor output", hoodMotor.getMotorOutputPercent());
     SmartDashboard.putNumber("Hood closed loop error", hoodMotor.getClosedLoopError(kPIDLoopIdx));
+    SmartDashboard.putBoolean("Hood limit", atLowerLimit());
     SmartDashboard.putBoolean("Hood at desired angle", atDesiredAngle);
 
   }
