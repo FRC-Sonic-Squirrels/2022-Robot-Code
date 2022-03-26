@@ -37,15 +37,16 @@ public class HoodSubsystem extends SubsystemBase {
   private double m_currentAngle;
   private double m_desiredAngle;
   private boolean m_atDesiredAngle;
+  private double toleranceDegrees = 0.25;
 
-  private static final double kP = 0.21;
+  private static final double kP = 0.11;  // try 0.21 for faster
   private static final double kI = 0.0;
   private static final double kD = 0.0;
-  private static final double kF = 0.23;
+  private static final double kF = 0.023;
   private static final double kIzone = 0;
 
   // Smoothing factor for motion control. 0 = trapazoidal, 1-8 for greater smoothing
-  private static final int kSmoothing = 0;
+  private static final int kSmoothing = 4;
 
   private linearInterpolator hoodInterpolator;
   
@@ -100,6 +101,9 @@ public class HoodSubsystem extends SubsystemBase {
 		/* Zero the sensor once on robot boot up */
 		hoodMotor.setSelectedSensorPosition(0, kPIDLoopIdx, kTimeoutMs);
 
+    // TODO: add backwards limit switch
+    // TODO: add forward soft limit
+  
     hoodInterpolator = new linearInterpolator(distancesInchesWithHoodAngleDegrees);
   }
 
@@ -110,7 +114,7 @@ public class HoodSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     m_currentAngle = ticksToDegrees(hoodMotor.getSelectedSensorPosition());
 
-    if (Math.abs(m_currentAngle - m_desiredAngle) <= 0.25){
+    if (Math.abs(m_currentAngle - m_desiredAngle) <= toleranceDegrees){
       m_atDesiredAngle = true;
     }
     else {
@@ -125,6 +129,7 @@ public class HoodSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Hood angle", m_currentAngle);
     SmartDashboard.putNumber("Hood desired angle", m_desiredAngle);
     SmartDashboard.putNumber("Hood motor output", hoodMotor.getMotorOutputPercent());
+    SmartDashboard.putNumber("Hood closed loop error", hoodMotor.getClosedLoopError(kPIDLoopIdx));
     SmartDashboard.putBoolean("Hood at desired angle", m_atDesiredAngle);
 
   }
@@ -155,16 +160,15 @@ public class HoodSubsystem extends SubsystemBase {
   }
 
   public double ticksToDegrees(double ticks) {
-
     return (ticks / ticksPerDegree) + minHoodAngle;
   }
 
   public double angleToTicks(double angle) {
-
     return (angle - minHoodAngle) * ticksPerDegree;
   }
 
   public double getAngleForDistance(double distanceFeet){
+    // interpolator is in inches, so convert to inches
     return hoodInterpolator.getInterpolatedValue(distanceFeet * 12.0);
   }
 
