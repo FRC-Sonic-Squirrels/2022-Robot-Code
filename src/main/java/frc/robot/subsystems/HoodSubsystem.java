@@ -25,11 +25,11 @@ public class HoodSubsystem extends SubsystemBase {
 
   //TODO: CHECK these values
   private double gearRatio = 1.0 / 84.0;
-  private double ticksPerDegree = (gearRatio / 4096.0) * 360.0;
+  private double ticksToDegree = (gearRatio / 2048) * 360.0;
 
   // min and max from Beau
   private double minHoodAngleDeg = 15.0;
-  private double maxHoodAngleDeg = 33.5;
+  private double maxHoodAngleDeg = 32.0; //actual is 33 
 
   private static final int kPIDLoopIdx = 0;
   private static final int kSlotIdx = 0;
@@ -42,11 +42,11 @@ public class HoodSubsystem extends SubsystemBase {
   private boolean zeroed = false;
   private double percentOutput = 0.0;
 
-  private static final double kP = 0.11;  // try 0.21 for faster
+  private static final double kP = 0.5;  // try 0.21 for faster
   private static final double kI = 0.0;
   private static final double kD = 0.0;
-  private static final double kF = 0.023;
-  private static final double kIzone = 0;
+  private static final double kF = 0.0;
+  private static final double kIzone = 100;
 
   // Smoothing factor for motion control. 0 = trapezoidal, 1-8 for greater smoothing
   private static final int kSmoothing = 4;
@@ -77,21 +77,7 @@ public class HoodSubsystem extends SubsystemBase {
 		hoodMotor.setInverted(false);
 
     hoodMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, kTimeoutMs);
-		hoodMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, kTimeoutMs);
-
-    hoodMotor.configReverseSoftLimitThreshold(degreesToTicks(maxHoodAngleDeg));
-    hoodMotor.configReverseSoftLimitEnable(true);
-
-    hoodMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
-        LimitSwitchNormal.NormallyOpen, kTimeoutMs);
-
-    // TalonFXConfiguration config = new TalonFXConfiguration();
-    // config.slot0.kP = kP;
-		// config.slot0.kI = kI;
-		// config.slot0.kD = kD;
-    // config.slot0.kF = kF; 
-    // config.slot0.integralZone = kIzone;
-    // hoodMotor.configAllSettings(config, kTimeoutMs);
+    //hoodMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, kTimeoutMs);
 
     /* Set Motion Magic gains in slot0 - see documentation */
 		hoodMotor.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
@@ -99,31 +85,28 @@ public class HoodSubsystem extends SubsystemBase {
 		hoodMotor.config_kP(kSlotIdx, kP, kTimeoutMs);
 		hoodMotor.config_kI(kSlotIdx, kI, kTimeoutMs);
 		hoodMotor.config_kD(kSlotIdx, kD, kTimeoutMs);
+    hoodMotor.config_IntegralZone(kSlotIdx, kIzone, kTimeoutMs);
 
 		// Set acceleration and cruise velocity 
     // TODO: get these values from Howdybots JVN
     // https://docs.google.com/spreadsheets/d/1sOS_vM87iaKPZUFSJTqKqaFTxIl3Jj5OEwBgRxc-QGM/edit#gid=852230499
-		hoodMotor.configMotionCruiseVelocity(9600, kTimeoutMs);
-		hoodMotor.configMotionAcceleration(10000, kTimeoutMs);
-
-    hoodMotor.configMotionSCurveStrength(kSmoothing);
-
-		/* Zero the sensor once on robot boot up */
-		hoodMotor.setSelectedSensorPosition(0, kPIDLoopIdx, kTimeoutMs);
+		// hoodMotor.configMotionCruiseVelocity(9600, kTimeoutMs);
+		// hoodMotor.configMotionAcceleration(10000, kTimeoutMs);
+    // hoodMotor.configMotionSCurveStrength(kSmoothing);
 
     // JVN predicts a max of 1.6A needed
-    hoodMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 1.5, 2, 0.1));
+    // Motor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 5.0, 10.0, 0.1));
     
     // reduce max output for testing
-    hoodMotor.configPeakOutputForward(0.2, kTimeoutMs);
-		hoodMotor.configPeakOutputReverse(-0.2, kTimeoutMs);
+    hoodMotor.configPeakOutputForward(0.5, kTimeoutMs);
+		hoodMotor.configPeakOutputReverse(-0.5, kTimeoutMs);
 
     // set soft limit on reverse movement (Up)
-    hoodMotor.configReverseSoftLimitThreshold(degreesToTicks(maxHoodAngleDeg - 0.25));
-    hoodMotor.configReverseSoftLimitEnable(true);
+    hoodMotor.configForwardSoftLimitThreshold(angleToTicks(maxHoodAngleDeg - 0.25));
+    hoodMotor.configForwardSoftLimitEnable(true);
 
     // config hard limit switch for full down position
-    hoodMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
+    hoodMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
         LimitSwitchNormal.NormallyOpen, 0);
 
     hoodMotor.setNeutralMode(NeutralMode.Coast);
@@ -151,11 +134,12 @@ public class HoodSubsystem extends SubsystemBase {
     }
 
     // percent output OR position control, not both
-    if (percentOutput != 0.0) {
+    if (Math.abs(percentOutput) > 0.05) {
       hoodMotor.set(ControlMode.PercentOutput, percentOutput);
     }
     else {
       currentAngleDeg = ticksToDegrees(hoodMotor.getSelectedSensorPosition());
+      hoodMotor.set(TalonFXControlMode.Position, angleToTicks(desiredAngleDeg));
     }
 
     if (Math.abs(currentAngleDeg - desiredAngleDeg) <= toleranceDegrees){
@@ -163,9 +147,7 @@ public class HoodSubsystem extends SubsystemBase {
     }
     else {
       atDesiredAngle = false;
-    }
-    
-    hoodMotor.set(TalonFXControlMode.MotionMagic, angleToTicks(desiredAngleDeg));
+    } 
 
     SmartDashboard.putNumber("Hood ticks", hoodMotor.getSelectedSensorPosition(kPIDLoopIdx));
     SmartDashboard.putNumber("Hood ticks/s", hoodMotor.getSelectedSensorVelocity(kPIDLoopIdx) * 10);
@@ -198,7 +180,7 @@ public class HoodSubsystem extends SubsystemBase {
    * atLowerLimit() returns true if the lower limit switch is triggered.
    */
   public boolean atLowerLimit() {
-    return (1 == hoodMotor.isFwdLimitSwitchClosed());
+    return (1 == hoodMotor.isRevLimitSwitchClosed());
   }
 
   public void setMinAngle() {
@@ -206,6 +188,7 @@ public class HoodSubsystem extends SubsystemBase {
   }
 
   public void setAngleDegrees(double angle) {
+    percentOutput = 0.0;
     if (angle < minHoodAngleDeg) {
       angle = minHoodAngleDeg;
     } else if (angle > maxHoodAngleDeg) {
@@ -219,15 +202,11 @@ public class HoodSubsystem extends SubsystemBase {
   }
 
   public double ticksToDegrees(double ticks) {
-    return (ticks / ticksPerDegree) + minHoodAngleDeg;
-  }
-
-  private double degreesToTicks(double degrees) {
-    return (degrees - minHoodAngleDeg) * ticksPerDegree;
+    return (ticks * ticksToDegree) + minHoodAngleDeg;
   }
 
   public double angleToTicks(double angle) {
-    return (angle - minHoodAngleDeg) * ticksPerDegree;
+    return (angle - minHoodAngleDeg) / ticksToDegree;
   }
 
   /**

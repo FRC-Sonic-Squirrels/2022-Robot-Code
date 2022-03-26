@@ -143,8 +143,8 @@ public class RobotContainer {
             .whenPressed(drivetrain::resetFieldCentric);
 
     // start button toggles the LimeLight LEDs
-    // new Button(m_controller::getStartButton)
-    //         .whenPressed(new InstantCommand(() -> m_limelight.toggleLEDs()));
+    new Button(m_controller::getStartButton)
+            .whenPressed(new InstantCommand(() -> m_limelight.toggleLEDs()));
 
     // new Button(m_controller::getXButton)
     //         .whenPressed(new DriveHubCentricCommand(drivetrain, 
@@ -210,35 +210,51 @@ public class RobotContainer {
 
     //--------------------------------Operator intake)-------------------
     //Deploy Intake
-    new Button(m_operatorController::getAButton)
-       .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
+    // new Button(m_operatorController::getAButton)
+    //    .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
 
-    new Button(m_operatorController::getYButton)
-       .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
+    // new Button(m_operatorController::getYButton)
+    //    .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
-    // middle shot to High Hub
-    new Button(m_operatorController::getXButton)
-       .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(3200, 30, m_cargo, m_shooter, m_hood), true);
+    // // middle shot to High Hub
+    // new Button(m_operatorController::getXButton)
+    //    .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(3200, 30, m_cargo, m_shooter, m_hood), true);
  
-    // Farthest shot to High Hub
-    new Button(m_operatorController::getBButton)
-       .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(3400, 33.5, m_cargo, m_shooter, m_hood), true);
+    // // Farthest shot to High Hub
+    // new Button(m_operatorController::getBButton)
+    //    .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(3400, 33.5, m_cargo, m_shooter, m_hood), true);
 
-    //Using this for debugging and tuning the hood at the practice field 
-    new Button(m_operatorController::getRightBumper)
-     .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(m_shootingRpm, m_hoodAngle, m_cargo, m_shooter, m_hood), true);
+    // //Using this for debugging and tuning the hood at the practice field 
+    // new Button(m_operatorController::getRightBumper)
+    //  .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(m_shootingRpm, m_hoodAngle, m_cargo, m_shooter, m_hood), true);
 
-    new Button(m_operatorController::getBackButton)
-      .whenPressed(new InstantCommand(() -> m_shootingRpm -= 50));
+    // new Button(m_operatorController::getBackButton)
+    //   .whenPressed(new InstantCommand(() -> m_shootingRpm -= 50));
 
-    new Button(m_operatorController::getStartButton)
-      .whenPressed(new InstantCommand(() -> m_shootingRpm += 50));
+    // new Button(m_operatorController::getStartButton)
+    //   .whenPressed(new InstantCommand(() -> m_shootingRpm += 50));
 
-    new Button(() -> m_operatorController.getLeftTriggerAxis() >= 0.05)
-      .whenPressed(new InstantCommand(() -> m_hoodAngle -= 1));
+    // new Button(() -> m_operatorController.getLeftTriggerAxis() >= 0.05)
+    //   .whenPressed(new InstantCommand(() -> m_hoodAngle -= 1));
 
-      new Button(() -> m_operatorController.getRightTriggerAxis() >= 0.05)
-      .whenPressed(new InstantCommand(() -> m_hoodAngle += 1));
+    //   new Button(() -> m_operatorController.getRightTriggerAxis() >= 0.05)
+    //   .whenPressed(new InstantCommand(() -> m_hoodAngle += 1));
+
+    new Button(m_operatorController::getAButton)
+      .whenPressed(() -> m_hood.setAngleDegrees(18.6), m_hood);
+
+      new Button(m_operatorController::getXButton)
+      .whenPressed(() -> m_hood.setAngleDegrees(23.5), m_hood);
+
+      new Button(m_operatorController::getYButton)
+      .whenPressed(() -> m_hood.setAngleDegrees(27.5), m_hood);
+
+      new Button(m_operatorController::getBButton)
+      .whenPressed(() -> m_hood.setAngleDegrees(31.8), m_hood);
+
+      new Button(m_operatorController::getStartButton)
+      .whenPressed(() -> m_hood.setAngleDegrees(15), m_hood);
+
 
     // new Button(() ->  (m_operatorController.getLeftTriggerAxis() > 0.05))
     //   .whileHeld(new CargoRunIndexer(m_cargo));
