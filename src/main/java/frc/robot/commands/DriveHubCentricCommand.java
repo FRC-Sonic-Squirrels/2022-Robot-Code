@@ -54,7 +54,6 @@ public class DriveHubCentricCommand extends CommandBase {
     rotationalController.enableContinuousInput(-Math.PI, Math.PI);
     rotationalController.setTolerance(Math.PI/180); //1 degree of wiggle room
 
-    
     rotationalController.reset(m_drivetrain.getRotation().getRadians());
   }
 
@@ -132,7 +131,6 @@ public class DriveHubCentricCommand extends CommandBase {
     double magnitudes = robotLocation.magnitude() * hubLocation.magnitude();
     double angle_rad = Math.acos(product / magnitudes);
 
-  
     return new Rotation2d(angle_rad);
   }
 
