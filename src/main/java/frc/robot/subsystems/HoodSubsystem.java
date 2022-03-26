@@ -42,7 +42,7 @@ public class HoodSubsystem extends SubsystemBase {
   private boolean zeroed = false;
   private double percentOutput = 0.0;
 
-  private static final double kP = 0.5;  // try 0.21 for faster
+  private static final double kP = 0.25;  // try 0.21 for faster
   private static final double kI = 0.0;
   private static final double kD = 0.0;
   private static final double kF = 0.0;
@@ -98,8 +98,10 @@ public class HoodSubsystem extends SubsystemBase {
     // Motor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 5.0, 10.0, 0.1));
     
     // reduce max output for testing
-    hoodMotor.configPeakOutputForward(0.5, kTimeoutMs);
-		hoodMotor.configPeakOutputReverse(-0.5, kTimeoutMs);
+    hoodMotor.configPeakOutputForward(0.2, kTimeoutMs);
+		hoodMotor.configPeakOutputReverse(-0.2, kTimeoutMs);
+
+    //hoodMotor.configClosedloopRamp(0.5, kTimeoutMs);
 
     // set soft limit on reverse movement (Up)
     hoodMotor.configForwardSoftLimitThreshold(angleToTicks(maxHoodAngleDeg - 0.25));
@@ -113,6 +115,7 @@ public class HoodSubsystem extends SubsystemBase {
   
     hoodInterpolator = new linearInterpolator(distancesInchesWithHoodAngleDegrees);
 
+    desiredAngleDeg = minHoodAngleDeg;
     zeroEncoder();
   }
 

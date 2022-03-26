@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.HoodSubsystem;
@@ -15,16 +17,16 @@ public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
   private HoodSubsystem m_hoodSubsystem;
   private long m_time;
   private double m_rpm;
-  private double m_hoodAngle;
+  private DoubleSupplier m_hoodAngle;
   private boolean shooting = false;
 
-  public ShootWithSetRPMandSetHoodCommand(double flyWheelRPM, double hoodAngleDegrees, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem) {
+  public ShootWithSetRPMandSetHoodCommand(double flyWheelRPM, DoubleSupplier hoodAngleSupplier, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
     m_hoodSubsystem = hoodSubsystem;
     m_rpm = flyWheelRPM;
-    m_hoodAngle = hoodAngleDegrees;
+    m_hoodAngle = hoodAngleSupplier;
     m_time = 0;
 
     addRequirements(cargoSubsystem, shooterSubsystem, hoodSubsystem);
@@ -34,7 +36,8 @@ public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
   @Override
   public void initialize() {    
     m_shooterSubsystem.setFlywheelRPM(m_rpm);
-    m_hoodSubsystem.setAngleDegrees(m_hoodAngle);
+    SmartDashboard.putNumber("AAA actual hood angle passed", m_hoodAngle.getAsDouble());
+    m_hoodSubsystem.setAngleDegrees(m_hoodAngle.getAsDouble());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -54,6 +57,7 @@ public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
     shooting = false;
     m_shooterSubsystem.stop();
     m_cargoSubsystem.setStopMode();
+    m_hoodSubsystem.setMinAngle();
   }
 
   // Returns true when the command should end.

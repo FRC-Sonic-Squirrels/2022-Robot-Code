@@ -17,7 +17,7 @@ public class HoodZeroAngle extends CommandBase {
 
   @Override
   public void initialize() {
-    hood.setPercentOutput(0.1);
+    hood.setPercentOutput(-0.1);
   }
 
   @Override
