@@ -240,10 +240,8 @@ public class RobotContainer {
       new Button(() -> m_operatorController.getRightTriggerAxis() >= 0.05)
       .whenPressed(new InstantCommand(() -> m_hoodAngle += 1));
 
-
     // new Button(() ->  (m_operatorController.getLeftTriggerAxis() > 0.05))
     //   .whileHeld(new CargoRunIndexer(m_cargo));
-     
      
 
     // new Button(m_operatorController::getLeftStickButtonPressed)
