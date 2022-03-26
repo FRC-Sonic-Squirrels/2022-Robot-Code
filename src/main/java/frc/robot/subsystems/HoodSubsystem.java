@@ -146,6 +146,10 @@ public class HoodSubsystem extends SubsystemBase {
 		hoodMotor.setSelectedSensorPosition(0, kPIDLoopIdx, kTimeoutMs);
   }
 
+  public void setMinAngle() {
+    m_desiredAngle = minHoodAngle;
+  }
+
   public void setDesiredAngle(double angle) {
     if (angle < minHoodAngle) {
       angle = minHoodAngle;

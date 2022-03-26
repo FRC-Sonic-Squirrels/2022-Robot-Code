@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,35 +17,33 @@ import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class LimelightRotateToHubAndShoot extends CommandBase {
-  private LimelightSubsystem m_limelight;
-  private Drivetrain m_drivetrain;
-  private CargoSubsystem m_cargoSubsystem;
-  private ShooterSubsystem m_shooterSubsystem;
-  private HoodSubsystem m_hoodSubsystem;
+  private LimelightSubsystem limelight;
+  private Drivetrain drivetrain;
+  private CargoSubsystem cargoSubsystem;
+  private ShooterSubsystem shooterSubsystem;
+  private HoodSubsystem hoodSubsystem;
   private ProfiledPIDController rotationalController = new ProfiledPIDController(3.0, 0.0, 0.02,
       new TrapezoidProfile.Constraints(
           Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 0.5,
           Drivetrain.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED * 0.4));
-  private double m_targetYaw;
-  private double m_rotationCorrection;
-  private double m_time;
-  private double m_targetAngle;
-
+  private double targetYaw;
+  private double time;
+  private double targetAngle;
   private double target_distance_meters = 0.0;
   private double target_rpm = 2000;
 
   private boolean shooting = false;
+ 
+  private MedianFilter distanceFilter = new MedianFilter(5);
 
-  private boolean setDistance = true;
+
   /** Creates a new VisionTurnToHub. */
-  public LimelightRotateToHubAndShoot(LimelightSubsystem limelight, Drivetrain drivetrain, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    m_limelight = limelight;
-    m_drivetrain = drivetrain;
-    m_cargoSubsystem = cargoSubsystem;
-    m_shooterSubsystem = shooterSubsystem;
-    m_hoodSubsystem = hoodSubsystem;
-    m_time = 0;
+  public LimelightRotateToHubAndShoot(LimelightSubsystem limelight, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem) {
+    this.limelight = limelight;
+    this.cargoSubsystem = cargoSubsystem;
+    this.shooterSubsystem = shooterSubsystem;
+    this.hoodSubsystem = hoodSubsystem;
+    time = 0;
 
     addRequirements(cargoSubsystem, shooterSubsystem, hoodSubsystem);
   }
@@ -55,72 +54,65 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   }
 
   public boolean isAtTargetAngle(){
-    return Math.abs(m_drivetrain.getRotation().getDegrees() - m_targetAngle) < 2;
+    return Math.abs(drivetrain.getRotation().getDegrees() - targetAngle) < 2;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_limelight.seesTarget()) {
-      m_targetYaw = Math.toRadians(m_limelight.hubRotationDegrees());
-      m_targetAngle = m_drivetrain.getPose().getRotation().getRadians() + m_targetYaw;
-      m_rotationCorrection =
-          rotationalController.calculate(m_drivetrain.getRotation().getRadians(), m_targetAngle);
-    
-      m_rotationCorrection *= 0.3;
+    if (limelight.seesTarget()) {
 
-      if(isAtTargetAngle()){
-        if(setDistance){
-          target_distance_meters = m_limelight.getDistanceMeters();
-          setDistance = false;
-        }
-        if(Math.abs(m_limelight.getDistanceMeters()-target_distance_meters) > 0.5){
-          setDistance = true;
-        }
-      
-        target_rpm = m_shooterSubsystem.getRPMforDistanceFeet(Units.metersToFeet(target_distance_meters));
-        m_targetAngle = m_hoodSubsystem.getAngleForDistance(Units.metersToFeet(target_distance_meters));
-        m_shooterSubsystem.setFlywheelRPM(target_rpm);
-        m_hoodSubsystem.setDesiredAngle(m_targetAngle);
-        if (!shooting && m_shooterSubsystem.isAtDesiredRPM() & m_hoodSubsystem.isAtAngle()) {
-          shooting = true;
-          m_cargoSubsystem.setShootMode();
-        }
-      }
-    }
-    SmartDashboard.putBoolean("SHOOTING", shooting);
-    SmartDashboard.putBoolean("LL facing toward hub", isAtTargetAngle());
+      target_distance_meters = distanceFilter.calculate(limelight.getDistanceMeters());
+
+      target_rpm =
+          shooterSubsystem.getRPMforDistanceFeet(Units.metersToFeet(target_distance_meters));
+      targetAngle =
+          hoodSubsystem.getAngleForDistance(Units.metersToFeet(target_distance_meters));
+      shooterSubsystem.setFlywheelRPM(target_rpm);
+      hoodSubsystem.setDesiredAngle(targetAngle);
+
+      if (!shooting && 
+          shooterSubsystem.isAtDesiredRPM() && 
+          hoodSubsystem.isAtAngle() &&
+          isAtTargetAngle()) {
+        shooting = true;
+        cargoSubsystem.setShootMode();
+      } 
+    } 
+    
+    SmartDashboard.putNumber("LLRS target_rpm", target_rpm);
+    SmartDashboard.putNumber("LLRS targetAngle", targetAngle);
+    SmartDashboard.putNumber("LLRS target_distance", target_distance_meters);
+    SmartDashboard.putBoolean("LLRS SHOOTING", shooting);
+    SmartDashboard.putBoolean("LLRS facing toward hub", isAtTargetAngle());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_shooterSubsystem.stop();
-    m_cargoSubsystem.setStopMode();
-
+    shooterSubsystem.stop();
+    cargoSubsystem.setIdleMode();
+    hoodSubsystem.setMinAngle();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     // Command will stop when all the cargo are gone
-    if ((! m_cargoSubsystem.cargoInUpperBelts()) && (! m_cargoSubsystem.cargoInLowerBelts())) {
-      if (m_time == 0) {
-        m_time = System.currentTimeMillis();
+    if ((! cargoSubsystem.cargoInUpperBelts()) && (! cargoSubsystem.cargoInLowerBelts())) {
+      if (time == 0) {
+        time = System.currentTimeMillis();
       }
-      else if (System.currentTimeMillis() - m_time >= 1000) {
+      else if (System.currentTimeMillis() - time >= 1000) {
         return true;
       }
     }
-    if (m_cargoSubsystem.cargoInUpperBelts() || m_cargoSubsystem.cargoInLowerBelts()) {
+    if (cargoSubsystem.cargoInUpperBelts() || cargoSubsystem.cargoInLowerBelts()) {
       // reset timer if we see a cargo in the indexer
-      m_time = 0;
+      time = 0;
     }
 
     //the command will be manually executed and ended by holding a button in teleop
     return false;
   }
-
-  
-
 }

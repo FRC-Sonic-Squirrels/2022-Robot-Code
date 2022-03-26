@@ -165,7 +165,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         SwerveControllerCommand(moveToHub, true),
 
         // shoot
-        new LimelightRotateToHubAndShoot(m_limelight, m_drivetrain, m_cargo, m_shooter, m_hood),
+        new LimelightRotateToHubAndShoot(m_limelight, m_cargo, m_shooter, m_hood),
 
         // pick up opponent ball
         new ParallelRaceGroup(
@@ -582,19 +582,19 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         new IntakeDeployCommand(m_intake, m_cargo),
         PPSwerveControlCommand(traject1)
       ),
-      new LimelightRotateToHubAndShoot(m_limelight, m_drivetrain, m_cargo, m_shooter, m_hood),
+      new LimelightRotateToHubAndShoot(m_limelight, m_cargo, m_shooter, m_hood),
 
       new ParallelRaceGroup(
         new IntakeDeployCommand(m_intake, m_cargo),
         PPSwerveControlCommand(traject2)
       ),
-      new LimelightRotateToHubAndShoot(m_limelight, m_drivetrain, m_cargo, m_shooter, m_hood),
+      new LimelightRotateToHubAndShoot(m_limelight, m_cargo, m_shooter, m_hood),
 
       PPSwerveControlCommand(traject3),
       new IntakeDeployCommand(m_intake, m_cargo).withTimeout(4),
 
       PPSwerveControlCommand(traject4),
-      new LimelightRotateToHubAndShoot(m_limelight, m_drivetrain, m_cargo, m_shooter, m_hood)
+      new LimelightRotateToHubAndShoot(m_limelight, m_cargo, m_shooter, m_hood)
     );
   }
 
