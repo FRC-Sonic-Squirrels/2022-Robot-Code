@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -72,6 +74,12 @@ public class HoodSubsystem extends SubsystemBase {
 
     hoodMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, kTimeoutMs);
 		hoodMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, kTimeoutMs);
+
+    hoodMotor.configReverseSoftLimitThreshold(degreesToTicks(maxHoodAngle));
+    hoodMotor.configReverseSoftLimitEnable(true);
+
+    hoodMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
+        LimitSwitchNormal.NormallyOpen, kTimeoutMs);
 
     // TalonFXConfiguration config = new TalonFXConfiguration();
     // config.slot0.kP = kP;
@@ -165,6 +173,10 @@ public class HoodSubsystem extends SubsystemBase {
 
   public double ticksToDegrees(double ticks) {
     return (ticks / ticksPerDegree) + minHoodAngle;
+  }
+
+  private double degreesToTicks(double degrees) {
+    return (degrees - minHoodAngle) * ticksPerDegree;
   }
 
   public double angleToTicks(double angle) {
