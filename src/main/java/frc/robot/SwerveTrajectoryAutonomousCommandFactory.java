@@ -614,10 +614,13 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     Trajectory moveToEjectPos = TrajectoryGenerator.generateTrajectory(startPos, List.of(),
         new Pose2d(ejectPos, cargoAngle), m_tt.getTrajectoryConfig());
+    
+    // pre-made trajectory that replaces red cargo 3
+    PathPlannerTrajectory trajectory = PathPlanner.loadPath("replaceCargo", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
 
     return new SequentialCommandGroup(
 
-      SwerveControllerCommand(moveToEjectPos, true),
+      SwerveControllerCommand(trajectory, true),
 
       new ParallelRaceGroup(
         new IntakeReverseCommand(m_intake, m_cargo),
