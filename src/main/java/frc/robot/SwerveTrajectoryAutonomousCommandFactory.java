@@ -18,20 +18,16 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.Vector2d;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.StartPoseConstants;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.commands.CargoMoveToUpperBeltsCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.LimelightRotateToHubAndShoot;
-import frc.robot.commands.ShootOneCargoCommand;
 import frc.robot.commands.ShootWithSetRPMandSetHoodCommand;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
@@ -40,7 +36,6 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
@@ -51,7 +46,6 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   private static CargoSubsystem m_cargo;
   private static IntakeSubsystem m_intake;
   private static HoodSubsystem m_hood;
-  private static Robot m_robot;
   private static TestTrajectories m_tt;
   private static LimelightSubsystem m_limelight;
 
@@ -59,14 +53,13 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
 
   public SwerveTrajectoryAutonomousCommandFactory(Drivetrain drivetrain, ShooterSubsystem shooter,
-      CargoSubsystem cargo, IntakeSubsystem intake, HoodSubsystem hood, Robot robot, LimelightSubsystem limelight, double maxVelocity, double maxAcceleration) {
+      CargoSubsystem cargo, IntakeSubsystem intake, HoodSubsystem hood, LimelightSubsystem limelight, double maxVelocity, double maxAcceleration) {
 
     m_drivetrain = drivetrain;
     m_shooter = shooter;
     m_cargo = cargo;
     m_intake = intake;
     m_hood = hood;
-    m_robot = robot;
     m_limelight = limelight;
     m_tt = new TestTrajectories(maxVelocity, maxAcceleration, m_drivetrain, true);
   }
