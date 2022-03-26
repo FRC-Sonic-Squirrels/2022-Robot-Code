@@ -41,7 +41,7 @@ public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
     
     //m_rpm = SmartDashboard.getNumber("AAA shooting rpm testing", 2000);
     m_shooterSubsystem.setFlywheelRPM(m_rpm);
-    m_hoodSubsystem.setDesiredAngle(m_hoodAngle);
+    m_hoodSubsystem.setAngleDegrees(m_hoodAngle);
 
   }
 
