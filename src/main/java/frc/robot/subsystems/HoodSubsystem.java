@@ -4,17 +4,13 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
-import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.team2930.lib.util.linearInterpolator;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -29,16 +25,16 @@ public class HoodSubsystem extends SubsystemBase {
   private double ticksPerDegree = (gearRatio / 4096.0) * 360.0;
 
   // min and max from Beau
-  private double minHoodAngle = 15.0;
-  private double maxHoodAngle = 33.5;
+  private double minHoodAngleDeg = 15.0;
+  private double maxHoodAngleDeg = 33.5;
 
   private static final int kPIDLoopIdx = 0;
   private static final int kSlotIdx = 0;
   private static final int kTimeoutMs = 20;
 
-  private double m_currentAngle;
-  private double m_desiredAngle;
-  private boolean m_atDesiredAngle;
+  private double currentAngleDeg;
+  private double desiredAngleDeg;
+  private boolean atDesiredAngle;
   private double toleranceDegrees = 0.25;
 
   private static final double kP = 0.11;  // try 0.21 for faster
@@ -47,15 +43,18 @@ public class HoodSubsystem extends SubsystemBase {
   private static final double kF = 0.023;
   private static final double kIzone = 0;
 
-  // Smoothing factor for motion control. 0 = trapazoidal, 1-8 for greater smoothing
+  // Smoothing factor for motion control. 0 = trapezoidal, 1-8 for greater smoothing
   private static final int kSmoothing = 4;
 
   private linearInterpolator hoodInterpolator;
   
+  // distances are in inches to make measuring easier
   private double distancesInchesWithHoodAngleDegrees[][] = {
-    {52, 15},
+    {52,  15},   // fender shot
+    {120, 30},   // 10 feet from center (an estimate)
+    {192, 33.5}  // 16 feet, max hood angle (an estimate)
   };
-  
+
   
   public HoodSubsystem() {
 
@@ -75,7 +74,7 @@ public class HoodSubsystem extends SubsystemBase {
     hoodMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, kTimeoutMs);
 		hoodMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, kTimeoutMs);
 
-    hoodMotor.configReverseSoftLimitThreshold(degreesToTicks(maxHoodAngle));
+    hoodMotor.configReverseSoftLimitThreshold(degreesToTicks(maxHoodAngleDeg));
     hoodMotor.configReverseSoftLimitEnable(true);
 
     hoodMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
@@ -120,30 +119,33 @@ public class HoodSubsystem extends SubsystemBase {
   public void periodic() {
 
     // This method will be called once per scheduler run
-    m_currentAngle = ticksToDegrees(hoodMotor.getSelectedSensorPosition());
+    currentAngleDeg = ticksToDegrees(hoodMotor.getSelectedSensorPosition());
 
-    if (Math.abs(m_currentAngle - m_desiredAngle) <= toleranceDegrees){
-      m_atDesiredAngle = true;
+    if (Math.abs(currentAngleDeg - desiredAngleDeg) <= toleranceDegrees){
+      atDesiredAngle = true;
     }
     else {
-      m_atDesiredAngle = false;
+      atDesiredAngle = false;
     }
     
-    hoodMotor.set(TalonFXControlMode.MotionMagic, angleToTicks(m_desiredAngle));
+    hoodMotor.set(TalonFXControlMode.MotionMagic, angleToTicks(desiredAngleDeg));
 
     SmartDashboard.putNumber("Hood ticks", hoodMotor.getSelectedSensorPosition(kPIDLoopIdx));
     SmartDashboard.putNumber("Hood ticks/s", hoodMotor.getSelectedSensorVelocity(kPIDLoopIdx) * 10);
     SmartDashboard.putNumber("Hood RPM", hoodMotor.getSelectedSensorVelocity(kPIDLoopIdx) * 10 / 4096 * 60);
-    SmartDashboard.putNumber("Hood angle", m_currentAngle);
-    SmartDashboard.putNumber("Hood desired angle", m_desiredAngle);
+    SmartDashboard.putNumber("Hood angle", currentAngleDeg);
+    SmartDashboard.putNumber("Hood desired angle", desiredAngleDeg);
     SmartDashboard.putNumber("Hood motor output", hoodMotor.getMotorOutputPercent());
     SmartDashboard.putNumber("Hood closed loop error", hoodMotor.getClosedLoopError(kPIDLoopIdx));
-    SmartDashboard.putBoolean("Hood at desired angle", m_atDesiredAngle);
+    SmartDashboard.putBoolean("Hood at desired angle", atDesiredAngle);
 
   }
 
+  /**
+   * getCurrentAngle() - return current hood angle in degrees
+   */
   public double getCurrentAngle() {
-    return m_currentAngle;
+    return currentAngleDeg;
   }
 
   /**
@@ -154,36 +156,42 @@ public class HoodSubsystem extends SubsystemBase {
 		hoodMotor.setSelectedSensorPosition(0, kPIDLoopIdx, kTimeoutMs);
   }
 
-  public void setMinAngle() {
-    m_desiredAngle = minHoodAngle;
+  public void setMinAngleDegrees() {
+    desiredAngleDeg = minHoodAngleDeg;
   }
 
-  public void setDesiredAngle(double angle) {
-    if (angle < minHoodAngle) {
-      angle = minHoodAngle;
-    } else if (angle > maxHoodAngle) {
-      angle = maxHoodAngle;
+  public void setAngleDegrees(double angle) {
+    if (angle < minHoodAngleDeg) {
+      angle = minHoodAngleDeg;
+    } else if (angle > maxHoodAngleDeg) {
+      angle = maxHoodAngleDeg;
     }
-    m_desiredAngle = angle;
+    desiredAngleDeg = angle;
   }
 
   public boolean isAtAngle(){
-    return m_atDesiredAngle;
+    return atDesiredAngle;
   }
 
   public double ticksToDegrees(double ticks) {
-    return (ticks / ticksPerDegree) + minHoodAngle;
+    return (ticks / ticksPerDegree) + minHoodAngleDeg;
   }
 
   private double degreesToTicks(double degrees) {
-    return (degrees - minHoodAngle) * ticksPerDegree;
+    return (degrees - minHoodAngleDeg) * ticksPerDegree;
   }
 
   public double angleToTicks(double angle) {
-    return (angle - minHoodAngle) * ticksPerDegree;
+    return (angle - minHoodAngleDeg) * ticksPerDegree;
   }
 
-  public double getAngleForDistance(double distanceFeet){
+  /**
+   * getAngleFromDistance() - return the hood angle in degrees for shooting a given distance
+   * 
+   * @param distanceFeet
+   * @return
+   */
+  public double getAngleForDistanceFeet(double distanceFeet){
     // interpolator is in inches, so convert to inches
     return hoodInterpolator.getInterpolatedValue(distanceFeet * 12.0);
   }
