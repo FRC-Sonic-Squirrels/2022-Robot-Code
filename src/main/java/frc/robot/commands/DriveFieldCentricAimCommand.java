@@ -37,6 +37,8 @@ public class DriveFieldCentricAimCommand extends CommandBase {
         this.translationYSupplier = translationYSupplier;
         this.limelight = limelight;
 
+        rotationalController.enableContinuousInput(-Math.PI, Math.PI);
+
         addRequirements(drivetrainSubsystem);
     }
 
@@ -58,10 +60,8 @@ public class DriveFieldCentricAimCommand extends CommandBase {
 
         double filteredTargetRotation = rotationFilter.calculate(targetHeadingRadians);
 
-        // Multiply by max velocity to hopefully speed up the rotation of the robot 
         double rotationOutput = rotationalController.calculate(
-            drivetrain.getRotation().getRadians(), filteredTargetRotation) * 
-              Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+            drivetrain.getRotation().getRadians(), filteredTargetRotation);
 
         // deadband the rotation to avoid oscillation
         if (Math.abs(rotationOutput) < 0.05) {

@@ -50,7 +50,6 @@ public class DriveHubCentricCommand extends CommandBase {
 
   @Override
   public void initialize() {
-    //TODO: do we need continuous input? drive with set rotation doesn't have it
     rotationalController.enableContinuousInput(-Math.PI, Math.PI);
     rotationalController.setTolerance(Math.PI/180); //1 degree of wiggle room
 
@@ -70,7 +69,7 @@ public class DriveHubCentricCommand extends CommandBase {
     double radius = Math.sqrt(Math.pow(m_hubCenter.x - robotPosition.getX(), 2) + Math.pow(m_hubCenter.y - robotPosition.getY(), 2));
 
     //Multiply by max velocity to hopefully speed up the rotation of the robot 
-    double rotationCorrection = rotationalController.calculate(currentHeading.getRadians(), targetHeading.getRadians()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+    double rotationCorrection = rotationalController.calculate(currentHeading.getRadians(), targetHeading.getRadians());
 
     double strafeX = 0.0;
     double strafeY = 0.0;
