@@ -3,6 +3,7 @@ package com.team2930.lib.util;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 
 public class SwerveUtils {
@@ -16,7 +17,7 @@ public class SwerveUtils {
  * @param robotOffset - add this angle 
  * @return targetHeading 
  */
-  public static Rotation2d headingToPoint(Pose2d robotPose, Transform2d point, Rotation2d robotOffset) {
+  public static Rotation2d headingToPoint(Pose2d robotPose, Translation2d point, Rotation2d robotOffset) {
 
     // vector from robot to point
     Vector2d robotVector =
