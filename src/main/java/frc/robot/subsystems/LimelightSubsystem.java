@@ -67,9 +67,6 @@ public class LimelightSubsystem extends SubsystemBase {
 
     robotPose = m_drivetrain.getPose();
 
-    SmartDashboard.putBoolean("LL has target", seesTarget==1);
-    SmartDashboard.putNumber("LL pitch", pitch);
-
     double currentHeadingDegrees = robotPose.getRotation().getDegrees();
     if (seesTarget==1) {
       // yaw is reported negative in Counter Clockwise direction, need to reverse it.
@@ -86,6 +83,9 @@ public class LimelightSubsystem extends SubsystemBase {
       // no target, so hold current rotation
       targetHeadingDegrees = currentHeadingDegrees;
     }
+
+    SmartDashboard.putBoolean("LL has target", seesTarget==1);
+    SmartDashboard.putNumber("LL pitch", pitch);
     SmartDashboard.putNumber("LL distance inches", Units.metersToInches(distance_meters));
     SmartDashboard.putNumber("LL distance ft", Units.metersToFeet(distance_meters));
     SmartDashboard.putNumber("LL target heading deg", targetHeadingDegrees);
