@@ -4,9 +4,11 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -36,6 +38,8 @@ public class HoodSubsystem extends SubsystemBase {
   private double desiredAngleDeg;
   private boolean atDesiredAngle;
   private double toleranceDegrees = 0.25;
+  private boolean zeroed = false;
+  private double percentOutput = 0.0;
 
   private static final double kP = 0.11;  // try 0.21 for faster
   private static final double kI = 0.0;
@@ -95,8 +99,6 @@ public class HoodSubsystem extends SubsystemBase {
 		hoodMotor.config_kI(kSlotIdx, kI, kTimeoutMs);
 		hoodMotor.config_kD(kSlotIdx, kD, kTimeoutMs);
 
-    zeroEncoder();
-
 		// Set acceleration and cruise velocity 
     // TODO: get these values from Howdybots JVN
     // https://docs.google.com/spreadsheets/d/1sOS_vM87iaKPZUFSJTqKqaFTxIl3Jj5OEwBgRxc-QGM/edit#gid=852230499
@@ -108,18 +110,50 @@ public class HoodSubsystem extends SubsystemBase {
 		/* Zero the sensor once on robot boot up */
 		hoodMotor.setSelectedSensorPosition(0, kPIDLoopIdx, kTimeoutMs);
 
-    // TODO: add backwards limit switch
-    // TODO: add forward soft limit
+    // JVN predicts a max of 1.6A needed
+    hoodMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 1.5, 2, 0.1));
+    
+    // reduce max output for testing
+    hoodMotor.configPeakOutputForward(0.2, kTimeoutMs);
+		hoodMotor.configPeakOutputReverse(-0.2, kTimeoutMs);
+
+    // set soft limit on reverse movement (Up)
+    hoodMotor.configReverseSoftLimitThreshold(degreesToTicks(maxHoodAngleDeg - 0.25));
+    hoodMotor.configReverseSoftLimitEnable(true);
+
+    // config hard limit switch for full down position
+    hoodMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
+        LimitSwitchNormal.NormallyOpen, 0);
   
     hoodInterpolator = new linearInterpolator(distancesInchesWithHoodAngleDegrees);
+
+    zeroEncoder();
   }
 
 
   @Override
   public void periodic() {
 
-    // This method will be called once per scheduler run
-    currentAngleDeg = ticksToDegrees(hoodMotor.getSelectedSensorPosition());
+    // check if we triggered lower limit switch, and reset elevator to zero
+    if(atLowerLimit()) {
+      if (! zeroed) {
+        // only zero height once per time hitting limit switch
+        zeroEncoder();
+        zeroed = true;
+      }
+    }
+    else {
+      // not currently on limit switch, zero again next time we hit limit switch
+      zeroed = false;
+    }
+
+    // percent output OR position control, not both
+    if (percentOutput != 0.0) {
+      hoodMotor.set(ControlMode.PercentOutput, percentOutput);
+    }
+    else {
+      currentAngleDeg = ticksToDegrees(hoodMotor.getSelectedSensorPosition());
+    }
 
     if (Math.abs(currentAngleDeg - desiredAngleDeg) <= toleranceDegrees){
       atDesiredAngle = true;
@@ -154,6 +188,13 @@ public class HoodSubsystem extends SubsystemBase {
   private void zeroEncoder(){
     /* Zero the sensor once on robot boot up */
 		hoodMotor.setSelectedSensorPosition(0, kPIDLoopIdx, kTimeoutMs);
+  }
+
+  /**
+   * atLowerLimit() returns true if the lower limit switch is triggered.
+   */
+  public boolean atLowerLimit() {
+    return (1 == hoodMotor.isFwdLimitSwitchClosed());
   }
 
   public void setMinAngle() {
@@ -194,6 +235,11 @@ public class HoodSubsystem extends SubsystemBase {
   public double getAngleForDistanceFeet(double distanceFeet){
     // interpolator is in inches, so convert to inches
     return hoodInterpolator.getInterpolatedValue(distanceFeet * 12.0);
+  }
+
+  public void setPercentOutput(double output) {
+    percentOutput = output;
+    hoodMotor.set(ControlMode.PercentOutput, output);
   }
 
 }

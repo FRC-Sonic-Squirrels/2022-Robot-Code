@@ -32,8 +32,6 @@ public class LimelightSubsystem extends SubsystemBase {
   private double targetHeadingDegrees;
   private Pose2d robotPose = new Pose2d();
   private boolean ledsOn = true;
-  private SwerveDrivePoseEstimator estimate;
-  private Pose2d limelightPose;
   private Pose2d kalmanLimelightPose;
   private double kalmanHubDistFeet;
 
