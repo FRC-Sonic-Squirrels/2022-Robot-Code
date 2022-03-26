@@ -4,31 +4,22 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.MedianFilter;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.CargoSubsystem;
-import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class LimelightRotateToHubAndShoot extends CommandBase {
   private LimelightSubsystem limelight;
-  private Drivetrain drivetrain;
   private CargoSubsystem cargoSubsystem;
   private ShooterSubsystem shooterSubsystem;
   private HoodSubsystem hoodSubsystem;
-  private ProfiledPIDController rotationalController = new ProfiledPIDController(3.0, 0.0, 0.02,
-      new TrapezoidProfile.Constraints(
-          Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 0.5,
-          Drivetrain.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED * 0.4));
-  private double targetYaw;
   private double time;
-  private double targetAngle;
+  private double hoodAngleDegrees;
   private double target_distance_meters = 0.0;
   private double target_rpm = 2000;
 
@@ -53,10 +44,6 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
   public void initialize() {
   }
 
-  public boolean isAtTargetAngle(){
-    return Math.abs(drivetrain.getRotation().getDegrees() - targetAngle) < 2;
-  }
-
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
@@ -66,25 +53,25 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
 
       target_rpm =
           shooterSubsystem.getRPMforDistanceFeet(Units.metersToFeet(target_distance_meters));
-      targetAngle =
-          hoodSubsystem.getAngleForDistance(Units.metersToFeet(target_distance_meters));
+      hoodAngleDegrees =
+          hoodSubsystem.getAngleForDistanceFeet(Units.metersToFeet(target_distance_meters));
       shooterSubsystem.setFlywheelRPM(target_rpm);
-      hoodSubsystem.setDesiredAngle(targetAngle);
+      hoodSubsystem.setAngleDegrees(hoodAngleDegrees);
 
       if (!shooting && 
           shooterSubsystem.isAtDesiredRPM() && 
           hoodSubsystem.isAtAngle() &&
-          isAtTargetAngle()) {
+          limelight.onTarget()) {
         shooting = true;
         cargoSubsystem.setShootMode();
       } 
     } 
     
     SmartDashboard.putNumber("LLRS target_rpm", target_rpm);
-    SmartDashboard.putNumber("LLRS targetAngle", targetAngle);
+    SmartDashboard.putNumber("LLRS target hood Angle", hoodAngleDegrees);
     SmartDashboard.putNumber("LLRS target_distance", target_distance_meters);
     SmartDashboard.putBoolean("LLRS SHOOTING", shooting);
-    SmartDashboard.putBoolean("LLRS facing toward hub", isAtTargetAngle());
+    SmartDashboard.putBoolean("LLRS facing toward hub", limelight.onTarget());
   }
 
   // Called once the command ends or is interrupted.

@@ -30,6 +30,7 @@
     "Feedforward",
     "holonomic",
     "leds",
+    "LLRS",
     "LOWERONLY",
     "Mjpeg",
     "navx",

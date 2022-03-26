@@ -131,6 +131,15 @@ public class LimelightSubsystem extends SubsystemBase {
     
   }
 
+  public boolean onTarget() {
+    if ((seesTarget==1) && 
+        Math.abs(yaw) < Constants.LimelightConstants.TARGET_TOLERANCE_DEGREES) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public Pose2d getLimelightPoseMeters() {
     return kalmanLimelightPose;
   }
