@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -19,7 +20,8 @@ public class DriveFieldCentricAimCommand extends CommandBase {
 
     private final DoubleSupplier translationXSupplier;
     private final DoubleSupplier translationYSupplier;
-    private final DoubleSupplier rotationSupplier;
+
+    private LinearFilter rotationFilter = LinearFilter.singlePoleIIR(0.1, 0.02);
 
     private ProfiledPIDController rotationalController = new ProfiledPIDController(3.0, 0.0, 0.02,
     new TrapezoidProfile.Constraints(
@@ -29,12 +31,10 @@ public class DriveFieldCentricAimCommand extends CommandBase {
     public DriveFieldCentricAimCommand(Drivetrain drivetrainSubsystem,
                                DoubleSupplier translationXSupplier,
                                DoubleSupplier translationYSupplier,
-                               DoubleSupplier rotationSupplier,
                                LimelightSubsystem limelight) {
         this.drivetrain = drivetrainSubsystem;
         this.translationXSupplier = translationXSupplier;
         this.translationYSupplier = translationYSupplier;
-        this.rotationSupplier = rotationSupplier;
         this.limelight = limelight;
 
         addRequirements(drivetrainSubsystem);
@@ -42,10 +42,6 @@ public class DriveFieldCentricAimCommand extends CommandBase {
 
     @Override
     public void execute() {
-        //DO NOT MULTIPLY THESE BY MAX VELOCITY that is already done in robot container
-        double rotationOutput = rotationSupplier.getAsDouble() * Constants.DriveFieldCentricConstant.ROTATION_MULTIPLIER;
-        SmartDashboard.putNumber("Drive field centric rotation output", rotationOutput);
-
         double targetHeadingRadians;
 
         if (limelight.seesTarget()) {
@@ -60,10 +56,17 @@ public class DriveFieldCentricAimCommand extends CommandBase {
                                 .getRadians();
         }
 
-        // Multiply by max velocity to hopefully speed up the rotation of the robot 
-        rotationOutput = rotationalController.calculate(drivetrain.getRotation().getRadians(), targetHeadingRadians) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+        double filteredTargetRotation = rotationFilter.calculate(targetHeadingRadians);
 
-        if(Math.abs(rotationOutput) <0.05) { rotationOutput = 0.0; }
+        // Multiply by max velocity to hopefully speed up the rotation of the robot 
+        double rotationOutput = rotationalController.calculate(
+            drivetrain.getRotation().getRadians(), filteredTargetRotation) * 
+              Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
+
+        // deadband the rotation to avoid oscillation
+        if (Math.abs(rotationOutput) < 0.05) {
+            rotationOutput = 0.0;
+        }
 
         drivetrain.drive(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -73,6 +76,10 @@ public class DriveFieldCentricAimCommand extends CommandBase {
                         drivetrain.getRotation()
                 )
         );
+
+        SmartDashboard.putNumber("Drive rotationalOutput", rotationOutput);
+        SmartDashboard.putNumber("Drive targetHeading", Math.toRadians(targetHeadingRadians));
+        SmartDashboard.putNumber("Drive targetHeading filtered", Math.toRadians(filteredTargetRotation));
     }
 
     @Override
