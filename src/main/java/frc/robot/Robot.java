@@ -13,11 +13,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.ArmManualControlCommand;
-import frc.robot.commands.DriveFieldCentricCommand;
-import frc.robot.commands.ElevatorControlCommand;
 import frc.robot.commands.ElevatorZeroHeight;
-import frc.robot.subsystems.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -42,8 +38,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     SmartDashboard.putBoolean("IS CHIMPING", false);
-    SmartDashboard.putNumber("AAA shooting rpm testing", 2000);
-    
+
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(this);
@@ -59,7 +54,7 @@ public class Robot extends TimedRobot {
       // Creates UsbCamera and sets resolution
       camera = CameraServer.startAutomaticCapture();
       camera.setResolution(160, 120);
-      camera.setFPS(20);
+      camera.setFPS(30);
     }
   }
 
@@ -77,18 +72,13 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    SmartDashboard.putNumber("DEBUG SHOOTING RPM", m_robotContainer.m_shootingRpm);
-    SmartDashboard.putNumber("DEBUG HOOD ANGLE", m_robotContainer.m_hoodAngle);
+
+    m_robotContainer.updateManualShooterSettings();
 
     // SmartDashboard.putNumber("Joystick_Values jLeftY", m_robotContainer.m_controller.getLeftY());
     // SmartDashboard.putNumber("Joystick_Values jLeftX", m_robotContainer.m_controller.getLeftX());
     // SmartDashboard.putNumber("Joystick_Values jRightY", m_robotContainer.m_controller.getRightY());
     // SmartDashboard.putNumber("Joystick_Values jRightX", m_robotContainer.m_controller.getRightX());
-
-    //SmartDashboard.putNumber("PDH Total Power", revPDH.getTotalPower());
-    // FIXME: getTotalCurrent() throws errors
-    //SmartDashboard.putNumber("PDH Total Current", revPDH.getTotalCurrent());
-    //SmartDashboard.putNumber("PDH Total Energy", revPDH.getTotalEnergy());
 
   }
 

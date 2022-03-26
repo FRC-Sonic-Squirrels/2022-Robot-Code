@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.HoodSubsystem;
@@ -19,7 +18,7 @@ public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
   private double m_hoodAngle;
   private boolean shooting = false;
 
-  public ShootWithSetRPMandSetHoodCommand(int flyWheelRPM, double hoodAngleDegrees, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem) {
+  public ShootWithSetRPMandSetHoodCommand(double flyWheelRPM, double hoodAngleDegrees, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
@@ -28,21 +27,14 @@ public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
     m_hoodAngle = hoodAngleDegrees;
     m_time = 0;
 
-
-    // drivetrain is not included in the requirements, as it use in a "read only"
-    // fashion, to call getPose(). 
     addRequirements(cargoSubsystem, shooterSubsystem, hoodSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    //by default from testing on 2/26 2000 works well enough for low goal shots 
-    
-    //m_rpm = SmartDashboard.getNumber("AAA shooting rpm testing", 2000);
+  public void initialize() {    
     m_shooterSubsystem.setFlywheelRPM(m_rpm);
     m_hoodSubsystem.setAngleDegrees(m_hoodAngle);
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -54,7 +46,6 @@ public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
       shooting = true;
       m_cargoSubsystem.setShootMode();
     }
-
   }
 
   // Called once the command ends or is interrupted.

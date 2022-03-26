@@ -72,8 +72,8 @@ public class RobotContainer {
   
   public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
 
-  public int m_shootingRpm = Constants.ShooterConstants.BUMPER_SHOT_RPM;
-  public int m_hoodAngle = Constants.ShooterConstants.HOOD_ANGLE;
+  public double m_shootingRpm = Constants.ShooterConstants.BUMPER_SHOT_RPM;
+  public double m_hoodAngle = Constants.ShooterConstants.HOOD_ANGLE;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -103,14 +103,11 @@ public class RobotContainer {
 
     Command autonFour = auton.twoBallAutoWaitShoot2();
 
-
     Command autonRightSide = auton.SundomeRightSideShootAndMove();
-    
     
     chooser.addOption(" (Fender) move, shoot 2, push", autonThree);
     chooser.addOption(" (Top tarmac) move, wait, shoot 2", autonFour);
     chooser.addOption("Right Side plan C", autonRightSide);
-
     chooser.setDefaultOption(" (Top tarmac) move, wait, shoot 2", autonFour);
     
 
@@ -221,13 +218,13 @@ public class RobotContainer {
 
     // middle shot to High Hub
     new Button(m_operatorController::getXButton)
-       .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(3200, 15, m_cargo, m_shooter, m_hood), true);
+       .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(3200, 30, m_cargo, m_shooter, m_hood), true);
  
     // Farthest shot to High Hub
     new Button(m_operatorController::getBButton)
-       .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(3400, 15, m_cargo, m_shooter, m_hood), true);
+       .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(3400, 33.5, m_cargo, m_shooter, m_hood), true);
 
-    //Using this for debuging and tuning the hood at the prac field 
+    //Using this for debugging and tuning the hood at the practice field 
     new Button(m_operatorController::getRightBumper)
      .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(m_shootingRpm, m_hoodAngle, m_cargo, m_shooter, m_hood), true);
 
@@ -292,6 +289,14 @@ public class RobotContainer {
       return true;
     } 
     return false;
+  }
+
+  public void updateManualShooterSettings() {
+    m_shootingRpm = SmartDashboard.getNumber("A MANUAL SHOOTING RPM", m_shootingRpm);
+    m_hoodAngle = SmartDashboard.getNumber("A MANUAL SHOOTING HOOD ANGLE", m_hoodAngle);
+
+    SmartDashboard.putNumber("A MANUAL SHOOTING RPM", m_shootingRpm);
+    SmartDashboard.putNumber("A MANUAL SHOOTING HOOD ANGLE", m_hoodAngle);
   }
 
 }
