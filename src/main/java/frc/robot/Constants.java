@@ -283,7 +283,6 @@ public final class Constants {
   public static class StartPoseConstants {
     public static Pose2d ORIGIN          = new Pose2d(0.0, 0.0, new Rotation2d(0));
     
-    // TODO: make new starting poses right against the hub
     public static Pose2d BLUE_BOTTOM    = 
         new Pose2d( Units.feetToMeters(26.8), Units.feetToMeters(5.64),   new Rotation2d(0.05 + 3*Math.PI/2) );
     public static Pose2d BLUE_MID_BOTTOM= 
