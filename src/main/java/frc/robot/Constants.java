@@ -310,4 +310,29 @@ public final class Constants {
       Units.feetToMeters(24.95), Units.feetToMeters(5.85), new Rotation2d(3*Math.PI/2));
   }
 
+  public static final double hoodAngleDegreesTable[][] = {
+    {52,  15}, // fender shot
+    {66,  15}, // no limelight, mid tarmac
+    {75,  20},
+    {108, 29}, // on corner of tarmac
+    {119, 30},
+    {128, 30}, // Money shot!
+    {136, 31},
+    {142, 32},
+    {194, 33}, // Launch pad
+    {242, 33}  // long shot, no limelight
+  };
+
+  public static final double flywheelRpmTable[][] = {
+    {52,  2800}, // fender shot
+    {66,  2800}, // no limelight, mid tarmac
+    {75,  2800},
+    {108, 2800}, // on corner of tarmac
+    {119, 2900},
+    {128, 3000}, // Money shot!
+    {136, 3100},  // TODO: test and change to 3000?
+    {142, 3000},
+    {194, 3600}, // Launch pad
+    {242, 5000}  // long shot, no limelight
+  };
 }

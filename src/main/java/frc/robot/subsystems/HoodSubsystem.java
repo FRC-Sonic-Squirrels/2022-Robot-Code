@@ -53,14 +53,6 @@ public class HoodSubsystem extends SubsystemBase {
 
   private linearInterpolator hoodInterpolator;
   
-  // distances are in inches to make measuring easier
-  private double distancesInchesWithHoodAngleDegrees[][] = {
-    {52,  15},   // fender shot
-    {120, 30},   // 10 feet from center (an estimate)
-    {192, 33.5}  // 16 feet, max hood angle (an estimate)
-  };
-
-  
   public HoodSubsystem() {
 
     // https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/blob/master/Java%20Talon%20FX%20(Falcon%20500)/MotionMagic/src/main/java/frc/robot/Robot.java
@@ -113,7 +105,7 @@ public class HoodSubsystem extends SubsystemBase {
 
     hoodMotor.setNeutralMode(NeutralMode.Coast);
   
-    hoodInterpolator = new linearInterpolator(distancesInchesWithHoodAngleDegrees);
+    hoodInterpolator = new linearInterpolator(Constants.hoodAngleDegreesTable);
 
     desiredAngleDeg = minHoodAngleDeg;
     zeroEncoder();

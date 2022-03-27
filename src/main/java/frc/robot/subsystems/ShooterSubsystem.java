@@ -14,6 +14,7 @@ import com.team2930.lib.util.linearInterpolator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.CANIVOR_canId;
 
@@ -55,11 +56,6 @@ public class ShooterSubsystem extends SubsystemBase {
   private double m_rate_RPMperSecond = 6000;
   private SlewRateLimiter m_rateLimiter = new SlewRateLimiter(m_rate_RPMperSecond);
 
-  private double distancesInchesWithRPM[][] = {
-    {36, 2800},
-    {73, 3400}
-  };
-
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem(Robot robot) {
     m_robot = robot;
@@ -86,7 +82,7 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheel_follow.setInverted(true);
 
     // Build the linear Interpolator
-    RPMinterpolator = new linearInterpolator(distancesInchesWithRPM);
+    RPMinterpolator = new linearInterpolator(Constants.flywheelRpmTable);
     
     // Be more responsive to changes in the RPM
     // https://docs.ctre-phoenix.com/en/stable/ch14_MCSensor.html#velocity-measurement-filter
