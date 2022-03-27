@@ -56,7 +56,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private SlewRateLimiter m_rateLimiter = new SlewRateLimiter(m_rate_RPMperSecond);
 
   private double distancesInchesWithRPM[][] = {
-    {52, 2750},
+    {36, 2800},
     {73, 3400}
   };
 

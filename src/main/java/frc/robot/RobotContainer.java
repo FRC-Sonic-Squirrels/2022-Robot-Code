@@ -227,7 +227,7 @@ public class RobotContainer {
 
     //Using this for debugging and tuning the hood at the practice field 
     new Button(m_operatorController::getRightBumper)
-     .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(m_shootingRpm, () -> m_hoodAngle, m_cargo, m_shooter, m_hood), true);
+     .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(() -> m_shootingRpm, () -> m_hoodAngle, m_cargo, m_shooter, m_hood, m_robot), true);
 
     new Button(m_operatorController::getBackButton)
       .whenPressed(new InstantCommand(() -> m_shootingRpm -= 50));
@@ -236,13 +236,13 @@ public class RobotContainer {
       .whenPressed(new InstantCommand(() -> m_shootingRpm += 50));
 
     new Button(() -> m_operatorController.getLeftTriggerAxis() >= 0.05)
-      .whenPressed(new InstantCommand(() -> m_hoodAngle -= 1));
+      .whenPressed(new InstantCommand(() -> m_hoodAngle -= 0.5));
 
       new Button(() -> m_operatorController.getRightTriggerAxis() >= 0.05)
-      .whenPressed(new InstantCommand(() -> m_hoodAngle += 1));
+      .whenPressed(new InstantCommand(() -> m_hoodAngle += 0.5));
 
-    new Button(m_operatorController::getBButton)
-      .whenPressed(new HoodZeroAngle(m_hood));
+    // new Button(m_operatorController::getBButton)
+    //   .whenPressed(new HoodZeroAngle(m_hood));
 
     // new Button(m_operatorController::getAButton)
     //   .whenPressed(() -> m_hood.setAngleDegrees(18.6), m_hood);

@@ -7,6 +7,7 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Robot;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -16,11 +17,12 @@ public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
   private ShooterSubsystem m_shooterSubsystem;
   private HoodSubsystem m_hoodSubsystem;
   private long m_time;
-  private double m_rpm;
+  private DoubleSupplier m_rpm;
   private DoubleSupplier m_hoodAngle;
   private boolean shooting = false;
+  private Robot m_robot;
 
-  public ShootWithSetRPMandSetHoodCommand(double flyWheelRPM, DoubleSupplier hoodAngleSupplier, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem) {
+  public ShootWithSetRPMandSetHoodCommand(DoubleSupplier flyWheelRPM, DoubleSupplier hoodAngleSupplier, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem, Robot robot) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
@@ -28,6 +30,7 @@ public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
     m_rpm = flyWheelRPM;
     m_hoodAngle = hoodAngleSupplier;
     m_time = 0;
+    m_robot = robot;
 
     addRequirements(cargoSubsystem, shooterSubsystem, hoodSubsystem);
   }
@@ -35,7 +38,7 @@ public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {    
-    m_shooterSubsystem.setFlywheelRPM(m_rpm);
+    m_shooterSubsystem.setFlywheelRPM(m_rpm.getAsDouble());
     SmartDashboard.putNumber("AAA actual hood angle passed", m_hoodAngle.getAsDouble());
     m_hoodSubsystem.setAngleDegrees(m_hoodAngle.getAsDouble());
   }
@@ -64,6 +67,7 @@ public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
   @Override
   public boolean isFinished() {
     // Command will stop when all the cargo are gone
+    if(m_robot.isAutonomous()){
     if ((! m_cargoSubsystem.cargoInUpperBelts()) && (! m_cargoSubsystem.cargoInLowerBelts())) {
       if (m_time == 0) {
         m_time = System.currentTimeMillis();
@@ -76,7 +80,7 @@ public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
       // reset timer if we see a cargo in the indexer
       m_time = 0;
     }
-
+  }
     //the command will be manually executed and ended by holding a button in teleop
     return false;
   }

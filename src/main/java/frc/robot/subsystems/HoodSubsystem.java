@@ -29,7 +29,7 @@ public class HoodSubsystem extends SubsystemBase {
 
   // min and max from Beau
   private double minHoodAngleDeg = 15.0;
-  private double maxHoodAngleDeg = 32.0; //actual is 33 
+  private double maxHoodAngleDeg = 33.0; //actual is 33 
 
   private static final int kPIDLoopIdx = 0;
   private static final int kSlotIdx = 0;
@@ -38,7 +38,7 @@ public class HoodSubsystem extends SubsystemBase {
   private double currentAngleDeg;
   private double desiredAngleDeg;
   private boolean atDesiredAngle;
-  private double toleranceDegrees = 0.25;
+  private double toleranceDegrees = 0.35;
   private boolean zeroed = false;
   private double percentOutput = 0.0;
 
