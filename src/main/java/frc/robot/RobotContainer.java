@@ -97,7 +97,7 @@ public class RobotContainer {
     // add the new auton trajectories to the auton trajectory chooser
     SwerveTrajectoryAutonomousCommandFactory auton =
         new SwerveTrajectoryAutonomousCommandFactory(drivetrain, m_shooter, m_cargo, m_intake, m_hood,
-            m_limelight, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
+            m_limelight, m_robot, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
 
 
     Command autonThree = auton.twoBallAutoShoot2push ();
