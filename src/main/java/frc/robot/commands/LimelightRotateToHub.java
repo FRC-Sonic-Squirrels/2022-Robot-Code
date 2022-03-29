@@ -24,6 +24,7 @@ public class LimelightRotateToHub extends CommandBase {
   private double m_targetYaw;
   private double m_targetAngle;
   private double m_rotationCorrection;
+  private double timeSinceNoTarget;
 
   public LimelightRotateToHub(LimelightSubsystem limelight, Drivetrain drivetrain) {
     m_limelight = limelight;
@@ -34,7 +35,9 @@ public class LimelightRotateToHub extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    timeSinceNoTarget = 0;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -47,6 +50,14 @@ public class LimelightRotateToHub extends CommandBase {
         // slow down rotation for testing/safety
         m_rotationCorrection *= 0.3;
     }
+
+    if(!m_limelight.seesTarget()){
+      if(timeSinceNoTarget == 0){
+        timeSinceNoTarget = System.currentTimeMillis();
+      }
+    } else {
+      timeSinceNoTarget = 0;
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -56,6 +67,10 @@ public class LimelightRotateToHub extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if(timeSinceNoTarget != 0 && System.currentTimeMillis() - timeSinceNoTarget >= 3000){
+      return true;
+    } else{
+      return false;
+    }
   }
 }
