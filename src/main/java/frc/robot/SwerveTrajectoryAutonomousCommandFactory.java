@@ -76,7 +76,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     Pose2d startPos = StartPoseConstants.BLUE_DEF_TOP;
     Translation2d cargoPos = FieldConstants.BLUE_CARGO_7;
 
-    m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
+    m_drivetrain.resetOdometry(startPos);
 
     Pose2d ourCargoPose = new Pose2d( cargoPos, new Rotation2d(3*Math.PI/4) );
     Pose2d opponentCargoPose = new Pose2d(Constants.FieldConstants.RED_CARGO_4, new Rotation2d(Math.PI/2));
@@ -126,7 +126,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     Pose2d cargoPos = new Pose2d(FieldConstants.BLUE_CARGO_7, new Rotation2d(Math.PI));
     Pose2d shootPos = StartPoseConstants.BLUE_DEF_TOP;
 
-    m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
+    m_drivetrain.resetOdometry(startPos);
 
     Trajectory moveToCargoOne =  TrajectoryGenerator.generateTrajectory(startPos,
         List.of(), cargoPos, m_tt.getTrajectoryConfig());
@@ -177,7 +177,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     PathPlannerTrajectory traject3 = PathPlanner.loadPath("5ball_part3", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
     PathPlannerTrajectory traject4 = PathPlanner.loadPath("5ball_part4", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
 
-    m_drivetrain.setPose(traject1.getInitialPose(), m_drivetrain.getIMURotation());
+    m_drivetrain.resetOdometry(traject1.getInitialPose());
 
     return new SequentialCommandGroup(
 
@@ -210,7 +210,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
    */
   public Command cargoReplaceCommand(Pose2d startPos, Translation2d ejectPos, Translation2d oppCargo) {
 
-    m_drivetrain.setPose(startPos, m_drivetrain.getIMURotation());
+    m_drivetrain.resetOdometry(startPos);
 
     // get the angle between the pose of the robot and the location of the cargo
     Rotation2d cargoAngle = new Rotation2d(getTranslationsAngleDouble(ejectPos, oppCargo));
@@ -244,7 +244,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     PathPlannerTrajectory traject2 = PathPlanner.loadPath("2plus1ball_part2", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
     PathPlannerTrajectory traject3 = PathPlanner.loadPath("2plus1ball_part3", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
 
-    m_drivetrain.setPose(traject1.getInitialPose(), m_drivetrain.getIMURotation());
+    m_drivetrain.resetOdometry(traject1.getInitialPose());
 
     return new SequentialCommandGroup(
 
