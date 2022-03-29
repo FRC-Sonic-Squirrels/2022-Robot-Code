@@ -242,7 +242,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     PathPlannerTrajectory traject1 = PathPlanner.loadPath("2plus1ball_part1", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
     PathPlannerTrajectory traject2 = PathPlanner.loadPath("2plus1ball_part2", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
-    //PathPlannerTrajectory traject3 = PathPlanner.loadPath("2plus1ball_part3", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
+    PathPlannerTrajectory traject3 = PathPlanner.loadPath("2plus1ball_part3", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
 
     m_drivetrain.resetOdometry(traject1.getInitialPose());
 
@@ -259,7 +259,9 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         PPSwerveControlCommand(traject2)
       ),
 
-      new IntakeReverseCommand(m_intake, m_cargo).withTimeout(5)
+      new IntakeReverseCommand(m_intake, m_cargo).withTimeout(5),
+
+      PPSwerveControlCommand(traject3)
     );
   }
 
