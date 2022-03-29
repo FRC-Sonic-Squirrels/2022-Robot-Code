@@ -131,16 +131,16 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     Trajectory moveToHub =  TrajectoryGenerator.generateTrajectory(cargoPos,
         List.of(), shootPos, m_tt.getTrajectoryConfig());
 
-    return new SequentialCommandGroup(      
+    return new SequentialCommandGroup(
       new ParallelRaceGroup(
         SwerveControllerCommand(moveToCargoOne, true),
         new IntakeDeployCommand(m_intake, m_cargo)
       ),
       //new WaitCommand(waitTime),
       new InstantCommand(() -> m_shooter.setFlywheelRPM(2750), m_shooter),
-      SwerveControllerCommand(moveToHub, true)
-     // new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood)
-       // .withTimeout(6)
+      SwerveControllerCommand(moveToHub, true),
+      new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood)
+        .withTimeout(6)
     );
   }  
 
@@ -154,8 +154,8 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       new Pose2d(cargoPos, startPos.getRotation()), m_tt.getTrajectoryConfig());
 
     return new SequentialCommandGroup(
-     // new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
-        //.withTimeout(4),
+      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
+        .withTimeout(4),
 
       SwerveControllerCommand(start_to_cargo, true)
     );
@@ -167,13 +167,14 @@ public class SwerveTrajectoryAutonomousCommandFactory {
    */
   public Command better5BallAuton() {
 
-    // drivetrain.setPose();
     //Trajectory test = PathPlanner.loadPath("5ball_part1", 1.0, 0.75);
 
     PathPlannerTrajectory traject1 = PathPlanner.loadPath("5ball_part1", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
     PathPlannerTrajectory traject2 = PathPlanner.loadPath("5ball_part2", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
     PathPlannerTrajectory traject3 = PathPlanner.loadPath("5ball_part3", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
     PathPlannerTrajectory traject4 = PathPlanner.loadPath("5ball_part4", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
+
+    m_drivetrain.setPose(traject1.getInitialPose(), m_drivetrain.getIMURotation());
 
     return new SequentialCommandGroup(
 
@@ -231,6 +232,27 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         new WaitCommand(4)
       )
 
+    );
+  }
+
+  /**
+   * Shoots two cargo into our goal, and pushes one enemy cargo into our hangar
+   */
+  public static Command TwoBallEnemyOne() {
+
+    PathPlannerTrajectory traject1 = PathPlanner.loadPath("2plus1ball_part1", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
+    PathPlannerTrajectory traject2 = PathPlanner.loadPath("2plus1ball_part2", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
+    PathPlannerTrajectory traject3 = PathPlanner.loadPath("2plus1ball_part3", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
+
+    m_drivetrain.setPose(traject1.getInitialPose(), m_drivetrain.getIMURotation());
+
+    return new SequentialCommandGroup(
+
+      new ParallelRaceGroup(
+        new IntakeDeployCommand(m_intake, m_cargo),
+        SwerveControllerCommand(traject1, true)
+      ),
+      new ShootWithSetRPMandSetHoodCommand(null, null, m_cargo, m_shooter, m_hood, m_robot)
     );
   }
 
