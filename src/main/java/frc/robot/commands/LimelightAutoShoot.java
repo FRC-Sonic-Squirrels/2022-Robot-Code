@@ -8,6 +8,7 @@ import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Robot;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
@@ -18,6 +19,7 @@ public class LimelightAutoShoot extends CommandBase {
   private CargoSubsystem cargoSubsystem;
   private ShooterSubsystem shooterSubsystem;
   private HoodSubsystem hoodSubsystem;
+  private Robot m_robot;
   private double time;
   private double hoodAngleDegrees;
   private double target_distance_meters = 0.0;
@@ -29,11 +31,12 @@ public class LimelightAutoShoot extends CommandBase {
 
 
   /** Creates a new VisionTurnToHub. */
-  public LimelightAutoShoot(LimelightSubsystem limelight, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem) {
+  public LimelightAutoShoot(LimelightSubsystem limelight, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem, Robot robot) {
     this.limelight = limelight;
     this.cargoSubsystem = cargoSubsystem;
     this.shooterSubsystem = shooterSubsystem;
     this.hoodSubsystem = hoodSubsystem;
+    this.m_robot = robot;
     time = 0;
 
     addRequirements(cargoSubsystem, shooterSubsystem, hoodSubsystem);
@@ -86,18 +89,20 @@ public class LimelightAutoShoot extends CommandBase {
   @Override
   public boolean isFinished() {
     // Command will stop when all the cargo are gone
-    if ((! cargoSubsystem.cargoInUpperBelts()) && (! cargoSubsystem.cargoInLowerBelts())) {
+    if(m_robot.isAutonomous()){
+      if ((! cargoSubsystem.cargoInUpperBelts()) && (! cargoSubsystem.cargoInLowerBelts())) {
       if (time == 0) {
         time = System.currentTimeMillis();
       }
       else if (System.currentTimeMillis() - time >= 1000) {
         return true;
       }
-    }
-    if (cargoSubsystem.cargoInUpperBelts() || cargoSubsystem.cargoInLowerBelts()) {
+      }
+      if (cargoSubsystem.cargoInUpperBelts() || cargoSubsystem.cargoInLowerBelts()) {
       // reset timer if we see a cargo in the indexer
       time = 0;
     }
+  }
 
     //the command will be manually executed and ended by holding a button in teleop
     return false;

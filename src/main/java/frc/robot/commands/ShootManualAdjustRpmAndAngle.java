@@ -12,7 +12,7 @@ import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
+public class ShootManualAdjustRpmAndAngle extends CommandBase {
   private CargoSubsystem m_cargoSubsystem;
   private ShooterSubsystem m_shooterSubsystem;
   private HoodSubsystem m_hoodSubsystem;
@@ -22,7 +22,7 @@ public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
   private boolean shooting = false;
   private Robot m_robot;
 
-  public ShootWithSetRPMandSetHoodCommand(DoubleSupplier flyWheelRPM, DoubleSupplier hoodAngleSupplier, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem, Robot robot) {
+  public ShootManualAdjustRpmAndAngle(DoubleSupplier flyWheelRPM, DoubleSupplier hoodAngleSupplier, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem, Robot robot) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
@@ -39,7 +39,7 @@ public class ShootWithSetRPMandSetHoodCommand extends CommandBase {
   @Override
   public void initialize() {    
     m_shooterSubsystem.setFlywheelRPM(m_rpm.getAsDouble());
-    SmartDashboard.putNumber("AAA actual hood angle passed", m_hoodAngle.getAsDouble());
+
     m_hoodSubsystem.setAngleDegrees(m_hoodAngle.getAsDouble());
   }
 

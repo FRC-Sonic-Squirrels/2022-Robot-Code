@@ -29,7 +29,6 @@ import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.ElevatorControlCommand;
 import frc.robot.commands.HoodZeroAngle;
-import frc.robot.commands.ShootWithSetRPMandSetHoodCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.LimelightAutoShoot;
@@ -97,19 +96,22 @@ public class RobotContainer {
     // add the new auton trajectories to the auton trajectory chooser
     SwerveTrajectoryAutonomousCommandFactory auton =
         new SwerveTrajectoryAutonomousCommandFactory(drivetrain, m_shooter, m_cargo, m_intake, m_hood,
-            m_limelight, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
+            m_limelight, m_robot, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
 
 
-    Command autonThree = auton.twoBallAutoShoot2push ();
+    Command autonTwoPushOne = auton.twoBallAutoShoot2push ();
 
-    Command autonFour = auton.twoBallAutoWaitShoot2();
+    Command autonWaitShoot2 = auton.twoBallAutoWaitShoot2();
 
     Command autonRightSide = auton.SundomeRightSideShootAndMove();
+
+    Command autonTwoShoveOne = auton.twoBallEnemyOne();
     
-    chooser.addOption(" (Fender) move, shoot 2, push", autonThree);
-    chooser.addOption(" (Top tarmac) move, wait, shoot 2", autonFour);
+    chooser.addOption(" (Fender) move, shoot 2, push", autonTwoPushOne);
+    chooser.addOption(" (Top tarmac) move, wait, shoot 2", autonWaitShoot2);
     chooser.addOption("Right Side plan C", autonRightSide);
-    chooser.setDefaultOption(" (Top tarmac) move, wait, shoot 2", autonFour);
+    chooser.addOption("Shoot 2, push enemy ball into hangar", autonTwoShoveOne);
+    chooser.setDefaultOption(" (Top tarmac) move, wait, shoot 2", autonWaitShoot2);
     
 
 
@@ -227,7 +229,7 @@ public class RobotContainer {
 
     //Using this for debugging and tuning the hood at the practice field 
     new Button(m_operatorController::getRightBumper)
-     .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(() -> m_shootingRpm, () -> m_hoodAngle, m_cargo, m_shooter, m_hood, m_robot), true);
+    .whileActiveOnce(new ShootManualAdjustRpmAndAngle(() -> m_shootingRpm, () -> m_hoodAngle, m_cargo, m_shooter, m_hood, m_robot), true);
 
     new Button(m_operatorController::getBackButton)
       .whenPressed(new InstantCommand(() -> m_shootingRpm -= 50));
