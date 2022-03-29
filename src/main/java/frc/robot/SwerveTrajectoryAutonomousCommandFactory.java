@@ -143,7 +143,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       //new WaitCommand(waitTime),
       new InstantCommand(() -> m_shooter.setFlywheelRPM(2750), m_shooter),
       SwerveControllerCommand(moveToHub, true),
-      new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood, m_robot)
+      new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood)
         .withTimeout(6)
     );
   }  
@@ -158,7 +158,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       new Pose2d(cargoPos, startPos.getRotation()), m_tt.getTrajectoryConfig());
 
     return new SequentialCommandGroup(
-      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood, m_robot)
+      new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood)
         .withTimeout(4),
 
       SwerveControllerCommand(start_to_cargo, true)
