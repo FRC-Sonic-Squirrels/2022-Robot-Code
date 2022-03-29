@@ -28,7 +28,7 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.LimelightAutoShoot;
-import frc.robot.commands.ShootWithSetRPMandSetHoodCommand;
+import frc.robot.commands.ShootManualAdjustRpmAndAngle;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.HoodSubsystem;
