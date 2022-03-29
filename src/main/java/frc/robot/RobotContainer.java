@@ -32,7 +32,7 @@ import frc.robot.commands.HoodZeroAngle;
 import frc.robot.commands.ShootWithSetRPMandSetHoodCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
-import frc.robot.commands.LimelightRotateToHubAndShoot;
+import frc.robot.commands.LimelightAutoShoot;
 import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.subsystems.ArmSubsystem;
