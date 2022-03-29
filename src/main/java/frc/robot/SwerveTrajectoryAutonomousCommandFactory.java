@@ -17,6 +17,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -48,12 +49,14 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   private static HoodSubsystem m_hood;
   private static TestTrajectories m_tt;
   private static LimelightSubsystem m_limelight;
+  private static Robot m_robot;
 
   private static int m_shootRPM = 3000;
 
 
   public SwerveTrajectoryAutonomousCommandFactory(Drivetrain drivetrain, ShooterSubsystem shooter,
-      CargoSubsystem cargo, IntakeSubsystem intake, HoodSubsystem hood, LimelightSubsystem limelight, double maxVelocity, double maxAcceleration) {
+      CargoSubsystem cargo, IntakeSubsystem intake, HoodSubsystem hood, LimelightSubsystem limelight,
+      Robot robot, double maxVelocity, double maxAcceleration) {
 
     m_drivetrain = drivetrain;
     m_shooter = shooter;
@@ -61,6 +64,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     m_intake = intake;
     m_hood = hood;
     m_limelight = limelight;
+    m_robot = robot;
     m_tt = new TestTrajectories(maxVelocity, maxAcceleration, m_drivetrain, true);
   }
 
@@ -139,7 +143,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       //new WaitCommand(waitTime),
       new InstantCommand(() -> m_shooter.setFlywheelRPM(2750), m_shooter),
       SwerveControllerCommand(moveToHub, true),
-      new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood)
+      new ShootWithSetRPMandSetHoodCommand(2750, 15, m_cargo, m_shooter, m_hood, m_robot)
         .withTimeout(6)
     );
   }  
@@ -154,7 +158,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       new Pose2d(cargoPos, startPos.getRotation()), m_tt.getTrajectoryConfig());
 
     return new SequentialCommandGroup(
-      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood)
+      new ShootWithSetRPMandSetHoodCommand(m_shootRPM, 15, m_cargo, m_shooter, m_hood, m_robot)
         .withTimeout(4),
 
       SwerveControllerCommand(start_to_cargo, true)
@@ -227,10 +231,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
       SwerveControllerCommand(usedTrajectory, true),
 
-      new ParallelRaceGroup(
-        new IntakeReverseCommand(m_intake, m_cargo),
-        new WaitCommand(4)
-      )
+      new IntakeReverseCommand(m_intake, m_cargo).withTimeout(4)
 
     );
   }
@@ -250,9 +251,17 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
       new ParallelRaceGroup(
         new IntakeDeployCommand(m_intake, m_cargo),
-        SwerveControllerCommand(traject1, true)
+        PPSwerveControlCommand(traject1)
       ),
-      new ShootWithSetRPMandSetHoodCommand(null, null, m_cargo, m_shooter, m_hood, m_robot)
+      new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood),
+
+      new ParallelRaceGroup(
+        new IntakeDeployCommand(m_intake, m_cargo),
+        PPSwerveControlCommand(traject2)
+      ),
+
+      PPSwerveControlCommand(traject3),
+      new IntakeReverseCommand(m_intake, m_cargo).withTimeout(5)
     );
   }
 
