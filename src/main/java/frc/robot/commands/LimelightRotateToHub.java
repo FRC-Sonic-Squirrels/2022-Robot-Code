@@ -29,6 +29,7 @@ public class LimelightRotateToHub extends CommandBase {
     m_limelight = limelight;
     m_drivetrain = drivetrain;
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(drivetrain);
   }
 
   // Called when the command is initially scheduled.

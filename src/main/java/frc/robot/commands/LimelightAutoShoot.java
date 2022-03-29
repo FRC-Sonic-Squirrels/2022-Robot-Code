@@ -13,7 +13,7 @@ import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class LimelightRotateToHubAndShoot extends CommandBase {
+public class LimelightAutoShoot extends CommandBase {
   private LimelightSubsystem limelight;
   private CargoSubsystem cargoSubsystem;
   private ShooterSubsystem shooterSubsystem;
@@ -29,7 +29,7 @@ public class LimelightRotateToHubAndShoot extends CommandBase {
 
 
   /** Creates a new VisionTurnToHub. */
-  public LimelightRotateToHubAndShoot(LimelightSubsystem limelight, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem) {
+  public LimelightAutoShoot(LimelightSubsystem limelight, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem) {
     this.limelight = limelight;
     this.cargoSubsystem = cargoSubsystem;
     this.shooterSubsystem = shooterSubsystem;
