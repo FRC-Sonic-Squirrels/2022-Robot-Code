@@ -27,7 +27,7 @@ import frc.robot.Constants.StartPoseConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
-import frc.robot.commands.LimelightRotateToHubAndShoot;
+import frc.robot.commands.LimelightAutoShoot;
 import frc.robot.commands.ShootWithSetRPMandSetHoodCommand;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
@@ -101,7 +101,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         SwerveControllerCommand(moveToHub, true),
 
         // shoot
-        new LimelightRotateToHubAndShoot(m_limelight, m_cargo, m_shooter, m_hood),
+        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood),
 
         // pick up opponent ball
         new ParallelRaceGroup(
@@ -181,19 +181,19 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         new IntakeDeployCommand(m_intake, m_cargo),
         PPSwerveControlCommand(traject1)
       ),
-      new LimelightRotateToHubAndShoot(m_limelight, m_cargo, m_shooter, m_hood),
+      new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood),
 
       new ParallelRaceGroup(
         new IntakeDeployCommand(m_intake, m_cargo),
         PPSwerveControlCommand(traject2)
       ),
-      new LimelightRotateToHubAndShoot(m_limelight, m_cargo, m_shooter, m_hood),
+      new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood),
 
       PPSwerveControlCommand(traject3),
       new IntakeDeployCommand(m_intake, m_cargo).withTimeout(4),
 
       PPSwerveControlCommand(traject4),
-      new LimelightRotateToHubAndShoot(m_limelight, m_cargo, m_shooter, m_hood)
+      new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood)
     );
   }
 
