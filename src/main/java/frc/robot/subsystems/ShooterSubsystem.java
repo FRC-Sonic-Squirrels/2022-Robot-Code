@@ -36,7 +36,6 @@ public class ShooterSubsystem extends SubsystemBase {
   private double m_error = 0;
   private double m_max_RPM_error = 30;
   private final double RPMtoTicks = 2048 / 600;
-  private double m_testingStaticRPM = 0;
 
   private boolean autonPIDset = false;
 
@@ -101,10 +100,6 @@ public class ShooterSubsystem extends SubsystemBase {
     setPIDteleop();
   }
 
-  public void updateTestingRPM() {
-    m_testingStaticRPM = SmartDashboard.getNumber("static flywheel speed", m_testingStaticRPM);
-  }
-
   public void stop() {
     m_desiredRPM = 0;
     flywheel_lead.set(ControlMode.PercentOutput, 0);
@@ -112,11 +107,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // if(this.getCurrentCommand() != null){
-    //   SmartDashboard.putString("AAA shooter current command", this.getCurrentCommand().toString());
-    // } else {
-    //   SmartDashboard.putString("AAA shooter current command", "null");
-    // }
 
     double setPoint = 0;
     m_currentRPM = m_encoder.getIntegratedSensorVelocity() / RPMtoTicks;
@@ -147,19 +137,10 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Shooter isAtSpeed", m_atSpeed);
     SmartDashboard.putNumber("Shooter m_CurrentRPM", m_currentRPM);
     SmartDashboard.putNumber("Shooter m_desiredRPM", m_desiredRPM);
-    SmartDashboard.putBoolean("Shooter m_atSpeed", m_atSpeed);
     SmartDashboard.putNumber("Shooter m_error", m_error);
     SmartDashboard.putNumber("Shooter m_max_RPM_error", m_max_RPM_error);
-    SmartDashboard.putNumber("Shooter RPMtoTicks", RPMtoTicks);
-    SmartDashboard.putNumber("Shooter m_testingStaticRPM", m_testingStaticRPM);
-    SmartDashboard.putBoolean("Shooter auton PID", autonPIDset);
-    SmartDashboard.putNumber("Shooter m_rate_RPMperSecond", m_rate_RPMperSecond);
-
-    if(isAtDesiredRPM()){
-      SmartDashboard.putNumber("AAA shooting rpm within error", m_desiredRPM);
-    } else {
-      SmartDashboard.putNumber("AAA shooting rpm within error", 0);
-    }
+    // SmartDashboard.putBoolean("Shooter auton PID", autonPIDset);
+    // SmartDashboard.putNumber("Shooter m_rate_RPMperSecond", m_rate_RPMperSecond);
 
   }
 
