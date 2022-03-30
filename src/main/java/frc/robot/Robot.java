@@ -7,6 +7,8 @@ package frc.robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -43,6 +45,8 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(this);
 
+    SmartDashboard.putNumber("LLRS heading odometry", 0);
+    SmartDashboard.putNumber("LLRS heading ll", 0);
     // clear sticky faults
     revPDH.clearStickyFaults();
     revPDH.resetTotalEnergy();
@@ -117,6 +121,13 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    // Pose2d start = new Pose2d(8.23 - Units.inchesToMeters(138), 4.11, new Rotation2d(Math.PI));
+
+    // //TODO: remove before auto
+    // m_robotContainer.drivetrain.setPose(start, m_robotContainer.drivetrain.getIMURotation());
+
+    
 
     //if testing and just using teleop we reset pose and rotation to 0, auton will correct this 
     //for its own use case and continue working after u switch to teleop

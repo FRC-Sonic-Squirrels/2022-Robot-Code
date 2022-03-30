@@ -49,13 +49,15 @@ public class DriveFieldCentricAimCommand extends CommandBase {
         if (limelight.seesTarget()) {
             // get heading from limelight
             targetHeadingRadians = limelight.getTargetHeadingRadians();
+            SmartDashboard.putNumber("LLRS heading ll", targetHeadingRadians);
         } else {
             // get heading from odometry
             targetHeadingRadians =
                     SwerveUtils.headingToPoint(drivetrain.getPose(),
                                                Constants.FieldConstants.HUB_CENTER,
-                                               new Rotation2d(Math.PI))
+                                               new Rotation2d(0))
                                 .getRadians();
+        SmartDashboard.putNumber("LLRS heading odometry", targetHeadingRadians);
         }
 
         double filteredTargetRotation = rotationFilter.calculate(targetHeadingRadians);

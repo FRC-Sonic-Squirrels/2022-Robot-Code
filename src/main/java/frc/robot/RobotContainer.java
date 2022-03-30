@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.fasterxml.jackson.core.format.MatchStrength;
 import com.team2930.lib.Limelight;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
@@ -109,11 +110,13 @@ public class RobotContainer {
 
     Command autonTwoShoveOne = auton.twoBallEnemyOne();
     
+    
     chooser.addOption(" (Fender) move, shoot 2, push", autonTwoPushOne);
     chooser.addOption(" (Top tarmac) move, wait, shoot 2", autonWaitShoot2);
     chooser.addOption("Right Side plan C", autonRightSide);
     chooser.addOption("Shoot 2, push enemy ball into hangar", autonTwoShoveOne);
     chooser.setDefaultOption(" (Top tarmac) move, wait, shoot 2", autonWaitShoot2);
+    chooser.addOption("nothing", new InstantCommand());
     
 
 
@@ -142,6 +145,9 @@ public class RobotContainer {
 
     //-------------- DRIVER CONTROLS DEFINED HERE --------------------------  
 
+    new Button(m_controller::getRightBumper)
+      .whileActiveOnce(new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot));
+
     // Back button resets field centric, forward is the current heading
     new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
@@ -157,13 +163,20 @@ public class RobotContainer {
     //         () -> -modifyAxis(m_controller.getLeftY())));
 
 
-    new Button(m_controller::getXButton).whenPressed(
-        new ParallelCommandGroup(
-          new DriveFieldCentricAimCommand(drivetrain,
-            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-            m_limelight),
-          new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)));
+    //Tempory to help testing ll shooting 
+    new Button(m_controller::getBButton)
+      .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
+
+    new Button(m_controller::getYButton)
+      .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
+  
+    // new Button(m_controller::getXButton).whenPressed(
+    //     new ParallelCommandGroup(
+    //       new DriveFieldCentricAimCommand(drivetrain,
+    //         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //         m_limelight),
+    //       new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)));
 
     // new Button(m_controller::getXButton)
     //     .whenPressed(new DriveFieldCentricAimCommand(drivetrain,
@@ -171,17 +184,17 @@ public class RobotContainer {
     //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
     //         m_limelight));
 
-    new Button(m_controller::getYButton)
-            .whenPressed(new DriveWithSetRotationCommand(drivetrain,
-            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> m_controller.getPOV(), 0.0));
+    // new Button(m_controller::getYButton)
+    //         .whenPressed(new DriveWithSetRotationCommand(drivetrain,
+    //         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> m_controller.getPOV(), 0.0));
 
-    new Button(m_controller::getBButton)
-            .whenPressed(new DriveRobotCentricCommand(drivetrain,
-            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8, 
-            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8,
-            () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 0.5));
+    // new Button(m_controller::getBButton)
+    //         .whenPressed(new DriveRobotCentricCommand(drivetrain,
+    //         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8, 
+    //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8,
+    //         () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 0.5));
 
     new Button(m_controller::getAButton)
             .whenPressed(new DriveFieldCentricCommand(drivetrain,

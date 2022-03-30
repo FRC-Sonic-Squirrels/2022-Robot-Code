@@ -28,7 +28,7 @@ public class LimelightSubsystem extends SubsystemBase {
   private double pitch;
   private double yaw;
   private double latency;
-  private double seesTarget;
+  private boolean seesTarget;
   private double targetHeadingDegrees;
   private Pose2d robotPose = new Pose2d();
   private boolean ledsOn = true;
@@ -61,14 +61,15 @@ public class LimelightSubsystem extends SubsystemBase {
     pitch = table.getEntry("ty").getDouble(0);
     yaw = table.getEntry("tx").getDouble(0);
     latency = table.getEntry("tl").getDouble(0);
-    seesTarget = table.getEntry("tv").getDouble(0);
+    seesTarget = table.getEntry("tv").getDouble(0) == 1;
 
     robotPose = m_drivetrain.getPose();
 
     double currentHeadingDegrees = robotPose.getRotation().getDegrees();
-    if (seesTarget==1) {
+    if (seesTarget) {
       // yaw is reported negative in Counter Clockwise direction, need to reverse it.
-      targetHeadingDegrees = currentHeadingDegrees - yaw;
+      //TODO: 180 to switch to shooter side 
+      targetHeadingDegrees = (currentHeadingDegrees - yaw) + 180;
 
       distance_meters = limelight.getDist(
         Units.inchesToMeters(Constants.LimelightConstants.HIGH_HUB_HEIGHT_INCHES),
@@ -82,7 +83,7 @@ public class LimelightSubsystem extends SubsystemBase {
       targetHeadingDegrees = currentHeadingDegrees;
     }
 
-    SmartDashboard.putBoolean("LL has target", seesTarget==1);
+    SmartDashboard.putBoolean("LL has target", seesTarget);
     SmartDashboard.putNumber("LL pitch", pitch);
     SmartDashboard.putNumber("LL distance inches", Units.metersToInches(distance_meters));
     SmartDashboard.putNumber("LL distance ft", Units.metersToFeet(distance_meters));
@@ -130,7 +131,7 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   public boolean onTarget() {
-    if ((seesTarget==1) && 
+    if ((seesTarget) && 
         Math.abs(yaw) < Constants.LimelightConstants.TARGET_TOLERANCE_DEGREES) {
       return true;
     } else {
@@ -147,7 +148,7 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   public boolean seesTarget() {
-    return limelight.seesTarget();
+    return seesTarget;
   }
 
   /** 
@@ -189,7 +190,7 @@ public class LimelightSubsystem extends SubsystemBase {
   * WARNING: This is UNTESTED.
   */
   public Pose2d getEstimatedRobotPose() {
-    if (seesTarget==1) {
+    if (seesTarget) {
       Pose2d estimatedRobotPose = PhotonUtils.estimateFieldToRobot(
       Units.inchesToMeters(Constants.LimelightConstants.LIMELIGHT_HEIGHT_INCHES), 
       Units.inchesToMeters(Constants.LimelightConstants.HIGH_HUB_HEIGHT_INCHES), 
