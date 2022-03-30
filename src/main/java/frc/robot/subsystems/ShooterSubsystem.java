@@ -40,20 +40,23 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private boolean autonPIDset = false;
 
-  private double teleop_configP = 0.22;
-  private double teleop_configI = 0.002;
-  private double teleop_configD = 0.0;
-  private double teleop_configF = 0.055;
+  private double teleop_configP = 0.2;
+  private double teleop_configI = 0.001;
+  private double teleop_configD = 0.3;
+  private double teleop_configF = 0.051;
   private double teleop_configIZ = 100;
+  private double maxForwardOutput = 1.0;
+  private double maxReverseOutput = -0.05;
 
-  private double auton_configP = 0.25;
-  private double auton_configI = 0.002;
-  private double auton_configD = 0.0;
-  private double auton_configF = 0.06;
-  private double auton_configIZ = 100;
+  // NOTE: this was a hack to fix weirdness during autonomous
+  // private double auton_configP = 0.25;
+  // private double auton_configI = 0.002;
+  // private double auton_configD = 0.0;
+  // private double auton_configF = 0.06;
+  // private double auton_configIZ = 100;
 
   // lower number here, slows the rate of change and decreases the power spike
-  private double m_rate_RPMperSecond = 6000;
+  private double m_rate_RPMperSecond = 10000000;
   private SlewRateLimiter m_rateLimiter = new SlewRateLimiter(m_rate_RPMperSecond);
 
   /** Creates a new ShooterSubsystem. */
@@ -71,6 +74,9 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheel_lead.enableVoltageCompensation(true);
     flywheel_follow.configVoltageCompSaturation(11.0);
     flywheel_follow.enableVoltageCompensation(true);
+
+    flywheel_lead.configPeakOutputForward(maxForwardOutput);
+    flywheel_lead.configPeakOutputReverse(maxReverseOutput);
 
     flywheel_lead.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
 
@@ -92,10 +98,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // MotorUtils.setCtreStatusSlow(flywheel_follow);
 
-    // TODO: try this for fixing auton shooting
-    // flywheel_lead.setSafetyEnabled(false);
-    // flywheel_follow.setSafetyEnabled(false);
-
     setPIDteleop();
   }
 
@@ -115,15 +117,6 @@ public class ShooterSubsystem extends SubsystemBase {
     // } else {
     //   SmartDashboard.putString("AAA shooter current command", "null");
     // }
-    if (m_robot.isAutonomous()) {
-      // auton mode, make sure auton PID is set
-      if (!autonPIDset) {
-        setPIDauton();
-      }
-    } else if (autonPIDset) {
-      // teleop mode, make sure teleop PID is set
-      setPIDteleop();
-    }
 
     double setPoint = 0;
     m_currentRPM = m_encoder.getIntegratedSensorVelocity() / RPMtoTicks;
@@ -199,12 +192,4 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheel_lead.config_IntegralZone(0, teleop_configIZ);
   }
 
-  private void setPIDauton() {
-    autonPIDset = true;
-    flywheel_lead.config_kP(0, auton_configP);
-    flywheel_lead.config_kI(0, auton_configI);
-    flywheel_lead.config_kD(0, auton_configD);
-    flywheel_lead.config_kF(0, auton_configF);
-    flywheel_lead.config_IntegralZone(0, auton_configIZ);
-  }
 }
