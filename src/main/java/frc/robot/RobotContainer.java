@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -154,6 +155,15 @@ public class RobotContainer {
     //         .whenPressed(new DriveHubCentricCommand(drivetrain, 
     //         () -> -modifyAxis(m_controller.getRightX()), 
     //         () -> -modifyAxis(m_controller.getLeftY())));
+
+
+    new Button(m_controller::getXButton).whenPressed(
+        new ParallelCommandGroup(
+          new DriveFieldCentricAimCommand(drivetrain,
+            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+            m_limelight),
+          new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)));
 
     new Button(m_controller::getXButton)
         .whenPressed(new DriveFieldCentricAimCommand(drivetrain,
