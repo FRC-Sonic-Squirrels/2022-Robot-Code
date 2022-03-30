@@ -118,7 +118,7 @@ public class Drivetrain extends SubsystemBase {
    * Object constructor
    */
   public Drivetrain() {
-    ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
+    //ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
     // TODO: Explore this, this looks like a good solution for validating the position through the
     // limelight also could just be a better odometry system
@@ -203,7 +203,7 @@ public class Drivetrain extends SubsystemBase {
     m_desiredStates = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0.0, 0.0, 0.0));
 
     // TODO: enabling this uses too much CPU in auton
-    // SmartDashboard.putData("Field", m_field);
+    SmartDashboard.putData("Field", m_field);
   }
 
   /**
@@ -420,7 +420,7 @@ public class Drivetrain extends SubsystemBase {
     setModuleStates(m_desiredStates);
 
     // Update pose in field simulation
-    // m_field.setRobotPose(m_odometry.getPoseMeters());
+    m_field.setRobotPose(m_odometry.getPoseMeters());
 
     // SmartDashboard.putNumber("Drivetrain IMU Yaw", m_pigeon.getYaw());
     // SmartDashboard.putNumber("Drivetrain IMU Roll", m_pigeon.getRoll());
