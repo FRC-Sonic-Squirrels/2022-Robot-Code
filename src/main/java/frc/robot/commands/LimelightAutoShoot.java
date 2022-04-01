@@ -54,20 +54,18 @@ public class LimelightAutoShoot extends CommandBase {
 
       target_distance_meters = distanceFilter.calculate(limelight.getDistanceMeters());
 
-      if(!m_gotValues){
+      if (!m_gotValues) {
         target_rpm =
-        shooterSubsystem.getRPMforDistanceFeet(Units.metersToFeet(target_distance_meters));
-      hoodAngleDegrees =
-        hoodSubsystem.getAngleForDistanceFeet(Units.metersToFeet(target_distance_meters));
+            shooterSubsystem.getRPMforDistanceFeet(Units.metersToFeet(target_distance_meters));
+        hoodAngleDegrees =
+            hoodSubsystem.getAngleForDistanceFeet(Units.metersToFeet(target_distance_meters));
         shooterSubsystem.setFlywheelRPM(target_rpm);
-         hoodSubsystem.setAngleDegrees(hoodAngleDegrees);
+        hoodSubsystem.setAngleDegrees(hoodAngleDegrees);
 
-         m_gotValues = true;
+        m_gotValues = true;
       }
 
-      
-
-      if (!shooting && shooterSubsystem.isAtDesiredRPM() && hoodSubsystem.isAtAngle()) {
+      if (!shooting && m_gotValues && shooterSubsystem.isAtDesiredRPM() && hoodSubsystem.isAtAngle()) {
         shooting = true;
         cargoSubsystem.setShootMode();
       }
@@ -86,6 +84,9 @@ public class LimelightAutoShoot extends CommandBase {
     shooterSubsystem.stop();
     cargoSubsystem.setIdleMode();
     hoodSubsystem.setMinAngle();
+    shooting = false;
+    m_gotValues = false;
+    time = 0;
   }
 
   // Returns true when the command should end.
