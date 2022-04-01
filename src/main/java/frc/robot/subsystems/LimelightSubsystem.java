@@ -10,6 +10,7 @@ import org.photonvision.PhotonUtils;
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -35,11 +36,8 @@ public class LimelightSubsystem extends SubsystemBase {
   private Pose2d kalmanLimelightPose;
   private double kalmanHubDistFeet;
 
-
-  // private final Field2d m_field = new Field2d();
-  // TODO: test and fix filtering change in the distance
-  // private static double rateMetersPerSecond = 1.0;
-  // private static final SlewRateLimiter distanceRateLimiter = new SlewRateLimiter(rateMetersPerSecond, 0.0);
+  private MedianFilter seesTargetFilter = new MedianFilter(5);
+  // TODO: add linear filter to limelight distance 
 
   /** Creates a new Limelight. */
   public LimelightSubsystem(Drivetrain drivetrain) {
@@ -48,7 +46,6 @@ public class LimelightSubsystem extends SubsystemBase {
     limelight.setPipeline(0);
     // SmartDashboard.putData("Field", m_field);
   }
-
 
   @Override
   public void periodic() {
@@ -61,12 +58,12 @@ public class LimelightSubsystem extends SubsystemBase {
     pitch = table.getEntry("ty").getDouble(0);
     yaw = table.getEntry("tx").getDouble(0);
     latency = table.getEntry("tl").getDouble(0);
-    seesTarget = table.getEntry("tv").getDouble(0) == 1;
+    seesTarget = seesTargetFilter.calculate(table.getEntry("tv").getDouble(0)) > 0.9;
 
     robotPose = m_drivetrain.getPose();
 
     double currentHeadingDegrees = robotPose.getRotation().getDegrees();
-    if (seesTarget) {
+    if (table.getEntry("tv").getDouble(0) > 0.99) {
       // yaw is reported negative in Counter Clockwise direction, need to reverse it.
       //TODO: 180 to switch to shooter side 
       targetHeadingDegrees = (currentHeadingDegrees - yaw) + 180;
@@ -76,6 +73,9 @@ public class LimelightSubsystem extends SubsystemBase {
         Units.inchesToMeters(Constants.LimelightConstants.LIMELIGHT_HEIGHT_INCHES),
         Constants.LimelightConstants.LIMELIGHT_PITCH_DEGREES) 
         + Units.inchesToMeters(Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES);
+    } else if (seesTarget) {
+      // we didn't see the target this loop, but on average we have seen it very recently
+      // assume distance and heading haven't changed much
     } else {
       // return zero if we don't see the target
       distance_meters = 0;

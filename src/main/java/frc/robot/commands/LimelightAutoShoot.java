@@ -27,9 +27,6 @@ public class LimelightAutoShoot extends CommandBase {
   private boolean m_gotValues = false;
   private boolean shooting = false;
 
-  private MedianFilter distanceFilter = new MedianFilter(5);
-
-
   /** Creates a new VisionTurnToHub. */
   public LimelightAutoShoot(LimelightSubsystem limelight, CargoSubsystem cargoSubsystem,
       ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem, Robot robot) {
@@ -52,7 +49,7 @@ public class LimelightAutoShoot extends CommandBase {
   public void execute() {
     if (limelight.seesTarget()) {
 
-      target_distance_meters = distanceFilter.calculate(limelight.getDistanceMeters());
+      target_distance_meters = limelight.getDistanceMeters();
 
       if (!m_gotValues) {
         target_rpm =
