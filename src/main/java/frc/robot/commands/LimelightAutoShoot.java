@@ -93,19 +93,17 @@ public class LimelightAutoShoot extends CommandBase {
   @Override
   public boolean isFinished() {
     // Command will stop when all the cargo are gone
-    // if (m_robot.isAutonomous()) {
-    //   if ((!cargoSubsystem.cargoInUpperBelts()) && (!cargoSubsystem.cargoInLowerBelts())) {
-    //     if (time == 0) {
-    //       time = System.currentTimeMillis();
-    //     } else if (System.currentTimeMillis() - time >= 1000) {
-    //       return true;
-    //     }
-    //   }
-    //   if (cargoSubsystem.cargoInUpperBelts() || cargoSubsystem.cargoInLowerBelts()) {
-    //     // reset timer if we see a cargo in the indexer
-    //     time = 0;
-    //   }
-    // }
+    if ((!cargoSubsystem.cargoInUpperBelts()) && (!cargoSubsystem.cargoInLowerBelts())) {
+      if (time == 0) {
+        time = System.currentTimeMillis();
+      } else if (System.currentTimeMillis() - time >= 500) {
+        return true;
+      }
+    }
+    else {
+      // reset timer if we see a cargo in the indexer
+      time = 0;
+    }
 
     // the command will be manually executed and ended by holding a button in teleop
     return false;

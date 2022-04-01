@@ -146,7 +146,7 @@ public class RobotContainer {
     //-------------- DRIVER CONTROLS DEFINED HERE --------------------------  
 
     new Button(m_controller::getRightBumper)
-      .whileActiveOnce(new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot));
+      .whenPressed(new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot));
 
     // Back button resets field centric, forward is the current heading
     new Button(m_controller::getBackButton)
