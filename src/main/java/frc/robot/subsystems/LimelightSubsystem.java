@@ -152,6 +152,10 @@ public class LimelightSubsystem extends SubsystemBase {
     return seesTarget;
   }
 
+  public boolean seesTargetRecently() {
+    return seesTargetRecently;
+  }
+
   /** 
    * Returns the distance in meters 
    */

@@ -22,6 +22,8 @@ public class DriveFieldCentricAimCommand extends CommandBase {
     private final DoubleSupplier translationYSupplier;
     private final DoubleSupplier rotationSupplier;
 
+    LinearFilter yawFilter = LinearFilter.movingAverage(5);
+
     //private LinearFilter rotationFilter = LinearFilter.singlePoleIIR(0.1, 0.02);
 
     // private ProfiledPIDController rotationalController = new ProfiledPIDController(3.0, 0.0, 0.02,
@@ -49,8 +51,10 @@ public class DriveFieldCentricAimCommand extends CommandBase {
         double rotationOutput = rotationSupplier.getAsDouble() * Constants.DriveFieldCentricConstant.ROTATION_MULTIPLIER;
         SmartDashboard.putNumber("LLRS driver rotation output", rotationOutput);
 
-        if (limelight.seesTarget()) {
-            rotationOutput = rotationOutput * 0.1 - (limelight.targetYaw() / 27.0 ) * 0.6;
+        double filteredYaw = yawFilter.calculate(limelight.targetYaw());
+
+        if (limelight.seesTargetRecently()) {
+            rotationOutput = rotationOutput * 0.1 - (filteredYaw / 27.0 ) * 1.5;
         } 
 
         // Just for debugging 
