@@ -117,7 +117,17 @@ public class RobotContainer {
     chooser.addOption("Shoot 2, push enemy ball into hangar", autonTwoShoveOne);
     chooser.setDefaultOption(" (Top tarmac) move, wait, shoot 2", autonWaitShoot2);
     chooser.addOption("nothing", new InstantCommand());
+
+    // test commands
+    Command testChangeHeading = auton.changeHeading();
+    Command testCurve = auton.curve();
+    Command testStraightLine = auton.straightLine();
+    Command test5BallStep1 = auton.fiveBallPartOne();
     
+    chooser.addOption("test change heading", testChangeHeading);
+    chooser.addOption("test curve", testCurve);
+    chooser.addOption("test straight line", testStraightLine);
+    chooser.addOption("test step 1 of 5 ball", test5BallStep1);
 
 
     drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
