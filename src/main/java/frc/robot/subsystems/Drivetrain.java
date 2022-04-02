@@ -51,9 +51,13 @@ public class Drivetrain extends SubsystemBase {
    * <p>
    * This is a measure of how fast the robot should be able to drive in a straight line.
    */
+
+   //4.968230
   public static final double MAX_VELOCITY_METERS_PER_SECOND =
       6380.0 / 60.0 * SdsModuleConfigurations.MK4I_L2.getDriveReduction()
           * SdsModuleConfigurations.MK4I_L2.getWheelDiameter() * Math.PI;
+
+  
 
   /**
    * The maximum acceleration of the robot.
@@ -71,6 +75,8 @@ public class Drivetrain extends SubsystemBase {
    */
   // Here we calculate the theoretical maximum angular velocity. You can also replace this with a
   // measured amount.
+
+  //11.288247
   public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND =
       MAX_VELOCITY_METERS_PER_SECOND
           / Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
@@ -119,6 +125,11 @@ public class Drivetrain extends SubsystemBase {
    */
   public Drivetrain() {
     //ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
+
+    // SmartDashboard.putNumber("drivetrain MAX_VELOCITY_METERS_PER_SECOND", MAX_VELOCITY_METERS_PER_SECOND);
+    // SmartDashboard.putNumber("drivetrain MAX_ACCELERATION_METERS_PER_SECOND_SQUARED", MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
+    // SmartDashboard.putNumber("drivetrain MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND", MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND);
+    // SmartDashboard.putNumber("drivetrain MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED", MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
 
     // TODO: Explore this, this looks like a good solution for validating the position through the
     // limelight also could just be a better odometry system
