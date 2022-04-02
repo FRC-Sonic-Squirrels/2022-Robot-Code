@@ -290,6 +290,14 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     return PPSwerveControlCommand(path);
   }
 
+  public static Command fiveBallPartOne() {
+
+    PathPlannerTrajectory path = PathPlanner.loadPath("5ball_part1", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
+    m_drivetrain.resetOdometry(path.getInitialPose());
+
+    return PPSwerveControlCommand(path);
+  }
+
 
   /**
    * Create a swerve trajectory follow command. If stopAtEnd is set to true, robot will come to full
