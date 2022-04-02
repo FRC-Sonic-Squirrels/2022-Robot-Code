@@ -144,7 +144,7 @@ public final class Constants {
     public static final double maxAcceleration = 2.5; // meters per second per second
 
     // This kP worked for the DriveWithSetRotation command
-    public static final double kPThetaController = 1.5;
+    public static final double kPThetaController = 1.5; //1.5;
     public static final double kIThetaController = 0.0;
     public static final double kDThetaController = 0.0;
 
@@ -152,9 +152,9 @@ public final class Constants {
     public static final double kP = 2.2941; // test bot = 2.3055;
     public static final double kI = 0;
     public static final double kD = 0;
-    public static final double kA = 0.43516; // test bot = 0.12817;
-    public static final double kV = 2.344;   // test bot = 2.3423;
-    public static final double kS = 0.62811; // test bot = 0.53114;
+    public static final double kA = 0.435;  // SysId = 0.43516; // test bot = 0.12817;
+    public static final double kV = 3.5;    // SysId = 2.344;   // test bot = 2.3423;
+    public static final double kS = 0.628;  // SysID = 0.62811; // test bot = 0.53114;
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints =

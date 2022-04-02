@@ -288,6 +288,8 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     PathPlannerTrajectory path = PathPlanner.loadPath("test_straightline", 1.5, 0.75);
 
+    System.out.println(path.toString());
+
     return PPSwerveControlCommand(path).beforeStarting(new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())));
   }
 
@@ -319,7 +321,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       ),
       new ParallelRaceGroup(
         new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
-        new ShootWithSetRPMAndHoodAngle(3000, 32, m_cargo, m_shooter, m_hood, m_robot)
+        new ShootWithSetRPMAndHoodAngle(3100, 31.0, m_cargo, m_shooter, m_hood, m_robot)
         //new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
       ),
       new ParallelRaceGroup(
@@ -329,6 +331,8 @@ public class SwerveTrajectoryAutonomousCommandFactory {
           new WaitCommand(0.5)
         )
       ),
+      new InstantCommand(() -> m_shooter.setFlywheelRPM(3000)),
+      new InstantCommand(() -> m_hood.setAngleDegrees(31)),
       PPSwerveControlCommand(path4),
       new ParallelRaceGroup(
         new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),

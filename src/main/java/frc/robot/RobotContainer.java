@@ -162,7 +162,7 @@ public class RobotContainer {
     // new Button(m_controller::getRightBumper)
     //   .whenPressed(new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot));
 
-    new Button(m_controller::getRightBumper)
+    new Button(m_controller::getLeftBumper)
       .whenPressed(new ParallelRaceGroup(
         new DriveFieldCentricAimCommand(drivetrain, 
             () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
@@ -187,7 +187,7 @@ public class RobotContainer {
 
 
     //Tempory to help testing ll shooting 
-    new Button(m_controller::getBButton)
+    new Button(m_controller::getRightBumper)
       .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
 
     new Button(m_controller::getYButton)
