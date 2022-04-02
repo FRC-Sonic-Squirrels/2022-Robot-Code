@@ -42,7 +42,10 @@ public class LimelightAutoShoot extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    shooterSubsystem.setFlywheelRPM(3000);
+    hoodSubsystem.setAngleDegrees(29);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -51,7 +54,7 @@ public class LimelightAutoShoot extends CommandBase {
 
       target_distance_meters = limelight.getDistanceMeters();
 
-      if (!m_gotValues) {
+      if (!m_gotValues && limelight.onTarget()) {
         target_rpm =
             shooterSubsystem.getRPMforDistanceFeet(Units.metersToFeet(target_distance_meters));
         hoodAngleDegrees =
@@ -62,7 +65,7 @@ public class LimelightAutoShoot extends CommandBase {
         m_gotValues = true;
       }
 
-      if (!shooting && m_gotValues && shooterSubsystem.isAtDesiredRPM() && hoodSubsystem.isAtAngle()) {
+      if (!shooting && m_gotValues && shooterSubsystem.isAtDesiredRPM() && hoodSubsystem.isAtAngle() && limelight.onTarget()) {
         shooting = true;
         cargoSubsystem.setShootMode();
       }
