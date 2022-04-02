@@ -39,14 +39,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    SmartDashboard.putBoolean("IS CHIMPING", false);
 
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(this);
 
-    SmartDashboard.putNumber("LLRS heading odometry", 0);
-    SmartDashboard.putNumber("LLRS heading ll", 0);
     // clear sticky faults
     revPDH.clearStickyFaults();
     revPDH.resetTotalEnergy();
@@ -77,8 +74,10 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    m_robotContainer.updateManualShooterSettings();
-
+    if (!isAutonomous()) {
+      m_robotContainer.updateManualShooterSettings();
+    }
+    
     // SmartDashboard.putNumber("Joystick_Values jLeftY", m_robotContainer.m_controller.getLeftY());
     // SmartDashboard.putNumber("Joystick_Values jLeftX", m_robotContainer.m_controller.getLeftX());
     // SmartDashboard.putNumber("Joystick_Values jRightY", m_robotContainer.m_controller.getRightY());

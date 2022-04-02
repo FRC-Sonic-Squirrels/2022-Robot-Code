@@ -102,7 +102,7 @@ public class Drivetrain extends SubsystemBase {
 
   private final SwerveDriveOdometry m_odometry;
 
-  private final Field2d m_field = new Field2d();
+  //private final Field2d m_field = new Field2d();
 
   private WPI_Pigeon2 m_pigeon = 
     new WPI_Pigeon2(Constants.CANIVOR_canId.CANID15_pigeon_imu, CANIVOR_canId.name);
@@ -153,8 +153,8 @@ public class Drivetrain extends SubsystemBase {
     // configuration or motors you MUST change it. If you do not, your code will crash on startup.
 
     Mk4ModuleConfiguration swerveConfig = new Mk4ModuleConfiguration();
-    swerveConfig.setDriveCurrentLimit(40);
-    swerveConfig.setNominalVoltage(11.5);
+    //swerveConfig.setDriveCurrentLimit(40);
+    //swerveConfig.setNominalVoltage(11.5);
 
     m_frontLeftModule = Mk4iSwerveModuleHelper.createFalcon500(
         // This parameter is optional, but will allow you to see the current state of the module on
@@ -214,7 +214,7 @@ public class Drivetrain extends SubsystemBase {
     m_desiredStates = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0.0, 0.0, 0.0));
 
     // TODO: enabling this uses too much CPU in auton
-    SmartDashboard.putData("Field", m_field);
+    //SmartDashboard.putData("Field", m_field);
   }
 
   /**
@@ -431,7 +431,7 @@ public class Drivetrain extends SubsystemBase {
     setModuleStates(m_desiredStates);
 
     // Update pose in field simulation
-    m_field.setRobotPose(m_odometry.getPoseMeters());
+    //m_field.setRobotPose(m_odometry.getPoseMeters());
 
     // SmartDashboard.putNumber("Drivetrain IMU Yaw", m_pigeon.getYaw());
     // SmartDashboard.putNumber("Drivetrain IMU Roll", m_pigeon.getRoll());

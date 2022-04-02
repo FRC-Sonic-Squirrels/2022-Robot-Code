@@ -152,7 +152,6 @@ public class HoodSubsystem extends SubsystemBase {
     // SmartDashboard.putNumber("Hood motor output", hoodMotor.getMotorOutputPercent());
     // SmartDashboard.putNumber("Hood closed loop error", hoodMotor.getClosedLoopError(kPIDLoopIdx));
     SmartDashboard.putBoolean("Hood limit", atLowerLimit());
-    SmartDashboard.putBoolean("Hood at desired angle", atDesiredAngle);
 
   }
 

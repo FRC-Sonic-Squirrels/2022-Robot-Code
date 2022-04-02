@@ -138,7 +138,7 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Shooter m_CurrentRPM", m_currentRPM);
     SmartDashboard.putNumber("Shooter m_desiredRPM", m_desiredRPM);
     SmartDashboard.putNumber("Shooter m_error", m_error);
-    SmartDashboard.putNumber("Shooter m_max_RPM_error", m_max_RPM_error);
+    // SmartDashboard.putNumber("Shooter m_max_RPM_error", m_max_RPM_error);
     // SmartDashboard.putBoolean("Shooter auton PID", autonPIDset);
     // SmartDashboard.putNumber("Shooter m_rate_RPMperSecond", m_rate_RPMperSecond);
 

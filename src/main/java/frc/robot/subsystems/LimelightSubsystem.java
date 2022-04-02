@@ -45,16 +45,11 @@ public class LimelightSubsystem extends SubsystemBase {
     m_drivetrain = drivetrain;
     this.limelight = new Limelight("limelight-one");
     limelight.setPipeline(0);
-    // SmartDashboard.putData("Field", m_field);
   }
 
   @Override
   public void periodic() {
-    // if(this.getCurrentCommand() != null){
-    //   SmartDashboard.putString("AAA limelight current command", this.getCurrentCommand().toString());
-    // } else {
-    //   SmartDashboard.putString("AAA limelight current command", "null");
-    // }
+
     table = NetworkTableInstance.getDefault().getTable("limelight-one");
     pitch = table.getEntry("ty").getDouble(0);
     yaw = table.getEntry("tx").getDouble(0);
@@ -84,50 +79,13 @@ public class LimelightSubsystem extends SubsystemBase {
       targetHeadingDegrees = currentHeadingDegrees;
     }
 
-    SmartDashboard.putBoolean("LL has target", seesTarget);
-    SmartDashboard.putNumber("LL pitch", pitch);
+    // SmartDashboard.putBoolean("LL has target", seesTarget);
+    // SmartDashboard.putNumber("LL pitch", pitch);
     SmartDashboard.putNumber("LL distance inches", Units.metersToInches(distance_meters));
-    SmartDashboard.putNumber("LL distance ft", Units.metersToFeet(distance_meters));
-    SmartDashboard.putNumber("LL target heading deg", targetHeadingDegrees);
-    SmartDashboard.putNumber("LL pipelineLatency", latency);
+    // SmartDashboard.putNumber("LL distance ft", Units.metersToFeet(distance_meters));
+    // SmartDashboard.putNumber("LL target heading deg", targetHeadingDegrees);
+    // SmartDashboard.putNumber("LL pipelineLatency", latency);
 
-    //   //TODO: should we use IMU rotation?
-    //   //TODO: put in actual standard devs
-    
-    //   estimate = new SwerveDrivePoseEstimator(
-    //     m_drivetrain.getRotation(),
-    //     m_drivetrain.getPose(),
-    //     m_drivetrain.kinematics(),
-    //     new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.02, 0.02, 0.01), // State measurement standard deviations. X, Y, theta.
-    //     new MatBuilder<>(Nat.N1(), Nat.N1()).fill(0.02), // Rotation standard dev. theta.
-    //     new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.01)); // Vision standard devs. X, Y, and theta.
-     
-    //   if (seesTarget == 1) {
-    //     limelightPose =
-    //         PhotonUtils.estimateFieldToRobot(Constants.LimelightConstants.LIMELIGHT_HEIGHT_INCHES,
-    //             Constants.LimelightConstants.HIGH_HUB_HEIGHT_INCHES,
-    //             Units.degreesToRadians(Constants.LimelightConstants.LIMELIGHT_PITCH_DEGREES),
-    //             Units.degreesToRadians(pitch), new Rotation2d(Units.degreesToRadians(yaw)),
-    //             robotPose.getRotation(),
-    //             new Pose2d(
-    //                 Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX()
-    //                     + (Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES
-    //                         * Math.cos(-Units.degreesToRadians(targetHeadingDegrees))),
-    //                 Constants.HubCentricConstants.HUB_CENTER_POSE2D.getY()
-    //                     + (Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES
-    //                         * Math.sin(-Units.degreesToRadians(targetHeadingDegrees))),
-    //                 Constants.HubCentricConstants.HUB_CENTER_POSE2D.getRotation()),
-    //             Constants.LimelightConstants.LIMELIGHT_TO_ROBOT);
-
-    //     estimate.addVisionMeasurement(limelightPose, (System.currentTimeMillis() - latency) / 1000);
-    //   }
-    //   kalmanLimelightPose = estimate.updateWithTime(System.currentTimeMillis()/1000, m_drivetrain.getRotation(), m_drivetrain.getSwerveModuleState());
-    //   kalmanHubDistFeet = Units.metersToFeet(Math.hypot(Constants.HubCentricConstants.HUB_CENTER_POSE2D.getX() - kalmanLimelightPose.getX(), Constants.HubCentricConstants.HUB_CENTER_POSE2D.getY() - kalmanLimelightPose.getY()));
-    //   SmartDashboard.putNumber("LL pose X meters", kalmanLimelightPose.getX());
-    //   SmartDashboard.putNumber("LL pose Y meters", kalmanLimelightPose.getY());
-    //   SmartDashboard.putNumber("LL pose Rotation degrees", kalmanLimelightPose.getRotation().getDegrees());
-    //   SmartDashboard.putNumber("LL kalman dist to hub feet", kalmanHubDistFeet);
-    // }
     
   }
 

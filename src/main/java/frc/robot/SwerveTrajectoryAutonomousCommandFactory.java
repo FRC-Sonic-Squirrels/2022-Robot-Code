@@ -27,6 +27,8 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.StartPoseConstants;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.commands.DriveChimpMode;
+import frc.robot.commands.DriveFieldCentricAimCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.LimelightAutoShoot;
@@ -285,22 +287,53 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   public Command straightLine() {
 
     PathPlannerTrajectory path = PathPlanner.loadPath("test_straightline", 1.5, 0.75);
-    SmartDashboard.putString("initial pose", path.getInitialPose().toString());
 
     return PPSwerveControlCommand(path).beforeStarting(new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())));
   }
 
   public Command fiveBallPartOne() {
 
-    PathPlannerTrajectory path = PathPlanner.loadPath("5ball_part1", 2.0, 1.5);
+    PathPlannerTrajectory path1 = PathPlanner.loadPath("5ball_part1", 2.0, 1.5);
+
+    PathPlannerTrajectory path2 = PathPlanner.loadPath("5ball_part2", 2.5, 2.0);
+
+    PathPlannerTrajectory path3 = PathPlanner.loadPath("5ball_part3", 3.0, 2.0);
+
+    PathPlannerTrajectory path4 = PathPlanner.loadPath("5ball_part4", 3.0, 2.5);
+
 
     return new SequentialCommandGroup( 
-      new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())),
+      new InstantCommand(() ->m_drivetrain.resetOdometry(path1.getInitialPose())),
+      new ParallelCommandGroup(
+        new IntakeDeployCommand(m_intake, m_cargo).until(() -> (m_cargo.cargoInLowerBelts() && m_cargo.cargoInUpperBelts())),
+        PPSwerveControlCommand(path1)
+      ),
+      new ParallelRaceGroup(
+         new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
+         //new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
+         new ShootWithSetRPMAndHoodAngle(2900, 30, m_cargo, m_shooter, m_hood, m_robot)
+      ),
       new ParallelRaceGroup(
         new IntakeDeployCommand(m_intake, m_cargo),
-        PPSwerveControlCommand(path)
+        PPSwerveControlCommand(path2)
       ),
-      new ShootWithSetRPMAndHoodAngle(2900, 30, m_cargo, m_shooter, m_hood, m_robot)
+      new ParallelRaceGroup(
+        new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
+        new ShootWithSetRPMAndHoodAngle(3000, 32, m_cargo, m_shooter, m_hood, m_robot)
+        //new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
+      ),
+      new ParallelRaceGroup(
+        new IntakeDeployCommand(m_intake, m_cargo),
+        new SequentialCommandGroup(
+          PPSwerveControlCommand(path3),
+          new WaitCommand(0.5)
+        )
+      ),
+      PPSwerveControlCommand(path4),
+      new ParallelRaceGroup(
+        new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
+        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
+      )
     );
   }
 

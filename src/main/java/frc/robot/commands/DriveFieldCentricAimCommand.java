@@ -53,16 +53,16 @@ public class DriveFieldCentricAimCommand extends CommandBase {
 
         double filteredYaw = yawFilter.calculate(limelight.targetYaw());
 
-        if (limelight.seesTargetRecently()) {
-            rotationOutput = rotationOutput * 0.1 - (filteredYaw / 27.0 ) * 1.0;
+        if (limelight.seesTargetRecently() && Math.abs(filteredYaw) > 2.0) {
+            rotationOutput = rotationOutput * 0.1 - (filteredYaw / 27.0 ) * 0.8;
         } 
 
         // Just for debugging 
-        SmartDashboard.putNumber("LLRS heading ll", Math.toDegrees(limelight.getTargetHeadingRadians()));
-        SmartDashboard.putNumber("LLRS heading odometry",
-                        SwerveUtils.headingToPoint(drivetrain.getPose(),
-                                        Constants.FieldConstants.HUB_CENTER, new Rotation2d(0))
-                                .getDegrees());
+        // SmartDashboard.putNumber("LLRS heading ll", Math.toDegrees(limelight.getTargetHeadingRadians()));
+        // SmartDashboard.putNumber("LLRS heading odometry",
+        //                 SwerveUtils.headingToPoint(drivetrain.getPose(),
+        //                                 Constants.FieldConstants.HUB_CENTER, new Rotation2d(0))
+        //                         .getDegrees());
 
         // deadband the rotation to avoid oscillation
         if (Math.abs(rotationOutput) < 0.05) {
