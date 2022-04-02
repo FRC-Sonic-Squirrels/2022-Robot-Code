@@ -132,7 +132,7 @@ public class Robot extends TimedRobot {
     //if testing and just using teleop we reset pose and rotation to 0, auton will correct this 
     //for its own use case and continue working after u switch to teleop
     if(!m_robotContainer.drivetrain.isOdometrySet()){
-      m_robotContainer.drivetrain.setPose(new Pose2d(), m_robotContainer.drivetrain.getIMURotation());
+      m_robotContainer.drivetrain.resetOdometry(new Pose2d(0.0, 0.0, new Rotation2d(0)));
     }
 
  
