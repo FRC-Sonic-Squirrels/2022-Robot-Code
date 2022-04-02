@@ -19,6 +19,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.drive.Vector2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -286,6 +287,8 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     PathPlannerTrajectory path = PathPlanner.loadPath("test_straightline", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
     m_drivetrain.resetOdometry(path.getInitialPose());
+
+    SmartDashboard.putString("initial pose", path.getInitialPose().toString());
 
     return PPSwerveControlCommand(path);
   }
