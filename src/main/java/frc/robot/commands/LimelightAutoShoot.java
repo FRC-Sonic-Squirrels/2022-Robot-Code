@@ -21,9 +21,9 @@ public class LimelightAutoShoot extends CommandBase {
   private HoodSubsystem hoodSubsystem;
   private Robot m_robot;
   private double time;
-  private double hoodAngleDegrees;
+  private double hoodAngleDegrees = 29;
   private double target_distance_meters = 0.0;
-  private double target_rpm = 2000;
+  private double target_rpm = 2900;
   private boolean m_gotValues = false;
   private boolean shooting = false;
 
@@ -43,7 +43,7 @@ public class LimelightAutoShoot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooterSubsystem.setFlywheelRPM(3000);
+    shooterSubsystem.setFlywheelRPM(2900);
     hoodSubsystem.setAngleDegrees(29);
   }
 
@@ -70,6 +70,7 @@ public class LimelightAutoShoot extends CommandBase {
         cargoSubsystem.setShootMode();
       }
     }
+    SmartDashboard.putBoolean("LLRS m_gotValues", m_gotValues);
 
     SmartDashboard.putNumber("LLRS target_rpm", target_rpm);
     SmartDashboard.putNumber("LLRS target hood Angle", hoodAngleDegrees);
@@ -86,6 +87,8 @@ public class LimelightAutoShoot extends CommandBase {
     hoodSubsystem.setMinAngle();
     shooting = false;
     m_gotValues = false;
+    target_rpm = 2900;
+    hoodAngleDegrees = 29;
     time = 0;
   }
 

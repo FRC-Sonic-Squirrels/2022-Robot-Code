@@ -40,10 +40,10 @@ public class ShooterSubsystem extends SubsystemBase {
   private boolean autonPIDset = false;
 
   private double teleop_configP = 0.2;
-  private double teleop_configI = 0.001;
+  private double teleop_configI = 0.0003;
   private double teleop_configD = 0.3;
   private double teleop_configF = 0.051;
-  private double teleop_configIZ = 100;
+  private double teleop_configIZ = 3000;   // 12288 = 100 RPM Izone
   private double maxForwardOutput = 1.0;
   private double maxReverseOutput = -0.05;
 
@@ -146,6 +146,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void setFlywheelRPM(double rpm) {
     m_desiredRPM = rpm;
+    flywheel_lead.setIntegralAccumulator(0.0);
   }
 
   public double getCurrentRPM() {

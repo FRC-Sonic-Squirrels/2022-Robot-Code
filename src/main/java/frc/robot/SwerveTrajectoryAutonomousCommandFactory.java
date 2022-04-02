@@ -304,6 +304,10 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     );
   }
 
+  public Command testShootBall() {
+    return new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot);
+  }
+
 
   /**
    * Create a swerve trajectory follow command. If stopAtEnd is set to true, robot will come to full

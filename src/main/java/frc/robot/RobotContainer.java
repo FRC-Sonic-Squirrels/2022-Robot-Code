@@ -125,11 +125,13 @@ public class RobotContainer {
     Command testCurve = auton.curve();
     Command testStraightLine = auton.straightLine();
     Command test5BallStep1 = auton.fiveBallPartOne();
+    Command testLimelightShoot = auton.testShootBall();
     
     chooser.addOption("test change heading", testChangeHeading);
     chooser.addOption("test curve", testCurve);
     chooser.addOption("test straight line", testStraightLine);
     chooser.addOption("test step 1 of 5 ball", test5BallStep1);
+    chooser.addOption("test limelight shoot", testLimelightShoot);
 
 
     drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
