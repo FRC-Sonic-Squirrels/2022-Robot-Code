@@ -54,7 +54,7 @@ public class DriveFieldCentricAimCommand extends CommandBase {
         double filteredYaw = yawFilter.calculate(limelight.targetYaw());
 
         if (limelight.seesTargetRecently()) {
-            rotationOutput = rotationOutput * 0.1 - (filteredYaw / 27.0 ) * 1.5;
+            rotationOutput = rotationOutput * 0.1 - (filteredYaw / 27.0 ) * 1.0;
         } 
 
         // Just for debugging 

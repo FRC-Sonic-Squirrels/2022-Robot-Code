@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.fasterxml.jackson.core.format.MatchStrength;
 import com.team2930.lib.Limelight;
+import org.ejml.equation.Macro;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -17,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -145,8 +147,17 @@ public class RobotContainer {
 
     //-------------- DRIVER CONTROLS DEFINED HERE --------------------------  
 
+    // new Button(m_controller::getRightBumper)
+    //   .whenPressed(new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot));
+
     new Button(m_controller::getRightBumper)
-      .whenPressed(new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot));
+      .whenPressed(new ParallelRaceGroup(
+        new DriveFieldCentricAimCommand(drivetrain, 
+            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+            m_limelight),
+        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)));
 
     // Back button resets field centric, forward is the current heading
     new Button(m_controller::getBackButton)
