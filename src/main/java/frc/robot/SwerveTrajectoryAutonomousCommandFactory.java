@@ -291,7 +291,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
   public Command fiveBallPartOne() {
 
-    PathPlannerTrajectory path = PathPlanner.loadPath("5ball_part1", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
+    PathPlannerTrajectory path = PathPlanner.loadPath("5ball_part1", 2.0, 1.5);
 
     return PPSwerveControlCommand(path).beforeStarting(new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())));
   }
