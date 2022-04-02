@@ -113,24 +113,25 @@ public class RobotContainer {
     Command autonTwoShoveOne = auton.twoBallEnemyOne();
     
     
-    chooser.addOption(" (Fender) move, shoot 2, push", autonTwoPushOne);
-    chooser.addOption(" (Top tarmac) move, wait, shoot 2", autonWaitShoot2);
-    chooser.addOption("Right Side plan C", autonRightSide);
-    chooser.addOption("Shoot 2, push enemy ball into hangar", autonTwoShoveOne);
-    chooser.setDefaultOption(" (Top tarmac) move, wait, shoot 2", autonWaitShoot2);
+    //chooser.addOption(" (Fender) move, shoot 2, push", autonTwoPushOne);
+    //chooser.addOption(" (Top tarmac) move, wait, shoot 2", autonWaitShoot2);
+    //chooser.addOption("Right Side plan C", autonRightSide);
+    // chooser.addOption("Shoot 2, push enemy ball into hangar", autonTwoShoveOne);
+    // chooser.setDefaultOption(" (Top tarmac) move, wait, shoot 2", autonWaitShoot2);
     chooser.addOption("nothing", new InstantCommand());
 
     // test commands
-    Command testChangeHeading = auton.changeHeading();
     Command testCurve = auton.curve();
     Command testStraightLine = auton.straightLine();
-    Command test5BallStep1 = auton.fiveBallPartOne();
+    Command rightSide5Ball = auton.rightSidefiveBall();
     Command testLimelightShoot = auton.testShootBall();
+    Command left2plus1 = auton.leftSide2plus1();
     
-    chooser.addOption("test change heading", testChangeHeading);
+    //chooser.addOption("test change heading", testChangeHeading);
+    chooser.addOption("right side 5 ball", rightSide5Ball);
+    chooser.addOption("left side 2 plus 1", left2plus1);
     chooser.addOption("test curve", testCurve);
     chooser.addOption("test straight line", testStraightLine);
-    chooser.addOption("test step 1 of 5 ball", test5BallStep1);
     chooser.addOption("test limelight shoot", testLimelightShoot);
 
 

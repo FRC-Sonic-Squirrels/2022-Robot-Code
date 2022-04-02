@@ -144,7 +144,7 @@ public final class Constants {
     public static final double maxAcceleration = 2.5; // meters per second per second
 
     // This kP worked for the DriveWithSetRotation command
-    public static final double kPThetaController = 1.5; //1.5;
+    public static final double kPThetaController = 2.0; //1.5;
     public static final double kIThetaController = 0.0;
     public static final double kDThetaController = 0.0;
 

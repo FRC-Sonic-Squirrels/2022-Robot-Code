@@ -170,41 +170,6 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   }
 
 
-  /**
-   * creates the pre-made 5 ball auton command, using trajectories from PathPlanner
-   */
-  public Command better5BallAuton() {
-
-    //Trajectory test = PathPlanner.loadPath("5ball_part1", 1.0, 0.75);
-
-    PathPlannerTrajectory traject1 = PathPlanner.loadPath("5ball_part1", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
-    PathPlannerTrajectory traject2 = PathPlanner.loadPath("5ball_part2", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
-    PathPlannerTrajectory traject3 = PathPlanner.loadPath("5ball_part3", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
-    PathPlannerTrajectory traject4 = PathPlanner.loadPath("5ball_part4", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
-
-    m_drivetrain.resetOdometry(traject1.getInitialPose());
-
-    return new SequentialCommandGroup(
-
-      new ParallelRaceGroup(
-        new IntakeDeployCommand(m_intake, m_cargo),
-        PPSwerveControlCommand(traject1)
-      ),
-      new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot),
-
-      new ParallelRaceGroup(
-        new IntakeDeployCommand(m_intake, m_cargo),
-        PPSwerveControlCommand(traject2)
-      ),
-      new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot),
-
-      PPSwerveControlCommand(traject3),
-      new IntakeDeployCommand(m_intake, m_cargo).withTimeout(4),
-
-      PPSwerveControlCommand(traject4),
-      new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
-    );
-  }
 
   /**
    * Creates a command that makes the robot rudely replace one of the opposing team's cargo with the robot's team's
@@ -294,7 +259,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     return PPSwerveControlCommand(path).beforeStarting(new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())));
   }
 
-  public Command fiveBallPartOne() {
+  public Command rightSidefiveBall() {
 
     PathPlannerTrajectory path1 = PathPlanner.loadPath("5ball_part1", 2.0, 1.5);
 
@@ -342,6 +307,39 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     );
   }
 
+
+  public Command leftSide2plus1() {
+
+    PathPlannerTrajectory path1 = PathPlanner.loadPath("2plus1ball_part1", 2.0, 1.5);
+
+    PathPlannerTrajectory path1b = PathPlanner.loadPath("2plus1ball_part1b", 2.5, 2.0);
+
+    PathPlannerTrajectory path2 = PathPlanner.loadPath("2plus1ball_part2", 2.5, 2.0);
+
+    PathPlannerTrajectory path3 = PathPlanner.loadPath("2plus1ball_part3", 3.0, 2.0);
+
+    return new SequentialCommandGroup( 
+      new InstantCommand(() ->m_drivetrain.resetOdometry(path1.getInitialPose())),
+      new ParallelCommandGroup(
+        new IntakeDeployCommand(m_intake, m_cargo).until(() -> (m_cargo.cargoInLowerBelts() && m_cargo.cargoInUpperBelts())),
+        PPSwerveControlCommand(path1)
+      ),
+      new InstantCommand(() -> m_shooter.setFlywheelRPM(2800)),
+      new InstantCommand(() -> m_hood.setAngleDegrees(29)),
+      PPSwerveControlCommand(path1b),
+      new ParallelRaceGroup(
+         new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
+         //new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
+         new ShootWithSetRPMAndHoodAngle(2800, 29, m_cargo, m_shooter, m_hood, m_robot)
+      ),
+      new ParallelCommandGroup(
+        new IntakeDeployCommand(m_intake, m_cargo).until(() -> m_cargo.cargoInLowerBelts()).withTimeout(3.0),
+        PPSwerveControlCommand(path2)
+      ),
+      new IntakeReverseCommand(m_intake, m_cargo).withTimeout(2.0),
+      PPSwerveControlCommand(path3)
+      );
+  }
   public Command testShootBall() {
     return new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot);
   }
