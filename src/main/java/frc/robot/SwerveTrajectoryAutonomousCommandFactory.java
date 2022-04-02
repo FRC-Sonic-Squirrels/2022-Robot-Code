@@ -30,6 +30,7 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.LimelightAutoShoot;
+import frc.robot.commands.ShootWithSetRPMAndHoodAngle;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.HoodSubsystem;
@@ -293,7 +294,14 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     PathPlannerTrajectory path = PathPlanner.loadPath("5ball_part1", 2.0, 1.5);
 
-    return PPSwerveControlCommand(path).beforeStarting(new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())));
+    return new SequentialCommandGroup( 
+      new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())),
+      new ParallelRaceGroup(
+        new IntakeDeployCommand(m_intake, m_cargo),
+        PPSwerveControlCommand(path)
+      ),
+      new ShootWithSetRPMAndHoodAngle(2900, 30, m_cargo, m_shooter, m_hood, m_robot)
+    );
   }
 
 
