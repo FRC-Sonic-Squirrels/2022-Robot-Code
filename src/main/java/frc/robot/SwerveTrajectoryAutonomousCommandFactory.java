@@ -269,36 +269,31 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   // testing trajectories created by PathPlanner
   public Command changeHeading() {
 
-    PathPlannerTrajectory path = PathPlanner.loadPath("test_changeheading", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
-    m_drivetrain.resetOdometry(path.getInitialPose());
+    PathPlannerTrajectory path = PathPlanner.loadPath("test_changeheading", 1.5, 0.75);
 
-    return PPSwerveControlCommand(path);
+    return PPSwerveControlCommand(path).beforeStarting(new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())));
   }
 
   public Command curve() {
 
     PathPlannerTrajectory path = PathPlanner.loadPath("test_curve", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
-    m_drivetrain.resetOdometry(path.getInitialPose());
 
-    return PPSwerveControlCommand(path);
+    return PPSwerveControlCommand(path).beforeStarting(new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())));
   }
 
   public Command straightLine() {
 
-    PathPlannerTrajectory path = PathPlanner.loadPath("test_straightline", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
-    m_drivetrain.resetOdometry(path.getInitialPose());
-
+    PathPlannerTrajectory path = PathPlanner.loadPath("test_straightline", 1.5, 0.75);
     SmartDashboard.putString("initial pose", path.getInitialPose().toString());
 
-    return PPSwerveControlCommand(path);
+    return PPSwerveControlCommand(path).beforeStarting(new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())));
   }
 
   public Command fiveBallPartOne() {
 
     PathPlannerTrajectory path = PathPlanner.loadPath("5ball_part1", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
-    m_drivetrain.resetOdometry(path.getInitialPose());
 
-    return PPSwerveControlCommand(path);
+    return PPSwerveControlCommand(path).beforeStarting(new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())));
   }
 
 
@@ -339,7 +334,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   public static Command PPSwerveControlCommand(PathPlannerTrajectory trajectory){
 
     var thetaController =
-        new ProfiledPIDController(AutoConstants.kPThetaController, AutoConstants.kIThetaController,
+        new ProfiledPIDController(/*AutoConstants.kPThetaController*/ 4, AutoConstants.kIThetaController,
             AutoConstants.kDThetaController, AutoConstants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
