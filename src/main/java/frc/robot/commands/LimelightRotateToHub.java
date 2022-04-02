@@ -43,7 +43,7 @@ public class LimelightRotateToHub extends CommandBase {
   @Override
   public void execute() {
     if (m_limelight.seesTarget()) {
-      m_targetYaw = Math.toRadians(m_limelight.hubRotationDegrees());
+      m_targetYaw = Math.toRadians(m_limelight.targetYaw());
       m_targetAngle = m_drivetrain.getPose().getRotation().getRadians() + m_targetYaw;
       m_rotationCorrection =
           rotationalController.calculate(m_drivetrain.getRotation().getRadians(), m_targetAngle);

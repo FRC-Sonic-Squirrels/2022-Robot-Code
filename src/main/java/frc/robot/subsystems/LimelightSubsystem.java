@@ -29,7 +29,8 @@ public class LimelightSubsystem extends SubsystemBase {
   private double pitch;
   private double yaw;
   private double latency;
-  private boolean seesTarget;
+  private boolean seesTargetRecently = false;
+  private boolean seesTarget = false;
   private double targetHeadingDegrees;
   private Pose2d robotPose = new Pose2d();
   private boolean ledsOn = true;
@@ -58,22 +59,22 @@ public class LimelightSubsystem extends SubsystemBase {
     pitch = table.getEntry("ty").getDouble(0);
     yaw = table.getEntry("tx").getDouble(0);
     latency = table.getEntry("tl").getDouble(0);
-    seesTarget = seesTargetFilter.calculate(table.getEntry("tv").getDouble(0)) > 0.9;
+    seesTargetRecently = seesTargetFilter.calculate(table.getEntry("tv").getDouble(0)) > 0.9;
+    seesTarget = table.getEntry("tv").getDouble(0) > 0.99;
 
     robotPose = m_drivetrain.getPose();
 
     double currentHeadingDegrees = robotPose.getRotation().getDegrees();
-    if (table.getEntry("tv").getDouble(0) > 0.99) {
+    if (seesTarget) {
       // yaw is reported negative in Counter Clockwise direction, need to reverse it.
-      //TODO: 180 to switch to shooter side 
-      targetHeadingDegrees = (currentHeadingDegrees - yaw) + 180;
+      targetHeadingDegrees = (currentHeadingDegrees - yaw);
 
       distance_meters = limelight.getDist(
         Units.inchesToMeters(Constants.LimelightConstants.HIGH_HUB_HEIGHT_INCHES),
         Units.inchesToMeters(Constants.LimelightConstants.LIMELIGHT_HEIGHT_INCHES),
         Constants.LimelightConstants.LIMELIGHT_PITCH_DEGREES) 
         + Units.inchesToMeters(Constants.LimelightConstants.HIGH_HUB_RADIUS_INCHES);
-    } else if (seesTarget) {
+    } else if (seesTargetRecently) {
       // we didn't see the target this loop, but on average we have seen it very recently
       // assume distance and heading haven't changed much
     } else {
@@ -168,7 +169,7 @@ public class LimelightSubsystem extends SubsystemBase {
   /** 
    * the angle offset to the vision target
    */
-  public double hubRotationDegrees () {
+  public double targetYaw () {
     return yaw;
   }
 

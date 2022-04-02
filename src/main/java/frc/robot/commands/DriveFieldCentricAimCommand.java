@@ -20,55 +20,52 @@ public class DriveFieldCentricAimCommand extends CommandBase {
 
     private final DoubleSupplier translationXSupplier;
     private final DoubleSupplier translationYSupplier;
+    private final DoubleSupplier rotationSupplier;
 
-    private LinearFilter rotationFilter = LinearFilter.singlePoleIIR(0.1, 0.02);
+    //private LinearFilter rotationFilter = LinearFilter.singlePoleIIR(0.1, 0.02);
 
-    private ProfiledPIDController rotationalController = new ProfiledPIDController(3.0, 0.0, 0.02,
-    new TrapezoidProfile.Constraints(
-        Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
-        Drivetrain.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED * 0.9));
+    // private ProfiledPIDController rotationalController = new ProfiledPIDController(3.0, 0.0, 0.02,
+    // new TrapezoidProfile.Constraints(
+    //     Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+    //     Drivetrain.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED * 0.9));
 
     public DriveFieldCentricAimCommand(Drivetrain drivetrainSubsystem,
                                DoubleSupplier translationXSupplier,
                                DoubleSupplier translationYSupplier,
+                               DoubleSupplier rotationSupplier,
                                LimelightSubsystem limelight) {
         this.drivetrain = drivetrainSubsystem;
         this.translationXSupplier = translationXSupplier;
         this.translationYSupplier = translationYSupplier;
+        this.rotationSupplier = rotationSupplier;
         this.limelight = limelight;
-
-        rotationalController.enableContinuousInput(-Math.PI, Math.PI);
 
         addRequirements(drivetrainSubsystem);
     }
 
     @Override
     public void execute() {
-        double targetHeadingRadians;
+
+        double rotationOutput = rotationSupplier.getAsDouble() * Constants.DriveFieldCentricConstant.ROTATION_MULTIPLIER;
+        SmartDashboard.putNumber("LLRS driver rotation output", rotationOutput);
 
         if (limelight.seesTarget()) {
-            // get heading from limelight
-            targetHeadingRadians = limelight.getTargetHeadingRadians();
-            SmartDashboard.putNumber("LLRS heading ll", targetHeadingRadians);
-        } else {
-            // get heading from odometry
-            targetHeadingRadians =
-                    SwerveUtils.headingToPoint(drivetrain.getPose(),
-                                               Constants.FieldConstants.HUB_CENTER,
-                                               new Rotation2d(0))
-                                .getRadians();
-        SmartDashboard.putNumber("LLRS heading odometry", targetHeadingRadians);
-        }
+            rotationOutput = rotationOutput * 0.1 - (limelight.targetYaw() / 27.0 ) * 0.6;
+        } 
 
-        double filteredTargetRotation = rotationFilter.calculate(targetHeadingRadians);
-
-        double rotationOutput = rotationalController.calculate(
-            drivetrain.getRotation().getRadians(), filteredTargetRotation);
+        // Just for debugging 
+        SmartDashboard.putNumber("LLRS heading ll", Math.toDegrees(limelight.getTargetHeadingRadians()));
+        SmartDashboard.putNumber("LLRS heading odometry",
+                        SwerveUtils.headingToPoint(drivetrain.getPose(),
+                                        Constants.FieldConstants.HUB_CENTER, new Rotation2d(0))
+                                .getDegrees());
 
         // deadband the rotation to avoid oscillation
         if (Math.abs(rotationOutput) < 0.05) {
             rotationOutput = 0.0;
         }
+
+        SmartDashboard.putNumber("LLRS rotation output", rotationOutput);
 
         drivetrain.drive(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -79,9 +76,6 @@ public class DriveFieldCentricAimCommand extends CommandBase {
                 )
         );
 
-        SmartDashboard.putNumber("Drive rotationalOutput", rotationOutput);
-        SmartDashboard.putNumber("Drive targetHeading", Math.toRadians(targetHeadingRadians));
-        SmartDashboard.putNumber("Drive targetHeading filtered", Math.toRadians(filteredTargetRotation));
     }
 
     @Override
