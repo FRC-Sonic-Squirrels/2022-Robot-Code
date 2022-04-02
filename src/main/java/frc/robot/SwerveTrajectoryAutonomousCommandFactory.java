@@ -266,7 +266,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   }
 
   // testing trajectories created by PathPlanner
-  public static Command changeHeading() {
+  public Command changeHeading() {
 
     PathPlannerTrajectory path = PathPlanner.loadPath("test_changeheading", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
     m_drivetrain.resetOdometry(path.getInitialPose());
@@ -274,7 +274,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     return PPSwerveControlCommand(path);
   }
 
-  public static Command curve() {
+  public Command curve() {
 
     PathPlannerTrajectory path = PathPlanner.loadPath("test_curve", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
     m_drivetrain.resetOdometry(path.getInitialPose());
@@ -282,7 +282,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     return PPSwerveControlCommand(path);
   }
 
-  public static Command straightLine() {
+  public Command straightLine() {
 
     PathPlannerTrajectory path = PathPlanner.loadPath("test_straightline", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
     m_drivetrain.resetOdometry(path.getInitialPose());
@@ -290,7 +290,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     return PPSwerveControlCommand(path);
   }
 
-  public static Command fiveBallPartOne() {
+  public Command fiveBallPartOne() {
 
     PathPlannerTrajectory path = PathPlanner.loadPath("5ball_part1", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
     m_drivetrain.resetOdometry(path.getInitialPose());
