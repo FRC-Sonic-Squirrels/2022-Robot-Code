@@ -139,6 +139,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         List.of(), shootPos, m_tt.getTrajectoryConfig());
 
     return new SequentialCommandGroup(
+      new InstantCommand(() -> m_drivetrain.resetOdometry(startPos)),
       new ParallelRaceGroup(
         SwerveControllerCommand(moveToCargoOne, true),
         new IntakeDeployCommand(m_intake, m_cargo)
@@ -383,7 +384,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   public static Command PPSwerveControlCommand(PathPlannerTrajectory trajectory){
 
     var thetaController =
-        new ProfiledPIDController(/*AutoConstants.kPThetaController*/ 4, AutoConstants.kIThetaController,
+        new ProfiledPIDController(AutoConstants.kPThetaController, AutoConstants.kIThetaController,
             AutoConstants.kDThetaController, AutoConstants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
