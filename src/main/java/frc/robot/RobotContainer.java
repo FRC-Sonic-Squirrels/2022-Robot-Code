@@ -104,13 +104,10 @@ public class RobotContainer {
             m_limelight, m_robot, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
 
 
-    Command autonTwoPushOne = auton.twoBallAutoShoot2push ();
-
-    Command autonWaitShoot2 = auton.twoBallAutoWaitShoot2();
-
-    Command autonRightSide = auton.SundomeRightSideShootAndMove();
-
-    Command autonTwoShoveOne = auton.twoBallEnemyOne();
+    // Command autonTwoPushOne = auton.twoBallAutoShoot2push ();
+    // Command autonWaitShoot2 = auton.twoBallAutoWaitShoot2();
+    // Command autonRightSide = auton.SundomeRightSideShootAndMove();
+    // Command autonTwoShoveOne = auton.twoBallEnemyOne();
     
     
     //chooser.addOption(" (Fender) move, shoot 2, push", autonTwoPushOne);
@@ -123,7 +120,7 @@ public class RobotContainer {
     // test commands
     Command testCurve = auton.curve();
     Command testStraightLine = auton.straightLine();
-    Command rightSide5Ball = auton.rightSidefiveBall();
+    Command rightSide5Ball = auton.rightSideFiveBall();
     Command testLimelightShoot = auton.testShootBall();
     Command left2plus1 = auton.leftSide2plus1();
     
@@ -133,7 +130,6 @@ public class RobotContainer {
     chooser.addOption("test curve", testCurve);
     chooser.addOption("test straight line", testStraightLine);
     chooser.addOption("test limelight shoot", testLimelightShoot);
-
 
     drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
       drivetrain, 

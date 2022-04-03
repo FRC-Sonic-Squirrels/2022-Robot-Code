@@ -254,12 +254,10 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     PathPlannerTrajectory path = PathPlanner.loadPath("test_straightline", 1.5, 0.75);
 
-    System.out.println(path.toString());
-
     return PPSwerveControlCommand(path).beforeStarting(new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())));
   }
 
-  public Command rightSidefiveBall() {
+  public Command rightSideFiveBall() {
 
     PathPlannerTrajectory path1 = PathPlanner.loadPath("5ball_part1", 2.0, 1.5);
 

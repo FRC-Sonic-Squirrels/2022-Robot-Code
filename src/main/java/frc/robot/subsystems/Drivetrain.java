@@ -368,6 +368,7 @@ public class Drivetrain extends SubsystemBase {
    */
   public void drive(ChassisSpeeds chassisSpeeds) {
     m_desiredStates = m_kinematics.toSwerveModuleStates(chassisSpeeds);
+    setModuleStates(m_desiredStates);
   }
 
   /**
@@ -424,11 +425,6 @@ public class Drivetrain extends SubsystemBase {
             new Rotation2d(m_backLeftModule.getSteerAngle())),
         new SwerveModuleState(m_backRightModule.getDriveVelocity(),
             new Rotation2d(m_backRightModule.getSteerAngle())));
-
-    // TODO: how can we be sure m_desiredStates form Autonomous gets set before running this
-    // periodic()
-    // and if not, will that mean we get occasional 20ms delays and/or duplicate states?
-    setModuleStates(m_desiredStates);
 
     // Update pose in field simulation
     //m_field.setRobotPose(m_odometry.getPoseMeters());
