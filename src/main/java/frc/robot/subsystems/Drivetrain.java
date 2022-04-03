@@ -52,7 +52,7 @@ public class Drivetrain extends SubsystemBase {
    * This is a measure of how fast the robot should be able to drive in a straight line.
    */
 
-   //4.968230
+  // Value = 4.968230 (2022/4)
   public static final double MAX_VELOCITY_METERS_PER_SECOND =
       6380.0 / 60.0 * SdsModuleConfigurations.MK4I_L2.getDriveReduction()
           * SdsModuleConfigurations.MK4I_L2.getWheelDiameter() * Math.PI;
@@ -75,8 +75,7 @@ public class Drivetrain extends SubsystemBase {
    */
   // Here we calculate the theoretical maximum angular velocity. You can also replace this with a
   // measured amount.
-
-  //11.288247
+  // Value = 11.288247 (2022/4)
   public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND =
       MAX_VELOCITY_METERS_PER_SECOND
           / Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
@@ -114,6 +113,7 @@ public class Drivetrain extends SubsystemBase {
   private final SwerveModule m_backRightModule;
 
   private SwerveModuleState[] m_desiredStates;
+  private int loopsSinceLastUpdate = 0;
 
   private SimpleMotorFeedforward m_feedForward = 
     new SimpleMotorFeedforward(AutoConstants.kS, AutoConstants.kV, AutoConstants.kA);
@@ -211,6 +211,7 @@ public class Drivetrain extends SubsystemBase {
     m_odometry.resetPosition(new Pose2d(0.0, 0.0, new Rotation2d(0.0)), getIMURotation());
 
     m_desiredStates = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0.0, 0.0, 0.0));
+    setModuleStates(m_desiredStates);
 
     // TODO: enabling this uses too much CPU in auton
     SmartDashboard.putData("Field", m_field);
@@ -277,7 +278,6 @@ public class Drivetrain extends SubsystemBase {
     return m_odometry.getPoseMeters().getRotation();
   }
 
-
   public Rotation2d getGyroscopeRotationVelocity() {
     double[] xyz_dps = new double[3];
     m_pigeon.getRawGyro(xyz_dps);
@@ -334,6 +334,7 @@ public class Drivetrain extends SubsystemBase {
     } else {
       DriverStation.reportError("Null swerve state in setModulesStates()", false);
     }
+    loopsSinceLastUpdate = 0;
   }
 
   /**
@@ -427,6 +428,21 @@ public class Drivetrain extends SubsystemBase {
 
     // Update pose in field simulation
     m_field.setRobotPose(m_odometry.getPoseMeters());
+
+    // Check for missed updates
+    if (loopsSinceLastUpdate > 5) {
+      // If we've not updated Swerve Module States in 5 loops, we must be disabled or something
+      // has gone wrong and there's no default drive command. Tell modules to stay still.
+      // This is SUPER IMPORANT, as this allows the swerve-lib code time to let the CANcoders
+      // settle and get an accurate reading.
+      int loopCount = loopsSinceLastUpdate;
+      m_desiredStates = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0.0, 0.0, 0.0));
+      setModuleStates(m_desiredStates);
+      loopsSinceLastUpdate = loopCount;
+    }
+
+    //SmartDashboard.putNumber("Drivetrain missed loops", loopsSinceLastUpdate);
+    loopsSinceLastUpdate++;
 
     // SmartDashboard.putNumber("Drivetrain IMU Yaw", m_pigeon.getYaw());
     // SmartDashboard.putNumber("Drivetrain IMU Roll", m_pigeon.getRoll());
