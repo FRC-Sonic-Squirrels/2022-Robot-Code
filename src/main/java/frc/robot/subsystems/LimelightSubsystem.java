@@ -81,6 +81,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
     // SmartDashboard.putBoolean("LL has target", seesTarget);
     // SmartDashboard.putNumber("LL pitch", pitch);
+    SmartDashboard.putBoolean("LL seen target recently", seesTargetRecently);
     SmartDashboard.putNumber("LL distance inches", Units.metersToInches(distance_meters));
     // SmartDashboard.putNumber("LL distance ft", Units.metersToFeet(distance_meters));
     // SmartDashboard.putNumber("LL target heading deg", targetHeadingDegrees);
