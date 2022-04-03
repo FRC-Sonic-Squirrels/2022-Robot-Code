@@ -59,30 +59,33 @@ public class ShootWithSetRPMAndHoodAngle extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     shooting = false;
-    m_shooterSubsystem.stop();
-    m_cargoSubsystem.setStopMode();
-    m_hoodSubsystem.setMinAngle();
+    m_time = 0;
+    m_cargoSubsystem.setIdleMode();
+    if (!m_robot.isAutonomous()) {
+      m_shooterSubsystem.stop();
+      m_hoodSubsystem.setMinAngle();
+    }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+
     // Command will stop when all the cargo are gone
-    if(m_robot.isAutonomous()){
-    if ((! m_cargoSubsystem.cargoInUpperBelts()) && (! m_cargoSubsystem.cargoInLowerBelts())) {
-      if (m_time == 0) {
-        m_time = System.currentTimeMillis();
+    //if (m_robot.isAutonomous()) {
+      if ((!m_cargoSubsystem.cargoInUpperBelts()) && (!m_cargoSubsystem.cargoInLowerBelts())) {
+        if (m_time == 0) {
+          m_time = System.currentTimeMillis();
+        } else if (System.currentTimeMillis() - m_time >= 1000) {
+          return true;
+        }
       }
-      else if (System.currentTimeMillis() - m_time >= 1000) {
-        return true;
+      if (m_cargoSubsystem.cargoInUpperBelts() || m_cargoSubsystem.cargoInLowerBelts()) {
+        // reset timer if we see a cargo in the indexer
+        m_time = 0;
       }
-    }
-    if (m_cargoSubsystem.cargoInUpperBelts() || m_cargoSubsystem.cargoInLowerBelts()) {
-      // reset timer if we see a cargo in the indexer
-      m_time = 0;
-    }
-  }
-    //the command will be manually executed and ended by holding a button in teleop
+    //}
+    // the command will be manually executed and ended by holding a button in teleop
     return false;
   }
 }

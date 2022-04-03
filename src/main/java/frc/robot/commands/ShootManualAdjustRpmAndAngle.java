@@ -58,8 +58,9 @@ public class ShootManualAdjustRpmAndAngle extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     shooting = false;
+    m_time = 0;
     m_shooterSubsystem.stop();
-    m_cargoSubsystem.setStopMode();
+    m_cargoSubsystem.setIdleMode();
     m_hoodSubsystem.setMinAngle();
   }
 
@@ -67,7 +68,6 @@ public class ShootManualAdjustRpmAndAngle extends CommandBase {
   @Override
   public boolean isFinished() {
     // Command will stop when all the cargo are gone
-    if(m_robot.isAutonomous()){
     if ((! m_cargoSubsystem.cargoInUpperBelts()) && (! m_cargoSubsystem.cargoInLowerBelts())) {
       if (m_time == 0) {
         m_time = System.currentTimeMillis();
@@ -76,12 +76,12 @@ public class ShootManualAdjustRpmAndAngle extends CommandBase {
         return true;
       }
     }
+
     if (m_cargoSubsystem.cargoInUpperBelts() || m_cargoSubsystem.cargoInLowerBelts()) {
       // reset timer if we see a cargo in the indexer
       m_time = 0;
     }
-  }
-    //the command will be manually executed and ended by holding a button in teleop
+
     return false;
   }
 }

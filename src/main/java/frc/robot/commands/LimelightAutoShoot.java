@@ -82,9 +82,12 @@ public class LimelightAutoShoot extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooterSubsystem.stop();
     cargoSubsystem.setIdleMode();
-    hoodSubsystem.setMinAngle();
+    if (!m_robot.isAutonomous()) {
+      shooterSubsystem.stop();
+      hoodSubsystem.setMinAngle();
+    }
+
     shooting = false;
     m_gotValues = false;
     target_rpm = 2900;

@@ -37,6 +37,7 @@ import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.LimelightAutoShoot;
 import frc.robot.commands.ShootManualAdjustRpmAndAngle;
+import frc.robot.commands.ShootWithSetRPMAndHoodAngle;
 import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.subsystems.ArmSubsystem;
@@ -264,17 +265,17 @@ public class RobotContainer {
     new Button(m_operatorController::getYButton)
        .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
-    // // middle shot to High Hub
-    // new Button(m_operatorController::getXButton)
-    //    .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(3200, 30, m_cargo, m_shooter, m_hood), true);
+    // TODO: fender sohpt
+    new Button(m_operatorController::getXButton)
+       .whenPressed(new ShootWithSetRPMAndHoodAngle(2800, 15, m_cargo, m_shooter, m_hood, m_robot), true);
  
-    // // Farthest shot to High Hub
-    // new Button(m_operatorController::getBButton)
-    //    .whileActiveOnce(new ShootWithSetRPMandSetHoodCommand(3400, 33.5, m_cargo, m_shooter, m_hood), true);
+    // TODO: launch pad shot
+    new Button(m_operatorController::getBButton)
+        .whenPressed(new ShootWithSetRPMAndHoodAngle(3600, 33, m_cargo, m_shooter, m_hood, m_robot), true);
 
     //Using this for debugging and tuning the hood at the practice field 
-    new Button(m_operatorController::getRightBumper)
-    .whileActiveOnce(new ShootManualAdjustRpmAndAngle(() -> m_shootingRpm, () -> m_hoodAngle, m_cargo, m_shooter, m_hood, m_robot), true);
+    // new Button(m_operatorController::getRightBumper)
+    // .whileActiveOnce(new ShootManualAdjustRpmAndAngle(() -> m_shootingRpm, () -> m_hoodAngle, m_cargo, m_shooter, m_hood, m_robot), true);
 
     new Button(m_operatorController::getBackButton)
       .whenPressed(new InstantCommand(() -> m_shootingRpm -= 50));
@@ -336,7 +337,6 @@ public class RobotContainer {
       return 0.0;
     }
   }
-
 
 
   //TODO: check if deadband value needs to be changed  
