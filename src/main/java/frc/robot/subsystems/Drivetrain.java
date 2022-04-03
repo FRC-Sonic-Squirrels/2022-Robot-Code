@@ -124,7 +124,7 @@ public class Drivetrain extends SubsystemBase {
    * Object constructor
    */
   public Drivetrain() {
-    ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
+    //ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
     // SmartDashboard.putNumber("drivetrain MAX_VELOCITY_METERS_PER_SECOND", MAX_VELOCITY_METERS_PER_SECOND);
     // SmartDashboard.putNumber("drivetrain MAX_ACCELERATION_METERS_PER_SECOND_SQUARED", MAX_ACCELERATION_METERS_PER_SECOND_SQUARED);
@@ -159,7 +159,7 @@ public class Drivetrain extends SubsystemBase {
     m_frontLeftModule = Mk4iSwerveModuleHelper.createFalcon500(
         // This parameter is optional, but will allow you to see the current state of the module on
         // the dashboard.
-        tab.getLayout("Front Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0,0),
+        //tab.getLayout("Front Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0,0),
         // set current limit and nominal voltage
         swerveConfig,
         // This can either be STANDARD or FAST depending on your gear configuration
@@ -177,7 +177,7 @@ public class Drivetrain extends SubsystemBase {
     // We will do the same for the other modules
     m_frontRightModule = 
       Mk4iSwerveModuleHelper.createFalcon500(
-        tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2,0),
+        //tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2,0),
         swerveConfig, 
         Mk4iSwerveModuleHelper.GearRatio.L2,
         canId.CANID2_FRONT_RIGHT_MODULE_DRIVE_MOTOR, 
@@ -187,7 +187,7 @@ public class Drivetrain extends SubsystemBase {
 
     m_backLeftModule = 
     Mk4iSwerveModuleHelper.createFalcon500(
-        tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4,0),
+        //tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4,0),
         swerveConfig, 
         Mk4iSwerveModuleHelper.GearRatio.L2,
         canId.CANID4_BACK_LEFT_MODULE_DRIVE_MOTOR, 
@@ -197,7 +197,7 @@ public class Drivetrain extends SubsystemBase {
 
     m_backRightModule = 
     Mk4iSwerveModuleHelper.createFalcon500(
-        tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6,0),
+        //tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6,0),
         swerveConfig, 
         Mk4iSwerveModuleHelper.GearRatio.L2,
         canId.CANID3_BACK_RIGHT_MODULE_DRIVE_MOTOR, 
