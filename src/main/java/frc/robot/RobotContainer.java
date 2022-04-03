@@ -184,12 +184,12 @@ public class RobotContainer {
     //         () -> -modifyAxis(m_controller.getLeftY())));
 
 
-    //Tempory to help testing ll shooting 
-    new Button(m_controller::getRightBumper)
-      .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
+    //Temporary to help testing ll shooting 
+    // new Button(m_controller::getRightBumper)
+    //   .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
 
-    new Button(m_controller::getYButton)
-      .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
+    // new Button(m_controller::getYButton)
+    //   .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
   
     // new Button(m_controller::getXButton).whenPressed(
     //     new ParallelCommandGroup(
@@ -212,11 +212,11 @@ public class RobotContainer {
     //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
     //         () -> m_controller.getPOV(), 0.0));
 
-    // new Button(m_controller::getBButton)
-    //         .whenPressed(new DriveRobotCentricCommand(drivetrain,
-    //         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8, 
-    //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8,
-    //         () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 0.5));
+    new Button(m_controller::getBButton)
+            .whenPressed(new DriveRobotCentricCommand(drivetrain,
+            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8, 
+            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8,
+            () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
     new Button(m_controller::getAButton)
             .whenPressed(new DriveFieldCentricCommand(drivetrain,
@@ -266,31 +266,28 @@ public class RobotContainer {
        .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
     // TODO: fender sohpt
-    new Button(m_operatorController::getXButton)
+    new Button(m_operatorController::getRightBumper)
        .whenPressed(new ShootWithSetRPMAndHoodAngle(2800, 15, m_cargo, m_shooter, m_hood, m_robot), true);
  
     // TODO: launch pad shot
-    new Button(m_operatorController::getBButton)
+    new Button(m_operatorController::getXButton)
         .whenPressed(new ShootWithSetRPMAndHoodAngle(3600, 33, m_cargo, m_shooter, m_hood, m_robot), true);
 
     //Using this for debugging and tuning the hood at the practice field 
     // new Button(m_operatorController::getRightBumper)
     // .whileActiveOnce(new ShootManualAdjustRpmAndAngle(() -> m_shootingRpm, () -> m_hoodAngle, m_cargo, m_shooter, m_hood, m_robot), true);
 
-    new Button(m_operatorController::getBackButton)
-      .whenPressed(new InstantCommand(() -> m_shootingRpm -= 50));
+    // new Button(m_operatorController::getBackButton)
+    //   .whenPressed(new InstantCommand(() -> m_shootingRpm -= 50));
 
-    new Button(m_operatorController::getStartButton)
-      .whenPressed(new InstantCommand(() -> m_shootingRpm += 50));
+    // new Button(m_operatorController::getStartButton)
+    //   .whenPressed(new InstantCommand(() -> m_shootingRpm += 50));
 
-    new Button(() -> m_operatorController.getLeftTriggerAxis() >= 0.05)
-      .whenPressed(new InstantCommand(() -> m_hoodAngle -= 0.5));
+    // new Button(() -> m_operatorController.getLeftTriggerAxis() >= 0.05)
+    //   .whenPressed(new InstantCommand(() -> m_hoodAngle -= 0.5));
 
-      new Button(() -> m_operatorController.getRightTriggerAxis() >= 0.05)
-      .whenPressed(new InstantCommand(() -> m_hoodAngle += 0.5));
-
-    // new Button(m_operatorController::getBButton)
-    //   .whenPressed(new HoodZeroAngle(m_hood));
+    // new Button(() -> m_operatorController.getRightTriggerAxis() >= 0.05)
+    //   .whenPressed(new InstantCommand(() -> m_hoodAngle += 0.5));
 
     // new Button(m_operatorController::getAButton)
     //   .whenPressed(() -> m_hood.setAngleDegrees(18.6), m_hood);

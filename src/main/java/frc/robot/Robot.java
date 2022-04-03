@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.ElevatorZeroHeight;
+import frc.robot.commands.HoodZeroAngle;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -89,6 +90,8 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     m_robotContainer.m_cargo.coastMode();
+    m_robotContainer.m_hood.setMinAngle();
+    m_robotContainer.m_shooter.setFlywheelRPM(0);
   }
 
   @Override
@@ -99,7 +102,9 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.chooser.getSelected();
  
+    new HoodZeroAngle(m_robotContainer.m_hood).schedule(true);
     new ElevatorZeroHeight(m_robotContainer.m_elevator).schedule(true);
+
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -121,12 +126,13 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
+    new HoodZeroAngle(m_robotContainer.m_hood).schedule(true);
+    new ElevatorZeroHeight(m_robotContainer.m_elevator).schedule(true);
+
     // Pose2d start = new Pose2d(8.23 - Units.inchesToMeters(138), 4.11, new Rotation2d(Math.PI));
 
     // //TODO: remove before auto
     // m_robotContainer.drivetrain.setPose(start, m_robotContainer.drivetrain.getIMURotation());
-
-    
 
     //if testing and just using teleop we reset pose and rotation to 0, auton will correct this 
     //for its own use case and continue working after u switch to teleop
