@@ -220,18 +220,18 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
       new ParallelRaceGroup(
         new IntakeDeployCommand(m_intake, m_cargo),
-        PPSwerveControlCommand(traject1)
+        PPSwerveControlCommand(traject1, true)
       ),
       new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot),
 
       new ParallelRaceGroup(
         new IntakeDeployCommand(m_intake, m_cargo),
-        PPSwerveControlCommand(traject2)
+        PPSwerveControlCommand(traject2, true)
       ),
 
       new IntakeReverseCommand(m_intake, m_cargo).withTimeout(5),
 
-      PPSwerveControlCommand(traject3)
+      PPSwerveControlCommand(traject3, true)
     );
   }
 
@@ -240,21 +240,21 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     PathPlannerTrajectory path = PathPlanner.loadPath("test_changeheading", 1.5, 0.75);
 
-    return PPSwerveControlCommand(path).beforeStarting(new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())));
+    return PPSwerveControlCommand(path, true).beforeStarting(new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())));
   }
 
   public Command curve() {
 
     PathPlannerTrajectory path = PathPlanner.loadPath("test_curve", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
 
-    return PPSwerveControlCommand(path).beforeStarting(new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())));
+    return PPSwerveControlCommand(path, true).beforeStarting(new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())));
   }
 
   public Command straightLine() {
 
     PathPlannerTrajectory path = PathPlanner.loadPath("test_straightline", 1.5, 0.75);
 
-    return PPSwerveControlCommand(path).beforeStarting(new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())));
+    return PPSwerveControlCommand(path, true).beforeStarting(new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())));
   }
 
   public Command rightSideFiveBall() {
@@ -272,7 +272,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       new InstantCommand(() ->m_drivetrain.resetOdometry(path1.getInitialPose())),
       new ParallelCommandGroup(
         new IntakeDeployCommand(m_intake, m_cargo).until(() -> (m_cargo.cargoInLowerBelts() && m_cargo.cargoInUpperBelts())),
-        PPSwerveControlCommand(path1)
+        PPSwerveControlCommand(path1, true)
       ),
       new ParallelRaceGroup(
          new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
@@ -281,7 +281,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       ),
       new ParallelRaceGroup(
         new IntakeDeployCommand(m_intake, m_cargo),
-        PPSwerveControlCommand(path2)
+        PPSwerveControlCommand(path2, true)
       ),
       new ParallelRaceGroup(
         new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
@@ -291,13 +291,13 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       new ParallelRaceGroup(
         new IntakeDeployCommand(m_intake, m_cargo),
         new SequentialCommandGroup(
-          PPSwerveControlCommand(path3),
+          PPSwerveControlCommand(path3, true),
           new WaitCommand(0.5)
         )
       ),
       new InstantCommand(() -> m_shooter.setFlywheelRPM(3000)),
       new InstantCommand(() -> m_hood.setAngleDegrees(31)),
-      PPSwerveControlCommand(path4),
+      PPSwerveControlCommand(path4, true),
       new ParallelRaceGroup(
         new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
         new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
@@ -320,11 +320,11 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       new InstantCommand(() ->m_drivetrain.resetOdometry(path1.getInitialPose())),
       new ParallelCommandGroup(
         new IntakeDeployCommand(m_intake, m_cargo).until(() -> (m_cargo.cargoInLowerBelts() && m_cargo.cargoInUpperBelts())),
-        PPSwerveControlCommand(path1)
+        PPSwerveControlCommand(path1, true)
       ),
       new InstantCommand(() -> m_shooter.setFlywheelRPM(2800)),
       new InstantCommand(() -> m_hood.setAngleDegrees(29)),
-      PPSwerveControlCommand(path1b),
+      PPSwerveControlCommand(path1b, true),
       new ParallelRaceGroup(
          new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
          //new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
@@ -332,10 +332,10 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       ),
       new ParallelCommandGroup(
         new IntakeDeployCommand(m_intake, m_cargo).until(() -> m_cargo.cargoInLowerBelts()).withTimeout(3.0),
-        PPSwerveControlCommand(path2)
+        PPSwerveControlCommand(path2, true)
       ),
       new IntakeReverseCommand(m_intake, m_cargo).withTimeout(2.0),
-      PPSwerveControlCommand(path3)
+      PPSwerveControlCommand(path3, true)
       );
   }
   public Command testShootBall() {
@@ -377,14 +377,14 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     return swerveControllerCommand;
   }
 
-  public static Command PPSwerveControlCommand(PathPlannerTrajectory trajectory){
+  public static Command PPSwerveControlCommand(PathPlannerTrajectory trajectory, boolean stopAtEnd){
 
     var thetaController =
         new ProfiledPIDController(AutoConstants.kPThetaController, AutoConstants.kIThetaController,
             AutoConstants.kDThetaController, AutoConstants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    return new PPSwerveControllerCommand(trajectory,
+    Command swerveControllerCommand = new PPSwerveControllerCommand(trajectory,
      m_drivetrain::getPose,
      m_drivetrain.kinematics(), 
      new PIDController(AutoConstants.kP, AutoConstants.kI, AutoConstants.kD),
@@ -392,6 +392,13 @@ public class SwerveTrajectoryAutonomousCommandFactory {
      thetaController,
      m_drivetrain::setModuleStates, 
      m_drivetrain);
+
+     if (stopAtEnd) {
+      // Stop at the end. A good safe default, but not desireable if running two paths back to back
+      swerveControllerCommand = swerveControllerCommand
+          .andThen(() -> m_drivetrain.drive(new ChassisSpeeds(0, 0, 0)));
+    }
+    return swerveControllerCommand;
   }
 
   // private method that changes the rotation of a Pose2d (because that isn't already included in the class for some reason)
