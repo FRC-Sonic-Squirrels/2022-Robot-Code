@@ -330,7 +330,7 @@ public final class Constants {
     {108, 2800}, // on corner of tarmac
     {119, 2900},
     {128, 3000}, // Money shot!
-    {136, 3100},  // TODO: test and change to 3000?
+    {136, 3100}, // TODO: test and change to 3000?
     {142, 3000},
     {194, 3600}, // Launch pad
     {242, 5000}  // long shot, no limelight

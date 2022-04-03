@@ -265,13 +265,13 @@ public class RobotContainer {
     new Button(m_operatorController::getYButton)
        .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
-    // TODO: fender sohpt
+    // fender sohpt
     new Button(m_operatorController::getRightBumper)
        .whenPressed(new ShootWithSetRPMAndHoodAngle(2800, 15, m_cargo, m_shooter, m_hood, m_robot), true);
  
-    // TODO: launch pad shot
+    // launch pad shot
     new Button(m_operatorController::getXButton)
-        .whenPressed(new ShootWithSetRPMAndHoodAngle(3600, 33, m_cargo, m_shooter, m_hood, m_robot), true);
+        .whenPressed(new ShootWithSetRPMAndHoodAngle(4000, 32, m_cargo, m_shooter, m_hood, m_robot), true);
 
     //Using this for debugging and tuning the hood at the practice field 
     // new Button(m_operatorController::getRightBumper)
