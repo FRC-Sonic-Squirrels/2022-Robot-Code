@@ -76,7 +76,7 @@ public class ShootWithSetRPMAndHoodAngle extends CommandBase {
       if ((!m_cargoSubsystem.cargoInUpperBelts()) && (!m_cargoSubsystem.cargoInLowerBelts())) {
         if (m_time == 0) {
           m_time = System.currentTimeMillis();
-        } else if (System.currentTimeMillis() - m_time >= 1000) {
+        } else if (System.currentTimeMillis() - m_time >= 400) {
           return true;
         }
       }

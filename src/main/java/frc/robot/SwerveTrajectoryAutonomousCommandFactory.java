@@ -259,55 +259,61 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
   public Command rightSideFiveBall() {
 
-    PathPlannerTrajectory path1 = PathPlanner.loadPath("5ball_part1", 2.5, 2.0);
+    PathPlannerTrajectory path1 = PathPlanner.loadPath("5ball_part1", 3.0, 2.2);
 
     PathPlannerTrajectory path2 = PathPlanner.loadPath("5ball_part2", 3.0, 2.5);
 
-    PathPlannerTrajectory path3 = PathPlanner.loadPath("5ball_part3", 3.0, 2.5);
+    PathPlannerTrajectory path3 = PathPlanner.loadPath("5ball_part3", 4.0, 3.5);
 
-    PathPlannerTrajectory path4 = PathPlanner.loadPath("5ball_part4", 3.5, 3.5);
-
+    PathPlannerTrajectory path4 = PathPlanner.loadPath("5ball_part4", 4.5, 3.5);
 
     return new SequentialCommandGroup( 
       new InstantCommand(() ->m_drivetrain.resetOdometry(path1.getInitialPose())),
+      new InstantCommand(() -> m_hood.setAngleDegrees(30)),
+      new InstantCommand(() -> m_shooter.setFlywheelRPM(2900)),
       new ParallelCommandGroup(
-        new IntakeDeployCommand(m_intake, m_cargo).until(() -> (m_cargo.cargoInLowerBelts() && m_cargo.cargoInUpperBelts())),
+        new IntakeDeployCommand(m_intake, m_cargo).until(() -> (m_cargo.cargoInLowerBelts() && m_cargo.cargoInUpperBelts())).withTimeout(3),
         PPSwerveControlCommand(path1, true)
       ),
-      new ParallelRaceGroup(
-         new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
-         //new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
-         new ShootWithSetRPMAndHoodAngle(2900, 30, m_cargo, m_shooter, m_hood, m_robot)
-      ),
+      new ShootWithSetRPMAndHoodAngle(2900, 30, m_cargo, m_shooter, m_hood, m_robot),
+      // new ParallelRaceGroup(
+      //    new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
+      //    //new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
+      //    new ShootWithSetRPMAndHoodAngle(2900, 30, m_cargo, m_shooter, m_hood, m_robot)
+      // ),
       new ParallelRaceGroup(
         new IntakeDeployCommand(m_intake, m_cargo),
         PPSwerveControlCommand(path2, true)
       ),
-      new ParallelRaceGroup(
-        new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
-        new ShootWithSetRPMAndHoodAngle(3200, 30.5, m_cargo, m_shooter, m_hood, m_robot)
+      new ShootWithSetRPMAndHoodAngle(3350, 32.5, m_cargo, m_shooter, m_hood, m_robot),
+      //new ParallelRaceGroup(
+        //new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
         //new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
-      ),
+      //),
       new ParallelRaceGroup(
         new IntakeDeployCommand(m_intake, m_cargo),
         new SequentialCommandGroup(
           PPSwerveControlCommand(path3, true),
-          new WaitCommand(0.3)
+          new WaitCommand(0.2)
         )
       ),
-      new InstantCommand(() -> m_hood.setAngleDegrees(31)),
+      new InstantCommand(() -> m_hood.setAngleDegrees(30)),
+      new InstantCommand(() -> m_shooter.setFlywheelRPM(2900)),
       PPSwerveControlCommand(path4, true),
       new ParallelRaceGroup(
         new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
-        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
-      )
+        //new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
+        new ShootWithSetRPMAndHoodAngle(2900, 30.0, m_cargo, m_shooter, m_hood, m_robot)
+      ),
+      new InstantCommand(() -> m_hood.setMinAngle()),
+      new InstantCommand(() -> m_shooter.setFlywheelRPM(0))
     );
   }
 
 
   public Command leftSide2plus1() {
 
-    PathPlannerTrajectory path1 = PathPlanner.loadPath("2plus1ball_part1", 2.0, 1.5);
+    PathPlannerTrajectory path1 = PathPlanner.loadPath("2plus1ball_part1", 3.0, 1.5);
 
     PathPlannerTrajectory path1b = PathPlanner.loadPath("2plus1ball_part1b", 2.5, 2.0);
 
