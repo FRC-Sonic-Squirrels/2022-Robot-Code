@@ -27,7 +27,6 @@ import frc.robot.Constants.StartPoseConstants;
 import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.CargoReverseCommand;
 import frc.robot.commands.CargoRunIndexer;
-import frc.robot.commands.DriveChimpMode;
 import frc.robot.commands.DriveFieldCentricAimCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
@@ -105,32 +104,22 @@ public class RobotContainer {
             m_limelight, m_robot, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
 
 
-    // Command autonTwoPushOne = auton.twoBallAutoShoot2push ();
-    // Command autonWaitShoot2 = auton.twoBallAutoWaitShoot2();
-    // Command autonRightSide = auton.SundomeRightSideShootAndMove();
-    // Command autonTwoShoveOne = auton.twoBallEnemyOne();
-    
-    
-    //chooser.addOption(" (Fender) move, shoot 2, push", autonTwoPushOne);
-    //chooser.addOption(" (Top tarmac) move, wait, shoot 2", autonWaitShoot2);
-    //chooser.addOption("Right Side plan C", autonRightSide);
-    // chooser.addOption("Shoot 2, push enemy ball into hangar", autonTwoShoveOne);
-    // chooser.setDefaultOption(" (Top tarmac) move, wait, shoot 2", autonWaitShoot2);
     chooser.addOption("nothing", new InstantCommand());
 
     // test commands
-    Command testCurve = auton.curve();
-    Command testStraightLine = auton.straightLine();
+    // Command testCurve = auton.curve();
+    // Command testStraightLine = auton.straightLine();
+    // Command testLimelightShoot = auton.testShootBall();
+    // chooser.addOption("test curve", testCurve);
+    // chooser.addOption("test straight line", testStraightLine);
+    // chooser.addOption("test limelight shoot", testLimelightShoot);
+
+
+    // Competition Autonomous
     Command rightSide5Ball = auton.rightSideFiveBall();
-    Command testLimelightShoot = auton.testShootBall();
     Command left2plus1 = auton.leftSide2plus1();
-    
-    //chooser.addOption("test change heading", testChangeHeading);
     chooser.addOption("right side 5 ball", rightSide5Ball);
     chooser.addOption("left side 2 plus 1", left2plus1);
-    chooser.addOption("test curve", testCurve);
-    chooser.addOption("test straight line", testStraightLine);
-    chooser.addOption("test limelight shoot", testLimelightShoot);
 
     drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
       drivetrain, 

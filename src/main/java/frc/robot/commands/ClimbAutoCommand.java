@@ -254,7 +254,4 @@ public class ClimbAutoCommand extends CommandBase {
     return getStage_2Command();
   }
 
-  private Command getStage_4Command(){
-    return null;
-  }
 }

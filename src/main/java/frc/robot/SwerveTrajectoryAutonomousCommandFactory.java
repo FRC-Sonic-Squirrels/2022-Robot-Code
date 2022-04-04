@@ -16,8 +16,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.StartPoseConstants;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.commands.DriveChimpMode;
 import frc.robot.commands.DriveFieldCentricAimCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
@@ -53,9 +50,6 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   private static TestTrajectories m_tt;
   private static LimelightSubsystem m_limelight;
   private static Robot m_robot;
-
-  private static int m_shootRPM = 3000;
-
 
   public SwerveTrajectoryAutonomousCommandFactory(Drivetrain drivetrain, ShooterSubsystem shooter,
       CargoSubsystem cargo, IntakeSubsystem intake, HoodSubsystem hood, LimelightSubsystem limelight,
@@ -170,79 +164,6 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   }
 
 
-
-  /**
-   * Creates a command that makes the robot rudely replace one of the opposing team's cargo with the robot's team's
-   * @param startPos the beginning position
-   * @param ejectPos the position where the robot ejects its currently contained cargo
-   * @param oppCargo the position of the target opposition cargo
-   * @return
-   */
-  public Command cargoReplaceCommand(Pose2d startPos, Translation2d ejectPos, Translation2d oppCargo) {
-
-    m_drivetrain.resetOdometry(startPos);
-
-    // get the angle between the pose of the robot and the location of the cargo
-    Rotation2d cargoAngle = new Rotation2d(getTranslationsAngleDouble(ejectPos, oppCargo));
-
-    Trajectory moveToEjectPos = TrajectoryGenerator.generateTrajectory(startPos, List.of(),
-        new Pose2d(ejectPos, cargoAngle), m_tt.getTrajectoryConfig());
-    
-    // pre-made trajectory that replaces red cargo 3
-    PathPlannerTrajectory ball3trajectory = PathPlanner.loadPath("replaceCargo", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
-
-    // pre-made trajectory that replaces red cargo 2 (for stealing jackson's cargo)
-    PathPlannerTrajectory ball2trajectory = PathPlanner.loadPath("replaceCargo2", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
-
-    Trajectory usedTrajectory = ball2trajectory;
-
-    return new SequentialCommandGroup(
-
-      SwerveControllerCommand(usedTrajectory, true),
-
-      new IntakeReverseCommand(m_intake, m_cargo).withTimeout(4)
-
-    );
-  }
-
-  /**
-   * Shoots two cargo into our goal, and pushes one enemy cargo into our hangar
-   */
-  public Command twoBallEnemyOne() {
-
-    PathPlannerTrajectory traject1 = PathPlanner.loadPath("2plus1ball_part1", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
-    PathPlannerTrajectory traject2 = PathPlanner.loadPath("2plus1ball_part2", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
-    PathPlannerTrajectory traject3 = PathPlanner.loadPath("2plus1ball_part3", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
-
-    m_drivetrain.resetOdometry(traject1.getInitialPose());
-
-    return new SequentialCommandGroup(
-
-      new ParallelRaceGroup(
-        new IntakeDeployCommand(m_intake, m_cargo),
-        PPSwerveControlCommand(traject1, true)
-      ),
-      new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot),
-
-      new ParallelRaceGroup(
-        new IntakeDeployCommand(m_intake, m_cargo),
-        PPSwerveControlCommand(traject2, true)
-      ),
-
-      new IntakeReverseCommand(m_intake, m_cargo).withTimeout(5),
-
-      PPSwerveControlCommand(traject3, true)
-    );
-  }
-
-  // testing trajectories created by PathPlanner
-  public Command changeHeading() {
-
-    PathPlannerTrajectory path = PathPlanner.loadPath("test_changeheading", 1.5, 0.75);
-
-    return PPSwerveControlCommand(path, true).beforeStarting(new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())));
-  }
-
   public Command curve() {
 
     PathPlannerTrajectory path = PathPlanner.loadPath("test_curve", AutoConstants.maxVelocity, AutoConstants.maxAcceleration);
@@ -257,6 +178,11 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     return PPSwerveControlCommand(path, true).beforeStarting(new InstantCommand(() ->m_drivetrain.resetOdometry(path.getInitialPose())));
   }
 
+  /**
+   * rightSideFiveBall() - competition auton for right side, 5 ball
+   *
+   * @return
+   */
   public Command rightSideFiveBall() {
 
     PathPlannerTrajectory path1 = PathPlanner.loadPath("5ball_part1", 3.0, 2.2);
@@ -311,6 +237,11 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   }
 
 
+  /**
+   * leftSide2plus1() - left side, score 2 and hide one opponent cargo.
+   * 
+   * @return
+   */
   public Command leftSide2plus1() {
 
     PathPlannerTrajectory path1 = PathPlanner.loadPath("2plus1ball_part1", 3.0, 1.5);
@@ -382,6 +313,13 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     return swerveControllerCommand;
   }
 
+  /**
+   * Create a swerve trajectory follow command. If stopAtEnd is set to true, robot will come to full stop when done.
+   * 
+   * @param trajectory
+   * @param stopAtEnd
+   * @return
+   */
   public static Command PPSwerveControlCommand(PathPlannerTrajectory trajectory, boolean stopAtEnd){
 
     var thetaController =
@@ -406,42 +344,4 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     return swerveControllerCommand;
   }
 
-  // private method that changes the rotation of a Pose2d (because that isn't already included in the class for some reason)
-  private static Pose2d setRotation(Pose2d pose, Rotation2d rotation) {
-    return new Pose2d(pose.getX(), pose.getY(), rotation);
-  }
-
-  // private method that gets the angle between two Translation2ds
-  private static Rotation2d getTranslationsAngle(Translation2d pose1, Translation2d pose2) {
-    Vector2d vector1 = new Vector2d(pose1.getX(), pose1.getY());
-    Vector2d vector2 = new Vector2d(pose2.getX(), pose2.getY());
-    double dotProduct = vector1.dot(vector2);
-    double magnitude = vector1.magnitude() * vector2.magnitude();
-
-    return new Rotation2d( Math.acos(dotProduct/magnitude) );
-  }
-
-  // private method that gets the angle between two Translation2ds
-  private static double getTranslationsAngleDouble(Translation2d pose1, Translation2d pose2) {
-    Vector2d vector1 = new Vector2d(pose1.getX(), pose1.getY());
-    Vector2d vector2 = new Vector2d(pose2.getX(), pose2.getY());
-    double dotProduct = vector1.dot(vector2);
-    double magnitude = vector1.magnitude() * vector2.magnitude();
-
-    return Math.acos(dotProduct/magnitude);
-  }
-
-  // private method that gets a midPos between two poses
-  private static Translation2d midPosFinder(Translation2d start, Translation2d target) {
-    //double hypotenuse = Math.hypot( (target.getX() - start.getX()), (target.getY() - start.getY()) );
-    double xDist = (target.getX() - start.getX()) * 0.75;
-    double yDist = (target.getY() - start.getY()) * 0.75;
-    Translation2d midPos = new Translation2d(start.getX() + xDist, start.getY() + yDist);
-
-    return midPos;
-  }
-
-  private static Translation2d poseToTranslation(Pose2d pose) {
-    return new Translation2d(pose.getX(), pose.getY());
-  }
 }
