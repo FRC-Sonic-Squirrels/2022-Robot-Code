@@ -162,11 +162,6 @@ public final class Constants {
             Drivetrain.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
   }
 
-  //TODO: check actual gear ratio
-  public static class IntakeConstants{
-    public static final double gearRatio = 1;
-  }
-
   public static class ElevatorConstants{
     public static final double elevatorSpeedMultiplier = 1.0;
     public static final double ELEVATOR_MAX_HEIGHT = 22;
@@ -183,7 +178,6 @@ public final class Constants {
   }
 
   public static class ShooterConstants {
-    //TODO: find the actual activated and idle values
     public static final double m_activated = 2000;
     public static final double m_idle = 500;
     public static final int BUMPER_SHOT_RPM = 3000;

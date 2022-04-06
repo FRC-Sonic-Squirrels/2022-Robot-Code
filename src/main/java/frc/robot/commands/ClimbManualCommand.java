@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -95,8 +94,4 @@ public class ClimbManualCommand extends CommandBase {
     return false;
   }
 
-  private void rumbleSequence() {
-    m_controller.setRumble(RumbleType.kLeftRumble, 0.3);
-    m_controller.setRumble(RumbleType.kRightRumble, 0.3);
-  }
 }

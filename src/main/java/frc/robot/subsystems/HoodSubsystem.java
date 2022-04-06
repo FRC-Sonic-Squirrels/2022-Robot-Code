@@ -23,7 +23,6 @@ public class HoodSubsystem extends SubsystemBase {
 
   private WPI_TalonFX hoodMotor = new WPI_TalonFX(Constants.CANIVOR_canId.CANID7_HOOD, Constants.CANIVOR_canId.name);
 
-  //TODO: CHECK these values
   private double gearRatio = 1.0 / 84.0;
   private double ticksToDegree = (gearRatio / 2048) * 360.0;
 

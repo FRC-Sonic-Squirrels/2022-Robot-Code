@@ -62,7 +62,6 @@ public class ShooterSubsystem extends SubsystemBase {
   public ShooterSubsystem(Robot robot) {
     m_robot = robot;
 
-    // TODO: go over this and confirm motors are set up correctly. check against 2021 code
     flywheel_lead.configFactoryDefault();
     flywheel_follow.configFactoryDefault();
 

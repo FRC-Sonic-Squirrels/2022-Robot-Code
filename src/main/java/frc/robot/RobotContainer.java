@@ -4,11 +4,7 @@
 
 package frc.robot;
 
-import com.fasterxml.jackson.core.format.MatchStrength;
-import com.team2930.lib.Limelight;
-import org.ejml.equation.Macro;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;

@@ -19,7 +19,6 @@ public class ElevatorZeroHeight extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-   // TODO:Test if we need higher values for percent  
     m_elevator.setWinchPercentOutput(0.2);
     m_elevator.brakeOff();
   }
