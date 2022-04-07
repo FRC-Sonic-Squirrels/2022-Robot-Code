@@ -214,6 +214,14 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
+  // fender sohpt
+    new Button(m_controller::getRightBumper)
+    .whenPressed(new ShootWithSetRPMAndHoodAngle(2800, 15, m_cargo, m_shooter, m_hood, m_robot), true);
+
+  // launch pad shot
+    new Button (() -> m_controller.getRightTriggerAxis() > 0.05)
+     .whenPressed(new ShootWithSetRPMAndHoodAngle(4000, 32, m_cargo, m_shooter, m_hood, m_robot), true);
+
     // new Button(m_controller::getLeftBumper)
     //         .whileHeld(new DriveChimpMode(drivetrain, m_intake,
     //         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
@@ -255,13 +263,13 @@ public class RobotContainer {
     new Button(m_operatorController::getYButton)
        .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
-    // fender sohpt
-    new Button(m_operatorController::getRightBumper)
-       .whenPressed(new ShootWithSetRPMAndHoodAngle(2800, 15, m_cargo, m_shooter, m_hood, m_robot), true);
+    // // fender sohpt
+    // new Button(m_operatorController::getRightBumper)
+    //    .whenPressed(new ShootWithSetRPMAndHoodAngle(2800, 15, m_cargo, m_shooter, m_hood, m_robot), true);
  
-    // launch pad shot
-    new Button(m_operatorController::getXButton)
-        .whenPressed(new ShootWithSetRPMAndHoodAngle(4000, 32, m_cargo, m_shooter, m_hood, m_robot), true);
+    // // launch pad shot
+    // new Button(m_operatorController::getXButton)
+    //     .whenPressed(new ShootWithSetRPMAndHoodAngle(4000, 32, m_cargo, m_shooter, m_hood, m_robot), true);
 
     //Using this for debugging and tuning the hood at the practice field 
     // new Button(m_operatorController::getRightBumper)
