@@ -90,7 +90,7 @@ public class RobotContainer {
     m_elevator = new ElevatorSubsystem();
     m_arm = new ArmSubsystem();
     m_hood = new HoodSubsystem();
-    m_limelight = new LimelightSubsystem(drivetrain);
+    m_limelight = new LimelightSubsystem(drivetrain, m_robot.revPDH);
     
     SmartDashboard.putData("Auto Mode", chooser);
 

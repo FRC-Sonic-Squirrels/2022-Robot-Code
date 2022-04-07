@@ -49,6 +49,8 @@ public class Robot extends TimedRobot {
     revPDH.clearStickyFaults();
     revPDH.resetTotalEnergy();
 
+    revPDH.setSwitchableChannel(true);
+
     // We don't use this
     LiveWindow.disableAllTelemetry();
 

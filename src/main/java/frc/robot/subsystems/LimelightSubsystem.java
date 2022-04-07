@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.team2930.lib.Limelight;
 import com.team2930.lib.ll_mode;
 import org.photonvision.PhotonUtils;
+import edu.wpi.first.hal.simulation.REVPHDataJNI;
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -16,10 +17,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 
 public class LimelightSubsystem extends SubsystemBase {
   private Limelight limelight; 
@@ -37,14 +40,18 @@ public class LimelightSubsystem extends SubsystemBase {
   private Pose2d kalmanLimelightPose;
   private double kalmanHubDistFeet;
 
+  PowerDistribution m_revPDH;
+
   private MedianFilter seesTargetFilter = new MedianFilter(5);
   // TODO: add linear filter to limelight distance 
 
   /** Creates a new Limelight. */
-  public LimelightSubsystem(Drivetrain drivetrain) {
+  public LimelightSubsystem(Drivetrain drivetrain, PowerDistribution revPDH) {
     m_drivetrain = drivetrain;
     this.limelight = new Limelight("limelight-one");
     limelight.setPipeline(0);
+
+    m_revPDH = revPDH;
   }
 
   @Override
@@ -137,16 +144,31 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   /**
-   * Toggle the LimeLight LEDs on or off
+   * Toggle the LimeLight !!NOT EXTERNAL!! LEDs on or off
    */
   public void toggleLEDs() {
     ledsOn = !ledsOn;
     if (ledsOn) {
       limelight.setLEDMode(ll_mode.led.on);
+      m_revPDH.setSwitchableChannel(true);
     } else {
       limelight.setLEDMode(ll_mode.led.off);
+      m_revPDH.setSwitchableChannel(false);
     }
   }
+
+  public void turnOnExternalLEDS(){
+    m_revPDH.setSwitchableChannel(true);
+  }
+
+  public void turnOffExternalLEDS(){
+    m_revPDH.setSwitchableChannel(false);
+  }
+  public void toggleExternalLEDS(){
+    m_revPDH.setSwitchableChannel(!m_revPDH.getSwitchableChannel());
+  }
+
+
 
   /*
   * Returns an estimated pose of the robot based on the limelight sighting of the target.
