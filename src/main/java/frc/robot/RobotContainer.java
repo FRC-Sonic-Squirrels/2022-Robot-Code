@@ -114,8 +114,13 @@ public class RobotContainer {
     // Competition Autonomous
     Command rightSide5Ball = auton.rightSideFiveBall();
     Command left2plus1 = auton.leftSide2plus1();
+    Command middle_1Ball_Complementary = auton.middleShootFenderAndLeave();
+
     chooser.addOption("right side 5 ball", rightSide5Ball);
     chooser.addOption("left side 2 plus 1", left2plus1);
+    chooser.addOption("Middle 1ball Complementary", middle_1Ball_Complementary);
+
+    chooser.setDefaultOption("right side 5 ball", rightSide5Ball);
 
     drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
       drivetrain, 
