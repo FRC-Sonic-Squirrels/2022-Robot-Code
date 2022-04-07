@@ -241,12 +241,12 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         )
       ),
       new InstantCommand(() -> m_hood.setAngleDegrees(30)),
-      new InstantCommand(() -> m_shooter.setFlywheelRPM(2900)),
+      new InstantCommand(() -> m_shooter.setFlywheelRPM(3000)),
       PPSwerveControlCommand(path4, true),
       new ParallelRaceGroup(
         new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
         //new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
-        new ShootWithSetRPMAndHoodAngle(2900, 30.0, m_cargo, m_shooter, m_hood, m_robot)
+        new ShootWithSetRPMAndHoodAngle(3000, 30.0, m_cargo, m_shooter, m_hood, m_robot)
       ),
       new InstantCommand(() -> m_hood.setMinAngle()),
       new InstantCommand(() -> m_shooter.setFlywheelRPM(0))
