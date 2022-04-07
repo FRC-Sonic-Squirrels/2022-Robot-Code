@@ -48,7 +48,7 @@ public class LimelightSubsystem extends SubsystemBase {
   /** Creates a new Limelight. */
   public LimelightSubsystem(Drivetrain drivetrain, PowerDistribution revPDH) {
     m_drivetrain = drivetrain;
-    this.limelight = new Limelight("limelight-one");
+    this.limelight = new Limelight("limelight");
     limelight.setPipeline(0);
 
     m_revPDH = revPDH;
@@ -57,7 +57,7 @@ public class LimelightSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    table = NetworkTableInstance.getDefault().getTable("limelight-one");
+    table = NetworkTableInstance.getDefault().getTable("limelight");
     pitch = table.getEntry("ty").getDouble(0);
     yaw = table.getEntry("tx").getDouble(0);
     latency = table.getEntry("tl").getDouble(0);
@@ -148,13 +148,15 @@ public class LimelightSubsystem extends SubsystemBase {
    */
   public void toggleLEDs() {
     ledsOn = !ledsOn;
-    if (ledsOn) {
-      limelight.setLEDMode(ll_mode.led.on);
-      m_revPDH.setSwitchableChannel(true);
-    } else {
-      limelight.setLEDMode(ll_mode.led.off);
-      m_revPDH.setSwitchableChannel(false);
-    }
+
+    toggleExternalLEDS();
+    // if (ledsOn) {
+    //   limelight.setLEDMode(ll_mode.led.on);
+    //   m_revPDH.setSwitchableChannel(true);
+    // } else {
+    //   limelight.setLEDMode(ll_mode.led.off);
+    //   m_revPDH.setSwitchableChannel(false);
+    // }
   }
 
   public void turnOnExternalLEDS(){

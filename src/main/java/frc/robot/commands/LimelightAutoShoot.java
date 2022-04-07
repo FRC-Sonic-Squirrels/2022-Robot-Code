@@ -44,6 +44,8 @@ public class LimelightAutoShoot extends CommandBase {
   public void initialize() {
     shooterSubsystem.setFlywheelRPM(2900);
     hoodSubsystem.setAngleDegrees(29);
+
+    limelight.turnOnExternalLEDS();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -86,6 +88,8 @@ public class LimelightAutoShoot extends CommandBase {
       shooterSubsystem.stop();
       hoodSubsystem.setMinAngle();
     }
+
+    limelight.turnOffExternalLEDS();
 
     shooting = false;
     m_gotValues = false;
