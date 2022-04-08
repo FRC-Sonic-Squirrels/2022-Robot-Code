@@ -45,7 +45,7 @@ public class LimelightAutoShoot extends CommandBase {
     shooterSubsystem.setFlywheelRPM(2900);
     hoodSubsystem.setAngleDegrees(29);
 
-    limelight.turnOnExternalLEDS();
+    //limelight.turnOnExternalLEDS();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -66,7 +66,7 @@ public class LimelightAutoShoot extends CommandBase {
         m_gotValues = true;
       }
 
-      if (!shooting && m_gotValues && shooterSubsystem.isAtDesiredRPM() && hoodSubsystem.isAtAngle() && limelight.onTarget()) {
+      if (!shooting && m_gotValues && shooterSubsystem.isAtDesiredRPM() && hoodSubsystem.isAtAngle()) {
         shooting = true;
         cargoSubsystem.setShootMode();
       }
@@ -77,7 +77,7 @@ public class LimelightAutoShoot extends CommandBase {
     SmartDashboard.putNumber("LLRS target hood Angle", hoodAngleDegrees);
     SmartDashboard.putNumber("LLRS target_distance", target_distance_meters);
     SmartDashboard.putBoolean("LLRS SHOOTING", shooting);
-    SmartDashboard.putBoolean("LLRS facing toward hub", limelight.onTarget());
+    SmartDashboard.putBoolean("LLRS on target", limelight.onTarget());
   }
 
   // Called once the command ends or is interrupted.
@@ -89,7 +89,7 @@ public class LimelightAutoShoot extends CommandBase {
       hoodSubsystem.setMinAngle();
     }
 
-    limelight.turnOffExternalLEDS();
+    //limelight.turnOffExternalLEDS();
 
     shooting = false;
     m_gotValues = false;
