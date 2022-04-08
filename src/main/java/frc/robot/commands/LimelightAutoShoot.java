@@ -42,7 +42,7 @@ public class LimelightAutoShoot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooterSubsystem.setFlywheelRPM(2900);
+    shooterSubsystem.setFlywheelRPM(2800);
     hoodSubsystem.setAngleDegrees(29);
 
     //limelight.turnOnExternalLEDS();
