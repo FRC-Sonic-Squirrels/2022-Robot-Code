@@ -40,6 +40,8 @@ public class LimelightSubsystem extends SubsystemBase {
   private Pose2d kalmanLimelightPose;
   private double kalmanHubDistFeet;
 
+
+  private double m_adjustableTolerance;
   PowerDistribution m_revPDH;
 
   private MedianFilter seesTargetFilter = new MedianFilter(5);
@@ -50,6 +52,9 @@ public class LimelightSubsystem extends SubsystemBase {
     m_drivetrain = drivetrain;
     this.limelight = new Limelight("limelight");
     limelight.setPipeline(0);
+
+    SmartDashboard.putNumber("limelight AdjustableTolerance", Constants.LimelightConstants.TARGET_TOLERANCE_DEGREES);
+    m_adjustableTolerance = SmartDashboard.getNumber("limelight AdjustableTolerance", Constants.LimelightConstants.TARGET_TOLERANCE_DEGREES);
 
     m_revPDH = revPDH;
   }
@@ -99,7 +104,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
   public boolean onTarget() {
     if ((seesTarget) && 
-        Math.abs(yaw) < Constants.LimelightConstants.TARGET_TOLERANCE_DEGREES) {
+        Math.abs(yaw) < m_adjustableTolerance) {
       return true;
     } else {
       return false;
