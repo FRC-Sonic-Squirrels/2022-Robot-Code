@@ -232,7 +232,7 @@ public final class Constants {
     public static final double LIMELIGHT_PITCH_DEGREES = 50;
     public static final double HIGH_HUB_RADIUS_INCHES = 26.6875;
 
-    public static final double TARGET_TOLERANCE_DEGREES = 2.5;
+    public static final double TARGET_TOLERANCE_DEGREES = 2.0;
 
     public static final Transform2d LIMELIGHT_TO_ROBOT = new Transform2d(new Translation2d(-7.5, 0), new Rotation2d(180));
   }

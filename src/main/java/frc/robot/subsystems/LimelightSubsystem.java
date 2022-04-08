@@ -54,7 +54,7 @@ public class LimelightSubsystem extends SubsystemBase {
     limelight.setPipeline(0);
 
     SmartDashboard.putNumber("limelight AdjustableTolerance", Constants.LimelightConstants.TARGET_TOLERANCE_DEGREES);
-    m_adjustableTolerance = SmartDashboard.getNumber("limelight AdjustableTolerance", Constants.LimelightConstants.TARGET_TOLERANCE_DEGREES);
+    //m_adjustableTolerance = SmartDashboard.getNumber("limelight AdjustableTolerance", Constants.LimelightConstants.TARGET_TOLERANCE_DEGREES);
 
     m_revPDH = revPDH;
   }
@@ -104,7 +104,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
   public boolean onTarget() {
     if ((seesTarget) && 
-        Math.abs(yaw) < m_adjustableTolerance) {
+        Math.abs(yaw) < Constants.LimelightConstants.TARGET_TOLERANCE_DEGREES){
       return true;
     } else {
       return false;
