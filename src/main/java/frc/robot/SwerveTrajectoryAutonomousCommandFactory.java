@@ -237,7 +237,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         new IntakeDeployCommand(m_intake, m_cargo),
         new SequentialCommandGroup(
           PPSwerveControlCommand(path3, true),
-          new WaitCommand(0.2)
+          new WaitCommand(0.4)
         )
       ),
       new InstantCommand(() -> m_hood.setAngleDegrees(30)),
