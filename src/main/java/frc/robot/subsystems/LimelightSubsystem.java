@@ -154,14 +154,13 @@ public class LimelightSubsystem extends SubsystemBase {
   public void toggleLEDs() {
     ledsOn = !ledsOn;
 
-    toggleExternalLEDS();
-    // if (ledsOn) {
-    //   limelight.setLEDMode(ll_mode.led.on);
-    //   m_revPDH.setSwitchableChannel(true);
-    // } else {
-    //   limelight.setLEDMode(ll_mode.led.off);
-    //   m_revPDH.setSwitchableChannel(false);
-    // }
+    if (ledsOn) {
+      limelight.setLEDMode(ll_mode.led.on);
+      m_revPDH.setSwitchableChannel(true);
+    } else {
+      limelight.setLEDMode(ll_mode.led.off);
+      m_revPDH.setSwitchableChannel(false);
+    }
   }
 
   public void turnOnExternalLEDS(){
