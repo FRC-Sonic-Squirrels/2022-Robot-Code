@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
@@ -23,10 +24,14 @@ import frc.robot.Constants.StartPoseConstants;
 import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.CargoReverseCommand;
 import frc.robot.commands.CargoRunIndexer;
+import frc.robot.commands.ClimbAutoMid;
+import frc.robot.commands.ControllerClimbMaxHeightRumble;
+import frc.robot.commands.ControllerRumbleCommand;
 import frc.robot.commands.DriveFieldCentricAimCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.ElevatorControlCommand;
+import frc.robot.commands.ElevatorGoToMaxHeight;
 import frc.robot.commands.HoodZeroAngle;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
@@ -130,6 +135,9 @@ public class RobotContainer {
 
     m_elevator.setDefaultCommand(new ElevatorControlCommand(m_elevator, m_climbController,
       Constants.ElevatorConstants.elevatorSpeedMultiplier));
+    
+    //CommandScheduler.getInstance().schedule(new ControllerClimbMaxHeightRumble(m_climbController, m_elevator));
+    //new ControllerClimbMaxHeightRumble(m_climbController, m_elevator);
 
     m_arm.setDefaultCommand(new ArmManualControlCommand(m_arm, m_climbController, 0.3));
 
@@ -157,7 +165,7 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
             m_limelight),
-        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)));
+        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot).andThen(new ControllerRumbleCommand(m_controller, 0.2))));
 
     // Back button resets field centric, forward is the current heading
     new Button(m_controller::getBackButton)
@@ -317,6 +325,13 @@ public class RobotContainer {
  
     new Button(m_climbController::getBackButton)
       .whileHeld(new InstantCommand(() -> m_arm.zeroEncoder(), m_arm));
+
+
+    // new Button(m_climbController::getAButton)
+    //   .whenPressed(new ElevatorGoToMaxHeight(m_elevator));
+
+    // new Button(m_climbController::getXButton)
+    //   .whenPressed(new ClimbAutoMid(m_elevator, m_arm, m_climbController));
 
    // Rest of climb controls are in the default arm and default elevator commands
   }
