@@ -171,8 +171,8 @@ public final class Constants {
     public static final double m_maxEncoderValue = 2000;
     public static final double m_minEncoderValue = -2000;
 
-    public static final double CLIMBING_BACK_ANGLE = -13.0;
-    public static final double CLIMBING_MIDDLE_ANGLE = -0.5;
+    public static final double CLIMBING_BACK_ANGLE = -18.0;
+    public static final double CLIMBING_MIDDLE_ANGLE = -5.5;
     public static final double CLIMBING_FORWARD_ANGLE = 22;
     public static final double CLIMBING_NEXT_BAR_ANGLE = 15.6;
   }
