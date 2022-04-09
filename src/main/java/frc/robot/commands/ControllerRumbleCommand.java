@@ -24,8 +24,8 @@ public class ControllerRumbleCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_controller.setRumble(RumbleType.kRightRumble, 0.1);
-    m_controller.setRumble(RumbleType.kLeftRumble, 0.1);
+    m_controller.setRumble(RumbleType.kRightRumble, 0.6);
+    m_controller.setRumble(RumbleType.kLeftRumble, 0.6);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -37,6 +37,7 @@ public class ControllerRumbleCommand extends CommandBase {
   public void end(boolean interrupted) {
     m_controller.setRumble(RumbleType.kRightRumble, 0.0);
     m_controller.setRumble(RumbleType.kLeftRumble, 0.0);
+    m_time = 0;
   }
 
   // Returns true when the command should end.
