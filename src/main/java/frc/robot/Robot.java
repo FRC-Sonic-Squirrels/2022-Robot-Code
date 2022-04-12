@@ -60,6 +60,8 @@ public class Robot extends TimedRobot {
       camera.setResolution(160, 120);
       camera.setFPS(30);
     }
+
+    //m_robotContainer.updateManualShooterSettings();
   }
 
   /**
@@ -131,6 +133,8 @@ public class Robot extends TimedRobot {
     new HoodZeroAngle(m_robotContainer.m_hood).schedule(true);
     new ElevatorZeroHeight(m_robotContainer.m_elevator).schedule(true);
 
+    //m_robotContainer.climbRumbleCommand.schedule(false);
+
     // Pose2d start = new Pose2d(8.23 - Units.inchesToMeters(138), 4.11, new Rotation2d(Math.PI));
 
     // //TODO: remove before auto
@@ -160,7 +164,8 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    
+    //m_robotContainer.updateManualShooterSettings();
+    //SmartDashboard.putBoolean("Climb Rumble Command scheduled", m_robotContainer.climbRumbleCommand.isScheduled()); 
   }
 
   @Override

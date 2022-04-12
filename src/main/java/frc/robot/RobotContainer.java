@@ -81,6 +81,8 @@ public class RobotContainer {
   public double m_shootingRpm = Constants.ShooterConstants.BUMPER_SHOT_RPM;
   public double m_hoodAngle = Constants.ShooterConstants.HOOD_ANGLE;
 
+  public Command climbRumbleCommand = new ControllerClimbMaxHeightRumble(m_climbController, m_elevator);
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -136,10 +138,12 @@ public class RobotContainer {
     m_elevator.setDefaultCommand(new ElevatorControlCommand(m_elevator, m_climbController,
       Constants.ElevatorConstants.elevatorSpeedMultiplier));
     
-    //CommandScheduler.getInstance().schedule(new ControllerClimbMaxHeightRumble(m_climbController, m_elevator));
     //new ControllerClimbMaxHeightRumble(m_climbController, m_elevator);
 
     m_arm.setDefaultCommand(new ArmManualControlCommand(m_arm, m_climbController, 0.3));
+
+    CommandScheduler.getInstance().schedule(false, new ControllerClimbMaxHeightRumble(m_climbController, m_elevator));
+
 
     configureButtonBindings();
   }
@@ -255,14 +259,6 @@ public class RobotContainer {
 
     // **************** OPERATOR CONTROLS ********************************
 
-    // //shoot 1 ball idk if this is useful but its here 
-    // new Button(m_operatorController::getBButton)
-    //   .whileHeld(new ShootOneCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake));
- 
-    //shoot while holding 
-    //new Button(m_operatorController::getRightBumper)
-    //  .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
-
     //--------------------------------Operator intake)-------------------
     //Deploy Intake
     new Button(m_operatorController::getAButton)
@@ -280,20 +276,20 @@ public class RobotContainer {
     //     .whenPressed(new ShootWithSetRPMAndHoodAngle(4000, 32, m_cargo, m_shooter, m_hood, m_robot), true);
 
     //Using this for debugging and tuning the hood at the practice field 
-    // new Button(m_operatorController::getRightBumper)
-    // .whileActiveOnce(new ShootManualAdjustRpmAndAngle(() -> m_shootingRpm, () -> m_hoodAngle, m_cargo, m_shooter, m_hood, m_robot), true);
+    new Button(m_operatorController::getRightBumper)
+    .whileActiveOnce(new ShootManualAdjustRpmAndAngle(() -> m_shootingRpm, () -> m_hoodAngle, m_cargo, m_shooter, m_hood, m_robot), true);
 
-    // new Button(m_operatorController::getBackButton)
-    //   .whenPressed(new InstantCommand(() -> m_shootingRpm -= 50));
+    new Button(m_operatorController::getBackButton)
+      .whenPressed(new InstantCommand(() -> m_shootingRpm -= 50));
 
-    // new Button(m_operatorController::getStartButton)
-    //   .whenPressed(new InstantCommand(() -> m_shootingRpm += 50));
+    new Button(m_operatorController::getStartButton)
+      .whenPressed(new InstantCommand(() -> m_shootingRpm += 50));
 
-    // new Button(() -> m_operatorController.getLeftTriggerAxis() >= 0.05)
-    //   .whenPressed(new InstantCommand(() -> m_hoodAngle -= 0.5));
+    new Button(() -> m_operatorController.getLeftTriggerAxis() >= 0.05)
+      .whenPressed(new InstantCommand(() -> m_hoodAngle -= 0.5));
 
-    // new Button(() -> m_operatorController.getRightTriggerAxis() >= 0.05)
-    //   .whenPressed(new InstantCommand(() -> m_hoodAngle += 0.5));
+    new Button(() -> m_operatorController.getRightTriggerAxis() >= 0.05)
+      .whenPressed(new InstantCommand(() -> m_hoodAngle += 0.5));
 
     // new Button(m_operatorController::getAButton)
     //   .whenPressed(() -> m_hood.setAngleDegrees(18.6), m_hood);
@@ -327,8 +323,8 @@ public class RobotContainer {
       .whileHeld(new InstantCommand(() -> m_arm.zeroEncoder(), m_arm));
 
 
-    // new Button(m_climbController::getAButton)
-    //   .whenPressed(new ElevatorGoToMaxHeight(m_elevator));
+    new Button(m_climbController::getAButton)
+      .whenPressed(new ElevatorGoToMaxHeight(m_elevator).andThen(new ControllerRumbleCommand(m_climbController, 0.2)));
 
     // new Button(m_climbController::getXButton)
     //   .whenPressed(new ClimbAutoMid(m_elevator, m_arm, m_climbController));
