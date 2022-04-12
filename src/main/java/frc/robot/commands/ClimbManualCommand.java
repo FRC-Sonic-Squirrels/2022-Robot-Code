@@ -68,12 +68,16 @@ public class ClimbManualCommand extends CommandBase {
       double pov = m_controller.getPOV();
 
       if (pov == 0) {
+        // close to straight up
         m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE);
       } else if (pov == 90) {
+        // arm forward, rotating the elevator back for the next bar
         m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_FORWARD_ANGLE);
       } else if (pov == 180) {
+        // arm forward, not fully rotated for next bar
         m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_NEXT_BAR_ANGLE);
       } else if (pov == 270) {
+        // arms back to pull up to bar
         m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_BACK_ANGLE);
       }
     }
