@@ -9,6 +9,7 @@ import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -53,6 +54,9 @@ public class Robot extends TimedRobot {
 
     // We don't use this
     LiveWindow.disableAllTelemetry();
+
+    // log NetworkTables data
+    DataLogManager.start();
 
     if (isReal()) {
       // Creates UsbCamera and sets resolution
