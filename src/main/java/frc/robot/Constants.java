@@ -308,6 +308,8 @@ public final class Constants {
     {52,  15}, // fender shot
     {66,  15}, // no limelight, mid tarmac
     {75,  20},
+    {82,  20},
+    {92,  23},
     {108, 29}, // on corner of tarmac
     {119, 30},
     {128, 30}, // Money shot!
@@ -321,6 +323,8 @@ public final class Constants {
     {52,  2800}, // fender shot
     {66,  2800}, // no limelight, mid tarmac
     {75,  2800},
+    {82,  2800},
+    {92,  2800},
     {108, 2800}, // on corner of tarmac
     {119, 2900},
     {128, 3000}, // Money shot!
