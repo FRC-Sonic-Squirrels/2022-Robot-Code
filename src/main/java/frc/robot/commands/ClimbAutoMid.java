@@ -28,17 +28,17 @@ public class ClimbAutoMid extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new InstantCommand(() -> m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_BACK_ANGLE), m_arm),
-      new WaitUntilCommand(() -> m_arm.isAtAngle()),
+      // new InstantCommand(() -> m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_BACK_ANGLE), m_arm),
+      // new WaitUntilCommand(() -> m_arm.isAtAngle()),
 
       new InstantCommand(() -> m_elevator.setElevatorHeight(0), m_elevator),
       new WaitUntilCommand(() -> m_elevator.isAtHeight(0)),
 
-      new InstantCommand(() -> m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE), m_arm),
-      new WaitUntilCommand(() -> m_arm.isAtAngle()),
+      // new InstantCommand(() -> m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE), m_arm),
+      // new WaitUntilCommand(() -> m_arm.isAtAngle()),
 
-      new InstantCommand(() -> m_elevator.setElevatorHeight(6), m_elevator),
-      new WaitUntilCommand(() -> m_elevator.isAtHeight(6)),
+      // new InstantCommand(() -> m_elevator.setElevatorHeight(6), m_elevator),
+      // new WaitUntilCommand(() -> m_elevator.isAtHeight(6)),
 
       new ControllerRumbleCommand(m_climbController, 0.2)
     );
