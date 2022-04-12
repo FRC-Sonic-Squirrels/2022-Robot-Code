@@ -322,10 +322,14 @@ public class RobotContainer {
     new Button(m_climbController::getBackButton)
       .whileHeld(new InstantCommand(() -> m_arm.zeroEncoder(), m_arm));
 
-
     new Button(m_climbController::getAButton)
       .whenPressed(new ElevatorGoToMaxHeight(m_elevator).andThen(new ControllerRumbleCommand(m_climbController, 0.2)));
 
+    new Button(m_climbController::getBButton)
+      .whenPressed(new InstantCommand(() -> m_intake.deployIntake());
+
+
+    // TODO: buttons to deploy/retract intake for playing with the balance
     // new Button(m_climbController::getXButton)
     //   .whenPressed(new ClimbAutoMid(m_elevator, m_arm, m_climbController));
 
