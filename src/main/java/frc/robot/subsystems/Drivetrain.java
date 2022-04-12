@@ -287,6 +287,24 @@ public class Drivetrain extends SubsystemBase {
   }
 
   /**
+   * get the change in pitch in degrees per second
+   */
+  public double getGyroscopePitchVelocity() {
+    double[] xyz_dps = new double[3];
+    m_pigeon.getRawGyro(xyz_dps);
+    return xyz_dps[1];
+  }
+
+  /**
+   * robot pitch in degrees
+   */
+  public double getGyroscopePitch() {
+    double[] xyz_dps = new double[3];
+    m_pigeon.getYawPitchRoll(xyz_dps);
+    return xyz_dps[1];
+  }
+
+  /**
    * Returns the currently-estimated pose of the robot.
    *
    * @return The pose.
