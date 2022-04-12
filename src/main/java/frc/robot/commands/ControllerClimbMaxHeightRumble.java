@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
 
@@ -14,6 +15,8 @@ public class ControllerClimbMaxHeightRumble extends CommandBase {
   XboxController m_controller;
   ElevatorSubsystem m_elevator;
   double m_time = 0;
+  double m_count = 0;
+
   public ControllerClimbMaxHeightRumble(XboxController controller, ElevatorSubsystem elevator) {
 
     m_controller = controller;
@@ -30,11 +33,17 @@ public class ControllerClimbMaxHeightRumble extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    SmartDashboard.putBoolean("Running climb rumble command", true);
     if(m_elevator.m_atMaxheight){
-      m_controller.setRumble(RumbleType.kRightRumble, 0.5);
-      m_controller.setRumble(RumbleType.kLeftRumble, 0.5);
+      if(m_count == 0){
+        m_controller.setRumble(RumbleType.kRightRumble, 0.5);
+        m_controller.setRumble(RumbleType.kLeftRumble, 0.5);
 
+        m_controller.setRumble(RumbleType.kRightRumble, 0.0);
+        m_controller.setRumble(RumbleType.kLeftRumble, 0.0);
+      }
     } else {
+      m_count = 0;
       m_controller.setRumble(RumbleType.kRightRumble, 0.0);
       m_controller.setRumble(RumbleType.kLeftRumble, 0.0);
     }
@@ -44,6 +53,8 @@ public class ControllerClimbMaxHeightRumble extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    SmartDashboard.putBoolean("Running climb rumble command", false);
+
     m_controller.setRumble(RumbleType.kRightRumble, 0.0);
     m_controller.setRumble(RumbleType.kLeftRumble, 0.0);
   }
