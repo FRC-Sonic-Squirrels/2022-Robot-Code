@@ -40,7 +40,7 @@ public class ElevatorGoToMaxHeight extends CommandBase {
       m_elevator.brakeOff();
       m_elevator.setWinchPercentOutput(-1);
     }
-
+    lastRobotPitchRate = currentRobotPitchRate;
   }
 
   // Called once the command ends or is interrupted.
