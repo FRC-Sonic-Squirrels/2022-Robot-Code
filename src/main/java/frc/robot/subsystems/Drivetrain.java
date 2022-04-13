@@ -280,6 +280,10 @@ public class Drivetrain extends SubsystemBase {
     return m_odometry.getPoseMeters().getRotation();
   }
 
+  /**
+   * get current change in yaw in degrees per second
+   * @return Rotation2d
+   */
   public Rotation2d getGyroscopeRotationVelocity() {
     double[] xyz_dps = new double[3];
     m_pigeon.getRawGyro(xyz_dps);
@@ -302,6 +306,24 @@ public class Drivetrain extends SubsystemBase {
     double[] xyz_dps = new double[3];
     m_pigeon.getYawPitchRoll(xyz_dps);
     return xyz_dps[1];
+  }
+
+  /**
+   * get the change in pitch in degrees per second
+   */
+  public double getGyroscopeRollVelocity() {
+    double[] xyz_dps = new double[3];
+    m_pigeon.getRawGyro(xyz_dps);
+    return xyz_dps[0];
+  }
+
+  /**
+   * robot pitch in degrees
+   */
+  public double getGyroscopeRoll() {
+    double[] xyz_dps = new double[3];
+    m_pigeon.getYawPitchRoll(xyz_dps);
+    return xyz_dps[0];
   }
 
   /**
