@@ -309,7 +309,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   /**
-   * get the change in pitch in degrees per second
+   * get the change in roll in degrees per second
    */
   public double getGyroscopeRollVelocity() {
     double[] xyz_dps = new double[3];
@@ -318,7 +318,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   /**
-   * robot pitch in degrees
+   * robot roll in degrees
    */
   public double getGyroscopeRoll() {
     double[] xyz_dps = new double[3];
