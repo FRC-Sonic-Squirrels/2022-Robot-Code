@@ -102,7 +102,7 @@ public class HoodSubsystem extends SubsystemBase {
     hoodMotor.configForwardSoftLimitEnable(true);
 
     // config hard limit switch for full down position
-    hoodMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
+    hoodMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
         LimitSwitchNormal.NormallyOpen, 0);
 
     hoodMotor.setNeutralMode(NeutralMode.Coast);
