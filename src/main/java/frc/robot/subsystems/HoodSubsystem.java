@@ -218,12 +218,12 @@ public class HoodSubsystem extends SubsystemBase {
   }
 
   /**
-   * **EXTREME CAUTION** THIS IS NOT FLIPPED BE CAREFUL 
+   * **EXTREME CAUTION** THIS IS FLIPPED to the correct direction 
    * @param output
    */
   public void setPercentOutput(double output) {
     percentOutput = output;
-    hoodMotor.set(ControlMode.PercentOutput, output);
+    //hoodMotor.set(ControlMode.PercentOutput, output);
   }
 
 }
