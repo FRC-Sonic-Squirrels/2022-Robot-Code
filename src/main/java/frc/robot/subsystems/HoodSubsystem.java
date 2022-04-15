@@ -26,6 +26,9 @@ public class HoodSubsystem extends SubsystemBase {
   private double gearRatio = 1.0 / 84.0;
   private double ticksToDegree = (gearRatio / 2048) * 360.0;
 
+  //changed hood motor to other side CCW makes hood go up (i think)
+  private final double motorFlipped = -1.0;
+
   // min and max from Beau
   private double minHoodAngleDeg = 15.0;
   private double maxHoodAngleDeg = 33.0; //actual is 33 
@@ -129,11 +132,11 @@ public class HoodSubsystem extends SubsystemBase {
 
     // percent output OR position control, not both
     if (Math.abs(percentOutput) > 0.05) {
-      hoodMotor.set(ControlMode.PercentOutput, percentOutput);
+      hoodMotor.set(ControlMode.PercentOutput, percentOutput * motorFlipped);
     }
     else {
       currentAngleDeg = ticksToDegrees(hoodMotor.getSelectedSensorPosition());
-      hoodMotor.set(TalonFXControlMode.Position, angleToTicks(desiredAngleDeg));
+      hoodMotor.set(TalonFXControlMode.Position, angleToTicks(desiredAngleDeg) * motorFlipped);
     }
 
     if (Math.abs(currentAngleDeg - desiredAngleDeg) <= toleranceDegrees){
@@ -214,6 +217,10 @@ public class HoodSubsystem extends SubsystemBase {
     return hoodInterpolator.getInterpolatedValue(distanceFeet * 12.0);
   }
 
+  /**
+   * **EXTREME CAUTION** THIS IS NOT FLIPPED BE CAREFUL 
+   * @param output
+   */
   public void setPercentOutput(double output) {
     percentOutput = output;
     hoodMotor.set(ControlMode.PercentOutput, output);
