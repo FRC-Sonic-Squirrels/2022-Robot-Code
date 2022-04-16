@@ -45,11 +45,13 @@ public class ClimbHandOff extends SequentialCommandGroup {
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
-      new ElevatorGoToSpecificHeight(m_elevator, 6, 0.5)
+      // TODO: guess that 22 inches gets us under the next bar
+      new ElevatorGoToSpecificHeight(m_elevator, 22.0, 1.0)
+
     );
   }
 
-  private boolean confirmButtonPressed(){
+  private boolean confirmButtonPressed() {
     return m_climbController.getAButtonPressed();
-}
+  }
 }
