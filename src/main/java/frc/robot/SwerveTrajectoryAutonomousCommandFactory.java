@@ -51,6 +51,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   private static LimelightSubsystem m_limelight;
   private static Robot m_robot;
 
+
   public SwerveTrajectoryAutonomousCommandFactory(Drivetrain drivetrain, ShooterSubsystem shooter,
       CargoSubsystem cargo, IntakeSubsystem intake, HoodSubsystem hood, LimelightSubsystem limelight,
       Robot robot, double maxVelocity, double maxAcceleration) {
@@ -62,7 +63,9 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     m_hood = hood;
     m_limelight = limelight;
     m_robot = robot;
-    m_tt = new TestTrajectories(maxVelocity, maxAcceleration, m_drivetrain, true);
+
+    m_tt = new SwerveTestTrajectories(maxVelocity, maxAcceleration,
+        Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, drivetrain.kinematics());
   }
 
 
@@ -145,7 +148,6 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         .withTimeout(6)
     );
   }  
-
 
   public Command SundomeRightSideShootAndMove(){
     Pose2d startPos = Constants.StartPoseConstants.BLUE_DEF_BOTTOM;
