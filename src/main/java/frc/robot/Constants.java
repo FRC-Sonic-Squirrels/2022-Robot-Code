@@ -54,7 +54,7 @@ public final class Constants {
     public static final int CANID14_BACK_LEFT_MODULE_STEER_MOTOR = 14;
     public static final int CANID24_BACK_LEFT_MODULE_STEER_ENCODER = 24;
 
-    public static final int CANID7 = 7;
+    
     public static final int CANID8 = 8;
     public static final int CANID18_INTAKE = 18;
     public static final int CANID19_ARM_LEAD_MOTOR = 19;
@@ -71,12 +71,13 @@ public final class Constants {
 
     public static final int CANID5_LOWER_BELTS = 5;
     public static final int CANID6_UPPER_BELTS = 6;
+    public static final int CANID7_HOOD = 7;
     public static final int CANID9_ELEVATOR_LEAD_TALON = 9;
     public static final int CANID10_ELEVATOR_FOLLOW_TALON = 10;
     public static final int CANID15_pigeon_imu = 15;
     public static final int CANID16_flywheel_lead = 16;
     public static final int CANID17_flywheel_follow = 17;
-
+    
   }
 
 
@@ -134,7 +135,7 @@ public final class Constants {
   public static final int DRIVETRAIN_PIGEON_ID = 15;
 
   public static class DriveFieldCentricConstant {
-    public static final double TRANSLATION_MULTIPLIER = 0.825; 
+    public static final double TRANSLATION_MULTIPLIER = 1.0; 
     public static final double ROTATION_MULTIPLIER = 0.6; 
   }
 
@@ -143,7 +144,7 @@ public final class Constants {
     public static final double maxAcceleration = 2.5; // meters per second per second
 
     // This kP worked for the DriveWithSetRotation command
-    public static final double kPThetaController = 1.5;
+    public static final double kPThetaController = 2.0; //1.5;
     public static final double kIThetaController = 0.0;
     public static final double kDThetaController = 0.0;
 
@@ -151,19 +152,14 @@ public final class Constants {
     public static final double kP = 2.2941; // test bot = 2.3055;
     public static final double kI = 0;
     public static final double kD = 0;
-    public static final double kA = 0.43516; // test bot = 0.12817;
-    public static final double kV = 2.344;   // test bot = 2.3423;
-    public static final double kS = 0.62811; // test bot = 0.53114;
+    public static final double kA = 0.435;  // SysId = 0.43516; // test bot = 0.12817;
+    public static final double kV = 2.344;  // SysId = 2.344;   // test bot = 2.3423;
+    public static final double kS = 0.628;  // SysID = 0.62811; // test bot = 0.53114;
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
         new TrapezoidProfile.Constraints(Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
             Drivetrain.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
-  }
-
-  //TODO: check actual gear ratio
-  public static class IntakeConstants{
-    public static final double gearRatio = 1;
   }
 
   public static class ElevatorConstants{
@@ -175,17 +171,17 @@ public final class Constants {
     public static final double m_maxEncoderValue = 2000;
     public static final double m_minEncoderValue = -2000;
 
-    public static final double CLIMBING_BACK_ANGLE = -13.0;
-    public static final double CLIMBING_MIDDLE_ANGLE = -1;
+    public static final double CLIMBING_BACK_ANGLE = -18.0;
+    public static final double CLIMBING_MIDDLE_ANGLE = -5.5;
     public static final double CLIMBING_FORWARD_ANGLE = 22;
     public static final double CLIMBING_NEXT_BAR_ANGLE = 15.6;
   }
 
   public static class ShooterConstants {
-    //TODO: find the actual activated and idle values
     public static final double m_activated = 2000;
     public static final double m_idle = 500;
     public static final int BUMPER_SHOT_RPM = 3000;
+    public static final int HOOD_ANGLE = 15;
   }
   // according to game manual field is 27 ft. (~823 cm) by 54 ft. (~1646 cm)
   public static class HubCentricConstants{
@@ -232,12 +228,13 @@ public final class Constants {
 
   public static class LimelightConstants{
     public static final double LIMELIGHT_HEIGHT_INCHES = 29.962;
-    public static final double TARGET_HEIGHT_INCHES = 104.0;
-    public static final double LIMELIGHT_PITCH_DEGREES = 40;
+    public static final double HIGH_HUB_HEIGHT_INCHES = 104.0;
+    public static final double LIMELIGHT_PITCH_DEGREES = 50;
     public static final double HIGH_HUB_RADIUS_INCHES = 26.6875;
 
-    //TODO: final distance between camera and the center of robot
-    public static final Transform2d LIMELIGHT_TO_ROBOT = new Transform2d(new Translation2d(0.5, 0.2), new Rotation2d(0));
+    public static final double TARGET_TOLERANCE_DEGREES = 2.0;
+
+    public static final Transform2d LIMELIGHT_TO_ROBOT = new Transform2d(new Translation2d(-7.5, 0), new Rotation2d(180));
   }
 
   public static class VisionPipelineIndex {
@@ -282,7 +279,6 @@ public final class Constants {
   public static class StartPoseConstants {
     public static Pose2d ORIGIN          = new Pose2d(0.0, 0.0, new Rotation2d(0));
     
-    // TODO: make new starting poses right against the hub
     public static Pose2d BLUE_BOTTOM    = 
         new Pose2d( Units.feetToMeters(26.8), Units.feetToMeters(5.64),   new Rotation2d(0.05 + 3*Math.PI/2) );
     public static Pose2d BLUE_MID_BOTTOM= 
@@ -303,6 +299,38 @@ public final class Constants {
         new Pose2d( Units.feetToMeters(22.9), Units.feetToMeters(15),   new Rotation2d(Math.toRadians(160)));
     //public static Pose2d RED_DEF_TOP    = new Pose2d( Units.feetToMeters(28.6), Units.feetToMeters(17.55),new Rotation2d(-0.35));
     //public static Pose2d RED_DEF_BOTTOM = new Pose2d( Units.feetToMeters(31.1), Units.feetToMeters(12),   new Rotation2d(3*Math.PI/2-0.35));
+  
+    public static Pose2d FIVE_BALL_START = new Pose2d(
+      Units.feetToMeters(24.95), Units.feetToMeters(5.85), new Rotation2d(3*Math.PI/2));
   }
 
+  public static final double hoodAngleDegreesTable[][] = {
+    {52,  15}, // fender shot
+    {66,  15}, // no limelight, mid tarmac
+    {75,  20},
+    {82,  20},
+    {92,  23},
+    {108, 29}, // on corner of tarmac
+    {119, 30},
+    {128, 30}, // Money shot!
+    {136, 31},
+    {142, 32},
+    {194, 33}, // Launch pad
+    {242, 33}  // long shot, no limelight
+  };
+
+  public static final double flywheelRpmTable[][] = {
+    {52,  2800}, // fender shot
+    {66,  2800}, // no limelight, mid tarmac
+    {75,  2800},
+    {82,  2800},
+    {92,  2800},
+    {108, 2800}, // on corner of tarmac
+    {119, 2900},
+    {128, 3000}, // Money shot!
+    {136, 3100}, // TODO: test and change to 3000?
+    {142, 3000},
+    {194, 3600}, // Launch pad
+    {242, 5000}  // long shot, no limelight
+  };
 }

@@ -14,6 +14,7 @@ import com.team2930.lib.util.linearInterpolator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.CANIVOR_canId;
 
@@ -30,42 +31,37 @@ public class ShooterSubsystem extends SubsystemBase {
   private TalonFXSensorCollection m_encoder;
   private double m_desiredRPM = 0;
   private boolean m_atSpeed = false;
-  private linearInterpolator m_lt_inches;
+  private linearInterpolator RPMinterpolator;
   private double m_currentRPM = 0;
   private double m_error = 0;
   private double m_max_RPM_error = 30;
   private final double RPMtoTicks = 2048 / 600;
-  private double m_testingStaticRPM = 0;
 
   private boolean autonPIDset = false;
 
-  private double teleop_configP = 0.22;
-  private double teleop_configI = 0.002;
-  private double teleop_configD = 0.0;
-  private double teleop_configF = 0.055;
-  private double teleop_configIZ = 100;
+  private double teleop_configP = 0.2;
+  private double teleop_configI = 0.0003;
+  private double teleop_configD = 0.3;
+  private double teleop_configF = 0.051;
+  private double teleop_configIZ = 3000;   // 12288 = 100 RPM Izone
+  private double maxForwardOutput = 1.0;
+  private double maxReverseOutput = -0.05;
 
-  private double auton_configP = 0.25;
-  private double auton_configI = 0.002;
-  private double auton_configD = 0.0;
-  private double auton_configF = 0.06;
-  private double auton_configIZ = 100;
+  // NOTE: this was a hack to fix weirdness during autonomous
+  // private double auton_configP = 0.25;
+  // private double auton_configI = 0.002;
+  // private double auton_configD = 0.0;
+  // private double auton_configF = 0.06;
+  // private double auton_configIZ = 100;
 
   // lower number here, slows the rate of change and decreases the power spike
-  private double m_rate_RPMperSecond = 6000;
+  private double m_rate_RPMperSecond = 10000000;
   private SlewRateLimiter m_rateLimiter = new SlewRateLimiter(m_rate_RPMperSecond);
-
-  private double shooterDistancesInches[][] = {
-    {52, 2750},
-    {70, 3400},
-    {73, 3400}
-  };
 
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem(Robot robot) {
     m_robot = robot;
 
-    // TODO: go over this and confirm motors are set up correctly. check against 2021 code
     flywheel_lead.configFactoryDefault();
     flywheel_follow.configFactoryDefault();
 
@@ -77,6 +73,9 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheel_follow.configVoltageCompSaturation(11.0);
     flywheel_follow.enableVoltageCompensation(true);
 
+    flywheel_lead.configPeakOutputForward(maxForwardOutput);
+    flywheel_lead.configPeakOutputReverse(maxReverseOutput);
+
     flywheel_lead.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
 
     m_encoder = flywheel_lead.getSensorCollection();
@@ -87,7 +86,7 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheel_follow.setInverted(true);
 
     // Build the linear Interpolator
-    m_lt_inches = new linearInterpolator(shooterDistancesInches);
+    RPMinterpolator = new linearInterpolator(Constants.flywheelRpmTable);
     
     // Be more responsive to changes in the RPM
     // https://docs.ctre-phoenix.com/en/stable/ch14_MCSensor.html#velocity-measurement-filter
@@ -97,15 +96,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // MotorUtils.setCtreStatusSlow(flywheel_follow);
 
-    // TODO: try this for fixing auton shooting
-    // flywheel_lead.setSafetyEnabled(false);
-    // flywheel_follow.setSafetyEnabled(false);
-
     setPIDteleop();
-  }
-
-  public void updateTestingRPM() {
-    m_testingStaticRPM = SmartDashboard.getNumber("static flywheel speed", m_testingStaticRPM);
   }
 
   public void stop() {
@@ -115,20 +106,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // if(this.getCurrentCommand() != null){
-    //   SmartDashboard.putString("AAA shooter current command", this.getCurrentCommand().toString());
-    // } else {
-    //   SmartDashboard.putString("AAA shooter current command", "null");
-    // }
-    if (m_robot.isAutonomous()) {
-      // auton mode, make sure auton PID is set
-      if (!autonPIDset) {
-        setPIDauton();
-      }
-    } else if (autonPIDset) {
-      // teleop mode, make sure teleop PID is set
-      setPIDteleop();
-    }
 
     double setPoint = 0;
     m_currentRPM = m_encoder.getIntegratedSensorVelocity() / RPMtoTicks;
@@ -159,24 +136,16 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Shooter isAtSpeed", m_atSpeed);
     SmartDashboard.putNumber("Shooter m_CurrentRPM", m_currentRPM);
     SmartDashboard.putNumber("Shooter m_desiredRPM", m_desiredRPM);
-    SmartDashboard.putBoolean("Shooter m_atSpeed", m_atSpeed);
     SmartDashboard.putNumber("Shooter m_error", m_error);
-    SmartDashboard.putNumber("Shooter m_max_RPM_error", m_max_RPM_error);
-    SmartDashboard.putNumber("Shooter RPMtoTicks", RPMtoTicks);
-    SmartDashboard.putNumber("Shooter m_testingStaticRPM", m_testingStaticRPM);
-    SmartDashboard.putBoolean("Shooter auton PID", autonPIDset);
-    SmartDashboard.putNumber("Shooter m_rate_RPMperSecond", m_rate_RPMperSecond);
-
-    if(isAtDesiredRPM()){
-      SmartDashboard.putNumber("AAA shooting rpm within error", m_desiredRPM);
-    } else {
-      SmartDashboard.putNumber("AAA shooting rpm within error", 0);
-    }
+    // SmartDashboard.putNumber("Shooter m_max_RPM_error", m_max_RPM_error);
+    // SmartDashboard.putBoolean("Shooter auton PID", autonPIDset);
+    // SmartDashboard.putNumber("Shooter m_rate_RPMperSecond", m_rate_RPMperSecond);
 
   }
 
   public void setFlywheelRPM(double rpm) {
     m_desiredRPM = rpm;
+    flywheel_lead.setIntegralAccumulator(0.0);
   }
 
   public double getCurrentRPM() {
@@ -192,7 +161,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public double getRPMforDistanceFeet(double distanceFeet) {
-    return m_lt_inches.getInterpolatedValue(distanceFeet / 12.0);
+    return RPMinterpolator.getInterpolatedValue(distanceFeet * 12.0);
   }
 
   private void setPIDteleop() {
@@ -204,12 +173,4 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheel_lead.config_IntegralZone(0, teleop_configIZ);
   }
 
-  private void setPIDauton() {
-    autonPIDset = true;
-    flywheel_lead.config_kP(0, auton_configP);
-    flywheel_lead.config_kI(0, auton_configI);
-    flywheel_lead.config_kD(0, auton_configD);
-    flywheel_lead.config_kF(0, auton_configF);
-    flywheel_lead.config_IntegralZone(0, auton_configIZ);
-  }
 }

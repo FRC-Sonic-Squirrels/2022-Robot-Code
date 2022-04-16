@@ -77,7 +77,7 @@ public class Limelight {
    * @return true if we see target
    */
   public boolean seesTarget() {
-    return (limelightNT.getEntry("TV").getDouble(0) == 1);
+    return (limelightNT.getEntry("tv").getDouble(0) == 1);
   }
 
   /**

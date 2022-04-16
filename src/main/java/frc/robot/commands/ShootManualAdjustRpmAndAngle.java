@@ -4,45 +4,43 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.CargoSubsystem;
+import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class ShootWithSetRPMCommand extends CommandBase {
+public class ShootManualAdjustRpmAndAngle extends CommandBase {
   private CargoSubsystem m_cargoSubsystem;
   private ShooterSubsystem m_shooterSubsystem;
-  private Robot m_robot;
+  private HoodSubsystem m_hoodSubsystem;
   private long m_time;
-  private double m_rpm;
+  private DoubleSupplier m_rpm;
+  private DoubleSupplier m_hoodAngle;
   private boolean shooting = false;
+  private Robot m_robot;
 
-  public ShootWithSetRPMCommand(int flyWheelRPM, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, Robot robot) {
+  public ShootManualAdjustRpmAndAngle(DoubleSupplier flyWheelRPM, DoubleSupplier hoodAngleSupplier, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem, Robot robot) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
-    m_robot = robot;
+    m_hoodSubsystem = hoodSubsystem;
     m_rpm = flyWheelRPM;
+    m_hoodAngle = hoodAngleSupplier;
     m_time = 0;
+    m_robot = robot;
 
-
-    // drivetrain is not included in the requirements, as it use in a "read only"
-    // fashion, to call getPose(). 
-    addRequirements(cargoSubsystem, shooterSubsystem);
+    addRequirements(cargoSubsystem, shooterSubsystem, hoodSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    //by default from testing on 2/26 2000 works well enough for low goal shots 
-    
-    //m_rpm = SmartDashboard.getNumber("AAA shooting rpm testing", 2000);
-    SmartDashboard.putNumber("SHOOTING RPM", m_rpm);
+  public void initialize() {    
+    m_shooterSubsystem.setFlywheelRPM(m_rpm.getAsDouble());
 
-    SmartDashboard.putString("AAAA Shoot Command State", "Initialized");
-    m_shooterSubsystem.setFlywheelRPM(m_rpm);
-
+    m_hoodSubsystem.setAngleDegrees(m_hoodAngle.getAsDouble());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -50,24 +48,20 @@ public class ShootWithSetRPMCommand extends CommandBase {
   public void execute() {
     // wait until flywheel is fully revved
     // once it is, set indexer in shooting mode
-    SmartDashboard.putString("AAAA Shoot Command State", "execute");
-    if (!shooting && m_shooterSubsystem.isAtDesiredRPM()) {
+    if (!shooting && m_shooterSubsystem.isAtDesiredRPM() && m_hoodSubsystem.isAtAngle()) {
       shooting = true;
-      SmartDashboard.putBoolean("AAA can shoot", true);
       m_cargoSubsystem.setShootMode();
     }
-    SmartDashboard.putBoolean("AAA shooting", shooting);
-
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    SmartDashboard.putString("AAAA Shoot Command State", "end");
     shooting = false;
+    m_time = 0;
     m_shooterSubsystem.stop();
-    m_cargoSubsystem.setStopMode();
-    SmartDashboard.putBoolean("AAA shooting", false);
+    m_cargoSubsystem.setIdleMode();
+    m_hoodSubsystem.setMinAngle();
   }
 
   // Returns true when the command should end.
@@ -82,12 +76,12 @@ public class ShootWithSetRPMCommand extends CommandBase {
         return true;
       }
     }
+
     if (m_cargoSubsystem.cargoInUpperBelts() || m_cargoSubsystem.cargoInLowerBelts()) {
       // reset timer if we see a cargo in the indexer
       m_time = 0;
     }
 
-    //the command will be manually executed and ended by holding a button in teleop
     return false;
   }
 }

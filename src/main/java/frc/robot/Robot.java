@@ -7,17 +7,16 @@ package frc.robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.ArmManualControlCommand;
-import frc.robot.commands.DriveFieldCentricCommand;
-import frc.robot.commands.ElevatorControlCommand;
 import frc.robot.commands.ElevatorZeroHeight;
-import frc.robot.subsystems.Drivetrain;
+import frc.robot.commands.HoodZeroAngle;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -41,9 +40,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    SmartDashboard.putBoolean("IS CHIMPING", false);
-    SmartDashboard.putNumber("AAA shooting rpm testing", 2000);
-    
+
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer(this);
@@ -52,15 +49,19 @@ public class Robot extends TimedRobot {
     revPDH.clearStickyFaults();
     revPDH.resetTotalEnergy();
 
+    revPDH.setSwitchableChannel(true);
+
     // We don't use this
     LiveWindow.disableAllTelemetry();
 
     if (isReal()) {
       // Creates UsbCamera and sets resolution
       camera = CameraServer.startAutomaticCapture();
-      camera.setResolution(320, 240);
-      camera.setFPS(20);
+      camera.setResolution(160, 120);
+      camera.setFPS(30);
     }
+
+    //m_robotContainer.updateManualShooterSettings();
   }
 
   /**
@@ -77,17 +78,15 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    SmartDashboard.putNumber("BUMPER SHOT RPM", m_robotContainer.m_bumperRpm);
 
+    if (!isAutonomous()) {
+      m_robotContainer.updateManualShooterSettings();
+    }
+    
     // SmartDashboard.putNumber("Joystick_Values jLeftY", m_robotContainer.m_controller.getLeftY());
     // SmartDashboard.putNumber("Joystick_Values jLeftX", m_robotContainer.m_controller.getLeftX());
     // SmartDashboard.putNumber("Joystick_Values jRightY", m_robotContainer.m_controller.getRightY());
     // SmartDashboard.putNumber("Joystick_Values jRightX", m_robotContainer.m_controller.getRightX());
-
-    //SmartDashboard.putNumber("PDH Total Power", revPDH.getTotalPower());
-    // FIXME: getTotalCurrent() throws errors
-    //SmartDashboard.putNumber("PDH Total Current", revPDH.getTotalCurrent());
-    //SmartDashboard.putNumber("PDH Total Energy", revPDH.getTotalEnergy());
 
   }
 
@@ -95,6 +94,8 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     m_robotContainer.m_cargo.coastMode();
+    m_robotContainer.m_hood.setMinAngle();
+    m_robotContainer.m_shooter.setFlywheelRPM(0);
   }
 
   @Override
@@ -105,7 +106,9 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.chooser.getSelected();
  
+    new HoodZeroAngle(m_robotContainer.m_hood).schedule(true);
     new ElevatorZeroHeight(m_robotContainer.m_elevator).schedule(true);
+
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -127,10 +130,20 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
+    new HoodZeroAngle(m_robotContainer.m_hood).schedule(true);
+    new ElevatorZeroHeight(m_robotContainer.m_elevator).schedule(true);
+
+    //m_robotContainer.climbRumbleCommand.schedule(false);
+
+    // Pose2d start = new Pose2d(8.23 - Units.inchesToMeters(138), 4.11, new Rotation2d(Math.PI));
+
+    // //TODO: remove before auto
+    // m_robotContainer.drivetrain.setPose(start, m_robotContainer.drivetrain.getIMURotation());
+
     //if testing and just using teleop we reset pose and rotation to 0, auton will correct this 
     //for its own use case and continue working after u switch to teleop
     if(!m_robotContainer.drivetrain.isOdometrySet()){
-      m_robotContainer.drivetrain.setPose(new Pose2d(), m_robotContainer.drivetrain.getIMURotation());
+      m_robotContainer.drivetrain.resetOdometry(new Pose2d(0.0, 0.0, new Rotation2d(0)));
     }
 
  
@@ -151,7 +164,8 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    
+    //m_robotContainer.updateManualShooterSettings();
+    //SmartDashboard.putBoolean("Climb Rumble Command scheduled", m_robotContainer.climbRumbleCommand.isScheduled()); 
   }
 
   @Override

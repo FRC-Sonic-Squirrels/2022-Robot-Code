@@ -41,11 +41,15 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final double winchCircumference = Math.PI * winchDiameter_inches;
   private final double maxExtensionInches = 25.5;
   private double heightSetpointInches = 0.0;
-  private double toleranceInches = 0.2;
+  private double toleranceInches = 1; //0.2 old value
   private double feedForwardClimbing = 0.025734; // from JVM calculator
-  private double feedForwardDescending = 0.001;
+  private double feedForwardDescending = 0.0257; //0.001;
   private final double ticks2distance = gearRatio * winchCircumference / 4096;
   private boolean zeroed = false;
+
+  public boolean m_atMaxheight;
+
+  private double m_currentHeight;
 
   // the encoder increase as the elevator moves down, so invert sign of height vs ticks
   private double sensor_invert = -1.0;
@@ -62,7 +66,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // https://docs.google.com/spreadsheets/d/1sOS_vM87iaKPZUFSJTqKqaFTxIl3Jj5OEwBgRxc-QGM/edit?usp=sharing
     // this also has suggest trapezoidal velocity profile constants.
     leadConfig.slot0.kF = 0.025734; 
-		leadConfig.slot0.kP = 0.054836;
+		leadConfig.slot0.kP = 0.5; //0.054836;
 		leadConfig.slot0.kI = 0.0;
 		leadConfig.slot0.kD = 0.0;
 		leadConfig.slot0.integralZone = 0.0;
@@ -249,6 +253,15 @@ public class ElevatorSubsystem extends SubsystemBase {
       // not currently on limit switch, zero again next time we hit limit switch
       zeroed = false;
     }
+
+    double currentHeight = getHeightInches();
+    if(currentHeight >= maxExtensionInches){
+      m_atMaxheight = true;
+    } else {
+      m_atMaxheight = false;
+    }
+
+    SmartDashboard.putBoolean("ELEVATOR AT THE MAX HEIGHT", m_atMaxheight);
 
     // if(this.getCurrentCommand() != null){
     //   SmartDashboard.putString("AAA elevator current command", this.getCurrentCommand().toString());

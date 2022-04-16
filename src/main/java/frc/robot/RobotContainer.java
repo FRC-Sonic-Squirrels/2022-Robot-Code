@@ -4,8 +4,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -13,7 +12,10 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -22,21 +24,27 @@ import frc.robot.Constants.StartPoseConstants;
 import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.CargoReverseCommand;
 import frc.robot.commands.CargoRunIndexer;
-import frc.robot.commands.DriveChimpMode;
+import frc.robot.commands.ClimbAutoMid;
+import frc.robot.commands.ControllerClimbMaxHeightRumble;
+import frc.robot.commands.ControllerRumbleCommand;
+import frc.robot.commands.DriveFieldCentricAimCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.ElevatorControlCommand;
-import frc.robot.commands.ShootWithSetRPMCommand;
+import frc.robot.commands.ElevatorGoToMaxHeight;
+import frc.robot.commands.HoodZeroAngle;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
-import frc.robot.commands.LimelightRotateToHubAndShoot;
-import frc.robot.commands.ShootCargoCommand;
+import frc.robot.commands.LimelightAutoShoot;
+import frc.robot.commands.ShootManualAdjustRpmAndAngle;
+import frc.robot.commands.ShootWithSetRPMAndHoodAngle;
 import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
@@ -58,7 +66,8 @@ public class RobotContainer {
   public ArmSubsystem m_arm;
   public final Drivetrain drivetrain;
   public final IntakeSubsystem m_intake;
-  //public LimelightSubsystem m_limelight;
+  public final HoodSubsystem m_hood;
+  public LimelightSubsystem m_limelight;
 
   // Controllers
   public final XboxController m_controller = new XboxController(0);
@@ -69,7 +78,10 @@ public class RobotContainer {
   
   public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
 
-  public int m_bumperRpm = Constants.ShooterConstants.BUMPER_SHOT_RPM;
+  public double m_shootingRpm = Constants.ShooterConstants.BUMPER_SHOT_RPM;
+  public double m_hoodAngle = Constants.ShooterConstants.HOOD_ANGLE;
+
+  public Command climbRumbleCommand = new ControllerClimbMaxHeightRumble(m_climbController, m_elevator);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -84,31 +96,38 @@ public class RobotContainer {
     drivetrain = new Drivetrain();
     m_elevator = new ElevatorSubsystem();
     m_arm = new ArmSubsystem();
-    //m_limelight = new LimelightSubsystem(drivetrain);
+    m_hood = new HoodSubsystem();
+    m_limelight = new LimelightSubsystem(drivetrain, m_robot.revPDH);
     
     SmartDashboard.putData("Auto Mode", chooser);
 
     // add the new auton trajectories to the auton trajectory chooser
     SwerveTrajectoryAutonomousCommandFactory auton =
-        new SwerveTrajectoryAutonomousCommandFactory(drivetrain, m_shooter, m_cargo, m_intake,
-            m_robot, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
+        new SwerveTrajectoryAutonomousCommandFactory(drivetrain, m_shooter, m_cargo, m_intake, m_hood,
+            m_limelight, m_robot, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
 
 
-    Command autonThree = auton.twoBallAutoShoot2push (StartPoseConstants.BLUE_DEF_TOP, FieldConstants.BLUE_CARGO_7);
+    chooser.addOption("nothing", new InstantCommand());
 
-    Command autonFour = auton.twoBallAutoWaitShoot2();
+    // test commands
+    // Command testCurve = auton.curve();
+    // Command testStraightLine = auton.straightLine();
+    // Command testLimelightShoot = auton.testShootBall();
+    // chooser.addOption("test curve", testCurve);
+    // chooser.addOption("test straight line", testStraightLine);
+    // chooser.addOption("test limelight shoot", testLimelightShoot);
 
 
-    Command autonRightSide = auton.SundomeRightSideShootAndMove();
-    
-    
-    chooser.addOption(" (Fender) move, shoot 2, push", autonThree);
-    chooser.addOption(" (Top tarmac) move, wait, shoot 2", autonFour);
-    chooser.addOption("Right Side plan C", autonRightSide);
+    // Competition Autonomous
+    Command rightSide5Ball = auton.rightSideFiveBall();
+    Command left2plus1 = auton.leftSide2plus1();
+    Command middle_1Ball_Complementary = auton.middleShootFenderAndLeave();
 
-    chooser.setDefaultOption(" (Top tarmac) move, wait, shoot 2", autonFour);
-    
+    chooser.addOption("right side 5 ball", rightSide5Ball);
+    chooser.addOption("left side 2 plus 1", left2plus1);
+    chooser.addOption("Middle 1ball Complementary", middle_1Ball_Complementary);
 
+    chooser.setDefaultOption("right side 5 ball", rightSide5Ball);
 
     drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
       drivetrain, 
@@ -118,8 +137,13 @@ public class RobotContainer {
 
     m_elevator.setDefaultCommand(new ElevatorControlCommand(m_elevator, m_climbController,
       Constants.ElevatorConstants.elevatorSpeedMultiplier));
+    
+    //new ControllerClimbMaxHeightRumble(m_climbController, m_elevator);
 
     m_arm.setDefaultCommand(new ArmManualControlCommand(m_arm, m_climbController, 0.3));
+
+    CommandScheduler.getInstance().schedule(false, new ControllerClimbMaxHeightRumble(m_climbController, m_elevator));
+
 
     configureButtonBindings();
   }
@@ -135,37 +159,80 @@ public class RobotContainer {
 
     //-------------- DRIVER CONTROLS DEFINED HERE --------------------------  
 
+    // new Button(m_controller::getRightBumper)
+    //   .whenPressed(new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot));
+
+    new Button(m_controller::getLeftBumper)
+      .whenPressed(new ParallelRaceGroup(
+        new DriveFieldCentricAimCommand(drivetrain, 
+            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+            m_limelight),
+        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot).andThen(new ControllerRumbleCommand(m_controller, 0.2))));
+
     // Back button resets field centric, forward is the current heading
     new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
             .whenPressed(drivetrain::resetFieldCentric);
 
     // start button toggles the LimeLight LEDs
-    // new Button(m_controller::getStartButton)
-    //         .whenPressed(new InstantCommand(() -> m_limelight.toggleLEDs()));
+    new Button(m_controller::getStartButton)
+            .whenPressed(new InstantCommand(() -> m_limelight.toggleLEDs()));
+
+    // new Button(m_controller::getXButton)
+    //         .whenPressed(new DriveHubCentricCommand(drivetrain, 
+    //         () -> -modifyAxis(m_controller.getRightX()), 
+    //         () -> -modifyAxis(m_controller.getLeftY())));
+
+
+    //Temporary to help testing ll shooting 
+    // new Button(m_controller::getRightBumper)
+    //   .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
+
+    // new Button(m_controller::getYButton)
+    //   .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
+  
+    // new Button(m_controller::getXButton).whenPressed(
+    //     new ParallelCommandGroup(
+    //       new DriveFieldCentricAimCommand(drivetrain,
+    //         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //         m_limelight),
+    //       new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)));
 
     new Button(m_controller::getXButton)
-            .whenPressed(new DriveHubCentricCommand(drivetrain, 
-            () -> -modifyAxis(m_controller.getRightX()), 
-            () -> -modifyAxis(m_controller.getLeftY())));
-
-    new Button(m_controller::getYButton)
-            .whenPressed(new DriveWithSetRotationCommand(drivetrain,
+        .whenPressed(new DriveFieldCentricAimCommand(drivetrain,
             () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> m_controller.getPOV(), 0.0));
+            () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+            m_limelight));
+
+    // new Button(m_controller::getYButton)
+    //         .whenPressed(new DriveWithSetRotationCommand(drivetrain,
+    //         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> m_controller.getPOV(), 0.0));
 
     new Button(m_controller::getBButton)
             .whenPressed(new DriveRobotCentricCommand(drivetrain,
             () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8, 
             () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8,
-            () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 0.5));
+            () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
     new Button(m_controller::getAButton)
             .whenPressed(new DriveFieldCentricCommand(drivetrain,
             () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
             () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+
+  // fender sohpt
+    new Button(m_controller::getRightBumper)
+    .whenPressed(new ShootWithSetRPMAndHoodAngle(2800, 15, m_cargo, m_shooter, m_hood, m_robot), true);
+
+  // launch pad shot
+    new Button (() -> m_controller.getRightTriggerAxis() > 0.05)
+     .whenPressed(new ShootWithSetRPMAndHoodAngle(4000, 32, m_cargo, m_shooter, m_hood, m_robot), true);
 
     // new Button(m_controller::getLeftBumper)
     //         .whileHeld(new DriveChimpMode(drivetrain, m_intake,
@@ -192,14 +259,6 @@ public class RobotContainer {
 
     // **************** OPERATOR CONTROLS ********************************
 
-    // //shoot 1 ball idk if this is useful but its here 
-    // new Button(m_operatorController::getBButton)
-    //   .whileHeld(new ShootOneCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake));
- 
-    //shoot while holding 
-    //new Button(m_operatorController::getRightBumper)
-    //  .whileHeld(new ShootCargoCommand(m_cargoSubsystem, m_shooterSubsystem, m_intake, m_robot));
-
     //--------------------------------Operator intake)-------------------
     //Deploy Intake
     new Button(m_operatorController::getAButton)
@@ -208,27 +267,48 @@ public class RobotContainer {
     new Button(m_operatorController::getYButton)
        .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
-    // middle shot to High Hub
-    new Button(m_operatorController::getXButton)
-       .whileActiveOnce(new ShootWithSetRPMCommand(3200, m_cargo, m_shooter, m_robot), true);
+    // // fender sohpt
+    // new Button(m_operatorController::getRightBumper)
+    //    .whenPressed(new ShootWithSetRPMAndHoodAngle(2800, 15, m_cargo, m_shooter, m_hood, m_robot), true);
  
-    // Farthest shot to High Hub
-    new Button(m_operatorController::getBButton)
-       .whileActiveOnce(new ShootWithSetRPMCommand(3400, m_cargo, m_shooter, m_robot), true);
+    // // launch pad shot
+    // new Button(m_operatorController::getXButton)
+    //     .whenPressed(new ShootWithSetRPMAndHoodAngle(4000, 32, m_cargo, m_shooter, m_hood, m_robot), true);
 
-    // Bumper Shot to High Hub right against the lower hub
+    //Using this for debugging and tuning the hood at the practice field 
     new Button(m_operatorController::getRightBumper)
-     .whileActiveOnce(new ShootWithSetRPMCommand(m_bumperRpm, m_cargo, m_shooter, m_robot), true);
+    .whileActiveOnce(new ShootManualAdjustRpmAndAngle(() -> m_shootingRpm, () -> m_hoodAngle, m_cargo, m_shooter, m_hood, m_robot), true);
 
     new Button(m_operatorController::getBackButton)
-      .whenPressed(new InstantCommand(() -> m_bumperRpm -= 50));
+      .whenPressed(new InstantCommand(() -> m_shootingRpm -= 50));
 
     new Button(m_operatorController::getStartButton)
-      .whenPressed(new InstantCommand(() -> m_bumperRpm += 50));
+      .whenPressed(new InstantCommand(() -> m_shootingRpm += 50));
 
-    new Button(() ->  (m_operatorController.getLeftTriggerAxis() > 0.05))
-      .whileHeld(new CargoRunIndexer(m_cargo));
-     
+    new Button(() -> m_operatorController.getLeftTriggerAxis() >= 0.05)
+      .whenPressed(new InstantCommand(() -> m_hoodAngle -= 0.5));
+
+    new Button(() -> m_operatorController.getRightTriggerAxis() >= 0.05)
+      .whenPressed(new InstantCommand(() -> m_hoodAngle += 0.5));
+
+    // new Button(m_operatorController::getAButton)
+    //   .whenPressed(() -> m_hood.setAngleDegrees(18.6), m_hood);
+
+    //   new Button(m_operatorController::getXButton)
+    //   .whenPressed(() -> m_hood.setAngleDegrees(23.5), m_hood);
+
+    //   new Button(m_operatorController::getYButton)
+    //   .whenPressed(() -> m_hood.setAngleDegrees(27.5), m_hood);
+
+    //   new Button(m_operatorController::getBButton)
+    //   .whenPressed(() -> m_hood.setAngleDegrees(33), m_hood);
+
+    //   new Button(m_operatorController::getStartButton)
+    //   .whenPressed(() -> m_hood.setAngleDegrees(15), m_hood);
+
+
+    // new Button(() ->  (m_operatorController.getLeftTriggerAxis() > 0.05))
+    //   .whileHeld(new CargoRunIndexer(m_cargo));
      
 
     // new Button(m_operatorController::getLeftStickButtonPressed)
@@ -241,6 +321,13 @@ public class RobotContainer {
  
     new Button(m_climbController::getBackButton)
       .whileHeld(new InstantCommand(() -> m_arm.zeroEncoder(), m_arm));
+
+
+    new Button(m_climbController::getAButton)
+      .whenPressed(new ElevatorGoToMaxHeight(m_elevator).andThen(new ControllerRumbleCommand(m_climbController, 0.2)));
+
+    // new Button(m_climbController::getXButton)
+    //   .whenPressed(new ClimbAutoMid(m_elevator, m_arm, m_climbController));
 
    // Rest of climb controls are in the default arm and default elevator commands
   }
@@ -256,6 +343,7 @@ public class RobotContainer {
       return 0.0;
     }
   }
+
 
   //TODO: check if deadband value needs to be changed  
   public static double modifyAxis(double value) {
@@ -274,6 +362,11 @@ public class RobotContainer {
       return true;
     } 
     return false;
+  }
+
+  public void updateManualShooterSettings() {
+    SmartDashboard.putNumber("A MANUAL SHOOTING RPM", m_shootingRpm);
+    SmartDashboard.putNumber("A MANUAL SHOOTING HOOD ANGLE", m_hoodAngle);
   }
 
 }

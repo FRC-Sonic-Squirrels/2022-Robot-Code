@@ -44,10 +44,6 @@ public class ArmSubsystem extends SubsystemBase {
   private double kFF = 0.0;
   private double kMaxOutput = 0.8;
   private double kMinOutput = -0.8;
-  
-  //TODO: Find the actual channels if physical limit switches are installed
-  // private DigitalInput limitSwitchFront = new DigitalInput(5);
-  // private DigitalInput limitSwitchBack = new DigitalInput(6);
 
   private double maxAngleDegree = 23.6;
   private double minAngleDegree = -20.5;
