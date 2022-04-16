@@ -58,7 +58,10 @@ public class LimelightAutoShoot extends CommandBase {
 
       target_distance_meters = limelight.getDistanceMeters();
 
-      m_gotValues = ! ( Math.abs(target_distance_meters - finalDistance) >= Units.inchesToMeters(adjustmentDistanceInches) );
+      if (Math.abs(target_distance_meters - finalDistance) >= Units.inchesToMeters(adjustmentDistanceInches) && m_gotValues) {
+        m_gotValues = false;
+      }
+      
 
       if (!m_gotValues && limelight.onTarget()) {
         target_rpm =
