@@ -26,6 +26,9 @@ public class LimelightAutoShoot extends CommandBase {
   private boolean m_gotValues = false;
   private boolean shooting = false;
 
+  private double finalDistance = 0.0;
+  private double adjustmentDistanceInches = 1;
+
   /** Creates a new VisionTurnToHub. */
   public LimelightAutoShoot(LimelightSubsystem limelight, CargoSubsystem cargoSubsystem,
       ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem, Robot robot) {
@@ -55,6 +58,8 @@ public class LimelightAutoShoot extends CommandBase {
 
       target_distance_meters = limelight.getDistanceMeters();
 
+      m_gotValues = ! ( Math.abs(target_distance_meters - finalDistance) >= Units.inchesToMeters(adjustmentDistanceInches) );
+
       if (!m_gotValues && limelight.onTarget()) {
         target_rpm =
             shooterSubsystem.getRPMforDistanceFeet(Units.metersToFeet(target_distance_meters));
@@ -64,6 +69,8 @@ public class LimelightAutoShoot extends CommandBase {
         hoodSubsystem.setAngleDegrees(hoodAngleDegrees);
 
         m_gotValues = true;
+        finalDistance = target_distance_meters;
+
       }
 
       if (!shooting && m_gotValues && shooterSubsystem.isAtDesiredRPM() && hoodSubsystem.isAtAngle()) {
