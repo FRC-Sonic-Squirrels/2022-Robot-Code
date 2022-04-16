@@ -29,7 +29,12 @@ public class ClimbHandOff extends SequentialCommandGroup {
     addCommands(
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
-      
+
+      new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_BACK_ANGLE),
+
+      new ControllerRumbleCommand(m_climbController, 0.2),
+      new WaitUntilCommand(() -> confirmButtonPressed()),
+
       new ElevatorGoToMinHeight(m_elevator),
 
       new ControllerRumbleCommand(m_climbController, 0.2),
