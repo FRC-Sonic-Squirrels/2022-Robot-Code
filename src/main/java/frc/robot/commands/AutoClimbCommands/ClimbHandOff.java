@@ -5,45 +5,43 @@
 package frc.robot.commands.AutoClimbCommands;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.commands.ControllerRumbleCommand;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ClimbMidAuto extends SequentialCommandGroup {
+public class ClimbHandOff extends SequentialCommandGroup {
   ElevatorSubsystem m_elevator;
   ArmSubsystem m_arm;
   XboxController m_climbController;
-  Drivetrain m_drivetrain;
 
-  public ClimbMidAuto(ElevatorSubsystem elevator, ArmSubsystem arm, XboxController climbController) {
+  public ClimbHandOff(ElevatorSubsystem elevator, ArmSubsystem arm, XboxController climbController) {
     m_elevator = elevator;
     m_arm = arm;
     m_climbController = climbController;
-    
-  
-    
     addCommands(
-      new ElevatorGoToMinHeight(m_elevator),  
-
-      new InstantCommand(() -> m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE), m_arm),
-      new WaitUntilCommand(() -> m_arm.isAtAngle()),
+      new ControllerRumbleCommand(m_climbController, 0.2),
+      new WaitUntilCommand(() -> confirmButtonPressed()),
+      
+      new ElevatorGoToMinHeight(m_elevator),
 
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
+      new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE),
+      
+      new ControllerRumbleCommand(m_climbController, 0.2),
+      new WaitUntilCommand(() -> confirmButtonPressed()),
+
       new ElevatorGoToSpecificHeight(m_elevator, 6, 0.5)
-
     );
-
-    
   }
 
   private boolean confirmButtonPressed(){

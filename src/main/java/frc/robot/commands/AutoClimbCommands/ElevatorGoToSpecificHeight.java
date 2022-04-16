@@ -11,15 +11,17 @@ public class ElevatorGoToSpecificHeight extends CommandBase {
   /** Creates a new ElevatorGoToSpecificHeight. */
   ElevatorSubsystem m_elevator;
   double m_targetHeight;
+  double m_strength;
 
 
   //Use this as a way to bypass the low pid on elevator? we dont need to be accurate 
   //unless we need to be at max or min and those commands are accurate
 
 
-  public ElevatorGoToSpecificHeight(ElevatorSubsystem elevator, double targetHeight) {
+  public ElevatorGoToSpecificHeight(ElevatorSubsystem elevator, double targetHeight, double strength) {
     m_elevator = elevator;
     m_targetHeight = targetHeight;
+    m_strength = strength;
 
     addRequirements(elevator);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -33,9 +35,9 @@ public class ElevatorGoToSpecificHeight extends CommandBase {
   @Override
   public void execute() {
     if(m_elevator.getHeightInches() < m_targetHeight){
-       m_elevator.setWinchPercentOutput(-1);
+       m_elevator.setWinchPercentOutput(-m_strength);
     } else if(m_elevator.getHeightInches() > m_targetHeight){
-      m_elevator.setWinchPercentOutput(1);
+      m_elevator.setWinchPercentOutput(m_strength);
     }
     
   }
