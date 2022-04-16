@@ -85,7 +85,7 @@ public class LimelightAutoShoot extends CommandBase {
   public void end(boolean interrupted) {
     cargoSubsystem.setIdleMode();
     if (!m_robot.isAutonomous()) {
-      shooterSubsystem.stop();
+      shooterSubsystem.idle();
       hoodSubsystem.setMinAngle();
     }
 

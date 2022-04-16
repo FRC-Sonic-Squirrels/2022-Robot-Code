@@ -99,7 +99,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     m_robotContainer.m_cargo.coastMode();
     m_robotContainer.m_hood.setMinAngle();
-    m_robotContainer.m_shooter.setFlywheelRPM(0);
+    m_robotContainer.m_shooter.stop();
   }
 
   @Override
