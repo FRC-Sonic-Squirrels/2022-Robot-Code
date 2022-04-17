@@ -5,13 +5,13 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.ErrorCode;
-import com.ctre.phoenix.sensors.Pigeon2;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.swervedrivespecialties.swervelib.Mk4ModuleConfiguration;
 import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -335,25 +335,14 @@ public class Drivetrain extends SubsystemBase {
     return m_odometry.getPoseMeters();
   }
 
-  public double getVelocity() {
-    SwerveModuleState m_actualStates[] = new SwerveModuleState[4];
-    SwerveModuleState frontLeft = new SwerveModuleState(m_frontLeftModule.getDriveVelocity(),
-        new Rotation2d(m_frontLeftModule.getSteerAngle()));
-    SwerveModuleState frontRight = new SwerveModuleState(m_frontRightModule.getDriveVelocity(),
-        new Rotation2d(m_frontRightModule.getSteerAngle()));
-    SwerveModuleState backLeft = new SwerveModuleState(m_backLeftModule.getDriveVelocity(),
-        new Rotation2d(m_backLeftModule.getSteerAngle()));
-    SwerveModuleState backRight = new SwerveModuleState(m_backRightModule.getDriveVelocity(),
-        new Rotation2d(m_backRightModule.getSteerAngle()));
-    // new array with size 4, fill array with new module sates in the order : fl, fr, bl, br
-    m_actualStates[0] = frontLeft;
-    m_actualStates[1] = frontRight;
-    m_actualStates[2] = backLeft;
-    m_actualStates[3] = backRight;
-    ChassisSpeeds cs = m_kinematics.toChassisSpeeds(m_actualStates);
-    Vector2d vector = new Vector2d(cs.vxMetersPerSecond, cs.vyMetersPerSecond);
-
-    return vector.magnitude();
+  /**
+   * Return the swerve drivetrain's chassis speeds: x, y, and rotational velocity
+   * @return ChassisSpeeds
+   */
+  public ChassisSpeeds getChassisSpeeds() {
+    SwerveModuleState m_actualStates[] = getSwerveModuleState();
+    
+    return m_kinematics.toChassisSpeeds(m_actualStates);
   }
 
   /**
@@ -422,16 +411,6 @@ public class Drivetrain extends SubsystemBase {
     return m_kinematics;
   }
 
-  public Rotation2d getWheelRotation() {
-    double avgRotation = 0;
-    for (int i = 0; i < 4; i++) {
-      SwerveModuleState state = m_desiredStates[i];
-      avgRotation += state.angle.getRadians();
-    }
-
-    return new Rotation2d(avgRotation / 4);
-  }
-
   public SwerveModuleState[] getSwerveModuleState() {
     SwerveModuleState[] m_actualStates = new SwerveModuleState[4];
     SwerveModuleState frontLeft = new SwerveModuleState(m_frontLeftModule.getDriveVelocity(),
@@ -452,11 +431,6 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // if(this.getCurrentCommand() != null){
-    //   SmartDashboard.putString("AAA drivetrain current command", this.getCurrentCommand().toString());
-    // } else {
-    //   SmartDashboard.putString("AAA drivetrain current command", "null");
-    // }
 
     m_odometry.update(getIMURotation(),
         new SwerveModuleState(m_frontLeftModule.getDriveVelocity(),

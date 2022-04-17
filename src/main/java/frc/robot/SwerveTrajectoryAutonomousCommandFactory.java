@@ -16,7 +16,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -233,8 +232,11 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         //new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
         //new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
       //),
-      new ParallelRaceGroup(
-        new IntakeDeployCommand(m_intake, m_cargo),
+      new ParallelCommandGroup(
+        // run the intake while we drive forward, but retract after we start driving
+        // away from loading zone. vx is robot centric x velocity.
+        new IntakeDeployCommand(m_intake, m_cargo)
+          .until(() -> (m_drivetrain.getChassisSpeeds().vxMetersPerSecond < -1.0)),
         new SequentialCommandGroup(
           PPSwerveControlCommand(path3, true),
           new WaitCommand(0.4),
