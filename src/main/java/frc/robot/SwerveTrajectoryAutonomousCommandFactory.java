@@ -236,7 +236,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         // run the intake while we drive forward, but retract after we start driving
         // away from loading zone. vx is robot centric x velocity.
         new IntakeDeployCommand(m_intake, m_cargo)
-          .until(() -> (m_drivetrain.getChassisSpeeds().vxMetersPerSecond < -1.0)),
+          .until(() -> (m_drivetrain.getChassisSpeeds().vxMetersPerSecond < -0.5)),
         new SequentialCommandGroup(
           PPSwerveControlCommand(path3, true),
           new WaitCommand(0.4),
