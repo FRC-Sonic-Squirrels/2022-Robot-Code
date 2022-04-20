@@ -261,11 +261,11 @@ public class RobotContainer {
 
     //--------------------------------Operator intake)-------------------
     //Deploy Intake
-    // new Button(m_operatorController::getAButton)
-    //    .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
+    new Button(m_operatorController::getAButton)
+       .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
 
-    // new Button(m_operatorController::getYButton)
-    //    .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
+    new Button(m_operatorController::getYButton)
+       .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
     // // fender sohpt
     // new Button(m_operatorController::getRightBumper)
@@ -291,20 +291,20 @@ public class RobotContainer {
     // new Button(() -> m_operatorController.getRightTriggerAxis() >= 0.05)
     //   .whenPressed(new InstantCommand(() -> m_hoodAngle += 0.5));
 
-    new Button(m_operatorController::getAButton)
-      .whenPressed(() -> m_hood.setAngleDegrees(18.6), m_hood);
+    // new Button(m_operatorController::getAButton)
+    //   .whenPressed(() -> m_hood.setAngleDegrees(18.6), m_hood);
 
-      new Button(m_operatorController::getXButton)
-      .whenPressed(() -> m_hood.setAngleDegrees(23.5), m_hood);
+    //   new Button(m_operatorController::getXButton)
+    //   .whenPressed(() -> m_hood.setAngleDegrees(23.5), m_hood);
 
-      new Button(m_operatorController::getYButton)
-      .whenPressed(() -> m_hood.setAngleDegrees(27.5), m_hood);
+    //   new Button(m_operatorController::getYButton)
+    //   .whenPressed(() -> m_hood.setAngleDegrees(27.5), m_hood);
 
-      new Button(m_operatorController::getBButton)
-      .whenPressed(() -> m_hood.setAngleDegrees(33), m_hood);
+    //   new Button(m_operatorController::getBButton)
+    //   .whenPressed(() -> m_hood.setAngleDegrees(33), m_hood);
 
-      new Button(m_operatorController::getStartButton)
-      .whenPressed(() -> m_hood.setAngleDegrees(15), m_hood);
+    //   new Button(m_operatorController::getStartButton)
+    //   .whenPressed(() -> m_hood.setAngleDegrees(15), m_hood);
 
 
     // new Button(() ->  (m_operatorController.getLeftTriggerAxis() > 0.05))
