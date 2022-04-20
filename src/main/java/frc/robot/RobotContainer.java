@@ -344,6 +344,10 @@ public class RobotContainer {
       new Button(m_climbController::getXButton)
       .whenPressed(new ClimbMidToHigh(m_elevator, m_arm, m_climbController)
       .withInterrupt(m_climbController::getBButton));
+
+      new Button(m_climbController::getStartButton)
+      .whenPressed(new ClimbMidToHigh(m_elevator, m_arm, m_climbController)
+      .withInterrupt(m_climbController::getBButton));
     
 
    // Rest of climb controls are in the default arm and default elevator commands
