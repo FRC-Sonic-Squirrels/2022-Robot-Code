@@ -183,11 +183,11 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     PathPlannerTrajectory path2 = PathPlanner.loadPath("1ball_complementary_part2", 1.5, 0.75);
 
     return new SequentialCommandGroup(
+      new InstantCommand(() -> m_drivetrain.resetOdometry(path1.getInitialPose())),
       new WaitCommand(4),
       PPSwerveControlCommand(path1, true),
       new ParallelRaceGroup(
         new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
-        //new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
         new ShootWithSetRPMAndHoodAngle(3000, 30.0, m_cargo, m_shooter, m_hood, m_robot)
       ),
       PPSwerveControlCommand(path2, true)
