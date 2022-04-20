@@ -27,7 +27,7 @@ public class LimelightAutoShoot extends CommandBase {
   private boolean shooting = false;
 
   private double finalDistance = 0.0;
-  private double adjustmentDistanceInches = 1;
+  private double adjustmentDistanceInches = 10;
 
   /** Creates a new VisionTurnToHub. */
   public LimelightAutoShoot(LimelightSubsystem limelight, CargoSubsystem cargoSubsystem,
@@ -58,7 +58,8 @@ public class LimelightAutoShoot extends CommandBase {
 
       target_distance_meters = limelight.getDistanceMeters();
 
-      if (Math.abs(target_distance_meters - finalDistance) >= Units.inchesToMeters(adjustmentDistanceInches) && m_gotValues) {
+      
+      if (finalDistance > 0.0 && Math.abs(target_distance_meters - finalDistance) >= Units.inchesToMeters(adjustmentDistanceInches) && m_gotValues) {
         m_gotValues = false;
       }
       
@@ -103,6 +104,7 @@ public class LimelightAutoShoot extends CommandBase {
 
     shooting = false;
     m_gotValues = false;
+    finalDistance = 0.0;
     target_rpm = 2900;
     hoodAngleDegrees = 29;
     time = 0;
