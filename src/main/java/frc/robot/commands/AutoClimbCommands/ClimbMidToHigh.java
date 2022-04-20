@@ -31,8 +31,7 @@ public class ClimbMidToHigh extends SequentialCommandGroup {
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
-      new InstantCommand(() -> m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_FORWARD_ANGLE), m_arm),
-      new WaitUntilCommand(() -> m_arm.isAtAngle()),
+      new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE),
 
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
@@ -42,25 +41,14 @@ public class ClimbMidToHigh extends SequentialCommandGroup {
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
-      new InstantCommand(() -> m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE), m_arm),
+      new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE),
 
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
-      new ElevatorGoToSpecificHeight(m_elevator, 10, 1),
+      new ElevatorGoToSpecificHeight(m_elevator, 10, 1, 0.4),
 
-      new InstantCommand(() -> m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_BACK_ANGLE), m_arm),
-      new WaitUntilCommand(() -> m_arm.isAtAngle()),
-
-      new ElevatorGoToMinHeight(m_elevator),
-
-      new InstantCommand(() -> m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE), m_arm),
-      new WaitUntilCommand(() -> m_arm.isAtAngle()),
-
-      new ControllerRumbleCommand(m_climbController, 0.2),
-      new WaitUntilCommand(() -> confirmButtonPressed()),
-
-      new ElevatorGoToSpecificHeight(m_elevator, 6, 0.5)
+      new ClimbHandOff(m_elevator, m_arm, m_climbController)
       
     );
   }

@@ -31,15 +31,21 @@ public class ClimbMidAuto extends SequentialCommandGroup {
   
     
     addCommands(
-      new ElevatorGoToMinHeight(m_elevator),  
+      new ControllerRumbleCommand(m_climbController, 0.2),
+      new WaitUntilCommand(() -> confirmButtonPressed()),
 
-      new InstantCommand(() -> m_arm.setArmAngle(Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE), m_arm),
-      new WaitUntilCommand(() -> m_arm.isAtAngle()),
+      new ElevatorGoToMinHeight(m_elevator),
 
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
-      new ElevatorGoToSpecificHeight(m_elevator, 6, 0.5)
+      new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE),
+      
+      new ControllerRumbleCommand(m_climbController, 0.2),
+      new WaitUntilCommand(() -> confirmButtonPressed()),
+
+      // TODO: guess that 22 inches gets us under the next bar
+      new ElevatorGoToSpecificHeight(m_elevator, 22.0, 1.0,0.4)
 
     );
 

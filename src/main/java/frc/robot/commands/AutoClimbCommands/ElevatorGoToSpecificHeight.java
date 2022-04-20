@@ -12,16 +12,18 @@ public class ElevatorGoToSpecificHeight extends CommandBase {
   ElevatorSubsystem m_elevator;
   double m_targetHeight;
   double m_strength;
+  double m_tolerance;
 
 
   //Use this as a way to bypass the low pid on elevator? we dont need to be accurate 
   //unless we need to be at max or min and those commands are accurate
 
 
-  public ElevatorGoToSpecificHeight(ElevatorSubsystem elevator, double targetHeight, double strength) {
+  public ElevatorGoToSpecificHeight(ElevatorSubsystem elevator, double targetHeight, double strength, double tolerance) {
     m_elevator = elevator;
     m_targetHeight = targetHeight;
     m_strength = strength;
+    m_tolerance = tolerance;
 
     addRequirements(elevator);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -29,7 +31,9 @@ public class ElevatorGoToSpecificHeight extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_elevator.brakeOff();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -51,6 +55,6 @@ public class ElevatorGoToSpecificHeight extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_elevator.isAtHeight(m_targetHeight);
+    return (Math.abs(m_targetHeight - m_elevator.getHeightInches()) <= m_tolerance);
   }
 }
