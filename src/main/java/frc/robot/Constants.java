@@ -229,7 +229,7 @@ public final class Constants {
   public static class LimelightConstants{
     public static final double LIMELIGHT_HEIGHT_INCHES = 29.962;
     public static final double HIGH_HUB_HEIGHT_INCHES = 104.0;
-    public static final double LIMELIGHT_PITCH_DEGREES = 50;
+    public static final double LIMELIGHT_PITCH_DEGREES = 45;
     public static final double HIGH_HUB_RADIUS_INCHES = 26.6875;
 
     public static final double TARGET_TOLERANCE_DEGREES = 2.0;
