@@ -97,9 +97,10 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
+    m_robotContainer.m_shooter.stop();
     m_robotContainer.m_cargo.coastMode();
     m_robotContainer.m_hood.setMinAngle();
-    m_robotContainer.m_shooter.setFlywheelRPM(0);
+    m_robotContainer.m_shooter.stop();
   }
 
   @Override

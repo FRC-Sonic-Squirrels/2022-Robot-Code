@@ -41,7 +41,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final double winchCircumference = Math.PI * winchDiameter_inches;
   private final double maxExtensionInches = 25.5;
   private double heightSetpointInches = 0.0;
-  private double toleranceInches = 1; //0.2 old value
+  private double toleranceInches = 0.2; 
   private double feedForwardClimbing = 0.025734; // from JVM calculator
   private double feedForwardDescending = 0.0257; //0.001;
   private final double ticks2distance = gearRatio * winchCircumference / 4096;

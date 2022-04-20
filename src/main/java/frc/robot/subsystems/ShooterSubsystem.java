@@ -104,6 +104,10 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheel_lead.set(ControlMode.PercentOutput, 0);
   }
 
+  public void idle(){
+    m_desiredRPM = Constants.ShooterConstants.IDLE;
+  }
+
   @Override
   public void periodic() {
 
