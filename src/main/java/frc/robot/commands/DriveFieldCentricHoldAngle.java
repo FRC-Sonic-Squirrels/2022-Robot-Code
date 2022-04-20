@@ -58,6 +58,7 @@ public class DriveFieldCentricHoldAngle extends CommandBase {
                             m_drivetrain.getRotation().getRadians(), m_targetYaw.getRadians());
 
     } else {
+      //manual input 
       //if rotating then update the angle we want to hold
       m_targetYaw = m_drivetrain.getRotation();
     }
