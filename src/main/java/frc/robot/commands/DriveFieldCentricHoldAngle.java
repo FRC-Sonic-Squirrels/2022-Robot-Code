@@ -16,7 +16,7 @@ import frc.robot.subsystems.Drivetrain;
 public class DriveFieldCentricHoldAngle extends CommandBase {
   /** Creates a new DriveFieldCentricHoldAngle. */
   Drivetrain m_drivetrain;
-  Rotation2d m_targetYaw;
+  Rotation2d m_targetYaw = new Rotation2d(0);
 
   private ProfiledPIDController rotationController = new ProfiledPIDController(1.5, 0.0, 0.0,
       new TrapezoidProfile.Constraints(Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
@@ -36,9 +36,12 @@ public class DriveFieldCentricHoldAngle extends CommandBase {
     this.m_translationYSupplier = translationYSupplier;
     this.m_rotationSupplier = rotationSupplier;
 
+
+
     m_drivetrain = drivetrain;
 
     rotationController.enableContinuousInput(-Math.PI, Math.PI);
+  
 
     addRequirements(drivetrain);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -56,12 +59,15 @@ public class DriveFieldCentricHoldAngle extends CommandBase {
     if(Math.abs(rotationValue) <= 0.05){
       rotationValue = rotationController.calculate(
                             m_drivetrain.getRotation().getRadians(), m_targetYaw.getRadians());
-
+      if(rotationValue <= 0.5){ 
+        rotationValue = 0;
+      }
     } else {
       //manual input 
       //if rotating then update the angle we want to hold
       m_targetYaw = m_drivetrain.getRotation();
     }
+    
 
     m_drivetrain.drive(new ChassisSpeeds(
       m_translationXSupplier.getAsDouble(),
