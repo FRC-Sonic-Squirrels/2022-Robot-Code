@@ -67,7 +67,7 @@ public class HoodSubsystem extends SubsystemBase {
 
     // TalonFX integrated sensor is always in phase with the motor.
     hoodMotor.setSensorPhase(false);
-		hoodMotor.setInverted(false);
+		hoodMotor.setInverted(true);
 
     hoodMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, kTimeoutMs);
     //hoodMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, kTimeoutMs);
