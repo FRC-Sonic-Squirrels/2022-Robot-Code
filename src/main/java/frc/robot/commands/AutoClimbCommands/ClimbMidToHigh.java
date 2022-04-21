@@ -31,7 +31,9 @@ public class ClimbMidToHigh extends SequentialCommandGroup {
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
-      new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE),
+      new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE)
+      .withTimeout(0.25),
+
 
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
@@ -41,15 +43,37 @@ public class ClimbMidToHigh extends SequentialCommandGroup {
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
-      new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE),
+      new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)
+      .withTimeout(0.25),
+
 
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
       new ElevatorGoToSpecificHeight(m_elevator, 10, 1, 0.4),
 
-      new ClimbHandOff(m_elevator, m_arm, m_climbController, 10)
-      
+      //new ClimbHandOff(m_elevator, m_arm, m_climbController, 10)
+      new ControllerRumbleCommand(m_climbController, 0.2),
+      new WaitUntilCommand(() -> confirmButtonPressed()),
+
+      new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_BACK_ANGLE)
+        .withTimeout(0.25),
+
+      new ControllerRumbleCommand(m_climbController, 0.2),
+      new WaitUntilCommand(() -> confirmButtonPressed()),
+
+      new ElevatorGoToMinHeight(m_elevator),
+
+      new ControllerRumbleCommand(m_climbController, 0.2),
+      new WaitUntilCommand(() -> confirmButtonPressed()),
+
+      new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)
+      .withTimeout(0.25),
+
+      new ControllerRumbleCommand(m_climbController, 0.2),
+      new WaitUntilCommand(() -> confirmButtonPressed()),
+
+      new ElevatorGoToSpecificHeight(m_elevator, 10, 1.0, 0.4)
     );
   }
 

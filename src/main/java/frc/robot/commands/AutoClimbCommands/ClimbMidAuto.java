@@ -39,7 +39,8 @@ public class ClimbMidAuto extends SequentialCommandGroup {
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
-      new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE),
+      new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)
+        .withTimeout(0.25),
       
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
