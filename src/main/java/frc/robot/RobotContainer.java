@@ -39,6 +39,9 @@ import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.LimelightAutoShoot;
 import frc.robot.commands.ShootManualAdjustRpmAndAngle;
 import frc.robot.commands.ShootWithSetRPMAndHoodAngle;
+import frc.robot.commands.AutoClimbCommands.ClimbElevatorTest;
+import frc.robot.commands.AutoClimbCommands.ClimbFullCommand;
+import frc.robot.commands.AutoClimbCommands.ClimbHighToTraverse;
 import frc.robot.commands.AutoClimbCommands.ClimbMidAuto;
 import frc.robot.commands.AutoClimbCommands.ClimbMidToHigh;
 import frc.robot.commands.DriveHubCentricCommand;
@@ -204,12 +207,12 @@ public class RobotContainer {
     //         m_limelight),
     //       new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)));
 
-    // new Button(m_controller::getXButton)
-    //     .whenPressed(new DriveFieldCentricAimCommand(drivetrain,
-    //         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-    //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-    //         () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
-    //         m_limelight));
+    new Button(m_controller::getYButton)
+        .whenPressed(new DriveFieldCentricAimCommand(drivetrain,
+            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+            m_limelight));
 
     // new Button(m_controller::getYButton)
     //         .whenPressed(new DriveWithSetRotationCommand(drivetrain,
@@ -217,11 +220,11 @@ public class RobotContainer {
     //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
     //         () -> m_controller.getPOV(), 0.0));
 
-    new Button(m_controller::getXButton)
-            .whenPressed(new DriveFieldCentricHoldAngle(drivetrain,
-            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
-            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+    // new Button(m_controller::getXButton)
+    //         .whenPressed(new DriveFieldCentricHoldAngle(drivetrain,
+    //         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
+    //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
     new Button(m_controller::getBButton)
             .whenPressed(new DriveRobotCentricCommand(drivetrain,
@@ -337,17 +340,21 @@ public class RobotContainer {
     // new Button(m_climbController::getBButton)
     //   .whenPressed(new InstantCommand(() -> m_intake.deployIntake()));
 
-    new Button(m_climbController::getYButton)
-      .whenPressed(new ClimbMidAuto(m_elevator, m_arm, m_climbController)
-      .withInterrupt(m_climbController::getBButton));
+    // new Button(m_climbController::getYButton)
+    //   .whenPressed(new ClimbMidAuto(m_elevator, m_arm, m_climbController)
+    //   .withInterrupt(m_climbController::getBButton));
 
-      new Button(m_climbController::getXButton)
-      .whenPressed(new ClimbMidToHigh(m_elevator, m_arm, m_climbController)
-      .withInterrupt(m_climbController::getBButton));
+    //   new Button(m_climbController::getXButton)
+    //   .whenPressed(new ClimbMidToHigh(m_elevator, m_arm, m_climbController)
+    //   .withInterrupt(m_climbController::getBButton));
 
-      new Button(m_climbController::getStartButton)
-      .whenPressed(new ClimbMidToHigh(m_elevator, m_arm, m_climbController)
-      .withInterrupt(m_climbController::getBButton));
+      // new Button(m_climbController::getStartButton)
+      // .whenPressed(new ClimbHighToTraverse(m_elevator, m_arm, m_climbController)
+      // .withInterrupt(m_climbController::getBButton));
+
+    //  new Button(m_climbController::getRightBumper)
+    //    .whenPressed(new ClimbFullCommand(m_elevator, m_arm, m_climbController)
+    //    .withInterrupt(m_climbController::getBButton));
     
 
    // Rest of climb controls are in the default arm and default elevator commands
