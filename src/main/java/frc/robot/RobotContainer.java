@@ -41,6 +41,7 @@ import frc.robot.commands.ShootManualAdjustRpmAndAngle;
 import frc.robot.commands.ShootWithSetRPMAndHoodAngle;
 import frc.robot.commands.AutoClimbCommands.ClimbElevatorTest;
 import frc.robot.commands.AutoClimbCommands.ClimbFullCommand;
+import frc.robot.commands.AutoClimbCommands.ClimbHighFull;
 import frc.robot.commands.AutoClimbCommands.ClimbHighToTraverse;
 import frc.robot.commands.AutoClimbCommands.ClimbMidAuto;
 import frc.robot.commands.AutoClimbCommands.ClimbMidToHigh;
@@ -348,13 +349,18 @@ public class RobotContainer {
     //   .whenPressed(new ClimbMidToHigh(m_elevator, m_arm, m_climbController)
     //   .withInterrupt(m_climbController::getBButton));
 
-      // new Button(m_climbController::getStartButton)
-      // .whenPressed(new ClimbHighToTraverse(m_elevator, m_arm, m_climbController)
-      // .withInterrupt(m_climbController::getBButton));
+    //   new Button(m_climbController::getStartButton)
+    //   .whenPressed(new ClimbHighToTraverse(m_elevator, m_arm, m_climbController)
+    //   .withInterrupt(m_climbController::getBButton));
 
     //  new Button(m_climbController::getRightBumper)
     //    .whenPressed(new ClimbFullCommand(m_elevator, m_arm, m_climbController)
     //    .withInterrupt(m_climbController::getBButton));
+
+    //  new Button(m_climbController::getYButton)
+    //    .whenPressed(new ClimbHighFull(m_elevator, m_arm, m_climbController)
+    //    .withInterrupt(m_climbController::getBButton));
+
     
 
    // Rest of climb controls are in the default arm and default elevator commands
