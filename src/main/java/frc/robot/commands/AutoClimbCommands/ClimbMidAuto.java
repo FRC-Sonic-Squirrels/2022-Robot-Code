@@ -46,7 +46,7 @@ public class ClimbMidAuto extends SequentialCommandGroup {
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
       // TODO: guess that 22 inches gets us under the next bar
-      new ElevatorGoToSpecificHeight(m_elevator, 5, 1.0,0.4)
+      new ElevatorGoToSpecificHeight(m_elevator, 5, 0.75,0.4)
 
     );
 
