@@ -22,7 +22,7 @@ public class ClimbHandOff extends SequentialCommandGroup {
   ArmSubsystem m_arm;
   XboxController m_climbController;
 
-  public ClimbHandOff(ElevatorSubsystem elevator, ArmSubsystem arm, XboxController climbController) {
+  public ClimbHandOff(ElevatorSubsystem elevator, ArmSubsystem arm, XboxController climbController, double endElevatorHeight) {
     m_elevator = elevator;
     m_arm = arm;
     m_climbController = climbController;
@@ -46,7 +46,7 @@ public class ClimbHandOff extends SequentialCommandGroup {
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
       // TODO: guess that 22 inches gets us under the next bar
-      new ElevatorGoToSpecificHeight(m_elevator, 22.0, 1.0,0.4)
+      new ElevatorGoToSpecificHeight(m_elevator, endElevatorHeight, 1.0,0.4)
 
     );
   }

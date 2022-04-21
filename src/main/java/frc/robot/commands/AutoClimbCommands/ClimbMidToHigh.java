@@ -48,7 +48,7 @@ public class ClimbMidToHigh extends SequentialCommandGroup {
 
       new ElevatorGoToSpecificHeight(m_elevator, 10, 1, 0.4),
 
-      new ClimbHandOff(m_elevator, m_arm, m_climbController)
+      new ClimbHandOff(m_elevator, m_arm, m_climbController, 10)
       
     );
   }

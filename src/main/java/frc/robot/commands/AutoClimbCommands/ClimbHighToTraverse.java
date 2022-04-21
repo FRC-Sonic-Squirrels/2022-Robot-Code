@@ -20,33 +20,38 @@ public class ClimbHighToTraverse extends SequentialCommandGroup {
   ArmSubsystem m_arm;
   XboxController m_climbController;
 
-  public ClimbHighToTraverse(ElevatorSubsystem elevator, ArmSubsystem arm, XboxController climbController){
-    m_elevator =  elevator;
+ 
+  public ClimbHighToTraverse(ElevatorSubsystem elevator, ArmSubsystem arm, XboxController climbController) {
+    m_elevator = elevator;
     m_arm = arm;
-    m_climbController = climbController; 
-
-
+    m_climbController = climbController;
+  
+    //assumes arms are on mid bar 
     addCommands(
-      new ControllerRumbleCommand(m_climbController, 0.2),
-      new WaitUntilCommand(() -> confirmButtonPressed()),
-
-      new ElevatorGoToMaxHeight(m_elevator),
-
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
       new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE),
 
-      new ElevatorGoToSpecificHeight(m_elevator, 10, 1.0, 0.4),
+      new ControllerRumbleCommand(m_climbController, 0.2),
+      new WaitUntilCommand(() -> confirmButtonPressed()),
+      
+      new ElevatorGoToMaxHeight(m_elevator),
 
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
-      new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_BACK_ANGLE)
+      new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE),
+
+      new ControllerRumbleCommand(m_climbController, 0.2),
+      new WaitUntilCommand(() -> confirmButtonPressed()),
+
+      new ElevatorGoToSpecificHeight(m_elevator, 20, 1, 0.4)
+      
     );
   }
 
-  private boolean confirmButtonPressed() {
-    return m_climbController.getAButtonPressed();
+  private boolean confirmButtonPressed(){
+      return m_climbController.getAButtonPressed();
   }
 }
