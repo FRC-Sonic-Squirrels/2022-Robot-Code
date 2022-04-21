@@ -37,7 +37,7 @@ public class ClimbHighToTraverse extends SequentialCommandGroup {
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
       
-      new ElevatorGoToMaxHeight(m_elevator),
+      new ElevatorGoToMaxHeight(m_elevator, 1.0),
 
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),

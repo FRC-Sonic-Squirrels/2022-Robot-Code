@@ -11,8 +11,10 @@ import frc.robot.subsystems.ElevatorSubsystem;
 public class ElevatorGoToMaxHeight extends CommandBase {
   /** Creates a new ElevatorGoToMaxHeight. */
   ElevatorSubsystem m_elevator;
-  public ElevatorGoToMaxHeight(ElevatorSubsystem elevator) {
+  double m_strength;
+  public ElevatorGoToMaxHeight(ElevatorSubsystem elevator, double strength) {
     m_elevator = elevator;
+    m_strength = strength;
 
     addRequirements(elevator);
     // Use addRequirements() here to declare subsystem dependencies.
@@ -27,7 +29,7 @@ public class ElevatorGoToMaxHeight extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevator.setWinchPercentOutput(-1);
+    m_elevator.setWinchPercentOutput(-m_strength);
   }
 
   // Called once the command ends or is interrupted.
