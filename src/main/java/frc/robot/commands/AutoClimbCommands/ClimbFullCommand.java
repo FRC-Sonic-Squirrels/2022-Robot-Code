@@ -26,7 +26,7 @@ public class ClimbFullCommand extends SequentialCommandGroup {
     addCommands(
       new ClimbMidAuto(m_elevator, m_arm, m_climbController),
 
-      new ClimbHighToTraverse(m_elevator, m_arm, m_climbController),
+      new ClimbMidToHigh(m_elevator, m_arm, m_climbController),
 
       new ClimbHighToTraverse(m_elevator, m_arm, climbController)
     );
