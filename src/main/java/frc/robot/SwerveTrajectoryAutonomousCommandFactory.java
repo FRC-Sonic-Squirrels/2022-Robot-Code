@@ -251,7 +251,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         new ShootWithSetRPMAndHoodAngle(3000, 30.0, m_cargo, m_shooter, m_hood, m_robot)
       ),
       new InstantCommand(() -> m_hood.setMinAngle()),
-      new InstantCommand(() -> m_shooter.setFlywheelRPM(0))
+      new InstantCommand(() -> m_shooter.setFlywheelRPM(Constants.ShooterConstants.IDLE), m_shooter)
     );
   }
 
