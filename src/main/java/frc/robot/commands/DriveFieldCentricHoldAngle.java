@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
 
 public class DriveFieldCentricHoldAngle extends CommandBase {
@@ -49,12 +50,14 @@ public class DriveFieldCentricHoldAngle extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_targetYaw = m_drivetrain.getRotation();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double rotationValue = m_rotationSupplier.getAsDouble();
+    double rotationValue = m_rotationSupplier.getAsDouble() * Constants.DriveFieldCentricConstant.ROTATION_MULTIPLIER;
 
     if(Math.abs(rotationValue) <= 0.05){
       rotationValue = rotationController.calculate(
