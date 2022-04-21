@@ -21,7 +21,7 @@ public class ClimbHighFull extends SequentialCommandGroup {
   ArmSubsystem m_arm;
   XboxController m_climbController;
 
-  public ClimbHighFull(ElevatorSubsystem elevator, ArmSubsystem arm, XboxController climbController, double endElevatorHeight) {
+  public ClimbHighFull(ElevatorSubsystem elevator, ArmSubsystem arm, XboxController climbController) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     m_elevator = elevator;
