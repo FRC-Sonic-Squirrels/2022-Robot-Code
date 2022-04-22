@@ -31,19 +31,19 @@ public class ClimbMidAuto extends SequentialCommandGroup {
   
     
     addCommands(
-      new ControllerRumbleCommand(m_climbController, 0.2),
-      new WaitUntilCommand(() -> confirmButtonPressed()),
+      // new ControllerRumbleCommand(m_climbController, 0.2),
+      // new WaitUntilCommand(() -> confirmButtonPressed()),
 
       new ElevatorGoToMinHeight(m_elevator),
 
-      new ControllerRumbleCommand(m_climbController, 0.2),
-      new WaitUntilCommand(() -> confirmButtonPressed()),
+      // new ControllerRumbleCommand(m_climbController, 0.2),
+      // new WaitUntilCommand(() -> confirmButtonPressed()),
 
       new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)
         .withTimeout(0.25),
       
-      new ControllerRumbleCommand(m_climbController, 0.2),
-      new WaitUntilCommand(() -> confirmButtonPressed()),
+      // new ControllerRumbleCommand(m_climbController, 0.2),
+      // new WaitUntilCommand(() -> confirmButtonPressed()),
 
       new ElevatorGoToSpecificHeight(m_elevator, 5, 0.75,0.4)
     );

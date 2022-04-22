@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.commands.ControllerRumbleCommand;
@@ -29,8 +30,8 @@ public class ClimbMidToHigh extends SequentialCommandGroup {
   
     //assumes arms are on mid bar 
     addCommands(
-      new ControllerRumbleCommand(m_climbController, 0.2),
-      new WaitUntilCommand(() -> confirmButtonPressed()),
+      // new ControllerRumbleCommand(m_climbController, 0.2),
+      // new WaitUntilCommand(() -> confirmButtonPressed()),
 
       new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE)
       .withTimeout(0.1),
@@ -53,9 +54,6 @@ public class ClimbMidToHigh extends SequentialCommandGroup {
 
       //latch on to high and mid 
      // new ElevatorGoToSpecificHeight(m_elevator, 23, 1, 0.4),
-
-      new ControllerRumbleCommand(m_climbController, 0.2),
-      new WaitUntilCommand(() -> confirmButtonPressed()),
 
       //gentle arm lift off 
     new SequentialCommandGroup(
