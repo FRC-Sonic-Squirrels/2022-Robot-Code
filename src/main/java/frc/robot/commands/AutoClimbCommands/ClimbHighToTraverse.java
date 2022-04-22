@@ -32,7 +32,7 @@ public class ClimbHighToTraverse extends SequentialCommandGroup {
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
       new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE)
-      .withTimeout(0.25),
+      .withTimeout(0.1),
 
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
@@ -43,7 +43,7 @@ public class ClimbHighToTraverse extends SequentialCommandGroup {
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
       new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)
-      .withTimeout(0.25),
+      .withTimeout(0.1),
 
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),

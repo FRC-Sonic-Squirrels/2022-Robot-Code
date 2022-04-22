@@ -45,9 +45,7 @@ public class ClimbMidAuto extends SequentialCommandGroup {
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
-      // TODO: guess that 22 inches gets us under the next bar
       new ElevatorGoToSpecificHeight(m_elevator, 5, 0.75,0.4)
-
     );
 
     

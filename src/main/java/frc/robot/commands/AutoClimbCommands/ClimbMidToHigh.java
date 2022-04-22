@@ -6,6 +6,7 @@ package frc.robot.commands.AutoClimbCommands;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
@@ -32,8 +33,7 @@ public class ClimbMidToHigh extends SequentialCommandGroup {
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
       new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE)
-      .withTimeout(0.25),
-
+      .withTimeout(0.1),
 
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
@@ -43,37 +43,46 @@ public class ClimbMidToHigh extends SequentialCommandGroup {
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
+      //elevator hits high bar 
       new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)
-      .withTimeout(0.25),
+      .withTimeout(0.1),
 
 
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
-      new ElevatorGoToSpecificHeight(m_elevator, 10, 1, 0.4),
+      //latch on to high and mid 
+     // new ElevatorGoToSpecificHeight(m_elevator, 23, 1, 0.4),
 
-      //new ClimbHandOff(m_elevator, m_arm, m_climbController, 10)
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
+      //gentle arm lift off 
+    new SequentialCommandGroup(
+      new ElevatorGoToSpecificHeight(m_elevator, 15, 0.5, 0.4),
       new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_BACK_ANGLE)
-        .withTimeout(0.25),
+        .withTimeout(0.1)
+    ),
+    
+     // new ControllerRumbleCommand(m_climbController, 0.2),
+      // new WaitUntilCommand(() -> confirmButtonPressed()),
 
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
-      new ElevatorGoToMinHeight(m_elevator),
+      new ElevatorGoToSpecificHeight(m_elevator, 0, 0.5, 0.4),
 
+      
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
       new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)
-      .withTimeout(0.25),
+      .withTimeout(0.1),
 
       new ControllerRumbleCommand(m_climbController, 0.2),
       new WaitUntilCommand(() -> confirmButtonPressed()),
 
-      new ElevatorGoToSpecificHeight(m_elevator, 10, 1.0, 0.4)
+      new ElevatorGoToSpecificHeight(m_elevator, 5, 0.6, 0.4)
     );
   }
 
