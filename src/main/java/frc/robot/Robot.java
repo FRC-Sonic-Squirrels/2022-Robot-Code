@@ -9,6 +9,7 @@ import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -54,6 +55,9 @@ public class Robot extends TimedRobot {
     // We don't use this
     LiveWindow.disableAllTelemetry();
 
+    // log NetworkTables data
+    DataLogManager.start();
+
     if (isReal()) {
       // Creates UsbCamera and sets resolution
       camera = CameraServer.startAutomaticCapture();
@@ -93,9 +97,10 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
+    m_robotContainer.m_shooter.stop();
     m_robotContainer.m_cargo.coastMode();
     m_robotContainer.m_hood.setMinAngle();
-    m_robotContainer.m_shooter.setFlywheelRPM(0);
+    m_robotContainer.m_shooter.stop();
   }
 
   @Override

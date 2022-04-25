@@ -136,7 +136,7 @@ public final class Constants {
 
   public static class DriveFieldCentricConstant {
     public static final double TRANSLATION_MULTIPLIER = 1.0; 
-    public static final double ROTATION_MULTIPLIER = 0.6; 
+    public static final double ROTATION_MULTIPLIER = 0.7; 
   }
 
   public static final class AutoConstants {
@@ -172,14 +172,14 @@ public final class Constants {
     public static final double m_minEncoderValue = -2000;
 
     public static final double CLIMBING_BACK_ANGLE = -18.0;
-    public static final double CLIMBING_MIDDLE_ANGLE = -5.5;
+    public static final double CLIMBING_MIDDLE_ANGLE = -1.5;  // if angle is any lower elevator will scrape on bar
     public static final double CLIMBING_FORWARD_ANGLE = 22;
     public static final double CLIMBING_NEXT_BAR_ANGLE = 15.6;
   }
 
   public static class ShooterConstants {
     public static final double m_activated = 2000;
-    public static final double m_idle = 500;
+    public static final double IDLE = 1000;
     public static final int BUMPER_SHOT_RPM = 3000;
     public static final int HOOD_ANGLE = 15;
   }
@@ -194,27 +194,35 @@ public final class Constants {
   public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
       new Pose2d(HubCentricConstants.HUB_CENTER.x - 1,HubCentricConstants.HUB_CENTER.y , new Rotation2d(0));
   //TODO: MAKE SURE THESE VALUES ARE CORRECT BEFORE WE TEST AUTONOMOUS 
-  public static class AutoClimbConstants{
+  public static class AutoClimbConstants {
+
+    // TODO: replace with actual limits
+    public static final double MAX_PITCH_DEGREE = 20;
+    public static final double MAX_PITCH_ACCEL = 5;
+
+    public static final double MAX_YAW_DEGREE = 1;
+    public static final double MAX_YAW_ACCEL = 0.1;
+
     public static class Stage_1 {
       public static final double ELEVATOR_PULL_HEIGHT = 0;
       public static final double ARM_TARGET_ANGLE = 0;
       public static final double ELEVATOR_SWITCH_TO_ARM_HEIGHT = 0;
+    }
+    public static class Stage_2 {
+      //overshoot to let the elevator extend all the way then hold the correct angle
+      public static final double ARM_STARTING_ANGLE = 0;
+      public static final double ELEVATOR_EXTENSION_HEIGHT = 0;
+      public static final double ARM_HOLD_ANGLE = 0;
+      public static final double ELEVATOR_PULL_HEIGHT = 0;
+
+      public static final double ELEVATOR_BRING_ARM_TO_OTHER_SIDE_HEIGHT = 0;
+      public static final double ARM_BRING_AROUND_ANGLE = 0;
+
+      public static final double ELEVATOR_PULL_TO_SWITCH_TO_ARM_HEIGHT = 0;
+
+      public static final double ELEVATOR_LIFT_TO_SWITCH_TO_ARM_HEIGHT = 0;
+    }
   }
-  public static class Stage_2 {
-    //overshoot to let the elevator extend all the way then hold the correct angle
-    public static final double ARM_STARTING_ANGLE = 0;
-    public static final double ELEVATOR_EXTENSION_HEIGHT = 0;
-    public static final double ARM_HOLD_ANGLE = 0;
-    public static final double ELEVATOR_PULL_HEIGHT = 0;
-
-    public static final double ELEVATOR_BRING_ARM_TO_OTHER_SIDE_HEIGHT = 0;
-    public static final double ARM_BRING_AROUND_ANGLE = 0;
-
-    public static final double ELEVATOR_PULL_TO_SWITCH_TO_ARM_HEIGHT = 0;
-
-    public static final double ELEVATOR_LIFT_TO_SWITCH_TO_ARM_HEIGHT = 0;
-  }
-}
   
   public static class VisionConstants{
     public static final double CAMERA_HEIGHT_INCHES = 42.0;
@@ -229,7 +237,7 @@ public final class Constants {
   public static class LimelightConstants{
     public static final double LIMELIGHT_HEIGHT_INCHES = 29.962;
     public static final double HIGH_HUB_HEIGHT_INCHES = 104.0;
-    public static final double LIMELIGHT_PITCH_DEGREES = 50;
+    public static final double LIMELIGHT_PITCH_DEGREES = 45.0;
     public static final double HIGH_HUB_RADIUS_INCHES = 26.6875;
 
     public static final double TARGET_TOLERANCE_DEGREES = 2.0;
@@ -315,7 +323,9 @@ public final class Constants {
     {128, 30}, // Money shot!
     {136, 31},
     {142, 32},
-    {194, 33}, // Launch pad
+    {156, 26},
+    {180, 29},
+    {202, 32},//{194, 33}, // Launch pad
     {242, 33}  // long shot, no limelight
   };
 
@@ -330,7 +340,10 @@ public final class Constants {
     {128, 3000}, // Money shot!
     {136, 3100}, // TODO: test and change to 3000?
     {142, 3000},
-    {194, 3600}, // Launch pad
+    {156, 3400},
+    {180, 3600},
+    {202, 4000},
+    //{194, 3600}, // Launch pad
     {242, 5000}  // long shot, no limelight
   };
 }

@@ -17,6 +17,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -185,11 +186,11 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     PathPlannerTrajectory path2 = PathPlanner.loadPath("1ball_complementary_part2", 1.5, 0.75);
 
     return new SequentialCommandGroup(
+      new InstantCommand(() -> m_drivetrain.resetOdometry(path1.getInitialPose())),
       new WaitCommand(4),
       PPSwerveControlCommand(path1, true),
       new ParallelRaceGroup(
         new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
-        //new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
         new ShootWithSetRPMAndHoodAngle(3000, 30.0, m_cargo, m_shooter, m_hood, m_robot)
       ),
       PPSwerveControlCommand(path2, true)
@@ -207,7 +208,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     PathPlannerTrajectory path2 = PathPlanner.loadPath("5ball_part2", 3.0, 2.5);
 
-    PathPlannerTrajectory path3 = PathPlanner.loadPath("5ball_part3", 4.0, 3.5);
+    PathPlannerTrajectory path3 = PathPlanner.loadPath("5ball_part3", 4.5, 3.5);
 
     PathPlannerTrajectory path4 = PathPlanner.loadPath("5ball_part4", 4.5, 3.5);
 
@@ -234,23 +235,26 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         //new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
         //new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
       //),
-      new ParallelRaceGroup(
-        new IntakeDeployCommand(m_intake, m_cargo),
+      new ParallelCommandGroup(
+        // run the intake while we drive forward, but retract after we start driving
+        // away from loading zone. vx is robot centric x velocity.
+        new IntakeDeployCommand(m_intake, m_cargo)
+          .until(() -> (m_drivetrain.getChassisSpeeds().vxMetersPerSecond < -0.5)),
         new SequentialCommandGroup(
           PPSwerveControlCommand(path3, true),
-          new WaitCommand(0.4)
+          new WaitCommand(0.4),
+          new InstantCommand(() -> m_hood.setAngleDegrees(30)),
+          new InstantCommand(() -> m_shooter.setFlywheelRPM(3000)),
+          PPSwerveControlCommand(path4, true)
         )
       ),
-      new InstantCommand(() -> m_hood.setAngleDegrees(30)),
-      new InstantCommand(() -> m_shooter.setFlywheelRPM(3000)),
-      PPSwerveControlCommand(path4, true),
       new ParallelRaceGroup(
         new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
         //new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
         new ShootWithSetRPMAndHoodAngle(3000, 30.0, m_cargo, m_shooter, m_hood, m_robot)
       ),
       new InstantCommand(() -> m_hood.setMinAngle()),
-      new InstantCommand(() -> m_shooter.setFlywheelRPM(0))
+      new InstantCommand(() -> m_shooter.setFlywheelRPM(Constants.ShooterConstants.IDLE), m_shooter)
     );
   }
 

@@ -4,12 +4,14 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.swervedrivespecialties.swervelib.Mk4ModuleConfiguration;
 import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -278,10 +280,50 @@ public class Drivetrain extends SubsystemBase {
     return m_odometry.getPoseMeters().getRotation();
   }
 
+  /**
+   * get current change in yaw in degrees per second
+   * @return Rotation2d
+   */
   public Rotation2d getGyroscopeRotationVelocity() {
     double[] xyz_dps = new double[3];
     m_pigeon.getRawGyro(xyz_dps);
     return Rotation2d.fromDegrees(xyz_dps[2]);
+  }
+
+  /**
+   * get the change in pitch in degrees per second
+   */
+  public double getGyroscopePitchVelocity() {
+    double[] xyz_dps = new double[3];
+    m_pigeon.getRawGyro(xyz_dps);
+    return xyz_dps[1];
+  }
+
+  /**
+   * robot pitch in degrees
+   */
+  public double getGyroscopePitch() {
+    double[] xyz_dps = new double[3];
+    m_pigeon.getYawPitchRoll(xyz_dps);
+    return xyz_dps[1];
+  }
+
+  /**
+   * get the change in roll in degrees per second
+   */
+  public double getGyroscopeRollVelocity() {
+    double[] xyz_dps = new double[3];
+    m_pigeon.getRawGyro(xyz_dps);
+    return xyz_dps[0];
+  }
+
+  /**
+   * robot roll in degrees
+   */
+  public double getGyroscopeRoll() {
+    double[] xyz_dps = new double[3];
+    m_pigeon.getYawPitchRoll(xyz_dps);
+    return xyz_dps[0];
   }
 
   /**
@@ -293,25 +335,14 @@ public class Drivetrain extends SubsystemBase {
     return m_odometry.getPoseMeters();
   }
 
-  public double getVelocity() {
-    SwerveModuleState m_actualStates[] = new SwerveModuleState[4];
-    SwerveModuleState frontLeft = new SwerveModuleState(m_frontLeftModule.getDriveVelocity(),
-        new Rotation2d(m_frontLeftModule.getSteerAngle()));
-    SwerveModuleState frontRight = new SwerveModuleState(m_frontRightModule.getDriveVelocity(),
-        new Rotation2d(m_frontRightModule.getSteerAngle()));
-    SwerveModuleState backLeft = new SwerveModuleState(m_backLeftModule.getDriveVelocity(),
-        new Rotation2d(m_backLeftModule.getSteerAngle()));
-    SwerveModuleState backRight = new SwerveModuleState(m_backRightModule.getDriveVelocity(),
-        new Rotation2d(m_backRightModule.getSteerAngle()));
-    // new array with size 4, fill array with new module sates in the order : fl, fr, bl, br
-    m_actualStates[0] = frontLeft;
-    m_actualStates[1] = frontRight;
-    m_actualStates[2] = backLeft;
-    m_actualStates[3] = backRight;
-    ChassisSpeeds cs = m_kinematics.toChassisSpeeds(m_actualStates);
-    Vector2d vector = new Vector2d(cs.vxMetersPerSecond, cs.vyMetersPerSecond);
-
-    return vector.magnitude();
+  /**
+   * Return the swerve drivetrain's chassis speeds: x, y, and rotational velocity
+   * @return ChassisSpeeds
+   */
+  public ChassisSpeeds getChassisSpeeds() {
+    SwerveModuleState m_actualStates[] = getSwerveModuleState();
+    
+    return m_kinematics.toChassisSpeeds(m_actualStates);
   }
 
   /**
@@ -380,16 +411,6 @@ public class Drivetrain extends SubsystemBase {
     return m_kinematics;
   }
 
-  public Rotation2d getWheelRotation() {
-    double avgRotation = 0;
-    for (int i = 0; i < 4; i++) {
-      SwerveModuleState state = m_desiredStates[i];
-      avgRotation += state.angle.getRadians();
-    }
-
-    return new Rotation2d(avgRotation / 4);
-  }
-
   public SwerveModuleState[] getSwerveModuleState() {
     SwerveModuleState[] m_actualStates = new SwerveModuleState[4];
     SwerveModuleState frontLeft = new SwerveModuleState(m_frontLeftModule.getDriveVelocity(),
@@ -410,11 +431,6 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // if(this.getCurrentCommand() != null){
-    //   SmartDashboard.putString("AAA drivetrain current command", this.getCurrentCommand().toString());
-    // } else {
-    //   SmartDashboard.putString("AAA drivetrain current command", "null");
-    // }
 
     m_odometry.update(getIMURotation(),
         new SwerveModuleState(m_frontLeftModule.getDriveVelocity(),
@@ -449,6 +465,29 @@ public class Drivetrain extends SubsystemBase {
     // SmartDashboard.putNumber("Drivetrain IMU Pitch", m_pigeon.getPitch());
     // SmartDashboard.putNumber("Drivetrain odometry angle",
     // m_odometry.getPoseMeters().getRotation().getDegrees());
+
+    // var vector = new double[3];
+    // if (m_pigeon.getGravityVector(vector) == ErrorCode.OK) {
+    //   // vector towards the ground
+    //   SmartDashboard.putNumber("GV Gravity Vector X", vector[0]);
+    //   SmartDashboard.putNumber("GV Gravity Vector Y", vector[1]);
+    //   SmartDashboard.putNumber("GV Gravity Vector Z", vector[2]);
+    // }
+    // if (m_pigeon.getYawPitchRoll(vector) == ErrorCode.OK) {
+    //   //  Array to fill with yaw[0], pitch[1], and roll[2] data. 
+    //   // Yaw is within [-368,640, +368,640] degrees.
+    //   // Pitch is within [-90,+90] degrees.
+    //   // Roll is within [-90,+90] degrees.
+    //   SmartDashboard.putNumber("GV Robot Yaw", vector[0]);
+    //   SmartDashboard.putNumber("GV Robot Pitch", vector[1]);
+    //   SmartDashboard.putNumber("GV Robot Roll", vector[2]);
+    // }
+    // if (m_pigeon.getRawGyro(vector) == ErrorCode.OK) {
+    //   // measured in degrees per second
+    //   SmartDashboard.putNumber("GV Robot rotation X deg per sec", vector[0]);
+    //   SmartDashboard.putNumber("GV Robot rotation Y deg per sec", vector[1]);
+    //   SmartDashboard.putNumber("GV Robot rotation Z deg per sec", vector[2]);
+    // }
   }
 
 }

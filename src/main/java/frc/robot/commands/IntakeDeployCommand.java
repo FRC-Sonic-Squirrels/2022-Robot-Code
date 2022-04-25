@@ -13,6 +13,11 @@ public class IntakeDeployCommand extends CommandBase {
   IntakeSubsystem m_intake;
   CargoSubsystem m_cargo;
 
+  /**
+   * Constructor for new IntakeDeployCommand to lower intake, run rollers, and run indexer.
+   * @param intakeSubsystem
+   * @param cargoSubsystem
+   */
   public IntakeDeployCommand(IntakeSubsystem intakeSubsystem, CargoSubsystem cargoSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_intake = intakeSubsystem;

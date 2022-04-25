@@ -26,6 +26,8 @@ public class HoodSubsystem extends SubsystemBase {
   private double gearRatio = 1.0 / 84.0;
   private double ticksToDegree = (gearRatio / 2048) * 360.0;
 
+
+
   // min and max from Beau
   private double minHoodAngleDeg = 15.0;
   private double maxHoodAngleDeg = 33.0; //actual is 33 
@@ -65,7 +67,9 @@ public class HoodSubsystem extends SubsystemBase {
 
     // TalonFX integrated sensor is always in phase with the motor.
     hoodMotor.setSensorPhase(false);
-		hoodMotor.setInverted(false);
+
+    // flip the motor direction
+		hoodMotor.setInverted(true);
 
     hoodMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, kTimeoutMs);
     //hoodMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, kTimeoutMs);
@@ -99,7 +103,7 @@ public class HoodSubsystem extends SubsystemBase {
     hoodMotor.configForwardSoftLimitEnable(true);
 
     // config hard limit switch for full down position
-    hoodMotor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
+    hoodMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector,
         LimitSwitchNormal.NormallyOpen, 0);
 
     hoodMotor.setNeutralMode(NeutralMode.Coast);
@@ -214,6 +218,10 @@ public class HoodSubsystem extends SubsystemBase {
     return hoodInterpolator.getInterpolatedValue(distanceFeet * 12.0);
   }
 
+  /**
+   * 
+   * @param output
+   */
   public void setPercentOutput(double output) {
     percentOutput = output;
     hoodMotor.set(ControlMode.PercentOutput, output);
