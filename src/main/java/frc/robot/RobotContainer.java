@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.team2930.lib.OrchestraMusicController;
 import com.team2930.lib.OrchestraMusicController.Playlists;
+import com.team2930.lib.OrchestraMusicController.Songs;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -52,6 +53,7 @@ import frc.robot.commands.AutoClimbCommands.ClimbHighToTraverse;
 import frc.robot.commands.AutoClimbCommands.ClimbMidAuto;
 import frc.robot.commands.AutoClimbCommands.ClimbMidToHigh;
 import frc.robot.commands.MusicCommands.OrchestraPlayQueueCommand;
+import frc.robot.commands.MusicCommands.OrchestraPlaySongCommand;
 import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.subsystems.ArmSubsystem;
@@ -186,8 +188,14 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     new Button(m_climbController::getXButton)
-      .whenPressed(new OrchestraPlayQueueCommand(musicController, Playlists.testPlaylist.files, instrumentSubsystems));
+      .whenPressed(
+        new OrchestraPlayQueueCommand(musicController, Playlists.testPlaylist.files, instrumentSubsystems)
+      );
 
+    new Button(m_climbController::getYButton)
+      .toggleWhenPressed(
+        new OrchestraPlaySongCommand(musicController, Songs.testSong.filepath, instrumentSubsystems)
+      );
     //-------------- DRIVER CONTROLS DEFINED HERE --------------------------  
 
     // new Button(m_controller::getRightBumper)
