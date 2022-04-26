@@ -11,7 +11,7 @@ public class GuitarHeroController extends GenericHID {
   public enum Button {
     greenButton(0), redButton(0), yellowButton(0), blueButton(0), orangeButton(0),
 
-    select(0), start(0),
+    selectButton(0), startButton(0),
 
     switchUp(0), switchDown(0),
 
@@ -48,16 +48,49 @@ public class GuitarHeroController extends GenericHID {
     // TODO Auto-generated constructor stub
   }
 
+  public boolean getGreenButton(){
+    return getRawButtonPressed(Button.greenButton.value);
+  }
+
   public boolean getRedButton(){
     return getRawButtonPressed(Button.redButton.value);
   }
 
+  public boolean getYellowButton(){
+    return getRawButtonPressed(Button.yellowButton.value);
+  }
+
+  public boolean getBlueButton(){
+    return getRawButtonPressed(Button.blueButton.value);
+  }
+
+  public boolean getOrangeButton(){
+    return getRawButtonPressed(Button.orangeButton.value);
+  }
+
+  public boolean getSelectButton(){
+    return getRawButtonPressed(Button.selectButton.value);
+  }
+
+  public boolean getStartButton(){
+    return getRawButtonPressed(Button.startButton.value);
+  }
+
+  public boolean getSwitchUp(){
+    return getRawButtonPressed(Button.switchUp.value);
+  }
+
+  public boolean getSwitchDown(){
+    return getRawButtonPressed(Button.switchDown.value);
+  }
+
+  public boolean getMotionSensor(){
+    return getRawButton(Button.motionSensor.value);
+  }
+
+
+
   public double getTrebleAxis(){
     return getRawAxis(Axis.treble.value);
   }
-
-  
-
-
-  
 }
