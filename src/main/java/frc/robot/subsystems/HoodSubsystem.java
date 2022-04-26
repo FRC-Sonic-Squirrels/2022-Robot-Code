@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
@@ -53,9 +54,13 @@ public class HoodSubsystem extends SubsystemBase {
   private static final int kSmoothing = 4;
 
   private linearInterpolator hoodInterpolator;
+
+  ArrayList<WPI_TalonFX> m_allMotors;
+
   
   public HoodSubsystem() {
 
+    m_allMotors.add(hoodMotor);
     // https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/blob/master/Java%20Talon%20FX%20(Falcon%20500)/MotionMagic/src/main/java/frc/robot/Robot.java
     hoodMotor.configFactoryDefault();
 
@@ -225,6 +230,10 @@ public class HoodSubsystem extends SubsystemBase {
   public void setPercentOutput(double output) {
     percentOutput = output;
     hoodMotor.set(ControlMode.PercentOutput, output);
+  }
+
+  public ArrayList<WPI_TalonFX> getAllMotors(){
+    return m_allMotors;
   }
 
 }

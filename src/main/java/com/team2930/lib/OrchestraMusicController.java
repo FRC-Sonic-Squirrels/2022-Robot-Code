@@ -57,6 +57,7 @@ public class OrchestraMusicController extends Orchestra{
 
 
   public void playSong(String filePath){
+    super.stop();
     super.loadMusic(filePath);
     super.play();
   }

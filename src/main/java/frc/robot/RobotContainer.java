@@ -5,6 +5,11 @@
 package frc.robot;
 
 
+import java.util.ArrayList;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.team2930.lib.OrchestraMusicController;
+import com.team2930.lib.OrchestraMusicController.Playlists;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -16,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -45,6 +51,7 @@ import frc.robot.commands.AutoClimbCommands.ClimbHighFull;
 import frc.robot.commands.AutoClimbCommands.ClimbHighToTraverse;
 import frc.robot.commands.AutoClimbCommands.ClimbMidAuto;
 import frc.robot.commands.AutoClimbCommands.ClimbMidToHigh;
+import frc.robot.commands.MusicCommands.OrchestraPlayQueueCommand;
 import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.subsystems.ArmSubsystem;
@@ -90,6 +97,10 @@ public class RobotContainer {
 
   public Command climbRumbleCommand = new ControllerClimbMaxHeightRumble(m_climbController, m_elevator);
 
+  Subsystem[] instrumentSubsystems = new Subsystem[2];
+  ArrayList<WPI_TalonFX> instrumentMotors;
+
+  OrchestraMusicController musicController;
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -105,6 +116,16 @@ public class RobotContainer {
     m_arm = new ArmSubsystem();
     m_hood = new HoodSubsystem();
     m_limelight = new LimelightSubsystem(drivetrain, m_robot.revPDH);
+
+    instrumentSubsystems[0] = m_elevator;
+    instrumentSubsystems[1] = m_hood;
+
+    instrumentMotors = new ArrayList<>();
+
+    instrumentMotors.addAll(m_elevator.getAllMotors());
+    instrumentMotors.addAll(m_hood.getAllMotors());
+
+    musicController = OrchestraMusicController.OrchestraFromWpiTalonControllers(instrumentMotors);
     
     SmartDashboard.putData("Auto Mode", chooser);
 
@@ -163,6 +184,9 @@ public class RobotContainer {
    */
 
   private void configureButtonBindings() {
+
+    new Button(m_climbController::getXButton)
+      .whenPressed(new OrchestraPlayQueueCommand(musicController, Playlists.testPlaylist.files, instrumentSubsystems));
 
     //-------------- DRIVER CONTROLS DEFINED HERE --------------------------  
 

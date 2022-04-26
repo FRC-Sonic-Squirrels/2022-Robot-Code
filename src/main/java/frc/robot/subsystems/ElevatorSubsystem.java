@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
@@ -51,12 +52,18 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private double m_currentHeight;
 
+  ArrayList<WPI_TalonFX> m_allMotors;
+
   // the encoder increase as the elevator moves down, so invert sign of height vs ticks
   private double sensor_invert = -1.0;
   
   public ElevatorSubsystem() {
     winch_lead_talon.configFactoryDefault();
     winch_follow_talon.configFactoryDefault();
+
+    m_allMotors = new ArrayList<>();
+    m_allMotors.add(winch_lead_talon);
+    m_allMotors.add(winch_follow_talon);
     
     TalonFXConfiguration leadConfig = new TalonFXConfiguration();
 
@@ -237,6 +244,10 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public boolean atLowerLimit() {
     return (1 == winch_lead_talon.isFwdLimitSwitchClosed());
+  }
+
+  public ArrayList<WPI_TalonFX> getAllMotors(){
+    return m_allMotors;
   }
 
   @Override
