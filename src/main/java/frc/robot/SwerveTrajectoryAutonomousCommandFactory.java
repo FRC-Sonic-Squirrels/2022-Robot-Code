@@ -8,6 +8,7 @@ import java.util.List;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+import com.team2930.lib.util.SwerveTestTrajectories;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -46,9 +47,10 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   private static CargoSubsystem m_cargo;
   private static IntakeSubsystem m_intake;
   private static HoodSubsystem m_hood;
-  private static TestTrajectories m_tt;
+  private static SwerveTestTrajectories m_tt;
   private static LimelightSubsystem m_limelight;
   private static Robot m_robot;
+
 
   public SwerveTrajectoryAutonomousCommandFactory(Drivetrain drivetrain, ShooterSubsystem shooter,
       CargoSubsystem cargo, IntakeSubsystem intake, HoodSubsystem hood, LimelightSubsystem limelight,
@@ -61,7 +63,9 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     m_hood = hood;
     m_limelight = limelight;
     m_robot = robot;
-    m_tt = new TestTrajectories(maxVelocity, maxAcceleration, m_drivetrain, true);
+
+    m_tt = new SwerveTestTrajectories(maxVelocity, maxAcceleration,
+        Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, drivetrain.kinematics());
   }
 
 
@@ -144,7 +148,6 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         .withTimeout(6)
     );
   }  
-
 
   public Command SundomeRightSideShootAndMove(){
     Pose2d startPos = Constants.StartPoseConstants.BLUE_DEF_BOTTOM;

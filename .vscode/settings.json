@@ -43,6 +43,8 @@
     "opencv",
     "robo",
     "Setpoint",
+    "straightline",
+    "Sundome",
     "teleop",
     "teleoperated",
     "TRACKWIDTH",
