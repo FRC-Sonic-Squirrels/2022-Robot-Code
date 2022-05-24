@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
@@ -274,8 +275,16 @@ public class RobotContainer {
 
     //--------------------------------Operator intake)-------------------
     //Deploy Intake
-    new Button(m_operatorController::getAButton)
-       .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
+    // new Button(m_operatorController::getAButton)
+    //    .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
+
+      new Button(m_operatorController::getAButton)
+       .toggleWhenPressed( 
+        new ConditionalCommand(
+          new IntakeDeployCommand(m_intake, m_cargo), 
+          new InstantCommand(), 
+          () -> !(m_shooter.getDesiredRPM() > 0))
+       );
 
     new Button(m_operatorController::getYButton)
        .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
