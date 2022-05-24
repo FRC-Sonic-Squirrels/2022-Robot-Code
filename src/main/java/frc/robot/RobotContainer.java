@@ -220,11 +220,11 @@ public class RobotContainer {
 
 
     //-------------Screen centric ----------------
-    // new Button(m_controller::getXButton)
-    //         .whenPressed(new DriveScreenCentricCommand(drivetrain,
-    //         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
-    //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-    //         () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+    new Button(m_controller::getXButton)
+            .whenPressed(new DriveScreenCentricCommand(drivetrain,
+            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
+            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
 
 

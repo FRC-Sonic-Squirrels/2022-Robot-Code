@@ -7,6 +7,9 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.ADXL345_I2C.AllAxes;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
@@ -37,12 +40,18 @@ public class DriveScreenCentricCommand extends CommandBase {
       
       if(Math.abs(rotationOutput) <0.05) { rotationOutput = 0.0; }
 
+      int angle = 90;
+
+      if(DriverStation.getAlliance() == Alliance.Red){
+        angle = -90;
+      }
+
       m_drivetrainSubsystem.drive(
               ChassisSpeeds.fromFieldRelativeSpeeds(
                       m_translationXSupplier.getAsDouble() * Constants.DriveFieldCentricConstant.TRANSLATION_MULTIPLIER,
                       m_translationYSupplier.getAsDouble() * Constants.DriveFieldCentricConstant.TRANSLATION_MULTIPLIER,
                       rotationOutput,
-                      m_drivetrainSubsystem.getRotation().plus(Rotation2d.fromDegrees(90))
+                      m_drivetrainSubsystem.getRotation().plus(Rotation2d.fromDegrees(angle))
               )
       );
   }
