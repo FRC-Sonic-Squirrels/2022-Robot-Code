@@ -16,7 +16,7 @@ public class MotionMagicControl extends CommandBase {
   double m_tolerance; 
 
   int m_withinThresholdLoops = 0; 
-  int kLoopsToSettle = 10; //10*20ms = 200ms = 1/5 of a second 
+  final int kLoopsToSettle = 10; //10*20ms = 200ms = 1/5 of a second 
   
    //TODO: test to see if the time it takes to update the constraints over CAN affects the elevator performance significantly
    //TODO: tune ff and pid in the elevator subsystem 
@@ -51,6 +51,7 @@ public class MotionMagicControl extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_elevator.stop();
+    m_withinThresholdLoops = 0;
   }
 
   // Returns true when the command should end.
