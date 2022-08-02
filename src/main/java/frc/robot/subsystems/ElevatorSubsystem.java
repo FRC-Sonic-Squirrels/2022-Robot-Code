@@ -37,6 +37,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private Solenoid frictionBrakeSolenoid =
       new Solenoid(PneumaticsModuleType.REVPH, Constants.pneumatics.channel_15_friction_brake);
   private final double gearRatio = 0.08229; // 0.074;
+  //TODO: note diameter is set to 1.9 on JVN 
   private final double winchDiameter_inches = 1.95;   // 1.25 diameter + string windings
   private final double winchCircumference = Math.PI * winchDiameter_inches;
   private final double maxExtensionInches = 25.5;
@@ -44,7 +45,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double toleranceInches = 0.2; 
   private double feedForwardClimbing = 0.025734; // from JVM calculator
   private double feedForwardDescending = 0.0257; //0.001;
-  private final double ticks2distance = gearRatio * winchCircumference / 4096;
+  private final double ticks2distance = gearRatio * winchCircumference / 4096; //0.000123071867248535 with gear ratio of 0.08229
   private boolean zeroed = false;
 
   public boolean m_atMaxheight;
@@ -130,10 +131,18 @@ public class ElevatorSubsystem extends SubsystemBase {
     winch_lead_talon.configReverseSoftLimitEnable(true);
   }
 
-  //TODO: these parameters expect ticks is there math we can do to accept inches per sec to make it more user friendly? 
-  public void setMotionMagicConstraints(int acceleration, int cruiseVelocity){
-    winch_lead_talon.configMotionAcceleration(acceleration);
-    winch_lead_talon.configMotionCruiseVelocity(cruiseVelocity);
+
+  /**
+   * 
+   * @param acceleration accel in inches per second^2
+   * @param cruiseVelocity max velocity in inches per second 
+   */
+  public void setMotionMagicConstraints(double acceleration, double cruiseVelocity){
+    double veloInTicks = cruiseVelocity / ticks2distance / 10;
+    double accelInTicks = acceleration / ticks2distance / 10;
+
+    winch_lead_talon.configMotionAcceleration(accelInTicks);
+    winch_lead_talon.configMotionCruiseVelocity(veloInTicks);
   }
 
   public void setMotionMagicSetPoint(double setPoint) {
