@@ -36,7 +36,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private WPI_TalonFX winch_follow_talon = new WPI_TalonFX(CANIVOR_canId.CANID10_ELEVATOR_FOLLOW_TALON, CANIVOR_canId.name);
   private Solenoid frictionBrakeSolenoid =
       new Solenoid(PneumaticsModuleType.REVPH, Constants.pneumatics.channel_15_friction_brake);
-  private final double gearRatio =  0.074;
+  private final double gearRatio = 0.08229; // 0.074;
   private final double winchDiameter_inches = 1.95;   // 1.25 diameter + string windings
   private final double winchCircumference = Math.PI * winchDiameter_inches;
   private final double maxExtensionInches = 25.5;
@@ -91,7 +91,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     winch_lead_talon.setInverted(false);
     winch_follow_talon.setInverted(false);
 
-    // JVN calculator predicts 19.25A per motor under load
+    // JVN calculator predicts 41.2 A per motor under load
+    //TODO: Check new JVN prediction
     SupplyCurrentLimitConfiguration currentLimit =
         new SupplyCurrentLimitConfiguration(true, 20, 25, 0.1);
     winch_lead_talon.configSupplyCurrentLimit(currentLimit);
