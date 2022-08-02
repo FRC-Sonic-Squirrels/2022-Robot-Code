@@ -145,9 +145,25 @@ public class ElevatorSubsystem extends SubsystemBase {
     winch_lead_talon.configMotionCruiseVelocity(veloInTicks);
   }
 
-  public void setMotionMagicSetPoint(double setPoint) {
-    //might have to add feedforward to this like in the setElevatorHeight function
-    winch_lead_talon.set(ControlMode.MotionMagic, heightToTicks(setPoint));
+  public void setMotionMagicSetPoint(double heightInches) {
+    if (heightInches < 0.0) {
+      heightInches = 0.0;
+    }
+    if (heightInches > maxExtensionInches) {
+      heightInches = maxExtensionInches;
+    }
+    
+    if (heightInches <= heightSetpointInches) {
+      // lifting up robot, use more feed forward
+      winch_lead_talon.set(TalonFXControlMode.MotionMagic, heightToTicks(heightInches),
+          DemandType.ArbitraryFeedForward, feedForwardClimbing);
+    } else {
+      // lowering robot, use less feed forward
+      winch_lead_talon.set(TalonFXControlMode.MotionMagic, heightToTicks(heightInches),
+          DemandType.ArbitraryFeedForward, feedForwardDescending);
+    }
+
+    heightSetpointInches = heightInches;
   }
 
   public void setElevatorHeight(double heightInches) {
