@@ -72,6 +72,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 		leadConfig.slot0.integralZone = 0.0;
 		leadConfig.slot0.closedLoopPeakOutput = 1.0;
 
+    //do we need this if the command is updating the motion magic constraints? 
+    //maybe have a safe default?  
     leadConfig.motionAcceleration = 20521;    //  20521 ticks/100ms     = 11 in/s
 		leadConfig.motionCruiseVelocity = 20521;  //  20521 ticks/100ms/sec = 11 in/s^2
 
@@ -79,6 +81,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // set config
     winch_lead_talon.configAllSettings(leadConfig);
+
+    //use pid from slot 0 for motion magic 
+    winch_lead_talon.selectProfileSlot(0, 0);
 
     winch_lead_talon.setNeutralMode(NeutralMode.Brake);
     winch_follow_talon.setNeutralMode(NeutralMode.Brake);
@@ -122,6 +127,17 @@ public class ElevatorSubsystem extends SubsystemBase {
     // set soft limit on reverse movement (Up)
     winch_lead_talon.configReverseSoftLimitThreshold(heightToTicks(maxExtensionInches));
     winch_lead_talon.configReverseSoftLimitEnable(true);
+  }
+
+  //TODO: these parameters expect ticks is there math we can do to accept inches per sec to make it more user friendly? 
+  public void setMotionMagicConstraints(int acceleration, int cruiseVelocity){
+    winch_lead_talon.configMotionAcceleration(acceleration);
+    winch_lead_talon.configMotionCruiseVelocity(cruiseVelocity);
+  }
+
+  public void setMotionMagicSetPoint(double setPoint) {
+    //might have to add feedforward to this like in the setElevatorHeight function
+    winch_lead_talon.set(ControlMode.MotionMagic, heightToTicks(setPoint));
   }
 
   public void setElevatorHeight(double heightInches) {
