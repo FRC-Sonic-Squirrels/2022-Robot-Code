@@ -164,7 +164,7 @@ public final class Constants {
 
   public static class ElevatorConstants{
     public static final double elevatorSpeedMultiplier = 1.0;
-    public static final double ELEVATOR_MAX_HEIGHT = 22;
+    public static final double ELEVATOR_MAX_HEIGHT = 22; //TODO: this value is 25.5 in the elevator subsystem 
   }
   
   public static class ArmConstants{
