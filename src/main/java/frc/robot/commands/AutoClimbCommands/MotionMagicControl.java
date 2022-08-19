@@ -11,8 +11,8 @@ public class MotionMagicControl extends CommandBase {
   /** Creates a new MotionMagicControl. */
   ElevatorSubsystem m_elevator; 
   double m_target; 
-  int m_acel; 
-  int m_velo; 
+  double m_acel; 
+  double m_velo; 
   double m_tolerance; 
 
   int m_withinThresholdLoops = 0; 
@@ -21,7 +21,7 @@ public class MotionMagicControl extends CommandBase {
    //TODO: test to see if the time it takes to update the constraints over CAN affects the elevator performance significantly
    //TODO: tune ff and pid in the elevator subsystem 
 
-  public MotionMagicControl(ElevatorSubsystem elevator, double targetHeight, double tolerance,  int acceleration, int cruiseVelocity) {
+  public MotionMagicControl(ElevatorSubsystem elevator, double targetHeight, double tolerance,  double acceleration, double cruiseVelocity) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(elevator);
   }
