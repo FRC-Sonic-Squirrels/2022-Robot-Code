@@ -20,12 +20,13 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.StartPoseConstants;
 import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.CargoReverseCommand;
 import frc.robot.commands.CargoRunIndexer;
-import frc.robot.commands.ClimbAutoMid;
+
 import frc.robot.commands.ControllerClimbMaxHeightRumble;
 import frc.robot.commands.ControllerRumbleCommand;
 import frc.robot.commands.DriveFieldCentricAimCommand;
@@ -46,6 +47,7 @@ import frc.robot.commands.AutoClimbCommands.ClimbHighFull;
 import frc.robot.commands.AutoClimbCommands.ClimbHighToTraverse;
 import frc.robot.commands.AutoClimbCommands.ClimbMidAuto;
 import frc.robot.commands.AutoClimbCommands.ClimbMidToHigh;
+import frc.robot.commands.AutoClimbCommands.MotionMagicControl;
 import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.commands.DriveScreenCentricCommand;
@@ -358,18 +360,34 @@ public class RobotContainer {
     //   .whenPressed(new ClimbMidToHigh(m_elevator, m_arm, m_climbController)
     //   .withInterrupt(m_climbController::getBButton));
 
-      // new Button(m_climbController::getStartButton)
-      // .whenPressed(new ClimbHighToTraverse(m_elevator, m_arm, m_climbController)
-      // .withInterrupt(m_climbController::getBButton));
+    // new Button(m_climbController::getStartButton)
+    // .whenPressed(new ClimbHighToTraverse(m_elevator, m_arm, m_climbController)
+    // .withInterrupt(m_climbController::getBButton));
 
-     new Button(m_climbController::getRightBumper)
-       .whenPressed(new ClimbFullCommand(m_elevator, m_arm, m_climbController)
-       .withInterrupt(m_climbController::getBButton));
+    //  new Button(m_climbController::getRightBumper)
+    //    .whenPressed(new ClimbFullCommand(m_elevator, m_arm, m_climbController)
+    //    .withInterrupt(m_climbController::getBButton));
 
     //  new Button(m_climbController::getYButton)
     //    .whenPressed(new ClimbHighFull(m_elevator, m_arm, m_climbController)
     //    .withInterrupt(m_climbController::getBButton));
 
+    //---------------------- Motion Magic Debugging -------------------------------------------
+
+    new Button(m_climbController::getAButton)
+      .whenPressed(new MotionMagicControl(m_elevator, 5, 0.5, 5, 10));
+
+    new Button(m_climbController::getBButton)
+      .whenPressed(new MotionMagicControl(m_elevator, 5, 0.5, 5, 10));
+
+    new Button(m_climbController::getXButton)
+      .whenPressed(new MotionMagicControl(m_elevator, 5, 0.5, 5, 10));
+
+    new Button(m_climbController::getYButton)
+      .whenPressed(new MotionMagicControl(m_elevator, 5, 0.5, 5, 10));
+
+
+    //---------------------- Motion Magic Debugging -------------------------------------------
     
 
    // Rest of climb controls are in the default arm and default elevator commands
