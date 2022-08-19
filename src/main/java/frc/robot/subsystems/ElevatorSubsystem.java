@@ -143,6 +143,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     winch_lead_talon.configMotionAcceleration(accelInTicks);
     winch_lead_talon.configMotionCruiseVelocity(veloInTicks);
+
+
+    //temporary for debugging 
+    SmartDashboard.putNumber("Elevator MM Constraint accel INCHES", acceleration);
+    SmartDashboard.putNumber("Elevator MM Constraint velo INCHES", cruiseVelocity);
+
+    SmartDashboard.putNumber("Elevator MM Constraint accel TICKS", veloInTicks);
+    SmartDashboard.putNumber("Elevator MM Constraint velo TICKS", veloInTicks);
   }
 
   public void setMotionMagicSetPoint(double heightInches) {
@@ -164,6 +172,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     heightSetpointInches = heightInches;
+
+    SmartDashboard.putNumber("Elevator MM Height SetPoint", heightInches);
   }
 
   public void setElevatorHeight(double heightInches) {
@@ -314,10 +324,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Elevator Height (inches)", getHeightInches());
     SmartDashboard.putNumber("Elevator Height Set Point", heightSetpointInches);
     //SmartDashboard.putNumber("Elevator Height (ticks)", getHeightTicks());
-    //SmartDashboard.putNumber("Elevator Vel (inches per s)", ticks2distance * winch_lead_talon.getSelectedSensorVelocity() / 10.0);
+    SmartDashboard.putNumber("Elevator current Vel (inches per s)", ticks2distance * winch_lead_talon.getSelectedSensorVelocity() / 10.0);
     //SmartDashboard.putNumber("Elevator SetPoint inches", heightSetpointInches);
     //SmartDashboard.putNumber("Elevator SetPoint (ticks)", heightToTicks(heightSetpointInches));
-    //SmartDashboard.putNumber("Elevator Error", heightSetpointInches - getHeightInches());
+    SmartDashboard.putNumber("Elevator Error", heightSetpointInches - getHeightInches());
     SmartDashboard.putBoolean("Elevator limit", atLowerLimit());
     SmartDashboard.putNumber("Elevator %output", winch_lead_talon.getMotorOutputPercent());
     //SmartDashboard.putNumber("Elevator Current", winch_lead_talon.getSupplyCurrent());
