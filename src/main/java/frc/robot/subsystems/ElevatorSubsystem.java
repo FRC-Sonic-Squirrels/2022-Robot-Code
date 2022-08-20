@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
@@ -332,5 +333,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Elevator %output", winch_lead_talon.getMotorOutputPercent());
     //SmartDashboard.putNumber("Elevator Current", winch_lead_talon.getSupplyCurrent());
     SmartDashboard.putBoolean("Elevator Brake On", !frictionBrakeSolenoid.get());
+
+    //debug values for MM. These should match the values from setMotionMagicConstraints()
+    //note: These along with all the other config options are viewable and editable from phoenix tuner 
+    SmartDashboard.putNumber("Elevator MM config acceleration", (winch_lead_talon.configGetParameter(ParamEnum.eMotMag_Accel, 0) * ticks2distance * 10));
+    SmartDashboard.putNumber("Elevator MM config velocity ", (winch_lead_talon.configGetParameter(ParamEnum.eMotMag_VelCruise, 0) * ticks2distance * 10));
+    SmartDashboard.putNumber("Elevator MM config S-curve", winch_lead_talon.configGetParameter(ParamEnum.eMotMag_SCurveLevel, 0));
   }
 }
