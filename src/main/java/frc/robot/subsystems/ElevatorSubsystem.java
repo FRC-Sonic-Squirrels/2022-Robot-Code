@@ -39,14 +39,14 @@ public class ElevatorSubsystem extends SubsystemBase {
       new Solenoid(PneumaticsModuleType.REVPH, Constants.pneumatics.channel_15_friction_brake);
   private final double gearRatio = 0.08229; // 0.074;
   //TODO: note diameter is set to 1.9 on JVN 
-  private final double winchDiameter_inches = 1.95;   // 1.25 diameter + string windings
+  private final double winchDiameter_inches = 1.43;   // 1.25 diameter + string windings
   private final double winchCircumference = Math.PI * winchDiameter_inches;
-  private final double maxExtensionInches = 25.5;
+  private final double maxExtensionInches = 25.5; //actually 24 letting more for unwinding
   private double heightSetpointInches = 0.0;
-  private double toleranceInches = 0.2; 
+  private double toleranceInches = 0.05; 
   private double feedForwardClimbing = 0.025734; // from JVM calculator
   private double feedForwardDescending = 0.0257; //0.001;
-  private final double ticks2distance = gearRatio * winchCircumference / 4096; //0.000123071867248535 with gear ratio of 0.08229
+  private final double ticks2distance = gearRatio * winchCircumference / 2048; 
   private boolean zeroed = false;
 
   public boolean m_atMaxheight;
@@ -67,8 +67,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Details on elevator motors, gearing and calculated kP and kFF are here
     // https://docs.google.com/spreadsheets/d/1sOS_vM87iaKPZUFSJTqKqaFTxIl3Jj5OEwBgRxc-QGM/edit?usp=sharing
     // this also has suggest trapezoidal velocity profile constants.
-    leadConfig.slot0.kF = 0.025734; 
-		leadConfig.slot0.kP = 0.5; //0.054836;
+    leadConfig.slot0.kF = 0.054; 
+		leadConfig.slot0.kP = 0.168; //0.054836;
 		leadConfig.slot0.kI = 0.0;
 		leadConfig.slot0.kD = 0.0;
 		leadConfig.slot0.integralZone = 0.0;
@@ -76,8 +76,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     //do we need this if the command is updating the motion magic constraints? 
     //maybe have a safe default?  
-    leadConfig.motionAcceleration = 20521;    //  20521 ticks/100ms     = 11 in/s
-		leadConfig.motionCruiseVelocity = 20521;  //  20521 ticks/100ms/sec = 11 in/s^2
+    leadConfig.motionAcceleration = 60941;    //  20521 ticks/100ms     = 11 in/s
+		leadConfig.motionCruiseVelocity = 15235;  //  20521 ticks/100ms/sec = 11 in/s^2
 
     leadConfig.slot0.allowableClosedloopError = toleranceInches / ticks2distance;
 
@@ -162,15 +162,17 @@ public class ElevatorSubsystem extends SubsystemBase {
       heightInches = maxExtensionInches;
     }
     
-    if (heightInches <= heightSetpointInches) {
-      // lifting up robot, use more feed forward
-      winch_lead_talon.set(TalonFXControlMode.MotionMagic, heightToTicks(heightInches),
-          DemandType.ArbitraryFeedForward, feedForwardClimbing);
-    } else {
-      // lowering robot, use less feed forward
-      winch_lead_talon.set(TalonFXControlMode.MotionMagic, heightToTicks(heightInches),
-          DemandType.ArbitraryFeedForward, feedForwardDescending);
-    }
+    winch_lead_talon.set(ControlMode.MotionMagic, heightToTicks(heightInches));
+
+    // if (heightInches <= heightSetpointInches) {
+    //   // lifting up robot, use more feed forward
+    //   winch_lead_talon.set(TalonFXControlMode.MotionMagic, heightToTicks(heightInches),
+    //       DemandType.ArbitraryFeedForward, feedForwardClimbing);
+    // } else {
+    //   // lowering robot, use less feed forward
+    //   winch_lead_talon.set(TalonFXControlMode.MotionMagic, heightToTicks(heightInches),
+    //       DemandType.ArbitraryFeedForward, feedForwardDescending);
+    // }
 
     heightSetpointInches = heightInches;
 
@@ -326,6 +328,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Elevator Height Set Point", heightSetpointInches);
     //SmartDashboard.putNumber("Elevator Height (ticks)", getHeightTicks());
     SmartDashboard.putNumber("Elevator current Vel (inches per s)", ticks2distance * winch_lead_talon.getSelectedSensorVelocity() / 10.0);
+    SmartDashboard.putNumber("Elevator current vel ticks", winch_lead_talon.getSelectedSensorVelocity() / 10.0);
     //SmartDashboard.putNumber("Elevator SetPoint inches", heightSetpointInches);
     //SmartDashboard.putNumber("Elevator SetPoint (ticks)", heightToTicks(heightSetpointInches));
     SmartDashboard.putNumber("Elevator Error", heightSetpointInches - getHeightInches());

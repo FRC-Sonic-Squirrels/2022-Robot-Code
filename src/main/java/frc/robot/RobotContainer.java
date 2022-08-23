@@ -375,16 +375,16 @@ public class RobotContainer {
     //---------------------- Motion Magic Debugging -------------------------------------------
 
     new Button(m_climbController::getAButton)
-      .whenPressed(new MotionMagicControl(m_elevator, 5, 0.5, 5, 10));
+      .whenPressed(new MotionMagicControl(m_elevator, 12.24, 0.05, 5, 10));
 
     new Button(m_climbController::getBButton)
-      .whenPressed(new MotionMagicControl(m_elevator, 5, 0.5, 5, 10));
+      .whenPressed(new MotionMagicControl(m_elevator, 24.68, 0.05, 5, 10));
 
     new Button(m_climbController::getXButton)
-      .whenPressed(new MotionMagicControl(m_elevator, 5, 0.5, 5, 10));
+      .whenPressed(new MotionMagicControl(m_elevator, 0, 0.05, 5, 10));
 
     new Button(m_climbController::getYButton)
-      .whenPressed(new MotionMagicControl(m_elevator, 5, 0.5, 5, 10));
+      .whenPressed(new MotionMagicControl(m_elevator, 4.08, 0.05, 5, 10));
 
 
     //---------------------- Motion Magic Debugging -------------------------------------------

@@ -23,6 +23,11 @@ public class MotionMagicControl extends CommandBase {
 
   public MotionMagicControl(ElevatorSubsystem elevator, double targetHeight, double tolerance,  double acceleration, double cruiseVelocity) {
     // Use addRequirements() here to declare subsystem dependencies.
+m_elevator = elevator;
+    m_target = targetHeight;
+    m_tolerance = tolerance;
+    m_acel = acceleration;
+    m_velo = cruiseVelocity;
     addRequirements(elevator);
   }
 
@@ -30,7 +35,7 @@ public class MotionMagicControl extends CommandBase {
   @Override
   public void initialize() {
     m_elevator.brakeOff();
-    m_elevator.setMotionMagicConstraints(m_acel, m_velo);
+    //m_elevator.setMotionMagicConstraints(m_acel, m_velo);
 
     m_elevator.setMotionMagicSetPoint(m_target);
   }
