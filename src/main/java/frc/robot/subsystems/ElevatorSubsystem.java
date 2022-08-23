@@ -335,7 +335,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Elevator Error", heightSetpointInches - getHeightInches());
     SmartDashboard.putBoolean("Elevator limit", atLowerLimit());
     SmartDashboard.putNumber("Elevator %output", winch_lead_talon.getMotorOutputPercent());
-    //SmartDashboard.putNumber("Elevator Current", winch_lead_talon.getSupplyCurrent());
+    SmartDashboard.putNumber("Elevator Current Lead", winch_lead_talon.getSupplyCurrent());
+    SmartDashboard.putNumber("Elevator Current Follow", winch_follow_talon.getSupplyCurrent());
     SmartDashboard.putBoolean("Elevator Brake On", !frictionBrakeSolenoid.get());
 
     //debug values for MM. These should match the values from setMotionMagicConstraints()
