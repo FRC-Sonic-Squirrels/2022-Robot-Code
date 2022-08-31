@@ -316,6 +316,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     return new SequentialCommandGroup(
       new InstantCommand(() ->m_drivetrain.resetOdometry(path1.getInitialPose())),
 
+      //shoot first two preloads 
       new ParallelRaceGroup(
         new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
         //eventually switch to using a raw value
@@ -323,11 +324,13 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         // new ShootWithSetRPMAndHoodAngle(flyWheelRPM, hoodAngle, m_cargo, m_shooter, m_hood, m_robot)
       ),
 
+      //drive back and pick up 3rd ball
       new ParallelCommandGroup(
         new IntakeDeployCommand(m_intake, m_cargo).until(() -> m_cargo.cargoInLowerBelts()),
         PPSwerveControlCommand(path1, true)
       ),
       
+      //shoot third ball
       new ParallelRaceGroup(
         new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
         //eventually switch to using a raw value
@@ -335,13 +338,16 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         // new ShootWithSetRPMAndHoodAngle(flyWheelRPM, hoodAngle, m_cargo, m_shooter, m_hood, m_robot)
       ),
 
+      //drive with intake down to pick up opponent cargo 
       new ParallelCommandGroup(
         PPSwerveControlCommand(path2, true),
         new IntakeDeployCommand(m_intake, m_cargo).until(() -> m_cargo.cargoInLowerBelts()).withTimeout(3.0)
       ),
 
+      //spit out opponent cargo 
       new IntakeReverseCommand(m_intake, m_cargo).withTimeout(2.0),
 
+      //start driving to ideal teleop starting point 
       PPSwerveControlCommand(path3, true)
     );
   }
@@ -352,6 +358,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     return new SequentialCommandGroup(
       new InstantCommand(() ->m_drivetrain.resetOdometry(path1.getInitialPose())),
 
+      //shoot first 2 preloads 
       new ParallelRaceGroup(
         new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
         //eventually switch to using a raw value
@@ -359,8 +366,10 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         // new ShootWithSetRPMAndHoodAngle(flyWheelRPM, hoodAngle, m_cargo, m_shooter, m_hood, m_robot)
       ),
 
+      //wait in tarmac to give alliance partners room to run autos 
       new WaitCommand(10.0),
 
+      //exit tarmac for auto points 
       PPSwerveControlCommand(path1, true)
     );
   }
