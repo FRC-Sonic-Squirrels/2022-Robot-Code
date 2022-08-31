@@ -23,13 +23,13 @@ public class ShootWithSetRPMAndHoodAngle extends CommandBase {
   private boolean shooting = false;
   private Robot m_robot;
 
-  public ShootWithSetRPMAndHoodAngle(double flyWheelRPM, double hoodAngleSupplier, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem, Robot robot) {
+  public ShootWithSetRPMAndHoodAngle(double flyWheelRPM, double hoodAngle, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem, Robot robot) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
     m_hoodSubsystem = hoodSubsystem;
     m_rpm = flyWheelRPM;
-    m_hoodAngle = hoodAngleSupplier;
+    m_hoodAngle = hoodAngle;
     m_time = 0;
     m_robot = robot;
 
