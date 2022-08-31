@@ -296,8 +296,50 @@ public class SwerveTrajectoryAutonomousCommandFactory {
       PPSwerveControlCommand(path3, true)
       );
   }
+
   public Command testShootBall() {
     return new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot);
+  }
+
+
+  //-----------------------------------------------CHEZY CHAMPS AUTOS---------------------------------------------------------
+
+  public Command ChezyLeft3plus1(){
+    //reusing some of the 2plus1ball trajectories as there is an overlap 
+    PathPlannerTrajectory path1 = PathPlanner.loadPath("2plus1ball_part1", 3.0, 1.5);
+
+    PathPlannerTrajectory path2 = PathPlanner.loadPath("Chezy_3plus1_part2", 3.0, 1.5);
+
+    PathPlannerTrajectory path3 = PathPlanner.loadPath("2plus1ball_part3", 3.0, 1.5);
+
+    return new SequentialCommandGroup(
+      new InstantCommand(() ->m_drivetrain.resetOdometry(path1.getInitialPose())),
+
+      new ParallelRaceGroup(
+        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
+        //eventually switch to using a raw value
+        // new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
+        // new ShootWithSetRPMAndHoodAngle(flyWheelRPM, hoodAngle, m_cargo, m_shooter, m_hood, m_robot)
+      ),
+
+      PPSwerveControlCommand(path1, true),
+
+      new ParallelRaceGroup(
+        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
+        //eventually switch to using a raw value
+        // new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
+        // new ShootWithSetRPMAndHoodAngle(flyWheelRPM, hoodAngle, m_cargo, m_shooter, m_hood, m_robot)
+      ),
+
+      new ParallelCommandGroup(
+        PPSwerveControlCommand(path2, true),
+        new IntakeDeployCommand(m_intake, m_cargo).until(() -> m_cargo.cargoInLowerBelts()).withTimeout(3.0)
+      ),
+
+      new IntakeReverseCommand(m_intake, m_cargo).withTimeout(2.0),
+
+      PPSwerveControlCommand(path3, true)
+    );
   }
 
 
