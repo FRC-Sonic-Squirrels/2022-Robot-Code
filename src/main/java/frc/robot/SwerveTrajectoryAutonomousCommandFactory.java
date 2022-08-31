@@ -342,6 +342,25 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     );
   }
 
+  public Command ChezyCenter2ballComplementary(){
+    PathPlannerTrajectory path1 = PathPlanner.loadPath("Chezy_Center2ballComplementary_Part1", 2.0, 0.75);
+
+    return new SequentialCommandGroup(
+      new InstantCommand(() ->m_drivetrain.resetOdometry(path1.getInitialPose())),
+
+      new ParallelRaceGroup(
+        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
+        //eventually switch to using a raw value
+        // new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
+        // new ShootWithSetRPMAndHoodAngle(flyWheelRPM, hoodAngle, m_cargo, m_shooter, m_hood, m_robot)
+      ),
+
+      new WaitCommand(10.0),
+
+      PPSwerveControlCommand(path1, true)
+    );
+  }
+
 
   /**
    * Create a swerve trajectory follow command. If stopAtEnd is set to true, robot will come to full
