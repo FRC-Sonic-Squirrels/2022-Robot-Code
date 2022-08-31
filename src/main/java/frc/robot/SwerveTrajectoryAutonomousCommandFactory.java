@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.util.List;
+import javax.crypto.Mac;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
@@ -322,8 +323,11 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         // new ShootWithSetRPMAndHoodAngle(flyWheelRPM, hoodAngle, m_cargo, m_shooter, m_hood, m_robot)
       ),
 
-      PPSwerveControlCommand(path1, true),
-
+      new ParallelCommandGroup(
+        new IntakeDeployCommand(m_intake, m_cargo).until(() -> m_cargo.cargoInLowerBelts()),
+        PPSwerveControlCommand(path1, true)
+      ),
+      
       new ParallelRaceGroup(
         new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
         //eventually switch to using a raw value
