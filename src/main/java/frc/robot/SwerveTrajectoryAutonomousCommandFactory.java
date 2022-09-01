@@ -352,6 +352,60 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     );
   }
 
+  public Command ChezyLeft3Plus2(){
+    PathPlannerTrajectory path1 = PathPlanner.loadPath("2plus2ball_part1", 3.0, 1.5);
+
+    PathPlannerTrajectory path2 = PathPlanner.loadPath("2plus2ball_part2", 3.0, 1.5);
+
+    PathPlannerTrajectory path3 = PathPlanner.loadPath("2plus2ball_part3", 3.0, 1.5);
+
+    PathPlannerTrajectory path4 = PathPlanner.loadPath("2plus2ball_part4", 3.0, 1.5);
+
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> m_drivetrain.resetOdometry(path1.getInitialPose())),
+
+      //shoot first two preloads 
+      new ParallelRaceGroup(
+        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
+        //eventually switch to using a raw value
+        // new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
+        // new ShootWithSetRPMAndHoodAngle(flyWheelRPM, hoodAngle, m_cargo, m_shooter, m_hood, m_robot)
+      ),
+
+      //drive back and pick up 3rd ball
+      new ParallelCommandGroup(
+        new IntakeDeployCommand(m_intake, m_cargo).until(() -> m_cargo.cargoInLowerBelts()),
+        PPSwerveControlCommand(path1, true)
+      ),
+
+       //shoot third ball
+       new ParallelRaceGroup(
+        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
+        //eventually switch to using a raw value
+        // new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
+        // new ShootWithSetRPMAndHoodAngle(flyWheelRPM, hoodAngle, m_cargo, m_shooter, m_hood, m_robot)
+      ),
+
+      //drive with intake down to pick up opponent cargo 
+      new ParallelCommandGroup(
+        PPSwerveControlCommand(path2, true),
+        new IntakeDeployCommand(m_intake, m_cargo)
+          .until(() -> m_cargo.cargoInLowerBelts() && m_cargo.cargoInUpperBelts())
+          .withTimeout(4)
+      ),
+
+      //drive to hanger 
+      PPSwerveControlCommand(path3, true),
+
+      //spit out both opponent cargo 
+      new IntakeReverseCommand(m_intake, m_cargo)
+        .withTimeout(3),
+
+      //drive to ideal teleop start point
+      PPSwerveControlCommand(path4, true)
+    );
+  }
+
   public Command ChezyCenter2ballComplementary(){
     PathPlannerTrajectory path1 = PathPlanner.loadPath("Chezy_Center2ballComplementary_Part1", 2.0, 0.75);
 
