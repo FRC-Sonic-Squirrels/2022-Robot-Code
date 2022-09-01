@@ -10,6 +10,7 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import com.team2930.lib.util.SwerveTestTrajectories;
+import org.ejml.equation.Macro;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -425,6 +426,46 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
       //exit tarmac for auto points 
       PPSwerveControlCommand(path1, true)
+    );
+  }
+
+  public Command ChezyCenter4ballHelper(){
+    PathPlannerTrajectory path1 = PathPlanner.loadPath("ChezyCenter4ball_part1", 3.0, 1.5);
+
+    PathPlannerTrajectory path2 = PathPlanner.loadPath("ChezyCenter4ball_part2", 3.0, 1.5);
+
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> m_drivetrain.resetOdometry(path1.getInitialPose())),
+
+      //shoot first two preloads 
+      new ParallelRaceGroup(
+        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
+        //eventually switch to using a raw value
+        // new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
+        // new ShootWithSetRPMAndHoodAngle(flyWheelRPM, hoodAngle, m_cargo, m_shooter, m_hood, m_robot)
+      ),
+
+      //go to human player terminal to get 2 cargo
+      new ParallelCommandGroup(
+        //run intake until we go up (y-axis) at 0.5 meters a second
+        new IntakeDeployCommand(m_intake, m_cargo)
+          .until(() -> m_drivetrain.getChassisSpeeds().vyMetersPerSecond > 0.5),
+
+          //go to terminal, wait, drive to shooting position 
+        new SequentialCommandGroup(
+          PPSwerveControlCommand(path1, true),
+          new WaitCommand(0.8),
+          PPSwerveControlCommand(path2, true)
+        )
+      ),
+
+      //shoot last 2 cargo
+      new ParallelRaceGroup(
+        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
+        //eventually switch to using a raw value
+        // new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
+        // new ShootWithSetRPMAndHoodAngle(flyWheelRPM, hoodAngle, m_cargo, m_shooter, m_hood, m_robot)
+      )
     );
   }
 
