@@ -136,7 +136,7 @@ public class Robot extends TimedRobot {
     }
 
     new HoodZeroAngle(m_robotContainer.m_hood).schedule(true);
-    new ElevatorZeroHeight(m_robotContainer.m_elevator).schedule(true);
+    //new ElevatorZeroHeight(m_robotContainer.m_elevator).schedule(true);
 
     //m_robotContainer.climbRumbleCommand.schedule(false);
 

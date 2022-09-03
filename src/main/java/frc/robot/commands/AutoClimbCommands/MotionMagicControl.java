@@ -62,6 +62,6 @@ m_elevator = elevator;
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (m_withinThresholdLoops >= kLoopsToSettle);
+    return ((Math.abs(m_elevator.getHeightInches() - m_target) < m_tolerance) || m_elevator.atLowerLimit());
   }
 }

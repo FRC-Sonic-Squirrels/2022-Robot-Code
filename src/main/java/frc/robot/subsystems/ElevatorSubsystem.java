@@ -17,6 +17,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.team2930.lib.util.MotorUtils;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -68,7 +69,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // https://docs.google.com/spreadsheets/d/1sOS_vM87iaKPZUFSJTqKqaFTxIl3Jj5OEwBgRxc-QGM/edit?usp=sharing
     // this also has suggest trapezoidal velocity profile constants.
     leadConfig.slot0.kF = 0.054; 
-		leadConfig.slot0.kP = 0.168; //0.054836;
+		leadConfig.slot0.kP = 0.48; //0.054836;
 		leadConfig.slot0.kI = 0.0;
 		leadConfig.slot0.kD = 0.0;
 		leadConfig.slot0.integralZone = 0.0;
@@ -76,7 +77,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     //do we need this if the command is updating the motion magic constraints? 
     //maybe have a safe default?  
-    leadConfig.motionAcceleration = 60941;    //  20521 ticks/100ms     = 11 in/s
+    leadConfig.motionAcceleration = 30000; //60941;    //  20521 ticks/100ms     = 11 in/s
 		leadConfig.motionCruiseVelocity = 15235;  //  20521 ticks/100ms/sec = 11 in/s^2
 
     leadConfig.slot0.allowableClosedloopError = toleranceInches / ticks2distance;
@@ -155,9 +156,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void setMotionMagicSetPoint(double heightInches) {
-    if (heightInches < 0.0) {
-      heightInches = 0.0;
-    }
+    // if (heightInches < 0.0) {
+    //   heightInches = 0.0;
+    // }
     if (heightInches > maxExtensionInches) {
       heightInches = maxExtensionInches;
     }
@@ -324,11 +325,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     //   SmartDashboard.putString("AAA elevator current command", "null");
     // }
 
+    
+    SmartDashboard.putNumber("Elevator height ticks", getHeightTicks());
     SmartDashboard.putNumber("Elevator Height (inches)", getHeightInches());
     SmartDashboard.putNumber("Elevator Height Set Point", heightSetpointInches);
     //SmartDashboard.putNumber("Elevator Height (ticks)", getHeightTicks());
-    SmartDashboard.putNumber("Elevator current Vel (inches per s)", ticks2distance * winch_lead_talon.getSelectedSensorVelocity() / 10.0);
-    SmartDashboard.putNumber("Elevator current vel ticks", winch_lead_talon.getSelectedSensorVelocity() / 10.0);
+    SmartDashboard.putNumber("Elevator current Vel (inches per s)", ticks2distance * 10.0 * winch_lead_talon.getSelectedSensorVelocity());
+    SmartDashboard.putNumber("Elevator current vel ticks", winch_lead_talon.getSelectedSensorVelocity() * 10.0);
     //SmartDashboard.putNumber("Elevator SetPoint inches", heightSetpointInches);
     //SmartDashboard.putNumber("Elevator SetPoint (ticks)", heightToTicks(heightSetpointInches));
     SmartDashboard.putNumber("Elevator Error", heightSetpointInches - getHeightInches());
@@ -342,5 +345,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Elevator MM config acceleration", (winch_lead_talon.configGetParameter(ParamEnum.eMotMag_Accel, 0) * ticks2distance * 10));
     SmartDashboard.putNumber("Elevator MM config velocity ", (winch_lead_talon.configGetParameter(ParamEnum.eMotMag_VelCruise, 0) * ticks2distance * 10));
     SmartDashboard.putNumber("Elevator MM config S-curve", winch_lead_talon.configGetParameter(ParamEnum.eMotMag_SCurveLevel, 0));
+
+    SmartDashboard.updateValues();
+
   }
 }
