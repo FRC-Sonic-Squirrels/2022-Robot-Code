@@ -11,7 +11,7 @@ public class MotionMagicControl extends CommandBase {
   /** Creates a new MotionMagicControl. */
   ElevatorSubsystem m_elevator; 
   double m_target; 
-  double m_acel; 
+  double m_desiredTimeToSpeed; 
   double m_velo; 
   double m_tolerance; 
 
@@ -21,12 +21,12 @@ public class MotionMagicControl extends CommandBase {
    //TODO: test to see if the time it takes to update the constraints over CAN affects the elevator performance significantly
    //TODO: tune ff and pid in the elevator subsystem 
 
-  public MotionMagicControl(ElevatorSubsystem elevator, double targetHeight, double tolerance,  double acceleration, double cruiseVelocity) {
+  public MotionMagicControl(ElevatorSubsystem elevator, double targetHeight, double tolerance,  double desiredTimeToSpeed, double cruiseVelocity) {
     // Use addRequirements() here to declare subsystem dependencies.
-m_elevator = elevator;
+    m_elevator = elevator;
     m_target = targetHeight;
     m_tolerance = tolerance;
-    m_acel = acceleration;
+    m_desiredTimeToSpeed = desiredTimeToSpeed;
     m_velo = cruiseVelocity;
     addRequirements(elevator);
   }
@@ -35,7 +35,7 @@ m_elevator = elevator;
   @Override
   public void initialize() {
     m_elevator.brakeOff();
-    //m_elevator.setMotionMagicConstraints(m_acel, m_velo);
+    //m_elevator.setMotionMagicConstraints(m_velo, m_desiredTimeToSpeed);
 
     m_elevator.setMotionMagicSetPoint(m_target);
   }

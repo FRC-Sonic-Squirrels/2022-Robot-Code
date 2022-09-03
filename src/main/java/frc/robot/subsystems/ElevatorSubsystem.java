@@ -139,16 +139,17 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @param acceleration accel in inches per second^2
    * @param cruiseVelocity max velocity in inches per second 
    */
-  public void setMotionMagicConstraints(double acceleration, double cruiseVelocity){
-    double veloInTicks = cruiseVelocity / ticks2distance / 10;
-    double accelInTicks = acceleration / ticks2distance / 10;
+  public void setMotionMagicConstraints(double cruiseVelocity, double desiredTimeToSpeed){
+    //math adapted from howdybots jvn calculator equation
+    double veloInTicks = cruiseVelocity * (12.15/winchCircumference) * 2048 / 10;
+    double accelInTicks = cruiseVelocity / desiredTimeToSpeed;
 
     winch_lead_talon.configMotionAcceleration(accelInTicks);
     winch_lead_talon.configMotionCruiseVelocity(veloInTicks);
 
 
     //temporary for debugging 
-    SmartDashboard.putNumber("Elevator MM Constraint accel INCHES", acceleration);
+    SmartDashboard.putNumber("Elevator MM Constraint desiredTimeToSpeed INCHES", desiredTimeToSpeed);
     SmartDashboard.putNumber("Elevator MM Constraint velo INCHES", cruiseVelocity);
 
     SmartDashboard.putNumber("Elevator MM Constraint accel TICKS", veloInTicks);
@@ -337,7 +338,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Elevator Error", heightSetpointInches - getHeightInches());
     SmartDashboard.putBoolean("Elevator limit", atLowerLimit());
     SmartDashboard.putNumber("Elevator %output", winch_lead_talon.getMotorOutputPercent());
-    //SmartDashboard.putNumber("Elevator Current", winch_lead_talon.getSupplyCurrent());
+    SmartDashboard.putNumber("Elevator Current Lead", winch_lead_talon.getSupplyCurrent());
+    SmartDashboard.putNumber("Elevator Current Follow", winch_follow_talon.getSupplyCurrent());
     SmartDashboard.putBoolean("Elevator Brake On", !frictionBrakeSolenoid.get());
 
     //debug values for MM. These should match the values from setMotionMagicConstraints()
