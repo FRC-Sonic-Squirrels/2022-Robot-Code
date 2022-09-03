@@ -48,6 +48,7 @@ import frc.robot.commands.AutoClimbCommands.ClimbHighToTraverse;
 import frc.robot.commands.AutoClimbCommands.ClimbMidAuto;
 import frc.robot.commands.AutoClimbCommands.ClimbMidToHigh;
 import frc.robot.commands.AutoClimbCommands.MotionMagicControl;
+import frc.robot.commands.AutoClimbCommands.NewClimbCommand;
 import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.commands.DriveScreenCentricCommand;
@@ -375,16 +376,20 @@ public class RobotContainer {
     //---------------------- Motion Magic Debugging -------------------------------------------
 
     new Button(m_climbController::getAButton)
-      .whenPressed(new MotionMagicControl(m_elevator, 12.24, 0.05, 5, 10));
+      .whenPressed(new MotionMagicControl(m_elevator, 24.68, 0.05, 1, 15));
 
     new Button(m_climbController::getBButton)
-      .whenPressed(new MotionMagicControl(m_elevator, 24.68, 0.05, 5, 10));
+      .whenPressed(new MotionMagicControl(m_elevator, 24.68, 0.05, 0.5, 25));
 
     new Button(m_climbController::getXButton)
-      .whenPressed(new MotionMagicControl(m_elevator, 0, 0.05, 5, 10));
+      .whenPressed(new MotionMagicControl(m_elevator, 0, 0.05, 0.5, 25));
 
     new Button(m_climbController::getYButton)
-      .whenPressed(new MotionMagicControl(m_elevator, 4.08, 0.05, 5, 10));
+      .whenPressed(new MotionMagicControl(m_elevator, 0, 0.05, 1, 15));
+
+    new Button(m_climbController::getRightBumper)
+      .whenPressed(new NewClimbCommand(m_elevator, m_arm, m_limelight));
+
 
 
     //---------------------- Motion Magic Debugging -------------------------------------------

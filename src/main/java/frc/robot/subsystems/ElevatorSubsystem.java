@@ -142,17 +142,17 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void setMotionMagicConstraints(double cruiseVelocity, double desiredTimeToSpeed){
     //math adapted from howdybots jvn calculator equation
     double veloInTicks = cruiseVelocity * (12.15/winchCircumference) * 2048 / 10;
-    double accelInTicks = cruiseVelocity / desiredTimeToSpeed;
+    double accelInTicks = veloInTicks / desiredTimeToSpeed;
 
     winch_lead_talon.configMotionAcceleration(accelInTicks);
     winch_lead_talon.configMotionCruiseVelocity(veloInTicks);
 
 
     //temporary for debugging 
-    SmartDashboard.putNumber("Elevator MM Constraint desiredTimeToSpeed INCHES", desiredTimeToSpeed);
+    SmartDashboard.putNumber("Elevator MM Constraint desiredTimeToSpeed", desiredTimeToSpeed);
     SmartDashboard.putNumber("Elevator MM Constraint velo INCHES", cruiseVelocity);
 
-    SmartDashboard.putNumber("Elevator MM Constraint accel TICKS", veloInTicks);
+    SmartDashboard.putNumber("Elevator MM Constraint accel TICKS", accelInTicks);
     SmartDashboard.putNumber("Elevator MM Constraint velo TICKS", veloInTicks);
   }
 

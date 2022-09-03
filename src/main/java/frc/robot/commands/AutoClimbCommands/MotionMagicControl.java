@@ -4,6 +4,7 @@
 
 package frc.robot.commands.AutoClimbCommands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
 
@@ -34,8 +35,9 @@ public class MotionMagicControl extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    SmartDashboard.putBoolean("Magic Motion Command", true);
     m_elevator.brakeOff();
-    //m_elevator.setMotionMagicConstraints(m_velo, m_desiredTimeToSpeed);
+    m_elevator.setMotionMagicConstraints(m_velo, m_desiredTimeToSpeed);
 
     m_elevator.setMotionMagicSetPoint(m_target);
   }
@@ -57,11 +59,12 @@ public class MotionMagicControl extends CommandBase {
   public void end(boolean interrupted) {
     m_elevator.stop();
     m_withinThresholdLoops = 0;
+    SmartDashboard.putBoolean("Magic Motion Command", false);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return ((Math.abs(m_elevator.getHeightInches() - m_target) < m_tolerance) || m_elevator.atLowerLimit());
+    return ((Math.abs(m_elevator.getHeightInches() - m_target) < m_tolerance) ||( m_elevator.atLowerLimit() && m_target <= 0.0) );
   }
 }
