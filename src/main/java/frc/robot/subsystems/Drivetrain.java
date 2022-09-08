@@ -29,8 +29,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.canId;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import static frc.robot.Constants.*;
+import java.sql.Time;
 
 public class Drivetrain extends SubsystemBase {
   /**
@@ -121,6 +123,11 @@ public class Drivetrain extends SubsystemBase {
     new SimpleMotorFeedforward(AutoConstants.kS, AutoConstants.kV, AutoConstants.kA);
 
   private boolean isOdometrySet = false;
+
+  double m_lastTime =0.0;
+  double m_VelocityX = 0.0;
+
+  double m_accelX = 0.0;
 
   /**
    * Object constructor
@@ -280,6 +287,9 @@ public class Drivetrain extends SubsystemBase {
     return m_odometry.getPoseMeters().getRotation();
   }
 
+  public double getAccelX(){
+    return m_accelX;
+  }
   /**
    * get current change in yaw in degrees per second
    * @return Rotation2d
@@ -431,6 +441,33 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    var velocityArray = new double[3];
+
+    //degrees per second
+   m_pigeon.getRawGyro(velocityArray);
+
+    double currentVelocity = velocityArray[0];
+
+    double deltaVelocity = currentVelocity - m_VelocityX;
+    double deltaTime = Timer.getFPGATimestamp() - m_lastTime;
+
+    m_accelX = 0.0;
+    if(deltaTime != 0) {
+      //degrees per second per second
+       m_accelX = deltaVelocity/deltaTime;
+    } 
+    
+    m_lastTime = Timer.getFPGATimestamp();
+    m_VelocityX = currentVelocity;
+
+
+   
+
+    SmartDashboard.putNumber("deltaVelocity", deltaVelocity);
+    SmartDashboard.putNumber("deltaTime", deltaTime);
+    SmartDashboard.putNumber("accelX", m_accelX);
+
+
 
     m_odometry.update(getIMURotation(),
         new SwerveModuleState(m_frontLeftModule.getDriveVelocity(),
@@ -468,10 +505,11 @@ public class Drivetrain extends SubsystemBase {
 
     var ba = new short[3];
     var vector = new double[3];
+
     if (m_pigeon.getBiasedAccelerometer(ba) == ErrorCode.OK) {
       // vector towards the ground
-      SmartDashboard.putNumber("accel X", ba[0]/16384.0);
-      SmartDashboard.putNumber("accel Y", ba[1]/16384.0);
+      SmartDashboard.putNumber("accel X", (ba[0]/16384.0)*10);
+      SmartDashboard.putNumber("accel Y", (ba[1]/16384.0)*10);
       SmartDashboard.putNumber("accel Z", (ba[2]/16384.0)*10 );
     } else {
       System.out.println("FAILED accell");

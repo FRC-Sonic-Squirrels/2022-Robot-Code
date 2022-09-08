@@ -172,7 +172,9 @@ public final class Constants {
     public static final double m_minEncoderValue = -2000;
 
     public static final double CLIMBING_BACK_ANGLE = -18.0;
+    public static final double CLIMBING_HANG_ANGLE = -6.0;
     public static final double CLIMBING_MIDDLE_ANGLE = -1.5;  // if angle is any lower elevator will scrape on bar
+    
     public static final double CLIMBING_FORWARD_ANGLE = 22;
     public static final double CLIMBING_NEXT_BAR_ANGLE = 15.6;
   }

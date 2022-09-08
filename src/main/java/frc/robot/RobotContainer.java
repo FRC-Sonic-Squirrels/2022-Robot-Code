@@ -41,6 +41,7 @@ import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.LimelightAutoShoot;
 import frc.robot.commands.ShootManualAdjustRpmAndAngle;
 import frc.robot.commands.ShootWithSetRPMAndHoodAngle;
+import frc.robot.commands.AutoClimbCommands.ArmSetAngle;
 import frc.robot.commands.AutoClimbCommands.ClimbElevatorTest;
 import frc.robot.commands.AutoClimbCommands.ClimbFullCommand;
 import frc.robot.commands.AutoClimbCommands.ClimbHighFull;
@@ -376,10 +377,11 @@ public class RobotContainer {
     //---------------------- Motion Magic Debugging -------------------------------------------
 
     new Button(m_climbController::getAButton)
-      .whenPressed(new MotionMagicControl(m_elevator, 24.68, 0.05, 1, 15));
+      .whenPressed(new MotionMagicControl(m_elevator, 25.68, 0.05, 0.25, 31));
 
     new Button(m_climbController::getBButton)
-      .whenPressed(new MotionMagicControl(m_elevator, 24.68, 0.05, 0.5, 25));
+      .whenPressed(new MotionMagicControl(m_elevator, -0.5, 0.05, 0.5, 25)
+                        .andThen(new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)));
 
     new Button(m_climbController::getXButton)
       .whenPressed(new MotionMagicControl(m_elevator, 0, 0.05, 0.5, 25));
@@ -388,7 +390,7 @@ public class RobotContainer {
       .whenPressed(new MotionMagicControl(m_elevator, 0, 0.05, 1, 15));
 
     new Button(m_climbController::getRightBumper)
-      .whenPressed(new NewClimbCommand(m_elevator, m_arm, m_limelight));
+      .whenPressed(new NewClimbCommand(m_elevator, m_arm, m_limelight, drivetrain));
 
 
 

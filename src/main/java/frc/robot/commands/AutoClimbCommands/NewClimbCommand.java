@@ -4,11 +4,15 @@
 
 package frc.robot.commands.AutoClimbCommands;
 
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 
@@ -17,7 +21,7 @@ import frc.robot.subsystems.LimelightSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class NewClimbCommand extends SequentialCommandGroup {
   /** Creates a new NewClimbCommand. */
-  public NewClimbCommand(ElevatorSubsystem elevator, ArmSubsystem arm, LimelightSubsystem limelight) {
+  public NewClimbCommand(ElevatorSubsystem elevator, ArmSubsystem arm, LimelightSubsystem limelight, Drivetrain drivetrain) {
     addCommands(
 
       // make sure arms are back and out of the way before climbing to Mid
@@ -43,8 +47,8 @@ public class NewClimbCommand extends SequentialCommandGroup {
       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE)
         .withTimeout(0.25),
 
-      // Fully extend Elevator. 
-      new MotionMagicControl(elevator, 24.68, 0.05, 0.5, 18),
+      // Fully extend Elevator. //this is soft limit max
+      new MotionMagicControl(elevator, 25.5, 0.05, 0.25, 31),
 
       // Let the robot settle, stop rocking so that elevator hooks are set
       new WaitCommand(0.5),
@@ -79,9 +83,31 @@ public class NewClimbCommand extends SequentialCommandGroup {
       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)
         .withTimeout(0.3),
 
-      // Elevator up a little to set Arms.
-      new MotionMagicControl(elevator, 5, 0.05, 0.5, 25)
+      new ParallelCommandGroup(
+        new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_HANG_ANGLE)
+          .withTimeout(0.3),
 
+        // Elevator up a little to set Arms.
+
+        new MotionMagicControl(elevator, 5, 0.05, 0.5, 25)
+      ),
+
+      //wait for swing to settle on high
+      new WaitCommand(1.5),
+
+      // Lean back. Arms full forward to lean the robot back.
+      new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE)
+        .withTimeout(0.25),
+
+      // Fully extend Elevator. //this is soft limit max
+      new MotionMagicControl(elevator, 25.5, 0.05, 0.5, 25),
+
+      new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)
+        .withTimeout(0.25),
+
+      new WaitUntilCommand(() -> (Math.abs(drivetrain.getGyroscopePitch() + 21) < 1) && (Math.abs(drivetrain.getAccelX()) < 5) ),
+
+      new MotionMagicControl(elevator, 19, 0.05, 0.5, 15)
 
       // TODO:
       //   - lean back
