@@ -98,6 +98,7 @@ public class NewClimbCommand extends SequentialCommandGroup {
       // //wait for swing to settle on high
       // new WaitCommand(1.5),
 
+      //idea try a short wait before
       new WaitUntilCommand(() -> (Math.abs(drivetrain.getGyroscopePitch() -7 ) < 5) && (drivetrain.getGyroscopePitchVelocity() <= 0)),
 
       // Lean back. Arms full forward to lean the robot back.
