@@ -65,8 +65,11 @@ public class NewClimbCommand extends SequentialCommandGroup {
       new MotionMagicControl(elevator, 19, 0.05, 0.5, 15),
 
       // Arms forward to ease the transition of arms popping off in next step.
-      new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE)
-        .withTimeout(0.25),
+      // new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE)
+      //   .withTimeout(0.25),
+      new InstantCommand(() -> arm.setArmPercentOutput(0.0), arm),
+      new InstantCommand(() -> arm.coastMode(), arm),
+      
 
       // Continue lifting onto HIGH bar, up until arms release from MID
       new MotionMagicControl(elevator, 15, 0.05, 0.75, 10),
@@ -89,25 +92,33 @@ public class NewClimbCommand extends SequentialCommandGroup {
 
         // Elevator up a little to set Arms.
 
-        new MotionMagicControl(elevator, 5, 0.05, 0.5, 25)
+        new MotionMagicControl(elevator, 13, 0.05, 0.5, 25)
       ),
 
-      //wait for swing to settle on high
-      new WaitCommand(1.5),
+      // //wait for swing to settle on high
+      // new WaitCommand(1.5),
+
+      new WaitUntilCommand(() -> (Math.abs(drivetrain.getGyroscopePitch() -7 ) < 5) && (drivetrain.getGyroscopePitchVelocity() <= 0)),
 
       // Lean back. Arms full forward to lean the robot back.
+      new ParallelCommandGroup(
       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE)
         .withTimeout(0.25),
+        // Fully extend Elevator. //this is soft limit max
+      new MotionMagicControl(elevator, 25.5, 0.05, 0.25, 31)
 
-      // Fully extend Elevator. //this is soft limit max
-      new MotionMagicControl(elevator, 25.5, 0.05, 0.5, 25),
+      ),
+      
 
       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)
         .withTimeout(0.25),
 
-      new WaitUntilCommand(() -> (Math.abs(drivetrain.getGyroscopePitch() + 21) < 1) && (Math.abs(drivetrain.getAccelX()) < 5) ),
+      new WaitUntilCommand(() -> (Math.abs(drivetrain.getGyroscopePitch() + 25) < 1) && (Math.abs(drivetrain.getAccelX()) < 5) ),
 
-      new MotionMagicControl(elevator, 19, 0.05, 0.5, 15)
+      new MotionMagicControl(elevator, 15, 0.05, 0.5, 15),
+
+       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_BACK_ANGLE)
+        .withTimeout(0.25)
 
       // TODO:
       //   - lean back
