@@ -49,7 +49,7 @@ import frc.robot.commands.AutoClimbCommands.ClimbHighToTraverse;
 import frc.robot.commands.AutoClimbCommands.ClimbMidAuto;
 import frc.robot.commands.AutoClimbCommands.ClimbMidToHigh;
 import frc.robot.commands.AutoClimbCommands.MotionMagicControl;
-import frc.robot.commands.AutoClimbCommands.NewClimbCommand;
+import frc.robot.commands.AutoClimbCommands.COOPER;
 import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.commands.DriveScreenCentricCommand;
@@ -390,7 +390,7 @@ public class RobotContainer {
       .whenPressed(new MotionMagicControl(m_elevator, 0, 0.05, 1, 15));
 
     new Button(m_climbController::getRightBumper)
-      .whenPressed(new NewClimbCommand(m_elevator, m_arm, m_limelight, drivetrain));
+      .whenPressed(new COOPER(m_elevator, m_arm, m_limelight, drivetrain));
 
 
 

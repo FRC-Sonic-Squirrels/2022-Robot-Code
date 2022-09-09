@@ -16,12 +16,19 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class NewClimbCommand extends SequentialCommandGroup {
-  /** Creates a new NewClimbCommand. */
-  public NewClimbCommand(ElevatorSubsystem elevator, ArmSubsystem arm, LimelightSubsystem limelight, Drivetrain drivetrain) {
+/**
+ * Automated climb program named after the former operator/person who climbed manually during the 2022 competition season, Cooper.
+ * 
+ * COOPER stands for: 
+ * C - Climb 
+ * O - Optimized 
+ * O - One-Press
+ * P - Program 
+ * E - Executable 
+ * R - Remotely 
+ */
+public class COOPER extends SequentialCommandGroup {
+  public COOPER(ElevatorSubsystem elevator, ArmSubsystem arm, LimelightSubsystem limelight, Drivetrain drivetrain) {
     addCommands(
 
       // make sure arms are back and out of the way before climbing to Mid
