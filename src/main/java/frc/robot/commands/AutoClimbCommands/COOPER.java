@@ -118,36 +118,6 @@ public class COOPER extends SequentialCommandGroup {
        new MotionMagicControl(elevator, 9, 0.05, 0.25, 28),
 
        new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_BACK_ANGLE)
-
-
-      //idea try a short wait before
-      // new WaitUntilCommand(() -> (Math.abs(drivetrain.getGyroscopePitch() -7 ) < 5) && (drivetrain.getGyroscopePitchVelocity() <= 0)),
-
-      // // Lean back. Arms full forward to lean the robot back.
-      // new ParallelCommandGroup(
-      // new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE)
-      //   .withTimeout(0.25),
-      //   // Fully extend Elevator. //this is soft limit max
-      // new MotionMagicControl(elevator, 25.5, 0.05, 0.25, 31)
-
-      // ),
-      
-
-      // new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)
-      //   .withTimeout(0.25),
-
-      // new WaitUntilCommand(() -> (Math.abs(drivetrain.getGyroscopePitch() + 25) < 1) && (Math.abs(drivetrain.getAccelX()) < 5) ),
-
-      // new MotionMagicControl(elevator, 15, 0.05, 0.5, 15),
-
-      //  new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_BACK_ANGLE)
-      //   .withTimeout(0.25)
-
-      // TODO:
-      //   - lean back
-      //   - elevator up
-      //   - set elevator hooks on TRAVERSE bar
-      //   - set arms on TRAVERSE bar
     );
   }
 }
