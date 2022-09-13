@@ -48,7 +48,7 @@ public class COOPER extends SequentialCommandGroup {
         .withTimeout(0.3),
 
       // Extend elevator a little so we are supported by only arms.
-      new MotionMagicControl(elevator, 5, 0.05, 0.5, 25),
+      new MotionMagicControl(elevator, 12, 0.05, 0.5, 25),
 
       // Lean back. Arms full forward to lean the robot back.
       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE)
@@ -113,9 +113,11 @@ public class COOPER extends SequentialCommandGroup {
         .withTimeout(0.25),
 
        new WaitUntilCommand(() -> (drivetrain.getGyroscopePitchVelocity() >= 0) && (drivetrain.getGyroscopePitch() <= -21)
-       && (arm.getArmAngle() >= 20) ),
+       && (arm.getArmAngle() >= 16) ),
 
-       new MotionMagicControl(elevator, 9, 0.05, 0.25, 28)
+       new MotionMagicControl(elevator, 9, 0.05, 0.25, 28),
+
+       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_BACK_ANGLE)
 
 
       //idea try a short wait before
