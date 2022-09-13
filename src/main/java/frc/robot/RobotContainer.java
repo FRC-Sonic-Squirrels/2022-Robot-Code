@@ -170,7 +170,7 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
 
-    //-------------- DRIVER CONTROLS DEFINED HERE --------------------------  
+    //************************ DRIVER CONTROLS [START] ******************************* 
 
     // new Button(m_controller::getRightBumper)
     //   .whenPressed(new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot));
@@ -275,9 +275,11 @@ public class RobotContainer {
     // new Button(m_controller::getRightBumper)
     //   .whileHeld(new VisionDriveToCargo(m_visionSubsystem, drivetrain));
 
-    // **************** OPERATOR CONTROLS ********************************
+    //************************ DRIVER CONTROLS [END] ******************************* 
 
-    //--------------------------------Operator intake)-------------------
+    // **************** OPERATOR CONTROLS [START] ********************************
+
+    //--------------------------------Operator intake-------------------
     //Deploy Intake
     // new Button(m_operatorController::getAButton)
     //    .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
@@ -340,7 +342,9 @@ public class RobotContainer {
     // new Button(m_operatorController::getLeftStickButtonPressed)
     //   .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
 
-    // ******************* Climb Controls ****************************
+    // **************** OPERATOR CONTROLS [END] ********************************
+
+    // ******************* Climb Controls [START] ****************************
 
     new Button(m_climbController::getStartButton)
       .whenPressed(new InstantCommand(() -> m_elevator.zeroHeight(), m_elevator));
@@ -348,53 +352,29 @@ public class RobotContainer {
     new Button(m_climbController::getBackButton)
       .whileHeld(new InstantCommand(() -> m_arm.zeroEncoder(), m_arm));
 
-    // new Button(m_climbController::getAButton)
-    //   .whenPressed(new ElevatorGoToMaxHeight(m_elevator,drivetrain).andThen(new ControllerRumbleCommand(m_climbController, 0.2)));
-
-    // new Button(m_climbController::getBButton)
-    //   .whenPressed(new InstantCommand(() -> m_intake.deployIntake()));
-
-    // new Button(m_climbController::getYButton)
-    //   .whenPressed(new ClimbMidAuto(m_elevator, m_arm, m_climbController)
-    //   .withInterrupt(m_climbController::getBButton));
-
-    //   new Button(m_climbController::getXButton)
-    //   .whenPressed(new ClimbMidToHigh(m_elevator, m_arm, m_climbController)
-    //   .withInterrupt(m_climbController::getBButton));
-
-    // new Button(m_climbController::getStartButton)
-    // .whenPressed(new ClimbHighToTraverse(m_elevator, m_arm, m_climbController)
-    // .withInterrupt(m_climbController::getBButton));
-
-    //  new Button(m_climbController::getRightBumper)
-    //    .whenPressed(new ClimbFullCommand(m_elevator, m_arm, m_climbController)
-    //    .withInterrupt(m_climbController::getBButton));
-
-    //  new Button(m_climbController::getYButton)
-    //    .whenPressed(new ClimbHighFull(m_elevator, m_arm, m_climbController)
-    //    .withInterrupt(m_climbController::getBButton));
-
-    //---------------------- Motion Magic Debugging -------------------------------------------
-
-    new Button(m_climbController::getAButton)
-      .whenPressed(new MotionMagicControl(m_elevator, 25.68, 0.05, 0.25, 31));
-
-    new Button(m_climbController::getBButton)
-      .whenPressed(new MotionMagicControl(m_elevator, -0.5, 0.05, 0.5, 25)
-                        .andThen(new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)));
-
-    new Button(m_climbController::getXButton)
-      .whenPressed(new MotionMagicControl(m_elevator, 0, 0.05, 0.5, 25));
-
-    new Button(m_climbController::getYButton)
-      .whenPressed(new MotionMagicControl(m_elevator, 0, 0.05, 1, 15));
-
     new Button(m_climbController::getRightBumper)
       .whenPressed(new COOPER(m_elevator, m_arm, m_limelight, drivetrain));
 
 
+    //---------------------- Motion Magic Debugging -------------------------------------------
+
+    // new Button(m_climbController::getAButton)
+    //   .whenPressed(new MotionMagicControl(m_elevator, 25.68, 0.05, 0.25, 31));
+
+    // new Button(m_climbController::getBButton)
+    //   .whenPressed(new MotionMagicControl(m_elevator, -0.5, 0.05, 0.5, 25)
+    //                     .andThen(new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)));
+
+    // new Button(m_climbController::getXButton)
+    //   .whenPressed(new MotionMagicControl(m_elevator, 0, 0.05, 0.5, 25));
+
+    // new Button(m_climbController::getYButton)
+    //   .whenPressed(new MotionMagicControl(m_elevator, 0, 0.05, 1, 15));
 
     //---------------------- Motion Magic Debugging -------------------------------------------
+
+    
+    // ******************* Climb Controls [END] ****************************
     
 
    // Rest of climb controls are in the default arm and default elevator commands
