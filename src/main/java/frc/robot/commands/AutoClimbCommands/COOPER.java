@@ -30,7 +30,6 @@ import frc.robot.subsystems.LimelightSubsystem;
 public class COOPER extends SequentialCommandGroup {
   public COOPER(ElevatorSubsystem elevator, ArmSubsystem arm, LimelightSubsystem limelight, Drivetrain drivetrain) {
     addCommands(
-
       // make sure arms are back and out of the way before climbing to Mid
       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_BACK_ANGLE)
         .withTimeout(0.1),
@@ -81,6 +80,7 @@ public class COOPER extends SequentialCommandGroup {
       // Continue lifting onto HIGH bar, up until arms release from MID
       new MotionMagicControl(elevator, 15, 0.05, 0.75, 10),
 
+      //go back to break mode after coast mode 
       new InstantCommand(() -> arm.setMotorBreakMode()),
 
       // Arms are free of MID bar, move them back out of the way before climbing
@@ -95,6 +95,7 @@ public class COOPER extends SequentialCommandGroup {
       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)
         .withTimeout(0.3),
 
+      //extend elevator up while the arms are not pushing hard against the bar 
       new ParallelCommandGroup(
         new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_HANG_ANGLE)
           .withTimeout(0.3),
@@ -104,19 +105,26 @@ public class COOPER extends SequentialCommandGroup {
         new MotionMagicControl(elevator, 13, 0.05, 0.5, 25)
       ),
 
-      // //wait for swing to settle on high
+      //wait for swing to settle on high
        new WaitCommand(1.5),
 
+       //extend all the way straight up  
        new MotionMagicControl(elevator, 25.5, 0.05, 0.25, 31),
 
+       //lean back to hook back hooks on traversal bar 
        new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE)
         .withTimeout(0.25),
 
-       new WaitUntilCommand(() -> (drivetrain.getGyroscopePitchVelocity() >= 0) && (drivetrain.getGyroscopePitch() <= -21)
-       && (arm.getArmAngle() >= 16) ),
+      //wait for safe grab on the traversal bar 
+       new WaitUntilCommand(() -> (
+         drivetrain.getGyroscopePitchVelocity() >= 0) && 
+         (drivetrain.getGyroscopePitch() <= -21) && 
+         (arm.getArmAngle() >= 16) ),
 
+      //pull down hard and fast 
        new MotionMagicControl(elevator, 9, 0.05, 0.25, 28),
 
+       //arms back at the end of the climb 
        new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_BACK_ANGLE)
     );
   }
