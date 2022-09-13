@@ -81,6 +81,8 @@ public class COOPER extends SequentialCommandGroup {
       // Continue lifting onto HIGH bar, up until arms release from MID
       new MotionMagicControl(elevator, 15, 0.05, 0.75, 10),
 
+      new InstantCommand(() -> arm.setMotorBreakMode()),
+
       // Arms are free of MID bar, move them back out of the way before climbing
       // to the HIGH bar
       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_BACK_ANGLE)
@@ -103,30 +105,41 @@ public class COOPER extends SequentialCommandGroup {
       ),
 
       // //wait for swing to settle on high
-      // new WaitCommand(1.5),
+       new WaitCommand(1.5),
+
+       new MotionMagicControl(elevator, 25.5, 0.05, 0.25, 31),
+
+       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE)
+        .withTimeout(0.25),
+
+       new WaitUntilCommand(() -> (drivetrain.getGyroscopePitchVelocity() >= 0) && (drivetrain.getGyroscopePitch() <= -21)
+       && (arm.getArmAngle() >= 20) ),
+
+       new MotionMagicControl(elevator, 9, 0.05, 0.25, 28)
+
 
       //idea try a short wait before
-      new WaitUntilCommand(() -> (Math.abs(drivetrain.getGyroscopePitch() -7 ) < 5) && (drivetrain.getGyroscopePitchVelocity() <= 0)),
+      // new WaitUntilCommand(() -> (Math.abs(drivetrain.getGyroscopePitch() -7 ) < 5) && (drivetrain.getGyroscopePitchVelocity() <= 0)),
 
-      // Lean back. Arms full forward to lean the robot back.
-      new ParallelCommandGroup(
-      new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE)
-        .withTimeout(0.25),
-        // Fully extend Elevator. //this is soft limit max
-      new MotionMagicControl(elevator, 25.5, 0.05, 0.25, 31)
+      // // Lean back. Arms full forward to lean the robot back.
+      // new ParallelCommandGroup(
+      // new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE)
+      //   .withTimeout(0.25),
+      //   // Fully extend Elevator. //this is soft limit max
+      // new MotionMagicControl(elevator, 25.5, 0.05, 0.25, 31)
 
-      ),
+      // ),
       
 
-      new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)
-        .withTimeout(0.25),
+      // new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)
+      //   .withTimeout(0.25),
 
-      new WaitUntilCommand(() -> (Math.abs(drivetrain.getGyroscopePitch() + 25) < 1) && (Math.abs(drivetrain.getAccelX()) < 5) ),
+      // new WaitUntilCommand(() -> (Math.abs(drivetrain.getGyroscopePitch() + 25) < 1) && (Math.abs(drivetrain.getAccelX()) < 5) ),
 
-      new MotionMagicControl(elevator, 15, 0.05, 0.5, 15),
+      // new MotionMagicControl(elevator, 15, 0.05, 0.5, 15),
 
-       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_BACK_ANGLE)
-        .withTimeout(0.25)
+      //  new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_BACK_ANGLE)
+      //   .withTimeout(0.25)
 
       // TODO:
       //   - lean back
