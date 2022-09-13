@@ -48,7 +48,7 @@ public class COOPER extends SequentialCommandGroup {
         .withTimeout(0.3),
 
       // Extend elevator a little so we are supported by only arms.
-      new MotionMagicControl(elevator, 12, 0.05, 0.5, 25),
+      new MotionMagicControl(elevator, 5, 0.05, 0.5, 25),
 
       // Lean back. Arms full forward to lean the robot back.
       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE)
