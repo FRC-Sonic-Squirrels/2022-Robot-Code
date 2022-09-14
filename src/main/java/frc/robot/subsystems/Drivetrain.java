@@ -124,10 +124,13 @@ public class Drivetrain extends SubsystemBase {
 
   private boolean isOdometrySet = false;
 
-  double m_lastTime =0.0;
-  double m_VelocityX = 0.0;
+  // enable/disable putting all the Gro data on smartdashboard
+  private boolean smartdashboardGyroData = false;
 
-  double m_accelX = 0.0;
+  // TODO: are we still using these?
+  private double m_lastTime =0.0;
+  private double m_VelocityX = 0.0;
+  private double m_accelX = 0.0;
 
   /**
    * Object constructor
@@ -444,10 +447,9 @@ public class Drivetrain extends SubsystemBase {
     var velocityArray = new double[3];
 
     //degrees per second
-   m_pigeon.getRawGyro(velocityArray);
+    m_pigeon.getRawGyro(velocityArray);
 
     double currentVelocity = velocityArray[0];
-
     double deltaVelocity = currentVelocity - m_VelocityX;
     double deltaTime = Timer.getFPGATimestamp() - m_lastTime;
 
@@ -459,14 +461,11 @@ public class Drivetrain extends SubsystemBase {
     
     m_lastTime = Timer.getFPGATimestamp();
     m_VelocityX = currentVelocity;
-
-
    
 
     SmartDashboard.putNumber("deltaVelocity", deltaVelocity);
     SmartDashboard.putNumber("deltaTime", deltaTime);
     SmartDashboard.putNumber("accelX", m_accelX);
-
 
 
     m_odometry.update(getIMURotation(),
@@ -503,38 +502,40 @@ public class Drivetrain extends SubsystemBase {
     // SmartDashboard.putNumber("Drivetrain odometry angle",
     // m_odometry.getPoseMeters().getRotation().getDegrees());
 
-    var ba = new short[3];
-    var vector = new double[3];
+    if (smartdashboardGyroData) {
+      var ba = new short[3];
+      var vector = new double[3];
 
-    if (m_pigeon.getBiasedAccelerometer(ba) == ErrorCode.OK) {
-      // vector towards the ground
-      SmartDashboard.putNumber("accel X", (ba[0]/16384.0)*10);
-      SmartDashboard.putNumber("accel Y", (ba[1]/16384.0)*10);
-      SmartDashboard.putNumber("accel Z", (ba[2]/16384.0)*10 );
-    } else {
-      System.out.println("FAILED accell");
-    }
-    
-    if (m_pigeon.getGravityVector(vector) == ErrorCode.OK) {
-      // vector towards the ground
-      SmartDashboard.putNumber("GV Gravity Vector X", vector[0]);
-      SmartDashboard.putNumber("GV Gravity Vector Y", vector[1]);
-      SmartDashboard.putNumber("GV Gravity Vector Z", vector[2]);
-    }
-    if (m_pigeon.getYawPitchRoll(vector) == ErrorCode.OK) {
-      //  Array to fill with yaw[0], pitch[1], and roll[2] data. 
-      // Yaw is within [-368,640, +368,640] degrees.
-      // Pitch is within [-90,+90] degrees.
-      // Roll is within [-90,90] degrees.
-      SmartDashboard.putNumber("GV Robot Yaw", vector[0]);
-      SmartDashboard.putNumber("GV Robot Pitch", vector[1]);
-      SmartDashboard.putNumber("GV Robot Roll", vector[2]);
-    }
-    if (m_pigeon.getRawGyro(vector) == ErrorCode.OK) {
-      // measured in degrees per second
-      SmartDashboard.putNumber("GV Robot rotation X deg per sec", vector[0]);
-      SmartDashboard.putNumber("GV Robot rotation Y deg per sec", vector[1]);
-      SmartDashboard.putNumber("GV Robot rotation Z deg per sec", vector[2]);
+      if (m_pigeon.getBiasedAccelerometer(ba) == ErrorCode.OK) {
+        // vector towards the ground
+        SmartDashboard.putNumber("accel X", (ba[0] / 16384.0) * 10);
+        SmartDashboard.putNumber("accel Y", (ba[1] / 16384.0) * 10);
+        SmartDashboard.putNumber("accel Z", (ba[2] / 16384.0) * 10);
+      } else {
+        System.out.println("FAILED accell");
+      }
+
+      if (m_pigeon.getGravityVector(vector) == ErrorCode.OK) {
+        // vector towards the ground
+        SmartDashboard.putNumber("GV Gravity Vector X", vector[0]);
+        SmartDashboard.putNumber("GV Gravity Vector Y", vector[1]);
+        SmartDashboard.putNumber("GV Gravity Vector Z", vector[2]);
+      }
+      if (m_pigeon.getYawPitchRoll(vector) == ErrorCode.OK) {
+        // Array to fill with yaw[0], pitch[1], and roll[2] data.
+        // Yaw is within [-368,640, +368,640] degrees.
+        // Pitch is within [-90,+90] degrees.
+        // Roll is within [-90,90] degrees.
+        SmartDashboard.putNumber("GV Robot Yaw", vector[0]);
+        SmartDashboard.putNumber("GV Robot Pitch", vector[1]);
+        SmartDashboard.putNumber("GV Robot Roll", vector[2]);
+      }
+      if (m_pigeon.getRawGyro(vector) == ErrorCode.OK) {
+        // measured in degrees per second
+        SmartDashboard.putNumber("GV Robot rotation X deg per sec", vector[0]);
+        SmartDashboard.putNumber("GV Robot rotation Y deg per sec", vector[1]);
+        SmartDashboard.putNumber("GV Robot rotation Z deg per sec", vector[2]);
+      }
     }
   }
 
