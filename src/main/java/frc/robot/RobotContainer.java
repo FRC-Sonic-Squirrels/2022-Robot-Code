@@ -5,36 +5,23 @@
 package frc.robot;
 
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.ElevatorConstants;
-import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.StartPoseConstants;
 import frc.robot.commands.ArmManualControlCommand;
-import frc.robot.commands.CargoReverseCommand;
-import frc.robot.commands.CargoRunIndexer;
 
 import frc.robot.commands.ControllerClimbMaxHeightRumble;
 import frc.robot.commands.ControllerRumbleCommand;
 import frc.robot.commands.DriveFieldCentricAimCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
-import frc.robot.commands.DriveFieldCentricHoldAngle;
-import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.ElevatorControlCommand;
-import frc.robot.commands.ElevatorGoToMaxHeight;
 import frc.robot.commands.HoodZeroAngle;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
@@ -50,7 +37,6 @@ import frc.robot.commands.AutoClimbCommands.ClimbMidAuto;
 import frc.robot.commands.AutoClimbCommands.ClimbMidToHigh;
 import frc.robot.commands.AutoClimbCommands.MotionMagicControl;
 import frc.robot.commands.AutoClimbCommands.COOPER;
-import frc.robot.commands.DriveHubCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.commands.DriveScreenCentricCommand;
 import frc.robot.subsystems.ArmSubsystem;
@@ -244,11 +230,11 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
-  // fender sohpt
+    // fender shot
     new Button(m_controller::getRightBumper)
     .whenPressed(new ShootWithSetRPMAndHoodAngle(2800, 15, m_cargo, m_shooter, m_hood, m_robot), true);
 
-  // launch pad shot
+    // launch pad shot
     new Button (() -> m_controller.getRightTriggerAxis() > 0.05)
      .whenPressed(new ShootWithSetRPMAndHoodAngle(4000, 32, m_cargo, m_shooter, m_hood, m_robot), true);
 
@@ -295,7 +281,7 @@ public class RobotContainer {
     new Button(m_operatorController::getYButton)
        .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
-    // // fender sohpt
+    // // fender shot
     // new Button(m_operatorController::getRightBumper)
     //    .whenPressed(new ShootWithSetRPMAndHoodAngle(2800, 15, m_cargo, m_shooter, m_hood, m_robot), true);
  

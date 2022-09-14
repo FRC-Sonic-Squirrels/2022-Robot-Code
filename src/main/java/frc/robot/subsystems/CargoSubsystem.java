@@ -43,7 +43,6 @@ public class CargoSubsystem extends SubsystemBase {
   private Mode mode = Mode.STOP;
   private double m_idleTime = 0;
 
-  // TODO: find the real percent outputs of the conveyor belts
   private double m_lowerOutput = 0.8;
   private double m_upperOutput = 0.9;
 
@@ -87,7 +86,7 @@ public class CargoSubsystem extends SubsystemBase {
     UpperBelts.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
 
 
-    // TODO: configure PID for lower and upper belts
+    // NOTE: never configured belts to use PID
     // Config PID values to control RPM
     // LowerBelts.config_kP(0, 0.15, 10);
     // LowerBelts.config_kI(0, 0.0, 10);

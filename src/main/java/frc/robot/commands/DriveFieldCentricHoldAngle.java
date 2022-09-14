@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
