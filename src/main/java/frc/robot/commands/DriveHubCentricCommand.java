@@ -5,29 +5,23 @@
 package frc.robot.commands;
 
 import java.util.function.Supplier;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.HubCentricConstants;
 import frc.robot.subsystems.Drivetrain;
 
 public class DriveHubCentricCommand extends CommandBase {
   private Drivetrain m_drivetrain;
-  private SwerveDriveKinematics m_kinematics;
 
   private Supplier<Double> m_sidewaysSupplier;
   private Supplier<Double> m_forwardSupplier;
-
-  
 
   // copied values from Swerve Template Odometry
   private ProfiledPIDController rotationalController = new ProfiledPIDController(3.0, 0.0, 0.02,
@@ -42,9 +36,7 @@ public class DriveHubCentricCommand extends CommandBase {
     m_sidewaysSupplier = sidewaysSupplier;
     m_forwardSupplier = forwardSupplier;
     m_drivetrain = drivetrain;
-    m_kinematics = m_drivetrain.kinematics();
 
-    
     addRequirements(drivetrain);
   }
 

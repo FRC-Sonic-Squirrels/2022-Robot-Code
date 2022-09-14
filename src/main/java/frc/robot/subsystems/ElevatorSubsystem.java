@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
@@ -16,6 +17,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.team2930.lib.util.MotorUtils;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,15 +38,16 @@ public class ElevatorSubsystem extends SubsystemBase {
   private WPI_TalonFX winch_follow_talon = new WPI_TalonFX(CANIVOR_canId.CANID10_ELEVATOR_FOLLOW_TALON, CANIVOR_canId.name);
   private Solenoid frictionBrakeSolenoid =
       new Solenoid(PneumaticsModuleType.REVPH, Constants.pneumatics.channel_15_friction_brake);
-  private final double gearRatio =  0.074;
-  private final double winchDiameter_inches = 1.95;   // 1.25 diameter + string windings
+  private final double gearRatio = 0.08229; // 0.074;
+  //TODO: note diameter is set to 1.9 on JVN 
+  private final double winchDiameter_inches = 1.43;   // 1.25 diameter + string windings
   private final double winchCircumference = Math.PI * winchDiameter_inches;
-  private final double maxExtensionInches = 25.5;
+  private final double maxExtensionInches = 25.5; //actually 24 letting more for unwinding
   private double heightSetpointInches = 0.0;
-  private double toleranceInches = 0.2; 
+  private double toleranceInches = 0.05; 
   private double feedForwardClimbing = 0.025734; // from JVM calculator
   private double feedForwardDescending = 0.0257; //0.001;
-  private final double ticks2distance = gearRatio * winchCircumference / 4096;
+  private final double ticks2distance = gearRatio * winchCircumference / 2048; 
   private boolean zeroed = false;
 
   public boolean m_atMaxheight;
@@ -65,20 +68,25 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Details on elevator motors, gearing and calculated kP and kFF are here
     // https://docs.google.com/spreadsheets/d/1sOS_vM87iaKPZUFSJTqKqaFTxIl3Jj5OEwBgRxc-QGM/edit?usp=sharing
     // this also has suggest trapezoidal velocity profile constants.
-    leadConfig.slot0.kF = 0.025734; 
-		leadConfig.slot0.kP = 0.5; //0.054836;
+    leadConfig.slot0.kF = 0.054; 
+		leadConfig.slot0.kP = 0.48; //0.054836;
 		leadConfig.slot0.kI = 0.0;
 		leadConfig.slot0.kD = 0.0;
 		leadConfig.slot0.integralZone = 0.0;
 		leadConfig.slot0.closedLoopPeakOutput = 1.0;
 
-    leadConfig.motionAcceleration = 20521;    //  20521 ticks/100ms     = 11 in/s
-		leadConfig.motionCruiseVelocity = 20521;  //  20521 ticks/100ms/sec = 11 in/s^2
+    //do we need this if the command is updating the motion magic constraints? 
+    //maybe have a safe default?  
+    leadConfig.motionAcceleration = 30000; //60941;    //  20521 ticks/100ms     = 11 in/s
+		leadConfig.motionCruiseVelocity = 15235;  //  20521 ticks/100ms/sec = 11 in/s^2
 
     leadConfig.slot0.allowableClosedloopError = toleranceInches / ticks2distance;
 
     // set config
     winch_lead_talon.configAllSettings(leadConfig);
+
+    //use pid from slot 0 for motion magic 
+    winch_lead_talon.selectProfileSlot(0, 0);
 
     winch_lead_talon.setNeutralMode(NeutralMode.Brake);
     winch_follow_talon.setNeutralMode(NeutralMode.Brake);
@@ -91,7 +99,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     winch_lead_talon.setInverted(false);
     winch_follow_talon.setInverted(false);
 
-    // JVN calculator predicts 19.25A per motor under load
+    // JVN calculator predicts 41.2 A per motor under load
+    //TODO: Check new JVN prediction
     SupplyCurrentLimitConfiguration currentLimit =
         new SupplyCurrentLimitConfiguration(true, 20, 25, 0.1);
     winch_lead_talon.configSupplyCurrentLimit(currentLimit);
@@ -122,6 +131,54 @@ public class ElevatorSubsystem extends SubsystemBase {
     // set soft limit on reverse movement (Up)
     winch_lead_talon.configReverseSoftLimitThreshold(heightToTicks(maxExtensionInches));
     winch_lead_talon.configReverseSoftLimitEnable(true);
+  }
+
+
+  /**
+   * 
+   * @param acceleration accel in inches per second^2
+   * @param cruiseVelocity max velocity in inches per second 
+   */
+  public void setMotionMagicConstraints(double cruiseVelocity, double desiredTimeToSpeed){
+    //math adapted from howdybots jvn calculator equation
+    double veloInTicks = cruiseVelocity * (12.15/winchCircumference) * 2048 / 10;
+    double accelInTicks = veloInTicks / desiredTimeToSpeed;
+
+    winch_lead_talon.configMotionAcceleration(accelInTicks);
+    winch_lead_talon.configMotionCruiseVelocity(veloInTicks);
+
+
+    //temporary for debugging 
+    SmartDashboard.putNumber("Elevator MM Constraint desiredTimeToSpeed", desiredTimeToSpeed);
+    SmartDashboard.putNumber("Elevator MM Constraint velo INCHES", cruiseVelocity);
+
+    SmartDashboard.putNumber("Elevator MM Constraint accel TICKS", accelInTicks);
+    SmartDashboard.putNumber("Elevator MM Constraint velo TICKS", veloInTicks);
+  }
+
+  public void setMotionMagicSetPoint(double heightInches) {
+    // if (heightInches < 0.0) {
+    //   heightInches = 0.0;
+    // }
+    if (heightInches > maxExtensionInches) {
+      heightInches = maxExtensionInches;
+    }
+    
+    winch_lead_talon.set(ControlMode.MotionMagic, heightToTicks(heightInches));
+
+    // if (heightInches <= heightSetpointInches) {
+    //   // lifting up robot, use more feed forward
+    //   winch_lead_talon.set(TalonFXControlMode.MotionMagic, heightToTicks(heightInches),
+    //       DemandType.ArbitraryFeedForward, feedForwardClimbing);
+    // } else {
+    //   // lowering robot, use less feed forward
+    //   winch_lead_talon.set(TalonFXControlMode.MotionMagic, heightToTicks(heightInches),
+    //       DemandType.ArbitraryFeedForward, feedForwardDescending);
+    // }
+
+    heightSetpointInches = heightInches;
+
+    SmartDashboard.putNumber("Elevator MM Height SetPoint", heightInches);
   }
 
   public void setElevatorHeight(double heightInches) {
@@ -269,16 +326,29 @@ public class ElevatorSubsystem extends SubsystemBase {
     //   SmartDashboard.putString("AAA elevator current command", "null");
     // }
 
+    
+    SmartDashboard.putNumber("Elevator height ticks", getHeightTicks());
     SmartDashboard.putNumber("Elevator Height (inches)", getHeightInches());
     SmartDashboard.putNumber("Elevator Height Set Point", heightSetpointInches);
     //SmartDashboard.putNumber("Elevator Height (ticks)", getHeightTicks());
-    //SmartDashboard.putNumber("Elevator Vel (inches per s)", ticks2distance * winch_lead_talon.getSelectedSensorVelocity() / 10.0);
+    SmartDashboard.putNumber("Elevator current Vel (inches per s)", ticks2distance * 10.0 * winch_lead_talon.getSelectedSensorVelocity());
+    SmartDashboard.putNumber("Elevator current vel ticks", winch_lead_talon.getSelectedSensorVelocity() * 10.0);
     //SmartDashboard.putNumber("Elevator SetPoint inches", heightSetpointInches);
     //SmartDashboard.putNumber("Elevator SetPoint (ticks)", heightToTicks(heightSetpointInches));
-    //SmartDashboard.putNumber("Elevator Error", heightSetpointInches - getHeightInches());
+    SmartDashboard.putNumber("Elevator Error", heightSetpointInches - getHeightInches());
     SmartDashboard.putBoolean("Elevator limit", atLowerLimit());
     SmartDashboard.putNumber("Elevator %output", winch_lead_talon.getMotorOutputPercent());
-    //SmartDashboard.putNumber("Elevator Current", winch_lead_talon.getSupplyCurrent());
+    SmartDashboard.putNumber("Elevator Current Lead", winch_lead_talon.getSupplyCurrent());
+    SmartDashboard.putNumber("Elevator Current Follow", winch_follow_talon.getSupplyCurrent());
     SmartDashboard.putBoolean("Elevator Brake On", !frictionBrakeSolenoid.get());
+
+    //debug values for MM. These should match the values from setMotionMagicConstraints()
+    //note: These along with all the other config options are viewable and editable from phoenix tuner 
+    SmartDashboard.putNumber("Elevator MM config acceleration", (winch_lead_talon.configGetParameter(ParamEnum.eMotMag_Accel, 0) * ticks2distance * 10));
+    SmartDashboard.putNumber("Elevator MM config velocity ", (winch_lead_talon.configGetParameter(ParamEnum.eMotMag_VelCruise, 0) * ticks2distance * 10));
+    SmartDashboard.putNumber("Elevator MM config S-curve", winch_lead_talon.configGetParameter(ParamEnum.eMotMag_SCurveLevel, 0));
+
+    SmartDashboard.updateValues();
+
   }
 }

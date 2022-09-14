@@ -138,13 +138,6 @@ public class Robot extends TimedRobot {
     new HoodZeroAngle(m_robotContainer.m_hood).schedule(true);
     new ElevatorZeroHeight(m_robotContainer.m_elevator).schedule(true);
 
-    //m_robotContainer.climbRumbleCommand.schedule(false);
-
-    // Pose2d start = new Pose2d(8.23 - Units.inchesToMeters(138), 4.11, new Rotation2d(Math.PI));
-
-    // //TODO: remove before auto
-    // m_robotContainer.drivetrain.setPose(start, m_robotContainer.drivetrain.getIMURotation());
-
     //if testing and just using teleop we reset pose and rotation to 0, auton will correct this 
     //for its own use case and continue working after u switch to teleop
     if(!m_robotContainer.drivetrain.isOdometrySet()){

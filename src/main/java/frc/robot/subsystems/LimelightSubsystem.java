@@ -163,6 +163,11 @@ public class LimelightSubsystem extends SubsystemBase {
     }
   }
 
+  public void turnOffAllLEDS(){
+    limelight.setLEDMode(ll_mode.led.off);
+    m_revPDH.setSwitchableChannel(false);
+  }
+
   public void turnOnExternalLEDS(){
     m_revPDH.setSwitchableChannel(true);
   }
