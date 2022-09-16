@@ -429,7 +429,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     );
   }
 
-  public Command ChezyCenter4ballHelper(){
+  public Command ChezyCenter4ballComplementary(){
     PathPlannerTrajectory path1 = PathPlanner.loadPath("ChezyCenter4ball_part1", 3.0, 1.5);
 
     PathPlannerTrajectory path2 = PathPlanner.loadPath("ChezyCenter4ball_part2", 3.0, 1.5);
