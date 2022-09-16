@@ -306,7 +306,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
   //-----------------------------------------------CHEZY CHAMPS AUTOS---------------------------------------------------------
 
-  public Command ChezyLeft3plus1(){
+  public Command chezyLeft3plus1(){
     //reusing some of the 2plus1ball trajectories as there is an overlap 
     PathPlannerTrajectory path1 = PathPlanner.loadPath("2plus1ball_part1", 3.0, 1.5);
 
@@ -353,7 +353,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     );
   }
 
-  public Command ChezyLeft3Plus2(){
+  public Command chezyLeft3Plus2(){
     PathPlannerTrajectory path1 = PathPlanner.loadPath("2plus2ball_part1", 3.0, 1.5);
 
     PathPlannerTrajectory path2 = PathPlanner.loadPath("2plus2ball_part2", 3.0, 1.5);
@@ -407,7 +407,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     );
   }
 
-  public Command ChezyCenter2ballComplementary(){
+  public Command chezyCenter2ballComplementary(){
     PathPlannerTrajectory path1 = PathPlanner.loadPath("Chezy_Center2ballComplementary_Part1", 2.0, 0.75);
 
     return new SequentialCommandGroup(
@@ -429,7 +429,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     );
   }
 
-  public Command ChezyCenter4ballComplementary(){
+  public Command chezyCenter4ballComplementary(){
     PathPlannerTrajectory path1 = PathPlanner.loadPath("ChezyCenter4ball_part1", 3.0, 1.5);
 
     PathPlannerTrajectory path2 = PathPlanner.loadPath("ChezyCenter4ball_part2", 3.0, 1.5);
