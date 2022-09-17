@@ -469,6 +469,47 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     );
   }
 
+  public Command chezyRightSide4Ball(){
+    PathPlannerTrajectory path1 = PathPlanner.loadPath("5ball_part1", 3.0, 1.5);
+
+    PathPlannerTrajectory path2 = PathPlanner.loadPath("5ball_part2", 3.0, 1.5);
+
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> m_drivetrain.resetOdometry(path1.getInitialPose())),
+
+      //shoot first two preloads 
+      new ParallelRaceGroup(
+        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
+        //eventually switch to using a raw value
+        // new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
+        // new ShootWithSetRPMAndHoodAngle(flyWheelRPM, hoodAngle, m_cargo, m_shooter, m_hood, m_robot)
+      ),
+
+      new ParallelCommandGroup(
+        //intake down to pick up balls
+        new IntakeDeployCommand(m_intake, m_cargo)
+          .until(() -> m_cargo.cargoInLowerBelts() && m_cargo.cargoInUpperBelts())
+          .withTimeout(7),
+
+        new SequentialCommandGroup(
+          //pick up first ball
+          PPSwerveControlCommand(path1, false),
+
+          //pick up second ball
+          PPSwerveControlCommand(path2, true)
+        )
+      ),
+      
+      new ParallelRaceGroup(
+        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot)
+        //eventually switch to using a raw value
+        // new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0, m_limelight),
+        // new ShootWithSetRPMAndHoodAngle(flyWheelRPM, hoodAngle, m_cargo, m_shooter, m_hood, m_robot)
+      )
+    );
+  
+  }
+
 
   /**
    * Create a swerve trajectory follow command. If stopAtEnd is set to true, robot will come to full
