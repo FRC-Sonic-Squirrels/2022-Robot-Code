@@ -251,9 +251,13 @@ public class RobotContainer {
     new Button(m_controller::getRightBumper)
     .whenPressed(new ShootWithSetRPMAndHoodAngle(2800, 15, m_cargo, m_shooter, m_hood, m_robot), true);
 
+    // new Button(() -> m_controller.getRightTriggerAxis() > 0.05) 
+    //    .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
+
+
     // launch pad shot
-    new Button (() -> m_controller.getRightTriggerAxis() > 0.05)
-     .whenPressed(new ShootWithSetRPMAndHoodAngle(4000, 32, m_cargo, m_shooter, m_hood, m_robot), true);
+    // new Button (() -> m_controller.getRightTriggerAxis() > 0.05)
+    //  .whenPressed(new ShootWithSetRPMAndHoodAngle(4000, 32, m_cargo, m_shooter, m_hood, m_robot), true);
 
     // new Button(m_controller::getLeftBumper)
     //         .whileHeld(new DriveChimpMode(drivetrain, m_intake,
@@ -266,8 +270,8 @@ public class RobotContainer {
     //         .whileHeld(new LimelightRotateToHubAndShoot(2000, m_limelight, drivetrain, m_cargo, m_shooter, m_intake, m_robot));
 
             
-    // new Button(() -> (m_controller.getRightTriggerAxis() > 0.05))
-    //         .toggleWhenActive(new IntakeDeployCommand(m_intake, m_cargo), true);
+    new Button(() -> (m_controller.getRightTriggerAxis() > 0.05))
+            .toggleWhenActive(new IntakeDeployCommand(m_intake, m_cargo), true);
 
     // new Button(() -> (m_controller.getLeftTriggerAxis() > 0.05))
     //         .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
