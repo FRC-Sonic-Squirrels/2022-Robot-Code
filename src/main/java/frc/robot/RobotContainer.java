@@ -118,15 +118,32 @@ public class RobotContainer {
 
 
     // Competition Autonomous
-    Command rightSide5Ball = auton.rightSideFiveBall();
-    Command left2plus1 = auton.leftSide2plus1();
-    Command middle_1Ball_Complementary = auton.middleShootFenderAndLeave();
+    // Command rightSide5Ball = auton.rightSideFiveBall();
+    // Command left2plus1 = auton.leftSide2plus1();
+    // Command middle_1Ball_Complementary = auton.middleShootFenderAndLeave();
 
-    chooser.addOption("right side 5 ball", rightSide5Ball);
-    chooser.addOption("left side 2 plus 1", left2plus1);
-    chooser.addOption("Middle 1ball Complementary", middle_1Ball_Complementary);
+    // chooser.addOption("right side 5 ball", rightSide5Ball);
+    // chooser.addOption("left side 2 plus 1", left2plus1);
+    // chooser.addOption("Middle 1ball Complementary", middle_1Ball_Complementary);
 
-    chooser.setDefaultOption("right side 5 ball", rightSide5Ball);
+    // Chezy Autonomous 
+    Command left_3plus_1 = auton.chezyLeft3plus1();
+    Command left_3plus_2 = auton.chezyLeft3Plus2();
+    Command center_2ball_wait = auton.chezyCenter2ballComplementary();
+    Command center_4ball = auton.chezyCenter4ballComplementary();
+
+    Command right_4ball = auton.chezyRightSide4Ball();
+
+    chooser.addOption("left 3 plus 1", left_3plus_1);
+    chooser.addOption("left 3 plus 2", left_3plus_2);
+    chooser.addOption("center 2 ball wait", center_2ball_wait);
+    chooser.addOption("center 4 ball", center_4ball);
+
+    chooser.addOption("right 4 ball", right_4ball);
+
+    chooser.setDefaultOption("nothing", new InstantCommand());
+
+    
 
     drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
       drivetrain, 
