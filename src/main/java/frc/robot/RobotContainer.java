@@ -130,6 +130,7 @@ public class RobotContainer {
     Command left_3plus_1 = auton.chezyLeft3plus1();
     Command left_3plus_2 = auton.chezyLeft3Plus2();
     Command center_2ball_wait = auton.chezyCenter2ballComplementary();
+    Command center_2ball_in_and_out = auton.chezyCenter2ballComplementaryDriveInAndOut();
     Command center_4ball = auton.chezyCenter4ballComplementary();
 
     Command right_4ball = auton.chezyRightSide4Ball();
@@ -137,6 +138,7 @@ public class RobotContainer {
     chooser.addOption("left 3 plus 1", left_3plus_1);
     chooser.addOption("left 3 plus 2", left_3plus_2);
     chooser.addOption("center 2 ball wait", center_2ball_wait);
+    chooser.addOption("center 2ball in and out", center_2ball_in_and_out);
     chooser.addOption("center 4 ball", center_4ball);
 
     chooser.addOption("right 4 ball", right_4ball);
@@ -311,20 +313,20 @@ public class RobotContainer {
     //     .whenPressed(new ShootWithSetRPMAndHoodAngle(4000, 32, m_cargo, m_shooter, m_hood, m_robot), true);
 
     //Using this for debugging and tuning the hood at the practice field 
-    // new Button(m_operatorController::getRightBumper)
-    // .whileActiveOnce(new ShootManualAdjustRpmAndAngle(() -> m_shootingRpm, () -> m_hoodAngle, m_cargo, m_shooter, m_hood, m_robot), true);
+    new Button(m_operatorController::getRightBumper)
+    .whileActiveOnce(new ShootManualAdjustRpmAndAngle(() -> m_shootingRpm, () -> m_hoodAngle, m_cargo, m_shooter, m_hood, m_robot), true);
 
-    // new Button(m_operatorController::getBackButton)
-    //   .whenPressed(new InstantCommand(() -> m_shootingRpm -= 50));
+    new Button(m_operatorController::getBackButton)
+      .whenPressed(new InstantCommand(() -> m_shootingRpm -= 50));
 
-    // new Button(m_operatorController::getStartButton)
-    //   .whenPressed(new InstantCommand(() -> m_shootingRpm += 50));
+    new Button(m_operatorController::getStartButton)
+      .whenPressed(new InstantCommand(() -> m_shootingRpm += 50));
 
-    // new Button(() -> m_operatorController.getLeftTriggerAxis() >= 0.05)
-    //   .whenPressed(new InstantCommand(() -> m_hoodAngle -= 0.5));
+    new Button(() -> m_operatorController.getLeftTriggerAxis() >= 0.05)
+      .whenPressed(new InstantCommand(() -> m_hoodAngle -= 0.5));
 
-    // new Button(() -> m_operatorController.getRightTriggerAxis() >= 0.05)
-    //   .whenPressed(new InstantCommand(() -> m_hoodAngle += 0.5));
+    new Button(() -> m_operatorController.getRightTriggerAxis() >= 0.05)
+      .whenPressed(new InstantCommand(() -> m_hoodAngle += 0.5));
 
     // new Button(m_operatorController::getAButton)
     //   .whenPressed(() -> m_hood.setAngleDegrees(18.6), m_hood);

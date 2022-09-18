@@ -115,7 +115,7 @@ public class ShooterSubsystem extends SubsystemBase {
     m_currentRPM = m_encoder.getIntegratedSensorVelocity() / RPMtoTicks;
     m_error = m_currentRPM - m_desiredRPM;
 
-    if (Math.abs(m_error) <= m_max_RPM_error) {
+    if (Math.abs(m_error) <= m_max_RPM_error && m_currentRPM > 100) {
       m_atSpeed = true;
     } else {
       m_atSpeed = false;
