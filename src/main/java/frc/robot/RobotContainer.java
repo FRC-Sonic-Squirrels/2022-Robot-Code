@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.ArmManualControlCommand;
@@ -275,14 +276,9 @@ public class RobotContainer {
     new Button(() -> (m_controller.getRightTriggerAxis() > 0.05))
             .toggleWhenActive(new IntakeDeployCommand(m_intake, m_cargo), true);
 
-    // new Button(() -> (m_controller.getLeftTriggerAxis() > 0.05))
-    //         .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
+    new Button(() -> (m_controller.getLeftTriggerAxis() > 0.05))
+            .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
-    // new Button(m_controller::getLeftBumper)
-    //   .whileHeld(new VisionRotateToCargo(m_visionSubsystem, drivetrain));
-
-    // new Button(m_controller::getRightBumper)
-    //   .whileHeld(new VisionDriveToCargo(m_visionSubsystem, drivetrain));
 
     //************************ DRIVER CONTROLS [END] ******************************* 
 
@@ -303,6 +299,14 @@ public class RobotContainer {
 
     new Button(m_operatorController::getYButton)
        .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
+
+    new Button(m_operatorController::getXButton)
+        .whileHeld(new ParallelCommandGroup(
+          new InstantCommand(() -> m_cargo.setLowerBeltPercentOutput(m_operatorController.getLeftY())),
+          new InstantCommand(() -> m_cargo.setUpperBeltPercentOutput(m_operatorController.getLeftY())
+        , m_cargo)));
+
+    
 
     // // fender shot
     // new Button(m_operatorController::getRightBumper)
@@ -362,7 +366,9 @@ public class RobotContainer {
       .whileHeld(new InstantCommand(() -> m_arm.zeroEncoder(), m_arm));
 
     new Button(m_climbController::getRightBumper)
-      .whenPressed(new COOPER(m_elevator, m_arm, m_limelight, drivetrain));
+      .whenPressed(new COOPER(m_elevator, m_arm, m_limelight, drivetrain)
+      .withInterrupt( () -> m_climbController.getBButtonPressed()));
+      
 
 
     //---------------------- Motion Magic Debugging -------------------------------------------
