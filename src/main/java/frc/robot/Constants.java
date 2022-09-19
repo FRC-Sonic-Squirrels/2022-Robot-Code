@@ -296,8 +296,8 @@ public final class Constants {
     {128, 30}, // Money shot!
     {136, 31},
     {142, 32},
-    {156, 26},
-    {180, 29},
+    {155, 32},
+    {180, 32},
     {202, 32},//{194, 33}, // Launch pad
     {242, 33}  // long shot, no limelight
   };
@@ -314,8 +314,8 @@ public final class Constants {
     {128, 3000}, // Money shot!
     {136, 3100}, // TODO: test and change to 3000?
     {142, 3000},
-    {156, 3400},
-    {180, 3600},
+    {155, 3200},
+    {180, 3500},
     {202, 4000},
     //{194, 3600}, // Launch pad
     {242, 5000}  // long shot, no limelight
