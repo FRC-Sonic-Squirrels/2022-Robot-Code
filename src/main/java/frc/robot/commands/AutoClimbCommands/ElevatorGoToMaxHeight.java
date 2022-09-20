@@ -4,7 +4,6 @@
 
 package frc.robot.commands.AutoClimbCommands;
 
-import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
 

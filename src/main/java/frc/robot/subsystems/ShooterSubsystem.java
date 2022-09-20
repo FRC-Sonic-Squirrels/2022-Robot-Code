@@ -15,8 +15,8 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.Constants.CANIVOR_canId;
+import frc.robot.Robot;
 
 public class ShooterSubsystem extends SubsystemBase {
 

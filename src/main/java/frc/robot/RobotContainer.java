@@ -13,41 +13,29 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.ArmManualControlCommand;
-
 import frc.robot.commands.ControllerClimbMaxHeightRumble;
 import frc.robot.commands.ControllerRumbleCommand;
 import frc.robot.commands.DriveFieldCentricAimCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
+import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.commands.ElevatorControlCommand;
-import frc.robot.commands.HoodZeroAngle;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.LimelightAutoShoot;
 import frc.robot.commands.ShootManualAdjustRpmAndAngle;
 import frc.robot.commands.ShootWithSetRPMAndHoodAngle;
-import frc.robot.commands.AutoClimbCommands.ArmSetAngle;
-import frc.robot.commands.AutoClimbCommands.ClimbElevatorTest;
-import frc.robot.commands.AutoClimbCommands.ClimbFullCommand;
-import frc.robot.commands.AutoClimbCommands.ClimbHighFull;
-import frc.robot.commands.AutoClimbCommands.ClimbHighToTraverse;
-import frc.robot.commands.AutoClimbCommands.ClimbMidAuto;
-import frc.robot.commands.AutoClimbCommands.ClimbMidToHigh;
-import frc.robot.commands.AutoClimbCommands.MotionMagicControl;
 import frc.robot.commands.AutoClimbCommands.COOPER;
-import frc.robot.commands.DriveRobotCentricCommand;
-import frc.robot.commands.DriveScreenCentricCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HoodSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
