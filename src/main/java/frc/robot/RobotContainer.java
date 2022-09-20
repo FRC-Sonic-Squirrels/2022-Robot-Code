@@ -119,7 +119,7 @@ public class RobotContainer {
 
 
     // Competition Autonomous
-    // Command rightSide5Ball = auton.rightSideFiveBall();
+     Command rightSide5Ball = auton.rightSideFiveBall();
     // Command left2plus1 = auton.leftSide2plus1();
     // Command middle_1Ball_Complementary = auton.middleShootFenderAndLeave();
 
@@ -144,6 +144,9 @@ public class RobotContainer {
 
     chooser.addOption("right 4 ball", right_4ball);
 
+    //Edge case if we need to run a 5ball on the right 
+    chooser.addOption("right side 5 ball", rightSide5Ball);
+
     chooser.setDefaultOption("nothing", new InstantCommand());
 
     
@@ -157,12 +160,7 @@ public class RobotContainer {
     m_elevator.setDefaultCommand(new ElevatorControlCommand(m_elevator, m_climbController,
       Constants.ElevatorConstants.elevatorSpeedMultiplier));
     
-    //new ControllerClimbMaxHeightRumble(m_climbController, m_elevator);
-
     m_arm.setDefaultCommand(new ArmManualControlCommand(m_arm, m_climbController, 0.3));
-
-    //CommandScheduler.getInstance().schedule(false, new ControllerClimbMaxHeightRumble(m_climbController, m_elevator));
-
 
     configureButtonBindings();
   }
@@ -177,9 +175,6 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     //************************ DRIVER CONTROLS [START] ******************************* 
-
-    // new Button(m_controller::getRightBumper)
-    //   .whenPressed(new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot));
 
     new Button(m_controller::getLeftBumper)
       .whenPressed(new ParallelRaceGroup(
@@ -199,15 +194,6 @@ public class RobotContainer {
     new Button(m_controller::getStartButton)
             .whenPressed(new InstantCommand(() -> m_limelight.toggleLEDs()));
 
-    // new Button(m_controller::getXButton)
-    //         .whenPressed(new DriveHubCentricCommand(drivetrain, 
-    //         () -> -modifyAxis(m_controller.getRightX()), 
-    //         () -> -modifyAxis(m_controller.getLeftY())));
-
-
-    // new Button(m_controller::getYButton)
-    //   .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
-  
   
     new Button(m_controller::getYButton)
         .whenPressed(new DriveFieldCentricAimCommand(drivetrain,
@@ -216,25 +202,12 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
             m_limelight));
 
-    // new Button(m_controller::getYButton)
-    //         .whenPressed(new DriveWithSetRotationCommand(drivetrain,
-    //         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-    //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-    //         () -> m_controller.getPOV(), 0.0));
-
+    //-------------Screen centric ----------------
     // new Button(m_controller::getXButton)
-    //         .whenPressed(new DriveFieldCentricHoldAngle(drivetrain,
+    //         .whenPressed(new DriveScreenCentricCommand(drivetrain,
     //         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
     //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
     //         () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
-
-
-    //-------------Screen centric ----------------
-    new Button(m_controller::getXButton)
-            .whenPressed(new DriveScreenCentricCommand(drivetrain,
-            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
-            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
 
 
@@ -254,28 +227,16 @@ public class RobotContainer {
     new Button(m_controller::getRightBumper)
     .whenPressed(new ShootWithSetRPMAndHoodAngle(2800, 15, m_cargo, m_shooter, m_hood, m_robot), true);
 
-    // new Button(() -> m_controller.getRightTriggerAxis() > 0.05) 
-    //    .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
-
 
     // launch pad shot
     // new Button (() -> m_controller.getRightTriggerAxis() > 0.05)
     //  .whenPressed(new ShootWithSetRPMAndHoodAngle(4000, 32, m_cargo, m_shooter, m_hood, m_robot), true);
-
-    // new Button(m_controller::getLeftBumper)
-    //         .whileHeld(new DriveChimpMode(drivetrain, m_intake,
-    //         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
-    //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-    //         () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
-
               
-    // new Button(m_controller::getLeftBumper)
-    //         .whileHeld(new LimelightRotateToHubAndShoot(2000, m_limelight, drivetrain, m_cargo, m_shooter, m_intake, m_robot));
-
-            
+    //deploy intake
     new Button(() -> (m_controller.getRightTriggerAxis() > 0.05))
             .toggleWhenActive(new IntakeDeployCommand(m_intake, m_cargo), true);
 
+    //reverse intake
     new Button(() -> (m_controller.getLeftTriggerAxis() > 0.05))
             .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
 
@@ -299,15 +260,7 @@ public class RobotContainer {
 
     new Button(m_operatorController::getYButton)
        .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
-
-    new Button(m_operatorController::getXButton)
-        .whileHeld(new ParallelCommandGroup(
-          new InstantCommand(() -> m_cargo.setLowerBeltPercentOutput(m_operatorController.getLeftY())),
-          new InstantCommand(() -> m_cargo.setUpperBeltPercentOutput(m_operatorController.getLeftY())
-        , m_cargo)));
-
     
-
     // // fender shot
     // new Button(m_operatorController::getRightBumper)
     //    .whenPressed(new ShootWithSetRPMAndHoodAngle(2800, 15, m_cargo, m_shooter, m_hood, m_robot), true);
@@ -332,28 +285,6 @@ public class RobotContainer {
     new Button(() -> m_operatorController.getRightTriggerAxis() >= 0.05)
       .whenPressed(new InstantCommand(() -> m_hoodAngle += 0.5));
 
-    // new Button(m_operatorController::getAButton)
-    //   .whenPressed(() -> m_hood.setAngleDegrees(18.6), m_hood);
-
-    //   new Button(m_operatorController::getXButton)
-    //   .whenPressed(() -> m_hood.setAngleDegrees(23.5), m_hood);
-
-    //   new Button(m_operatorController::getYButton)
-    //   .whenPressed(() -> m_hood.setAngleDegrees(27.5), m_hood);
-
-    //   new Button(m_operatorController::getBButton)
-    //   .whenPressed(() -> m_hood.setAngleDegrees(33), m_hood);
-
-    //   new Button(m_operatorController::getStartButton)
-    //   .whenPressed(() -> m_hood.setAngleDegrees(15), m_hood);
-
-
-    // new Button(() ->  (m_operatorController.getLeftTriggerAxis() > 0.05))
-    //   .whileHeld(new CargoRunIndexer(m_cargo));
-     
-
-    // new Button(m_operatorController::getLeftStickButtonPressed)
-    //   .whileHeld(new CargoReverseCommand(m_cargoSubsystem, m_intake));
 
     // **************** OPERATOR CONTROLS [END] ********************************
 
@@ -368,26 +299,7 @@ public class RobotContainer {
     new Button(m_climbController::getRightBumper)
       .whenPressed(new COOPER(m_elevator, m_arm, m_limelight, drivetrain)
       .withInterrupt( () -> m_climbController.getBButtonPressed()));
-      
-
-
-    //---------------------- Motion Magic Debugging -------------------------------------------
-
-    // new Button(m_climbController::getAButton)
-    //   .whenPressed(new MotionMagicControl(m_elevator, 25.68, 0.05, 0.25, 31));
-
-    // new Button(m_climbController::getBButton)
-    //   .whenPressed(new MotionMagicControl(m_elevator, -0.5, 0.05, 0.5, 25)
-    //                     .andThen(new ArmSetAngle(m_arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)));
-
-    // new Button(m_climbController::getXButton)
-    //   .whenPressed(new MotionMagicControl(m_elevator, 0, 0.05, 0.5, 25));
-
-    // new Button(m_climbController::getYButton)
-    //   .whenPressed(new MotionMagicControl(m_elevator, 0, 0.05, 1, 15));
-
-    //---------------------- Motion Magic Debugging -------------------------------------------
-
+  
     
     // ******************* Climb Controls [END] ****************************
     
