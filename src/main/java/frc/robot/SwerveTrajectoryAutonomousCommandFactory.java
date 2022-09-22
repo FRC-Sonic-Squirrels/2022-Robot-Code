@@ -301,8 +301,6 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     Pose2d pathPostion = new Pose2d(pathPose.getX(), pathPose.getY(), Rotation2d.fromDegrees(180));
 
-
-    SmartDashboard.putString("Path pose", pathPostion.toString());
     return new SequentialCommandGroup(
       new InstantCommand(() -> m_drivetrain.resetOdometry(pathPostion)),
       

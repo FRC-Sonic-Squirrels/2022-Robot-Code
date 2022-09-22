@@ -161,7 +161,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     //m_robotContainer.updateManualShooterSettings();
-    //SmartDashboard.putBoolean("Climb Rumble Command scheduled", m_robotContainer.climbRumbleCommand.isScheduled()); 
+     
   }
 
   @Override
