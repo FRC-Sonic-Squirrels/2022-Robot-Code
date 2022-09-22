@@ -28,6 +28,7 @@ import frc.robot.commands.LimelightAutoShoot;
 import frc.robot.commands.ShootManualAdjustRpmAndAngle;
 import frc.robot.commands.ShootWithSetRPMAndHoodAngle;
 import frc.robot.commands.AutoClimbCommands.COOPER;
+import frc.robot.commands.AutoClimbCommands.COOPERHigh;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
@@ -285,8 +286,16 @@ public class RobotContainer {
       .whileHeld(new InstantCommand(() -> m_arm.zeroEncoder(), m_arm));
 
     new Button(m_climbController::getRightBumper)
-      .whenPressed(new COOPER(m_elevator, m_arm, m_limelight, drivetrain)
-      .withInterrupt( () -> m_climbController.getBButtonPressed()));
+      .whenPressed(
+        new COOPER(m_elevator, m_arm, m_limelight, drivetrain)
+          .withInterrupt(() -> m_climbController.getBButtonPressed())
+      );
+
+    new Button(m_climbController::getLeftBumper)
+      .whenPressed(
+        new COOPERHigh(m_elevator, m_arm, m_limelight, drivetrain)
+          .withInterrupt(() -> m_climbController.getBButtonPressed() )
+      );
   
     
     // ******************* Climb Controls [END] ****************************
