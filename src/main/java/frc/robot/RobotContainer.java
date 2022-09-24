@@ -165,7 +165,7 @@ public class RobotContainer {
 
     //************************ DRIVER CONTROLS [START] ******************************* 
 
-    new Button(m_controller::getLeftBumper)
+    new Button(m_controller::getRightBumper)
       .whenPressed(new ParallelRaceGroup(
         new DriveFieldCentricAimCommand(drivetrain, 
             () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
@@ -213,7 +213,7 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
     // fender shot
-    new Button(m_controller::getRightBumper)
+    new Button(m_controller::getLeftBumper)
     .whenPressed(new ShootWithSetRPMAndHoodAngle(2800, 15, m_cargo, m_shooter, m_hood, m_robot), true);
 
 
