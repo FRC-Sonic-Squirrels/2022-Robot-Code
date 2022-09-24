@@ -89,8 +89,8 @@ public class ArmSubsystem extends SubsystemBase {
     //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
 
     // don't need frequent updates for follow motor
-    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 396);
-    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 401);
+    // m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 396);
+    // m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 401);
 
     m_throughBoreEncoder.setPositionConversionFactor(1.0);
 
