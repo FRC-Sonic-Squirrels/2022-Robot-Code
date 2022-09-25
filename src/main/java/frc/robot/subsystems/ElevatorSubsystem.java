@@ -41,7 +41,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   //TODO: note diameter is set to 1.9 on JVN 
   private final double winchDiameter_inches = 1.43;   // 1.25 diameter + string windings
   private final double winchCircumference = Math.PI * winchDiameter_inches;
-  private final double maxExtensionInches = 25.5; //actually 24 letting more for unwinding
+  private final double maxExtensionInches = 26; //actually 24 letting more for unwinding
   private double heightSetpointInches = 0.0;
   private double toleranceInches = 0.05; 
   private double feedForwardClimbing = 0.025734; // from JVM calculator

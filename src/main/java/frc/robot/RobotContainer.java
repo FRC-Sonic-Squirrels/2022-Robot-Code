@@ -5,6 +5,7 @@
 package frc.robot;
 
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -21,6 +22,7 @@ import frc.robot.commands.ControllerRumbleCommand;
 import frc.robot.commands.DriveFieldCentricAimCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
+import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.ElevatorControlCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
@@ -72,6 +74,8 @@ public class RobotContainer {
 
   public Command climbRumbleCommand = new ControllerClimbMaxHeightRumble(m_climbController, m_elevator);
 
+  public double m_limelightOffset = 0;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -84,7 +88,7 @@ public class RobotContainer {
     m_intake = new IntakeSubsystem();
     drivetrain = new Drivetrain();
     m_elevator = new ElevatorSubsystem();
-    m_arm = new ArmSubsystem();
+    m_arm = new ArmSubsystem(m_robot);
     m_hood = new HoodSubsystem();
     m_limelight = new LimelightSubsystem(drivetrain, m_robot.revPDH);
     
@@ -133,10 +137,12 @@ public class RobotContainer {
 
     chooser.addOption("right 4 ball", right_4ball);
 
+    chooser.addOption("nothing", new InstantCommand());
+
     //Edge case if we need to run a 5ball on the right 
     chooser.addOption("right side 5 ball", rightSide5Ball);
 
-    chooser.setDefaultOption("nothing", new InstantCommand());
+    chooser.setDefaultOption("center 2ball in and out", center_2ball_in_and_out);
 
     
 
@@ -172,7 +178,7 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
             m_limelight),
-        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot).andThen(new ControllerRumbleCommand(m_controller, 0.2))));
+        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot, () -> m_limelightOffset).andThen(new ControllerRumbleCommand(m_controller, 0.2))));
 
     // Back button resets field centric, forward is the current heading
     new Button(m_controller::getBackButton)
@@ -279,23 +285,32 @@ public class RobotContainer {
 
     // ******************* Climb Controls [START] ****************************
 
-    new Button(m_climbController::getStartButton)
-      .whenPressed(new InstantCommand(() -> m_elevator.zeroHeight(), m_elevator));
+    // new Button(m_climbController::getStartButton)
+    //   .whenPressed(new InstantCommand(() -> m_elevator.zeroHeight(), m_elevator));
  
-    new Button(m_climbController::getBackButton)
-      .whileHeld(new InstantCommand(() -> m_arm.zeroEncoder(), m_arm));
+    // new Button(m_climbController::getBackButton)
+    //   .whileHeld(new InstantCommand(() -> m_arm.zeroEncoder(), m_arm));
 
     new Button(m_climbController::getRightBumper)
       .whenPressed(
-        new COOPER(m_elevator, m_arm, m_limelight, drivetrain)
+        new COOPER(m_elevator, m_arm, m_limelight, drivetrain, m_intake)
           .withInterrupt(() -> m_climbController.getBButtonPressed())
       );
+
+    new Button(m_climbController::getXButton)
+      .whileHeld(new InstantCommand( () -> m_arm.setArmPercentOutput(m_climbController.getRightY()), m_arm));
 
     new Button(m_climbController::getLeftBumper)
       .whenPressed(
         new COOPERHigh(m_elevator, m_arm, m_limelight, drivetrain)
           .withInterrupt(() -> m_climbController.getBButtonPressed() )
       );
+
+    new Button(m_climbController::getBackButton)
+      .whenPressed(new InstantCommand(() -> m_limelightOffset -= Units.inchesToMeters(5)));
+
+    new Button(m_climbController::getStartButton)
+      .whenPressed(new InstantCommand(() -> m_limelightOffset += Units.inchesToMeters(5)));
   
     
     // ******************* Climb Controls [END] ****************************
