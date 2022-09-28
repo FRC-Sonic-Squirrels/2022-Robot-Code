@@ -30,7 +30,6 @@ import frc.robot.commands.LimelightAutoShoot;
 import frc.robot.commands.ShootManualAdjustRpmAndAngle;
 import frc.robot.commands.ShootWithSetRPMAndHoodAngle;
 import frc.robot.commands.AutoClimbCommands.COOPER;
-import frc.robot.commands.AutoClimbCommands.COOPERHigh;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
@@ -299,12 +298,6 @@ public class RobotContainer {
 
     new Button(m_climbController::getXButton)
       .whileHeld(new InstantCommand( () -> m_arm.setArmPercentOutput(m_climbController.getRightY()), m_arm));
-
-    new Button(m_climbController::getLeftBumper)
-      .whenPressed(
-        new COOPERHigh(m_elevator, m_arm, m_limelight, drivetrain)
-          .withInterrupt(() -> m_climbController.getBButtonPressed() )
-      );
 
     new Button(m_climbController::getBackButton)
       .whenPressed(new InstantCommand(() -> m_limelightOffset -= Units.inchesToMeters(5)));
