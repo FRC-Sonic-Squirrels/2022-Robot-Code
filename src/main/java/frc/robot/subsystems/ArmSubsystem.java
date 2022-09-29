@@ -5,15 +5,16 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxAlternateEncoder;
-import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxAlternateEncoder;
+import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.Constants.canId;
 
 // Helpful link for converting between CTRE and Rev
@@ -47,7 +48,15 @@ public class ArmSubsystem extends SubsystemBase {
   private double maxAngleDegree = 23.6;
   private double minAngleDegree = -20.5;
 
-  public ArmSubsystem() {
+  private int m_numberOfTimesReinitalized = 0;
+
+  private Robot m_robot;
+
+  public ArmSubsystem(Robot robot) {
+
+    SmartDashboard.putNumber("ARM number of reinitalize", m_numberOfTimesReinitalized);
+
+    m_robot = robot;
     m_armLeadMotor.restoreFactoryDefaults();
     m_armFollowMotor.restoreFactoryDefaults();
 
@@ -100,6 +109,54 @@ public class ArmSubsystem extends SubsystemBase {
     // Arm will start on a hard stop, part way back with a limit switch
     zeroEncoder();
     m_targetAngle = zeroedEncoderAngle;
+  }
+
+  private void initalizeMotors(){
+    m_armLeadMotor.setIdleMode(IdleMode.kBrake);
+    m_armFollowMotor.setIdleMode(IdleMode.kBrake);
+
+    m_armFollowMotor.follow(m_armLeadMotor);
+
+    m_throughBoreEncoder = m_armLeadMotor.getAlternateEncoder(kAltEncType, kCPR);
+    
+    m_armPID = m_armLeadMotor.getPIDController();
+    m_armPID.setFeedbackDevice(m_throughBoreEncoder);
+    m_armPID.setOutputRange(-1, 1);
+    m_armPID.setSmartMotionAccelStrategy(SparkMaxPIDController.AccelStrategy.kTrapezoidal, 0);
+    // Acceleration is in RPM/s. 45 degrees per second per second.
+    m_armPID.setSmartMotionMaxAccel(60*(45.0/360.0), 0);
+    // velocity is in RPM. 7.5 RPM is 45 degrees per second
+    // for reference JVN calc claims max velocity of about 450 degrees per second.
+    m_armPID.setSmartMotionMaxVelocity(60*(45.0/360.0), 0);
+    // Error is in rotations
+    m_armPID.setSmartMotionAllowedClosedLoopError(1/360.0, 0);
+    //good for preventing small changes but this can also be done with the joystick itself 
+    //m_armPID.setSmartMotionMinOutputVelocity(0.05, 0);
+  
+    // set PID coefficients
+    m_armPID.setP(kP);
+    m_armPID.setI(kI);
+    m_armPID.setD(kD);
+    m_armPID.setIZone(kIz);
+    m_armPID.setFF(kFF);
+    m_armPID.setOutputRange(kMinOutput, kMaxOutput);
+
+    // Reduce CAN traffic when possible
+    // https://www.hi-im.kim/canbus
+    //MotorUtils.setSparkMaxStatusSlow(m_armFollowMotor);
+    // we don't need fast updates of sensor velocity
+    //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 101);
+    // we do need updates of sensor position
+    //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+
+    // don't need frequent updates for follow motor
+    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 396);
+    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 401);
+
+    m_throughBoreEncoder.setPositionConversionFactor(1.0);
+
+    //because of gear box the encoder is spinning the wrong way
+    m_throughBoreEncoder.setInverted(true);
   }
 
   /**
@@ -190,6 +247,20 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    if(m_robot.isDisabled()){
+      double leadPidkP = m_armLeadMotor.getPIDController().getP();
+      SmartDashboard.putString("ARM last error lead", m_armLeadMotor.getLastError().toString());
+      SmartDashboard.putNumber("ARM kp value", leadPidkP);
+
+      if(leadPidkP != kP){
+        m_numberOfTimesReinitalized++;
+        initalizeMotors();
+
+        SmartDashboard.putNumber("ARM number of reinitalize", m_numberOfTimesReinitalized);
+      }
+      
+    }
 
     SmartDashboard.putNumber("Arm Angle deg", getArmAngle());
     SmartDashboard.putNumber("Arm Vel (deg per sec)", m_armLeadMotor.getEncoder().getVelocity()*rpm2degreesPerSecond);

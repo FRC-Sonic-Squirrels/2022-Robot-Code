@@ -13,6 +13,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 
 /**
@@ -27,7 +28,7 @@ import frc.robot.subsystems.LimelightSubsystem;
  * R - Remotely 
  */
 public class COOPER extends SequentialCommandGroup {
-  public COOPER(ElevatorSubsystem elevator, ArmSubsystem arm, LimelightSubsystem limelight, Drivetrain drivetrain) {
+  public COOPER(ElevatorSubsystem elevator, ArmSubsystem arm, LimelightSubsystem limelight, Drivetrain drivetrain, IntakeSubsystem  intake) {
     addCommands(
       // make sure arms are back and out of the way before climbing to Mid
       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_BACK_ANGLE)
@@ -53,14 +54,20 @@ public class COOPER extends SequentialCommandGroup {
         .withTimeout(0.25),
 
       // Fully extend Elevator. //this is soft limit max
-      new MotionMagicControl(elevator, 25.5, 0.05, 0.25, 31),
+      new MotionMagicControl(elevator, 26, 0.05, 0.25, 31),
 
       // Let the robot settle, stop rocking so that elevator hooks are set
       new WaitCommand(0.5),
 
+      new InstantCommand(() -> intake.deployIntake(), intake),
+
+      new WaitCommand(0.3),
+
       // Set the elevator hooks by moving arms back slightly
       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)
         .withTimeout(0.25),
+
+        new InstantCommand(() -> intake.retractIntake(), intake),
 
       // let the robot settle
       new WaitCommand(0.5),
@@ -116,6 +123,13 @@ public class COOPER extends SequentialCommandGroup {
 
       //wait for safe grab on the traversal bar 
        new WaitUntilCommand(() -> (
+         drivetrain.getGyroscopePitchVelocity() >= 0) && 
+         (drivetrain.getGyroscopePitch() <= -21) && 
+         (arm.getArmAngle() >= 16) ),
+
+        new WaitCommand(0.2),
+
+        new WaitUntilCommand(() -> (
          drivetrain.getGyroscopePitchVelocity() >= 0) && 
          (drivetrain.getGyroscopePitch() <= -21) && 
          (arm.getArmAngle() >= 16) ),

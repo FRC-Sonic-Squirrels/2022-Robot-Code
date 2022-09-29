@@ -17,9 +17,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CANIVOR_canId;
-import static frc.robot.Constants.currentLimits;
-import static frc.robot.Constants.digitalIOConstants;
-import static frc.robot.Constants.canId;
+import frc.robot.Constants.digitalIOConstants;
 
 public class CargoSubsystem extends SubsystemBase {
 

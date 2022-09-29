@@ -55,7 +55,7 @@ public class ArmManualControlCommand extends CommandBase {
       arm.setArmAngle(Constants.ArmConstants.CLIMBING_FORWARD_ANGLE);
       holding = true;
     } else if (pov == 180) {
-      arm.setArmAngle(Constants.ArmConstants.CLIMBING_NEXT_BAR_ANGLE);
+      arm.setArmAngle(Constants.ArmConstants.CLIMBING_HANG_ANGLE);
       holding = true;
     } else if (pov == 270) {
       arm.setArmAngle(Constants.ArmConstants.CLIMBING_BACK_ANGLE);
