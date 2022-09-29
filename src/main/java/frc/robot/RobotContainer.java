@@ -128,22 +128,19 @@ public class RobotContainer {
 
     Command right_4ball = auton.chezyRightSide4Ball();
 
+    Command human_player_prac = auton.humanPlayerPracticeAuto();
+
     chooser.addOption("left 3 plus 1", left_3plus_1);
     chooser.addOption("left 3 plus 2", left_3plus_2);
     chooser.addOption("center 2 ball wait", center_2ball_wait);
     chooser.addOption("center 2ball in and out", center_2ball_in_and_out);
     chooser.addOption("center 4 ball", center_4ball);
-
     chooser.addOption("right 4 ball", right_4ball);
-
-    chooser.addOption("nothing", new InstantCommand());
-
-    //Edge case if we need to run a 5ball on the right 
     chooser.addOption("right side 5 ball", rightSide5Ball);
+    chooser.addOption("center 2ball in and out", center_2ball_in_and_out);
 
-    chooser.setDefaultOption("center 2ball in and out", center_2ball_in_and_out);
-
-    
+    // default auton is to do nothing, for SAFETY
+    chooser.setDefaultOption("nothing", new InstantCommand());
 
     drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
       drivetrain, 
