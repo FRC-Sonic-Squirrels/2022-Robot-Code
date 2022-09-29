@@ -131,10 +131,14 @@ public class SwerveTrajectoryAutonomousCommandFactory {
             // away from loading zone. vx is robot centric x velocity.
             new IntakeDeployCommand(m_intake, m_cargo)
                 .until(() -> (m_drivetrain.getChassisSpeeds().vxMetersPerSecond < -0.5)),
-            new SequentialCommandGroup(PPSwerveControlCommand(path3, true), new WaitCommand(0.4),
+            new SequentialCommandGroup(
+                PPSwerveControlCommand(path3, true), 
+                new WaitCommand(0.4),
                 new InstantCommand(() -> m_hood.setAngleDegrees(30)),
                 new InstantCommand(() -> m_shooter.setFlywheelRPM(3000)),
-                PPSwerveControlCommand(path4, true))),
+                PPSwerveControlCommand(path4, true)
+            )
+        ),
         new ParallelRaceGroup(
             new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0,
                 m_limelight),
@@ -144,6 +148,30 @@ public class SwerveTrajectoryAutonomousCommandFactory {
             () -> m_shooter.setFlywheelRPM(Constants.ShooterConstants.IDLE), m_shooter));
   }
 
+  public Command humanPlayerPracticeAuto(){
+    PathPlannerTrajectory path1 = PathPlanner.loadPath("5ball_part3", 4.5, 3.5);
+    PathPlannerTrajectory path2 = PathPlanner.loadPath("humanPlayerPracExitTerminal", 4.5, 3.5);
+
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> m_drivetrain.resetOdometry(path1.getInitialPose())),
+
+        new ParallelCommandGroup(
+            // run the intake while we drive forward, but retract after we start driving
+            // away from loading zone. vx is robot centric x velocity.
+            new IntakeDeployCommand(m_intake, m_cargo)
+                .until(() -> (m_drivetrain.getChassisSpeeds().vxMetersPerSecond < -0.5)),
+            new SequentialCommandGroup(
+                PPSwerveControlCommand(path1, true), 
+                new WaitCommand(0.4),
+                PPSwerveControlCommand(path2, true)
+            )
+        ),
+
+        new IntakeReverseCommand(m_intake, m_cargo)
+            .withTimeout(2)
+
+      );
+  }
 
   /**
    * leftSide2plus1() - left side, score 2 and hide one opponent cargo.
