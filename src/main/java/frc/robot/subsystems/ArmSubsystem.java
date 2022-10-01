@@ -60,9 +60,11 @@ public class ArmSubsystem extends SubsystemBase {
     m_armLeadMotor.restoreFactoryDefaults();
     m_armFollowMotor.restoreFactoryDefaults();
 
-
     initializeMotors();
 
+    m_armLeadMotor.burnFlash();
+    m_armFollowMotor.burnFlash();
+    
     // Arm will start on a hard stop, part way back with a limit switch
     zeroEncoder();
     m_targetAngle = zeroedEncoderAngle;
@@ -156,6 +158,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_targetAngle = angleDegrees;
     double encoderValue = angleToEncoderRotations(angleDegrees);
     //m_armPID.setReference(encoderValue, ControlType.kPosition);
+
     m_armPID.setReference(encoderValue, ControlType.kSmartMotion);
   }
 
