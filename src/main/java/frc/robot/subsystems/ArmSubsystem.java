@@ -64,7 +64,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     m_armLeadMotor.burnFlash();
     m_armFollowMotor.burnFlash();
-    
+
     // Arm will start on a hard stop, part way back with a limit switch
     zeroEncoder();
     m_targetAngle = zeroedEncoderAngle;
@@ -87,6 +87,10 @@ public class ArmSubsystem extends SubsystemBase {
     m_armPID.setFeedbackDevice(m_throughBoreEncoder);
     m_armPID.setOutputRange(-1, 1);
     m_armPID.setSmartMotionAccelStrategy(SparkMaxPIDController.AccelStrategy.kTrapezoidal, 0);
+
+    // TODO: I think the velocities bellow are for the encoder shaft and the velocities for
+    //  the arms are these values multiplied by m_encoderToArmRatio (~0.43)
+
     // Acceleration is in RPM/s. 45 degrees per second per second.
     m_armPID.setSmartMotionMaxAccel(60*(45.0/360.0), 0);
     // velocity is in RPM. 7.5 RPM is 45 degrees per second
