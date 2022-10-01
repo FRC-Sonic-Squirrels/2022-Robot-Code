@@ -24,7 +24,7 @@ public class ArmSubsystem extends SubsystemBase {
   private CANSparkMax m_armLeadMotor = new CANSparkMax(canId.CANID19_ARM_LEAD_MOTOR, MotorType.kBrushless);
   private CANSparkMax m_armFollowMotor = new CANSparkMax(canId.CANID20_ARM_FOLLOW_MOTOR, MotorType.kBrushless);
 
-  private int kCPR = 8192;   // ticks per revolution
+  private int kCPR = 8192;   // ticks per revolution for through bor encoder
   private SparkMaxAlternateEncoder.Type kAltEncType = SparkMaxAlternateEncoder.Type.kQuadrature;
   private RelativeEncoder m_throughBoreEncoder;
 
@@ -34,8 +34,16 @@ public class ArmSubsystem extends SubsystemBase {
   private double degrees2rotations = 1.0/360.0;
   private double toleranceDegrees = 1.0;
   // arm angle = encoder angle * constant ratio
+
+  // encoderToArmRatio is the gear reduction between the driven shaft with the 
+  // Through bore encoder on it and the rotation of the arm. The arm is driven by
+  // a chain from shaft with the through bore encoder.
   private double m_encoderToArmRatio = 0.428571;
   
+  // NOTE: we don't care about the gear reduction between the motor and the encoder.
+  // This is because the PID parameters are tuned to get the desired response at the encoder
+  // and the motor and gearbox are treated as a black box.
+
   private SparkMaxPIDController m_armPID;
   private double kP = 3.5;  // 4.0
   private double kI = 0.0001;
