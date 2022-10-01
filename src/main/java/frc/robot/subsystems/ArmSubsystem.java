@@ -60,66 +60,28 @@ public class ArmSubsystem extends SubsystemBase {
     m_armLeadMotor.restoreFactoryDefaults();
     m_armFollowMotor.restoreFactoryDefaults();
 
-    m_armLeadMotor.setIdleMode(IdleMode.kBrake);
-    m_armFollowMotor.setIdleMode(IdleMode.kBrake);
 
-    m_armFollowMotor.follow(m_armLeadMotor);
+    initializeMotors();
 
-    m_throughBoreEncoder = m_armLeadMotor.getAlternateEncoder(kAltEncType, kCPR);
-    
-    m_armPID = m_armLeadMotor.getPIDController();
-    m_armPID.setFeedbackDevice(m_throughBoreEncoder);
-    m_armPID.setOutputRange(-1, 1);
-    m_armPID.setSmartMotionAccelStrategy(SparkMaxPIDController.AccelStrategy.kTrapezoidal, 0);
-    // Acceleration is in RPM/s. 45 degrees per second per second.
-    m_armPID.setSmartMotionMaxAccel(60*(45.0/360.0), 0);
-    // velocity is in RPM. 7.5 RPM is 45 degrees per second
-    // for reference JVN calc claims max velocity of about 450 degrees per second.
-    m_armPID.setSmartMotionMaxVelocity(60*(45.0/360.0), 0);
-    // Error is in rotations
-    m_armPID.setSmartMotionAllowedClosedLoopError(1/360.0, 0);
-    //good for preventing small changes but this can also be done with the joystick itself 
-    //m_armPID.setSmartMotionMinOutputVelocity(0.05, 0);
-  
-    // set PID coefficients
-    m_armPID.setP(kP);
-    m_armPID.setI(kI);
-    m_armPID.setD(kD);
-    m_armPID.setIZone(kIz);
-    m_armPID.setFF(kFF);
-    m_armPID.setOutputRange(kMinOutput, kMaxOutput);
-
-    // Reduce CAN traffic when possible
-    // https://www.hi-im.kim/canbus
-    //MotorUtils.setSparkMaxStatusSlow(m_armFollowMotor);
-    // we don't need fast updates of sensor velocity
-    //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 101);
-    // we do need updates of sensor position
-    //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
-
-    // don't need frequent updates for follow motor
-    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 396);
-    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 401);
-
-    m_throughBoreEncoder.setPositionConversionFactor(1.0);
-
-    //because of gear box the encoder is spinning the wrong way
-    m_throughBoreEncoder.setInverted(true);
-  
     // Arm will start on a hard stop, part way back with a limit switch
     zeroEncoder();
     m_targetAngle = zeroedEncoderAngle;
   }
 
-  private void initalizeMotors(){
+  private void initializeMotors() {
+
     m_armLeadMotor.setIdleMode(IdleMode.kBrake);
     m_armFollowMotor.setIdleMode(IdleMode.kBrake);
 
     m_armFollowMotor.follow(m_armLeadMotor);
 
     m_throughBoreEncoder = m_armLeadMotor.getAlternateEncoder(kAltEncType, kCPR);
-    
+    m_throughBoreEncoder.setPositionConversionFactor(1.0);
+    //because of gear box the encoder is spinning the wrong way
+    m_throughBoreEncoder.setInverted(true);
+
     m_armPID = m_armLeadMotor.getPIDController();
+
     m_armPID.setFeedbackDevice(m_throughBoreEncoder);
     m_armPID.setOutputRange(-1, 1);
     m_armPID.setSmartMotionAccelStrategy(SparkMaxPIDController.AccelStrategy.kTrapezoidal, 0);
@@ -143,20 +105,16 @@ public class ArmSubsystem extends SubsystemBase {
 
     // Reduce CAN traffic when possible
     // https://www.hi-im.kim/canbus
-    //MotorUtils.setSparkMaxStatusSlow(m_armFollowMotor);
+    // MotorUtils.setSparkMaxStatusSlow(m_armFollowMotor);
     // we don't need fast updates of sensor velocity
-    //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 101);
+    // m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 101);
     // we do need updates of sensor position
-    //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+    // m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
 
     // don't need frequent updates for follow motor
-    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 400);
+    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 300);
     m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 400);
 
-    m_throughBoreEncoder.setPositionConversionFactor(1.0);
-
-    //because of gear box the encoder is spinning the wrong way
-    m_throughBoreEncoder.setInverted(true);
   }
 
   /**
@@ -257,7 +215,7 @@ public class ArmSubsystem extends SubsystemBase {
 
       if(leadPidkP != kP){
         m_numberOfTimesReinitialized++;
-        initalizeMotors();
+        initializeMotors();
 
         SmartDashboard.putNumber("ARM number of reinitalize", m_numberOfTimesReinitialized);
       }
