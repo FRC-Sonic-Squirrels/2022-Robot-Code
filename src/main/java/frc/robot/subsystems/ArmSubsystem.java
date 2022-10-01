@@ -48,13 +48,13 @@ public class ArmSubsystem extends SubsystemBase {
   private double maxAngleDegree = 23.6;
   private double minAngleDegree = -20.5;
 
-  private int m_numberOfTimesReinitalized = 0;
+  private int m_numberOfTimesReinitialized = 0;
 
   private Robot m_robot;
 
   public ArmSubsystem(Robot robot) {
 
-    SmartDashboard.putNumber("ARM number of reinitalize", m_numberOfTimesReinitalized);
+    SmartDashboard.putNumber("ARM number of reinitialize", m_numberOfTimesReinitialized);
 
     m_robot = robot;
     m_armLeadMotor.restoreFactoryDefaults();
@@ -150,8 +150,8 @@ public class ArmSubsystem extends SubsystemBase {
     //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
 
     // don't need frequent updates for follow motor
-    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 396);
-    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 401);
+    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 400);
+    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 400);
 
     m_throughBoreEncoder.setPositionConversionFactor(1.0);
 
@@ -163,7 +163,8 @@ public class ArmSubsystem extends SubsystemBase {
    * Hold - hold the arm in place using positional control
    */
   public void hold() {
-    m_armPID.setReference(getEncoderValue(), ControlType.kPosition);
+    //m_armPID.setReference(getEncoderValue(), ControlType.kPosition);
+    m_armPID.setReference(getEncoderValue(), ControlType.kSmartMotion);
   }
   
   /**
@@ -196,7 +197,8 @@ public class ArmSubsystem extends SubsystemBase {
     }
     m_targetAngle = angleDegrees;
     double encoderValue = angleToEncoderRotations(angleDegrees);
-    m_armPID.setReference(encoderValue, ControlType.kPosition);
+    //m_armPID.setReference(encoderValue, ControlType.kPosition);
+    m_armPID.setReference(encoderValue, ControlType.kSmartMotion);
   }
 
   /**
@@ -254,10 +256,10 @@ public class ArmSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("ARM kp value", leadPidkP);
 
       if(leadPidkP != kP){
-        m_numberOfTimesReinitalized++;
+        m_numberOfTimesReinitialized++;
         initalizeMotors();
 
-        SmartDashboard.putNumber("ARM number of reinitalize", m_numberOfTimesReinitalized);
+        SmartDashboard.putNumber("ARM number of reinitalize", m_numberOfTimesReinitialized);
       }
       
     }
