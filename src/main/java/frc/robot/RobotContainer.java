@@ -61,7 +61,7 @@ public class RobotContainer {
 
   // Controllers
   public final XboxController m_controller = new XboxController(0);
-  public final XboxController m_operatorController = new XboxController(1);
+  //public final XboxController m_operatorController = new XboxController(1);
   public final XboxController m_climbController = new XboxController(2);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
@@ -241,16 +241,16 @@ public class RobotContainer {
     // new Button(m_operatorController::getAButton)
     //    .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
 
-      new Button(m_operatorController::getAButton)
-       .toggleWhenPressed( 
-        new ConditionalCommand(
-          new IntakeDeployCommand(m_intake, m_cargo), 
-          new InstantCommand(), 
-          () -> !(m_shooter.getDesiredRPM() > 0))
-       );
+    //   new Button(m_operatorController::getAButton)
+    //    .toggleWhenPressed( 
+    //     new ConditionalCommand(
+    //       new IntakeDeployCommand(m_intake, m_cargo), 
+    //       new InstantCommand(), 
+    //       () -> !(m_shooter.getDesiredRPM() > 0))
+    //    );
 
-    new Button(m_operatorController::getYButton)
-       .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
+    // new Button(m_operatorController::getYButton)
+    //    .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
     
     // // fender shot
     // new Button(m_operatorController::getRightBumper)
@@ -261,20 +261,20 @@ public class RobotContainer {
     //     .whenPressed(new ShootWithSetRPMAndHoodAngle(4000, 32, m_cargo, m_shooter, m_hood, m_robot), true);
 
     //Using this for debugging and tuning the hood at the practice field 
-    new Button(m_operatorController::getRightBumper)
-    .whileActiveOnce(new ShootManualAdjustRpmAndAngle(() -> m_shootingRpm, () -> m_hoodAngle, m_cargo, m_shooter, m_hood, m_robot), true);
+    // new Button(m_operatorController::getRightBumper)
+    // .whileActiveOnce(new ShootManualAdjustRpmAndAngle(() -> m_shootingRpm, () -> m_hoodAngle, m_cargo, m_shooter, m_hood, m_robot), true);
 
-    new Button(m_operatorController::getBackButton)
-      .whenPressed(new InstantCommand(() -> m_shootingRpm -= 50));
+    // new Button(m_operatorController::getBackButton)
+    //   .whenPressed(new InstantCommand(() -> m_shootingRpm -= 50));
 
-    new Button(m_operatorController::getStartButton)
-      .whenPressed(new InstantCommand(() -> m_shootingRpm += 50));
+    // new Button(m_operatorController::getStartButton)
+    //   .whenPressed(new InstantCommand(() -> m_shootingRpm += 50));
 
-    new Button(() -> m_operatorController.getLeftTriggerAxis() >= 0.05)
-      .whenPressed(new InstantCommand(() -> m_hoodAngle -= 0.5));
+    // new Button(() -> m_operatorController.getLeftTriggerAxis() >= 0.05)
+    //   .whenPressed(new InstantCommand(() -> m_hoodAngle -= 0.5));
 
-    new Button(() -> m_operatorController.getRightTriggerAxis() >= 0.05)
-      .whenPressed(new InstantCommand(() -> m_hoodAngle += 0.5));
+    // new Button(() -> m_operatorController.getRightTriggerAxis() >= 0.05)
+    //   .whenPressed(new InstantCommand(() -> m_hoodAngle += 0.5));
 
 
     // **************** OPERATOR CONTROLS [END] ********************************
