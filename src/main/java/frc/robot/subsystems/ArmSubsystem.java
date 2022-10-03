@@ -45,13 +45,13 @@ public class ArmSubsystem extends SubsystemBase {
   // and the motor and gearbox are treated as a black box.
 
   private SparkMaxPIDController m_armPID;
-  private double kP = 3.5;  // 4.0
-  private double kI = 0.0001;
+  private double kP = 0.005;
+  private double kI = 0.0;
   private double kD = 0.0;
   private double kIz = 0.005;
-  private double kFF = 0.0;
-  private double kMaxOutput = 0.8;
-  private double kMinOutput = -0.8;
+  private double kFF = 0.013;
+  private double kMaxOutput = 0.4;
+  private double kMinOutput = -0.4;
 
   private double maxAngleDegree = 23.6;
   private double minAngleDegree = -20.5;
@@ -100,12 +100,12 @@ public class ArmSubsystem extends SubsystemBase {
     //  the arms are these values multiplied by m_encoderToArmRatio (~0.43)
 
     // Acceleration is in RPM/s. 45 degrees per second per second.
-    m_armPID.setSmartMotionMaxAccel(60*(45.0/360.0), 0);
+    m_armPID.setSmartMotionMaxAccel(60*(180.0/360.0), 0);
     // velocity is in RPM. 7.5 RPM is 45 degrees per second
     // for reference JVN calc claims max velocity of about 450 degrees per second.
-    m_armPID.setSmartMotionMaxVelocity(60*(45.0/360.0), 0);
+    m_armPID.setSmartMotionMaxVelocity(60*(180.0/360.0), 0);
     // Error is in rotations
-    m_armPID.setSmartMotionAllowedClosedLoopError(1/360.0, 0);
+    m_armPID.setSmartMotionAllowedClosedLoopError(4/360.0, 0);
     //good for preventing small changes but this can also be done with the joystick itself 
     //m_armPID.setSmartMotionMinOutputVelocity(0.05, 0);
   
