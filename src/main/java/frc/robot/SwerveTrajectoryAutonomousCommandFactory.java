@@ -144,8 +144,14 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     PathPlannerTrajectory path1 = PathPlanner.loadPath("5ball_part3", 4.5, 3.5);
     PathPlannerTrajectory path2 = PathPlanner.loadPath("humanPlayerPracExitTerminal", 4.5, 3.5);
 
+    SmartDashboard.putString("auto path", path1.getInitialPose().toString());
+
+    Pose2d startPose  = new Pose2d(path1.getInitialPose().getTranslation(), path1.getInitialState().holonomicRotation);
+
+
+
     return new SequentialCommandGroup(
-        new InstantCommand(() -> m_drivetrain.resetOdometry(path1.getInitialPose())),
+        new InstantCommand(() -> m_drivetrain.resetOdometry(startPose)),
 
         new ParallelCommandGroup(
             // run the intake while we drive forward, but retract after we start driving
