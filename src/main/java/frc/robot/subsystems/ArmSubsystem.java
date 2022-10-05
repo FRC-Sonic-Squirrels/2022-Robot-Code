@@ -96,8 +96,8 @@ public class ArmSubsystem extends SubsystemBase {
     m_armPID.setOutputRange(-1, 1);
     m_armPID.setSmartMotionAccelStrategy(SparkMaxPIDController.AccelStrategy.kTrapezoidal, 0);
 
-    // TODO: I think the velocities bellow are for the encoder shaft and the velocities for
-    //  the arms are these values multiplied by m_encoderToArmRatio (~0.43)
+    // Velocities for Smart Motion are for the encoder shaft. To get the velocity for
+    // the arms, multiplied shaft velocity by m_encoderToArmRatio (~0.43)
 
     // Acceleration is in RPM/s. 45 degrees per second per second.
     m_armPID.setSmartMotionMaxAccel(60*(360.0/360.0), 0);
@@ -232,17 +232,17 @@ public class ArmSubsystem extends SubsystemBase {
         m_numberOfTimesReinitialized++;
         initializeMotors();
 
-        SmartDashboard.putNumber("ARM number of reinitalize", m_numberOfTimesReinitialized);
+        SmartDashboard.putNumber("ARM number of reinitialize", m_numberOfTimesReinitialized);
       }
       
     }
 
     SmartDashboard.putNumber("Arm Angle deg", getArmAngle());
-    SmartDashboard.putNumber("Arm Vel (deg per sec)", m_armLeadMotor.getEncoder().getVelocity()*rpm2degreesPerSecond);
+    //SmartDashboard.putNumber("Arm Vel (deg per sec)", m_armLeadMotor.getEncoder().getVelocity()*rpm2degreesPerSecond);
     SmartDashboard.putNumber("Arm SetPoint", m_targetAngle);
     SmartDashboard.putNumber("Arm Error", m_targetAngle - getArmAngle());
-    SmartDashboard.putNumber("Arm %output", m_armLeadMotor.getAppliedOutput());
-    SmartDashboard.putNumber("Arm Current", m_armLeadMotor.getOutputCurrent());
+    // SmartDashboard.putNumber("Arm %output", m_armLeadMotor.getAppliedOutput());
+    // SmartDashboard.putNumber("Arm Current", m_armLeadMotor.getOutputCurrent());
     // SmartDashboard.putNumber("Arm rpm To Degrees Per Second", rpm2degreesPerSecond);
     // SmartDashboard.putNumber("Arm tolerance Degrees", toleranceDegrees);
     // SmartDashboard.putNumber("Arm maximum Angle Degree", maxAngleDegree);
