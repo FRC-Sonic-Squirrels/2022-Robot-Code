@@ -126,9 +126,9 @@ public class RobotContainer {
     // Command human_player_prac = auton.humanPlayerPracticeAuto();
 
     chooser.addOption("left side 2 plus 1", left2plus1);
-    chooser.addOption("center 2 ball wait", center_2ball_wait);
-    chooser.addOption("center 2ball in and out", center_2ball_in_and_out);
-    chooser.addOption("center 4 ball", center_4ball);
+    chooser.addOption("center 1 ball wait", center_2ball_wait);
+    chooser.addOption("center 1 ball in and out", center_2ball_in_and_out);
+    chooser.addOption("center 3 ball", center_4ball);
     // chooser.addOption("right 4 ball", right_4ball);
     chooser.addOption("right side 5 ball", rightSide5Ball);
 
