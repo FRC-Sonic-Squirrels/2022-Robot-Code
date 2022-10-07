@@ -228,7 +228,7 @@ public class ArmSubsystem extends SubsystemBase {
       SmartDashboard.putString("ARM last error lead", m_armLeadMotor.getLastError().toString());
       SmartDashboard.putNumber("ARM kp value", leadPidkP);
 
-      if(leadPidkP != kP){
+      if(Math.abs(leadPidkP - kP) < 0.000000001){
         m_numberOfTimesReinitialized++;
         initializeMotors();
 
