@@ -21,8 +21,12 @@ import frc.robot.Robot;
 public class ShooterSubsystem extends SubsystemBase {
 
   enum ShooterMode {
-    STATIC, DYNAMIC
+    STOP, IDLE, SHOOTING 
   };
+
+  private ShooterMode m_mode = ShooterMode.STOP;
+
+  private double m_idleRpm = Constants.ShooterConstants.IDLE;
 
   private Robot m_robot;
 
@@ -99,19 +103,43 @@ public class ShooterSubsystem extends SubsystemBase {
     setPIDteleop();
   }
 
-  public void stop() {
-    m_desiredRPM = 0;
-    flywheel_lead.set(ControlMode.PercentOutput, 0);
-  }
-
-  public void idle(){
-    m_desiredRPM = Constants.ShooterConstants.IDLE;
-  }
-
   @Override
   public void periodic() {
-
     double setPoint = 0;
+    switch (m_mode) {
+      case STOP:
+        flywheel_lead.set(ControlMode.PercentOutput, 0);
+        m_desiredRPM = 0; //need to update this because its used for determining isAtSpeed
+        break;
+
+      case IDLE: 
+        // if the difference in current rpm vs idle is significant set percent 0 
+        // so it slows down faster if we shoot from further away in theory means 
+        // we wait less when we shoot from far and then close 
+        if(Math.abs(m_currentRPM - m_idleRpm) > 25 ) {
+          flywheel_lead.set(ControlMode.PercentOutput, 0);
+        } else {
+          flywheel_lead.set(ControlMode.Velocity, m_idleRpm * RPMtoTicks);
+          m_desiredRPM = m_idleRpm; //need to update this because its used for determining isAtSpeed
+        }
+        break;
+
+      case SHOOTING: 
+        setPoint = m_rateLimiter.calculate(m_desiredRPM);
+        if (m_desiredRPM < setPoint) {
+          // we don't rate reduce slowing the robot
+          setPoint = m_desiredRPM;
+        }
+
+        flywheel_lead.set(ControlMode.Velocity, setPoint * RPMtoTicks);
+        break;
+
+      default:
+        flywheel_lead.set(ControlMode.PercentOutput, 0);
+        break;
+    }
+
+    // double setPoint = 0;
     m_currentRPM = m_encoder.getIntegratedSensorVelocity() / RPMtoTicks;
     m_error = m_currentRPM - m_desiredRPM;
 
@@ -121,19 +149,19 @@ public class ShooterSubsystem extends SubsystemBase {
       m_atSpeed = false;
     }
 
-    setPoint = m_rateLimiter.calculate(m_desiredRPM);
-    if (m_desiredRPM < setPoint) {
-      // we don't rate reduce slowing the robot
-      setPoint = m_desiredRPM;
-    }
+    // setPoint = m_rateLimiter.calculate(m_desiredRPM);
+    // if (m_desiredRPM < setPoint) {
+    //   // we don't rate reduce slowing the robot
+    //   setPoint = m_desiredRPM;
+    // }
 
-    if (m_desiredRPM == 0) {
-      // special case, turn off power to flywheel
-      flywheel_lead.set(ControlMode.PercentOutput, 0);
-    }
-    else {
-      flywheel_lead.set(ControlMode.Velocity, setPoint * RPMtoTicks);
-    }
+    // if (m_desiredRPM == 0) {
+    //   // special case, turn off power to flywheel
+    //   flywheel_lead.set(ControlMode.PercentOutput, 0);
+    // }
+    // else {
+    //   flywheel_lead.set(ControlMode.Velocity, setPoint * RPMtoTicks);
+    // }
 
     SmartDashboard.putNumber("Shooter RPM set point", setPoint);
     SmartDashboard.putNumber("Shooter RPM error", m_error);
@@ -141,6 +169,9 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Shooter m_CurrentRPM", m_currentRPM);
     SmartDashboard.putNumber("Shooter m_desiredRPM", m_desiredRPM);
     SmartDashboard.putNumber("Shooter m_error", m_error);
+
+    SmartDashboard.putNumber("flywheel output percent", flywheel_lead.getMotorOutputPercent());
+    SmartDashboard.putNumber("flywheel output voltage", flywheel_lead.getMotorOutputVoltage());
     // SmartDashboard.putNumber("Shooter m_max_RPM_error", m_max_RPM_error);
     // SmartDashboard.putBoolean("Shooter auton PID", autonPIDset);
     // SmartDashboard.putNumber("Shooter m_rate_RPMperSecond", m_rate_RPMperSecond);
@@ -149,7 +180,16 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void setFlywheelRPM(double rpm) {
     m_desiredRPM = rpm;
+    m_mode = ShooterMode.SHOOTING;
     flywheel_lead.setIntegralAccumulator(0.0);
+  }
+
+  public void stop() {
+    m_mode = ShooterMode.STOP;
+  }
+
+  public void idle(){
+    m_mode = ShooterMode.IDLE;
   }
 
   public double getCurrentRPM() {
