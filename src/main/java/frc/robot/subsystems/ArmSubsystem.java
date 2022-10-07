@@ -24,7 +24,7 @@ public class ArmSubsystem extends SubsystemBase {
   private CANSparkMax m_armLeadMotor = new CANSparkMax(canId.CANID19_ARM_LEAD_MOTOR, MotorType.kBrushless);
   private CANSparkMax m_armFollowMotor = new CANSparkMax(canId.CANID20_ARM_FOLLOW_MOTOR, MotorType.kBrushless);
 
-  private int kCPR = 8192;   // ticks per revolution
+  private int kCPR = 8192;   // ticks per revolution for through bor encoder
   private SparkMaxAlternateEncoder.Type kAltEncType = SparkMaxAlternateEncoder.Type.kQuadrature;
   private RelativeEncoder m_throughBoreEncoder;
 
@@ -34,102 +34,78 @@ public class ArmSubsystem extends SubsystemBase {
   private double degrees2rotations = 1.0/360.0;
   private double toleranceDegrees = 1.0;
   // arm angle = encoder angle * constant ratio
+
+  // encoderToArmRatio is the gear reduction between the driven shaft with the 
+  // Through bore encoder on it and the rotation of the arm. The arm is driven by
+  // a chain from shaft with the through bore encoder.
   private double m_encoderToArmRatio = 0.428571;
   
+  // NOTE: we don't care about the gear reduction between the motor and the encoder.
+  // This is because the PID parameters are tuned to get the desired response at the encoder
+  // and the motor and gearbox are treated as a black box.
+
   private SparkMaxPIDController m_armPID;
-  private double kP = 3.5;  // 4.0
-  private double kI = 0.0001;
+  private double kP = 0.003;
+  private double kI = 0.0;
   private double kD = 0.0;
   private double kIz = 0.005;
-  private double kFF = 0.0;
+  private double kFF = 0.013;
   private double kMaxOutput = 0.8;
   private double kMinOutput = -0.8;
 
   private double maxAngleDegree = 23.6;
   private double minAngleDegree = -20.5;
 
-  private int m_numberOfTimesReinitalized = 0;
+  private int m_numberOfTimesReinitialized = 0;
 
   private Robot m_robot;
 
   public ArmSubsystem(Robot robot) {
 
-    SmartDashboard.putNumber("ARM number of reinitalize", m_numberOfTimesReinitalized);
+    SmartDashboard.putNumber("ARM number of reinitialize", m_numberOfTimesReinitialized);
 
     m_robot = robot;
     m_armLeadMotor.restoreFactoryDefaults();
     m_armFollowMotor.restoreFactoryDefaults();
 
-    m_armLeadMotor.setIdleMode(IdleMode.kBrake);
-    m_armFollowMotor.setIdleMode(IdleMode.kBrake);
+    initializeMotors();
 
-    m_armFollowMotor.follow(m_armLeadMotor);
+    m_armLeadMotor.burnFlash();
+    m_armFollowMotor.burnFlash();
 
-    m_throughBoreEncoder = m_armLeadMotor.getAlternateEncoder(kAltEncType, kCPR);
-    
-    m_armPID = m_armLeadMotor.getPIDController();
-    m_armPID.setFeedbackDevice(m_throughBoreEncoder);
-    m_armPID.setOutputRange(-1, 1);
-    m_armPID.setSmartMotionAccelStrategy(SparkMaxPIDController.AccelStrategy.kTrapezoidal, 0);
-    // Acceleration is in RPM/s. 45 degrees per second per second.
-    m_armPID.setSmartMotionMaxAccel(60*(45.0/360.0), 0);
-    // velocity is in RPM. 7.5 RPM is 45 degrees per second
-    // for reference JVN calc claims max velocity of about 450 degrees per second.
-    m_armPID.setSmartMotionMaxVelocity(60*(45.0/360.0), 0);
-    // Error is in rotations
-    m_armPID.setSmartMotionAllowedClosedLoopError(1/360.0, 0);
-    //good for preventing small changes but this can also be done with the joystick itself 
-    //m_armPID.setSmartMotionMinOutputVelocity(0.05, 0);
-  
-    // set PID coefficients
-    m_armPID.setP(kP);
-    m_armPID.setI(kI);
-    m_armPID.setD(kD);
-    m_armPID.setIZone(kIz);
-    m_armPID.setFF(kFF);
-    m_armPID.setOutputRange(kMinOutput, kMaxOutput);
-
-    // Reduce CAN traffic when possible
-    // https://www.hi-im.kim/canbus
-    //MotorUtils.setSparkMaxStatusSlow(m_armFollowMotor);
-    // we don't need fast updates of sensor velocity
-    //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 101);
-    // we do need updates of sensor position
-    //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
-
-    // don't need frequent updates for follow motor
-    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 396);
-    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 401);
-
-    m_throughBoreEncoder.setPositionConversionFactor(1.0);
-
-    //because of gear box the encoder is spinning the wrong way
-    m_throughBoreEncoder.setInverted(true);
-  
     // Arm will start on a hard stop, part way back with a limit switch
     zeroEncoder();
     m_targetAngle = zeroedEncoderAngle;
   }
 
-  private void initalizeMotors(){
+  private void initializeMotors() {
+
     m_armLeadMotor.setIdleMode(IdleMode.kBrake);
     m_armFollowMotor.setIdleMode(IdleMode.kBrake);
 
     m_armFollowMotor.follow(m_armLeadMotor);
 
     m_throughBoreEncoder = m_armLeadMotor.getAlternateEncoder(kAltEncType, kCPR);
-    
+    m_throughBoreEncoder.setPositionConversionFactor(1.0);
+    //because of gear box the encoder is spinning the wrong way
+    m_throughBoreEncoder.setInverted(true);
+
     m_armPID = m_armLeadMotor.getPIDController();
+
     m_armPID.setFeedbackDevice(m_throughBoreEncoder);
     m_armPID.setOutputRange(-1, 1);
     m_armPID.setSmartMotionAccelStrategy(SparkMaxPIDController.AccelStrategy.kTrapezoidal, 0);
+
+    // Velocities for Smart Motion are for the encoder shaft. To get the velocity for
+    // the arms, multiplied shaft velocity by m_encoderToArmRatio (~0.43)
+
     // Acceleration is in RPM/s. 45 degrees per second per second.
-    m_armPID.setSmartMotionMaxAccel(60*(45.0/360.0), 0);
+    m_armPID.setSmartMotionMaxAccel(60*(360.0/360.0), 0);
     // velocity is in RPM. 7.5 RPM is 45 degrees per second
     // for reference JVN calc claims max velocity of about 450 degrees per second.
-    m_armPID.setSmartMotionMaxVelocity(60*(45.0/360.0), 0);
+    m_armPID.setSmartMotionMaxVelocity(60*(360.0/360.0), 0);
     // Error is in rotations
-    m_armPID.setSmartMotionAllowedClosedLoopError(1/360.0, 0);
+    m_armPID.setSmartMotionAllowedClosedLoopError(4/360.0, 0);
     //good for preventing small changes but this can also be done with the joystick itself 
     //m_armPID.setSmartMotionMinOutputVelocity(0.05, 0);
   
@@ -143,27 +119,24 @@ public class ArmSubsystem extends SubsystemBase {
 
     // Reduce CAN traffic when possible
     // https://www.hi-im.kim/canbus
-    //MotorUtils.setSparkMaxStatusSlow(m_armFollowMotor);
+    // MotorUtils.setSparkMaxStatusSlow(m_armFollowMotor);
     // we don't need fast updates of sensor velocity
-    //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 101);
+    // m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 101);
     // we do need updates of sensor position
-    //m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+    // m_armLeadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
 
     // don't need frequent updates for follow motor
-    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 396);
-    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 401);
+    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 300);
+    m_armFollowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 400);
 
-    m_throughBoreEncoder.setPositionConversionFactor(1.0);
-
-    //because of gear box the encoder is spinning the wrong way
-    m_throughBoreEncoder.setInverted(true);
   }
 
   /**
    * Hold - hold the arm in place using positional control
    */
   public void hold() {
-    m_armPID.setReference(getEncoderValue(), ControlType.kPosition);
+    //m_armPID.setReference(getEncoderValue(), ControlType.kPosition);
+    m_armPID.setReference(getEncoderValue(), ControlType.kSmartMotion);
   }
   
   /**
@@ -196,7 +169,9 @@ public class ArmSubsystem extends SubsystemBase {
     }
     m_targetAngle = angleDegrees;
     double encoderValue = angleToEncoderRotations(angleDegrees);
-    m_armPID.setReference(encoderValue, ControlType.kPosition);
+    //m_armPID.setReference(encoderValue, ControlType.kPosition);
+
+    m_armPID.setReference(encoderValue, ControlType.kSmartMotion);
   }
 
   /**
@@ -253,21 +228,21 @@ public class ArmSubsystem extends SubsystemBase {
       SmartDashboard.putString("ARM last error lead", m_armLeadMotor.getLastError().toString());
       SmartDashboard.putNumber("ARM kp value", leadPidkP);
 
-      if(leadPidkP != kP){
-        m_numberOfTimesReinitalized++;
-        initalizeMotors();
+      if(Math.abs(leadPidkP - kP) < 0.000000001){
+        m_numberOfTimesReinitialized++;
+        initializeMotors();
 
-        SmartDashboard.putNumber("ARM number of reinitalize", m_numberOfTimesReinitalized);
+        SmartDashboard.putNumber("ARM number of reinitialize", m_numberOfTimesReinitialized);
       }
       
     }
 
     SmartDashboard.putNumber("Arm Angle deg", getArmAngle());
-    SmartDashboard.putNumber("Arm Vel (deg per sec)", m_armLeadMotor.getEncoder().getVelocity()*rpm2degreesPerSecond);
+    //SmartDashboard.putNumber("Arm Vel (deg per sec)", m_armLeadMotor.getEncoder().getVelocity()*rpm2degreesPerSecond);
     SmartDashboard.putNumber("Arm SetPoint", m_targetAngle);
     SmartDashboard.putNumber("Arm Error", m_targetAngle - getArmAngle());
-    SmartDashboard.putNumber("Arm %output", m_armLeadMotor.getAppliedOutput());
-    SmartDashboard.putNumber("Arm Current", m_armLeadMotor.getOutputCurrent());
+    // SmartDashboard.putNumber("Arm %output", m_armLeadMotor.getAppliedOutput());
+    // SmartDashboard.putNumber("Arm Current", m_armLeadMotor.getOutputCurrent());
     // SmartDashboard.putNumber("Arm rpm To Degrees Per Second", rpm2degreesPerSecond);
     // SmartDashboard.putNumber("Arm tolerance Degrees", toleranceDegrees);
     // SmartDashboard.putNumber("Arm maximum Angle Degree", maxAngleDegree);

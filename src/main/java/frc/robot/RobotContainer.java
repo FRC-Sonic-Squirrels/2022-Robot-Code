@@ -30,6 +30,7 @@ import frc.robot.commands.LimelightAutoShoot;
 import frc.robot.commands.ShootManualAdjustRpmAndAngle;
 import frc.robot.commands.ShootWithSetRPMAndHoodAngle;
 import frc.robot.commands.AutoClimbCommands.COOPER;
+import frc.robot.commands.AutoClimbCommands.MotionMagicControl;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
@@ -61,7 +62,7 @@ public class RobotContainer {
 
   // Controllers
   public final XboxController m_controller = new XboxController(0);
-  public final XboxController m_operatorController = new XboxController(1);
+  //public final XboxController m_operatorController = new XboxController(1);
   public final XboxController m_climbController = new XboxController(2);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
@@ -243,16 +244,16 @@ public class RobotContainer {
     // new Button(m_operatorController::getAButton)
     //    .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
 
-      new Button(m_operatorController::getAButton)
-       .toggleWhenPressed( 
-        new ConditionalCommand(
-          new IntakeDeployCommand(m_intake, m_cargo), 
-          new InstantCommand(), 
-          () -> !(m_shooter.getDesiredRPM() > 0))
-       );
+    //   new Button(m_operatorController::getAButton)
+    //    .toggleWhenPressed( 
+    //     new ConditionalCommand(
+    //       new IntakeDeployCommand(m_intake, m_cargo), 
+    //       new InstantCommand(), 
+    //       () -> !(m_shooter.getDesiredRPM() > 0))
+    //    );
 
-    new Button(m_operatorController::getYButton)
-       .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
+    // new Button(m_operatorController::getYButton)
+    //    .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
     
     // // fender shot
     // new Button(m_operatorController::getRightBumper)
@@ -263,20 +264,20 @@ public class RobotContainer {
     //     .whenPressed(new ShootWithSetRPMAndHoodAngle(4000, 32, m_cargo, m_shooter, m_hood, m_robot), true);
 
     //Using this for debugging and tuning the hood at the practice field 
-    new Button(m_operatorController::getRightBumper)
-    .whileActiveOnce(new ShootManualAdjustRpmAndAngle(() -> m_shootingRpm, () -> m_hoodAngle, m_cargo, m_shooter, m_hood, m_robot), true);
+    // new Button(m_operatorController::getRightBumper)
+    // .whileActiveOnce(new ShootManualAdjustRpmAndAngle(() -> m_shootingRpm, () -> m_hoodAngle, m_cargo, m_shooter, m_hood, m_robot), true);
 
-    new Button(m_operatorController::getBackButton)
-      .whenPressed(new InstantCommand(() -> m_shootingRpm -= 50));
+    // new Button(m_operatorController::getBackButton)
+    //   .whenPressed(new InstantCommand(() -> m_shootingRpm -= 50));
 
-    new Button(m_operatorController::getStartButton)
-      .whenPressed(new InstantCommand(() -> m_shootingRpm += 50));
+    // new Button(m_operatorController::getStartButton)
+    //   .whenPressed(new InstantCommand(() -> m_shootingRpm += 50));
 
-    new Button(() -> m_operatorController.getLeftTriggerAxis() >= 0.05)
-      .whenPressed(new InstantCommand(() -> m_hoodAngle -= 0.5));
+    // new Button(() -> m_operatorController.getLeftTriggerAxis() >= 0.05)
+    //   .whenPressed(new InstantCommand(() -> m_hoodAngle -= 0.5));
 
-    new Button(() -> m_operatorController.getRightTriggerAxis() >= 0.05)
-      .whenPressed(new InstantCommand(() -> m_hoodAngle += 0.5));
+    // new Button(() -> m_operatorController.getRightTriggerAxis() >= 0.05)
+    //   .whenPressed(new InstantCommand(() -> m_hoodAngle += 0.5));
 
 
     // **************** OPERATOR CONTROLS [END] ********************************
@@ -295,14 +296,20 @@ public class RobotContainer {
           .withInterrupt(() -> m_climbController.getBButtonPressed())
       );
 
-    new Button(m_climbController::getXButton)
-      .whileHeld(new InstantCommand( () -> m_arm.setArmPercentOutput(m_climbController.getRightY()), m_arm));
+    // new Button(m_climbController::getXButton)
+    //   .whileHeld(new InstantCommand( () -> m_arm.setArmPercentOutput(m_climbController.getRightY()), m_arm));
 
     new Button(m_climbController::getBackButton)
       .whenPressed(new InstantCommand(() -> m_limelightOffset -= Units.inchesToMeters(5)));
 
     new Button(m_climbController::getStartButton)
       .whenPressed(new InstantCommand(() -> m_limelightOffset += Units.inchesToMeters(5)));
+
+    // "Send It"  - pull up on bar with elevator NOW. Used when robot get stuck on last step of
+    // autoclimb. 
+    new Button(m_climbController::getXButton)
+      .whenPressed(new MotionMagicControl(m_elevator, 9, 0.05, 0.25, 28));
+
   
     
     // ******************* Climb Controls [END] ****************************

@@ -32,7 +32,7 @@ public class COOPER extends SequentialCommandGroup {
     addCommands(
       // make sure arms are back and out of the way before climbing to Mid
       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_BACK_ANGLE)
-        .withTimeout(0.1),
+        .withTimeout(0.2),
 
       // turn off limelight LEDs to save the drive team's eyes
       new InstantCommand(() -> limelight.turnOffAllLEDS()),
@@ -44,14 +44,14 @@ public class COOPER extends SequentialCommandGroup {
 
       // Arms forward onto the Mid bar
       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)
-        .withTimeout(0.3),
+        .withTimeout(0.45),
 
       // Extend elevator a little so we are supported by only arms.
       new MotionMagicControl(elevator, 5, 0.05, 0.5, 25),
 
       // Lean back. Arms full forward to lean the robot back.
       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE)
-        .withTimeout(0.25),
+        .withTimeout(0.3),
 
       // Fully extend Elevator. //this is soft limit max
       new MotionMagicControl(elevator, 26, 0.05, 0.25, 31),
@@ -65,7 +65,7 @@ public class COOPER extends SequentialCommandGroup {
 
       // Set the elevator hooks by moving arms back slightly
       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)
-        .withTimeout(0.25),
+        .withTimeout(0.4),
 
         new InstantCommand(() -> intake.retractIntake(), intake),
 
@@ -99,7 +99,7 @@ public class COOPER extends SequentialCommandGroup {
 
       // Arms on HIGH bar
       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_MIDDLE_ANGLE)
-        .withTimeout(0.3),
+        .withTimeout(0.6),
 
       //extend elevator up while the arms are not pushing hard against the bar 
       new ParallelCommandGroup(
@@ -112,30 +112,42 @@ public class COOPER extends SequentialCommandGroup {
       ),
 
       //wait for swing to settle on high
-       new WaitCommand(1.5),
+       new WaitCommand(2),
+
+       new WaitUntilCommand(() -> (
+         drivetrain.getGyroscopePitchVelocity() <= 0) && 
+         (drivetrain.getGyroscopePitch() <= 0) 
+       ),
 
        //extend all the way straight up  
        new MotionMagicControl(elevator, 25.5, 0.05, 0.25, 31),
 
        //lean back to hook back hooks on traversal bar 
        new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_FORWARD_ANGLE)
-        .withTimeout(0.25),
+        .until(() -> arm.getArmAngle() >= 19),
+
+        new InstantCommand(() -> intake.deployIntake(), intake),
 
       //wait for safe grab on the traversal bar 
        new WaitUntilCommand(() -> (
          drivetrain.getGyroscopePitchVelocity() >= 0) && 
          (drivetrain.getGyroscopePitch() <= -21) && 
-         (arm.getArmAngle() >= 16) ),
+         (arm.getArmAngle() >= 15) ),
 
         new WaitCommand(0.2),
 
         new WaitUntilCommand(() -> (
          drivetrain.getGyroscopePitchVelocity() >= 0) && 
          (drivetrain.getGyroscopePitch() <= -21) && 
-         (arm.getArmAngle() >= 16) ),
+         (arm.getArmAngle() >= 15) ),
 
       //pull down hard and fast 
+
+      
+
        new MotionMagicControl(elevator, 9, 0.05, 0.25, 28),
+
+       new InstantCommand(() -> intake.retractIntake(), intake),
 
        //arms back at the end of the climb 
        new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_BACK_ANGLE)
