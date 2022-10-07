@@ -17,10 +17,12 @@
   },
   "cSpell.words": [
     "AHRS",
+    "autoclimb",
     "Auton",
     "camtran",
     "CANID",
     "CANIVOR",
+    "Chezy",
     "CHIMPING",
     "CTRE",
     "currentlimit",
