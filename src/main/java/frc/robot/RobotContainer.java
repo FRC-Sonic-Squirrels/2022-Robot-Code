@@ -30,6 +30,7 @@ import frc.robot.commands.LimelightAutoShoot;
 import frc.robot.commands.ShootManualAdjustRpmAndAngle;
 import frc.robot.commands.ShootWithSetRPMAndHoodAngle;
 import frc.robot.commands.AutoClimbCommands.COOPER;
+import frc.robot.commands.AutoClimbCommands.MotionMagicControl;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
@@ -293,14 +294,20 @@ public class RobotContainer {
           .withInterrupt(() -> m_climbController.getBButtonPressed())
       );
 
-    new Button(m_climbController::getXButton)
-      .whileHeld(new InstantCommand( () -> m_arm.setArmPercentOutput(m_climbController.getRightY()), m_arm));
+    // new Button(m_climbController::getXButton)
+    //   .whileHeld(new InstantCommand( () -> m_arm.setArmPercentOutput(m_climbController.getRightY()), m_arm));
 
     new Button(m_climbController::getBackButton)
       .whenPressed(new InstantCommand(() -> m_limelightOffset -= Units.inchesToMeters(5)));
 
     new Button(m_climbController::getStartButton)
       .whenPressed(new InstantCommand(() -> m_limelightOffset += Units.inchesToMeters(5)));
+
+    // "Send It"  - pull up on bar with elevator NOW. Used when robot get stuck on last step of
+    // autoclimb. 
+    new Button(m_climbController::getXButton)
+      .whenPressed(new MotionMagicControl(m_elevator, 9, 0.05, 0.25, 28));
+
   
     
     // ******************* Climb Controls [END] ****************************
