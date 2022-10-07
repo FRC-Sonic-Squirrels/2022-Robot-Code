@@ -96,8 +96,10 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     PathPlannerTrajectory path4 = PathPlanner.loadPath("5ball_part4", 4.5, 3.5);
 
+    Pose2d startPose = getStartPoseForPath(path1);
+
     return new SequentialCommandGroup(
-        new InstantCommand(() -> m_drivetrain.resetOdometry(path1.getInitialPose())),
+        new InstantCommand(() -> m_drivetrain.resetOdometry(startPose)),
         new InstantCommand(() -> m_hood.setAngleDegrees(30)),
         new InstantCommand(() -> m_shooter.setFlywheelRPM(2900)),
         new ParallelCommandGroup(new IntakeDeployCommand(m_intake, m_cargo)
@@ -144,8 +146,9 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     PathPlannerTrajectory path1 = PathPlanner.loadPath("5ball_part3", 4.5, 3.5);
     PathPlannerTrajectory path2 = PathPlanner.loadPath("humanPlayerPracExitTerminal", 4.5, 3.5);
 
+    Pose2d startPose = getStartPoseForPath(path1);
     return new SequentialCommandGroup(
-        new InstantCommand(() -> m_drivetrain.resetOdometry(path1.getInitialPose())),
+        new InstantCommand(() -> m_drivetrain.resetOdometry(startPose)),
 
         new ParallelCommandGroup(
             // run the intake while we drive forward, but retract after we start driving
@@ -180,8 +183,10 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     PathPlannerTrajectory path3 = PathPlanner.loadPath("2plus1ball_part3", 3.0, 2.0);
 
+    Pose2d startPose = getStartPoseForPath(path1);
+
     return new SequentialCommandGroup(
-        new InstantCommand(() -> m_drivetrain.resetOdometry(path1.getInitialPose())),
+        new InstantCommand(() -> m_drivetrain.resetOdometry(startPose)),
         new ParallelCommandGroup(
             new IntakeDeployCommand(m_intake, m_cargo)
                 .until(() -> (m_cargo.cargoInLowerBelts() && m_cargo.cargoInUpperBelts())),
@@ -216,8 +221,10 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     PathPlannerTrajectory path3 = PathPlanner.loadPath("2plus1ball_part3", 3.0, 1.5);
 
+    Pose2d startPose = getStartPoseForPath(path1);
+
     return new SequentialCommandGroup(
-        new InstantCommand(() -> m_drivetrain.resetOdometry(path1.getInitialPose())),
+        new InstantCommand(() -> m_drivetrain.resetOdometry(startPose)),
 
         // shoot first two preloads
         new ParallelRaceGroup(
@@ -271,8 +278,10 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     PathPlannerTrajectory path4 = PathPlanner.loadPath("2plus2ball_part4", 3.0, 1.5);
 
+    Pose2d startPose = getStartPoseForPath(path1);
+
     return new SequentialCommandGroup(
-        new InstantCommand(() -> m_drivetrain.resetOdometry(path1.getInitialPose())),
+        new InstantCommand(() -> m_drivetrain.resetOdometry(startPose)),
 
         // shoot first two preloads
         new ParallelRaceGroup(
@@ -325,12 +334,10 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   public Command chezyCenter2ballComplementary(){
     PathPlannerTrajectory path = PathPlanner.loadPath("Chezy_2ball_complamentary", 3.0, 1.5);
 
-    Pose2d pathPose = path.getInitialPose();
-
-    Pose2d pathPostion = new Pose2d(pathPose.getX(), pathPose.getY(), Rotation2d.fromDegrees(180));
+    Pose2d startPose = getStartPoseForPath(path);
 
     return new SequentialCommandGroup(
-      new InstantCommand(() -> m_drivetrain.resetOdometry(pathPostion)),
+      new InstantCommand(() -> m_drivetrain.resetOdometry(startPose)),
       
       new ParallelCommandGroup(
       new WaitCommand(10.0),
@@ -355,14 +362,11 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   public Command chezyCenter2ballComplementaryDriveInAndOut(){
     PathPlannerTrajectory path = PathPlanner.loadPath("Chezy_2ball_complamentary", 3.0, 1.5);
     PathPlannerTrajectory path1 = PathPlanner.loadPath("Chezy_2ball_complamentary_reversed", 3.0, 1.5);
-    Pose2d pathPose = path.getInitialPose();
+    
+    Pose2d startPose = getStartPoseForPath(path1);
 
-    Pose2d pathPostion = new Pose2d(pathPose.getX(), pathPose.getY(), Rotation2d.fromDegrees(180));
-
-
-    SmartDashboard.putString("Path pose", pathPostion.toString());
     return new SequentialCommandGroup(
-      new InstantCommand(() -> m_drivetrain.resetOdometry(pathPostion)),
+      new InstantCommand(() -> m_drivetrain.resetOdometry(startPose)),
       
       new ShootWithSetRPMAndHoodAngle(2900, 22, m_cargo, m_shooter, m_hood, m_robot),
 
@@ -381,12 +385,10 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     PathPlannerTrajectory path2 = PathPlanner.loadPath("ChezyCenter4ball_part2", 3.0, 1.5);
 
-    Pose2d pathPose = path1.getInitialPose();
-
-    Pose2d pathPostion = new Pose2d(pathPose.getX(), pathPose.getY(), Rotation2d.fromDegrees(180));
+    Pose2d startPose = getStartPoseForPath(path1);
 
     return new SequentialCommandGroup(
-        new InstantCommand(() -> m_drivetrain.resetOdometry(pathPostion)),
+        new InstantCommand(() -> m_drivetrain.resetOdometry(startPose)),
 
         // shoot first two preloads
         new ParallelRaceGroup(
@@ -433,8 +435,10 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     PathPlannerTrajectory path2 = PathPlanner.loadPath("5ball_part2", 3.0, 1.5);
 
+    Pose2d startPose = getStartPoseForPath(path1);
+
     return new SequentialCommandGroup(
-        new InstantCommand(() -> m_drivetrain.resetOdometry(path1.getInitialPose())),
+        new InstantCommand(() -> m_drivetrain.resetOdometry(startPose)),
 
         // shoot first two preloads
         new ParallelRaceGroup(
@@ -534,6 +538,17 @@ public class SwerveTrajectoryAutonomousCommandFactory {
           swerveControllerCommand.andThen(() -> m_drivetrain.drive(new ChassisSpeeds(0, 0, 0)));
     }
     return swerveControllerCommand;
+  }
+/**
+ * This returns the pose2d to reset the odometry to at the start of auto. If you 
+ * just use path.getInitalPose() the rotation is the angle of the heading not what the robot is 
+ * facing. For swerve robots the rotation value at a state is the 
+ * path.getInitialState().holonomicRotation
+ * @param path to get the starting pose of 
+ * @return the pose2d to reset the odometry to
+ */
+  public Pose2d getStartPoseForPath(PathPlannerTrajectory path){
+      return new Pose2d(path.getInitialPose().getTranslation(), path.getInitialState().holonomicRotation);
   }
 
 }
