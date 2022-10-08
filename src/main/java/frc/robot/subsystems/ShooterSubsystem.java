@@ -101,6 +101,8 @@ public class ShooterSubsystem extends SubsystemBase {
     // MotorUtils.setCtreStatusSlow(flywheel_follow);
 
     setPIDteleop();
+
+    SmartDashboard.putBoolean("USE IDLE RPM", true);
   }
 
   @Override
@@ -116,6 +118,10 @@ public class ShooterSubsystem extends SubsystemBase {
         // if the difference in current rpm vs idle is significant set percent 0 
         // so it slows down faster if we shoot from further away in theory means 
         // we wait less when we shoot from far and then close 
+        if(!SmartDashboard.getBoolean("USE IDLE RPM", true)) {
+          m_mode = ShooterMode.STOP;
+          break;
+        }
         if(Math.abs(m_currentRPM - m_idleRpm) > 25 ) {
           flywheel_lead.set(ControlMode.PercentOutput, 0);
         } else {
@@ -172,6 +178,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("flywheel output percent", flywheel_lead.getMotorOutputPercent());
     SmartDashboard.putNumber("flywheel output voltage", flywheel_lead.getMotorOutputVoltage());
+    SmartDashboard.putString("flywheel MODE", m_mode.name());
     // SmartDashboard.putNumber("Shooter m_max_RPM_error", m_max_RPM_error);
     // SmartDashboard.putBoolean("Shooter auton PID", autonPIDset);
     // SmartDashboard.putNumber("Shooter m_rate_RPMperSecond", m_rate_RPMperSecond);
