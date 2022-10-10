@@ -116,12 +116,14 @@ public class ShooterSubsystem extends SubsystemBase {
         // if the difference in current rpm vs idle is significant set percent 0 
         // so it slows down faster if we shoot from further away in theory means 
         // we wait less when we shoot from far and then close 
-        if(Math.abs(m_currentRPM - m_idleRpm) > 25 ) {
+        if( (Math.abs(m_currentRPM - m_idleRpm) > 50) && (m_currentRPM > m_idleRpm) ) {
           flywheel_lead.set(ControlMode.PercentOutput, 0);
         } else {
           flywheel_lead.set(ControlMode.Velocity, m_idleRpm * RPMtoTicks);
-          m_desiredRPM = m_idleRpm; //need to update this because its used for determining isAtSpeed
+          
         }
+
+        m_desiredRPM = m_idleRpm; //need to update this because its used for determining isAtSpeed
         break;
 
       case SHOOTING: 
