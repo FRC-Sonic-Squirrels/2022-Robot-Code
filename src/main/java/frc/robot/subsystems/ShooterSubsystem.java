@@ -113,9 +113,9 @@ public class ShooterSubsystem extends SubsystemBase {
         break;
 
       case IDLE: 
-        // if the difference in current rpm vs idle is significant set percent 0 
-        // so it slows down faster if we shoot from further away in theory means 
-        // we wait less when we shoot from far and then close 
+        //our max motor output slowing down is 5% power this means slowing our flywheel is super slow 
+        //instead if the flywheel is spinning super fast, cut power to lower its velocity faster 
+        //this should mean we avoid the case where we wait for the shooter to slow down  
         if( (Math.abs(m_currentRPM - m_idleRpm) > 50) && (m_currentRPM > m_idleRpm) ) {
           flywheel_lead.set(ControlMode.PercentOutput, 0);
         } else {
