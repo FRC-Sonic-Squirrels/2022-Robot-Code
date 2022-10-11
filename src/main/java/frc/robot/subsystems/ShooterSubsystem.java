@@ -116,11 +116,12 @@ public class ShooterSubsystem extends SubsystemBase {
         //our max motor output slowing down is 5% power this means slowing our flywheel is super slow 
         //instead if the flywheel is spinning super fast, cut power to lower its velocity faster 
         //this should mean we avoid the case where we wait for the shooter to slow down  
-        if( (Math.abs(m_currentRPM - m_idleRpm) > 50) && (m_currentRPM > m_idleRpm) ) {
+
+        //no abs bc value if current rpm is within 50 but less than idle rpm get it up to idle rpm 
+        if( (m_currentRPM - m_idleRpm > 50) && (m_currentRPM > m_idleRpm) ) {
           flywheel_lead.set(ControlMode.PercentOutput, 0);
         } else {
           flywheel_lead.set(ControlMode.Velocity, m_idleRpm * RPMtoTicks);
-          
         }
 
         m_desiredRPM = m_idleRpm; //need to update this because its used for determining isAtSpeed
