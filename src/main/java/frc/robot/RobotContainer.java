@@ -6,6 +6,7 @@ package frc.robot;
 
 
 import edu.wpi.first.math.util.Units;
+import com.team2930.lib.command.WaitUntilForCommand;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -244,6 +245,14 @@ public class RobotContainer {
     // **************** OPERATOR CONTROLS [START] ********************************
 
     //--------------------------------Operator intake-------------------
+
+    // new Button(m_operatorController::getYButton)
+    //   .whenPressed(
+    //     new WaitUntilForCommand(() -> m_operatorController.getXButton(), 3)
+    //       .beforeStarting(new InstantCommand( () -> SmartDashboard.putBoolean("wait until for test started", true)))
+    //       .andThen(new InstantCommand(() -> SmartDashboard.putBoolean("wait until for test started", false)))
+    //   );
+
     //Deploy Intake
     // new Button(m_operatorController::getAButton)
     //    .toggleWhenPressed(new IntakeDeployCommand(m_intake, m_cargo));
