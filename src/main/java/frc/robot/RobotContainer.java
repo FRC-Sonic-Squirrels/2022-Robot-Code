@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
@@ -220,7 +221,18 @@ public class RobotContainer {
               
     //deploy intake
     new Button(() -> (m_controller.getRightTriggerAxis() > 0.05))
-            .toggleWhenActive(new IntakeDeployCommand(m_intake, m_cargo), true);
+    .toggleWhenActive(
+      new IntakeDeployCommand(m_intake, m_cargo)
+      .alongWith(
+        new ConditionalCommand(
+          new ControllerRumbleCommand(m_controller, 0.5), 
+          new InstantCommand(), 
+          () -> m_cargo.cargoInLowerBelts() && m_cargo.cargoInUpperBelts()
+        ).perpetually()
+      )
+    );
+
+  
 
     //reverse intake
     new Button(() -> (m_controller.getLeftTriggerAxis() > 0.05))
