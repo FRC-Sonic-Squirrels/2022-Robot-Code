@@ -6,6 +6,7 @@ package frc.robot;
 
 
 import edu.wpi.first.math.util.Units;
+import com.team2930.lib.command.RumbleControllerOnCondition;
 import com.team2930.lib.command.WaitUntilForCommand;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -224,13 +225,13 @@ public class RobotContainer {
     new Button(() -> (m_controller.getRightTriggerAxis() > 0.05))
     .toggleWhenActive(
       new IntakeDeployCommand(m_intake, m_cargo)
-      .alongWith(
-        new ConditionalCommand(
-          new ControllerRumbleCommand(m_controller, 0.5), 
-          new InstantCommand(), 
-          () -> m_cargo.cargoInLowerBelts() && m_cargo.cargoInUpperBelts()
-        ).perpetually()
-      )
+        .alongWith(
+          new RumbleControllerOnCondition(
+            m_controller, 
+            0.5, 
+            () -> ( m_cargo.cargoInUpperBelts() && m_cargo.cargoInLowerBelts() )
+          )
+        )
     );
 
   
