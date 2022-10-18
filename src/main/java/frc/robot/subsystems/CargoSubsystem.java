@@ -46,6 +46,9 @@ public class CargoSubsystem extends SubsystemBase {
 
   public CargoSubsystem() {
 
+    SmartDashboard.putNumber("LowerBelt Selectable output", 0.6);
+    SmartDashboard.putNumber("UpperBelt Selectable output", 0.9);
+
     LowerBelts = new WPI_TalonFX(CANIVOR_canId.CANID5_LOWER_BELTS, CANIVOR_canId.name);
     UpperBelts = new WPI_TalonFX(CANIVOR_canId.CANID6_UPPER_BELTS, CANIVOR_canId.name);
 
@@ -130,16 +133,14 @@ public class CargoSubsystem extends SubsystemBase {
       setLowerBeltPercentOutput(m_lowerOutput);
     } else if (mode == Mode.SHOOT) {
       if (!cargoInUpperBelts()) {
-        setUpperBeltPercentOutput(0.9);
-        setLowerBeltPercentOutput(0.6);
         mode = Mode.SHOOT_STEP2;
       } else {
         setUpperBeltPercentOutput(-0.5);
         setLowerBeltPercentOutput(-0.2);
       }
     } else if (mode == Mode.SHOOT_STEP2) {
-      setUpperBeltPercentOutput(0.9);
-      setLowerBeltPercentOutput(0.6);
+      setUpperBeltPercentOutput(SmartDashboard.getNumber("UpperBelt Selectable output", 0.0));
+      setLowerBeltPercentOutput(SmartDashboard.getNumber("LowerBelt Selectable output", 0.0));
     } else if(mode == Mode.SHOOT_PREP){
       if(!cargoInUpperBelts()){
         setStopMode();
