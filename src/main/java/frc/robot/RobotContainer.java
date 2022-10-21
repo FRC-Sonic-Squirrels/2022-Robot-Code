@@ -234,7 +234,8 @@ public class RobotContainer {
           )
         )
         .raceWith(new WaitUntilCommand(() -> (m_cargo.cargoInUpperBelts() && m_cargo.cargoInLowerBelts()))) 
-        //race with might cause weirdness with the toggle, dont think it will but might 
+        //race with might cause weirdness with the toggle, dont think it will but might
+        //if the intake pulls up too early we can try using the WaitUntilForCommand ***however it is untested 
     );
 
   
