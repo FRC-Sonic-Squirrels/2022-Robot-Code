@@ -100,6 +100,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // MotorUtils.setCtreStatusSlow(flywheel_follow);
 
+    SmartDashboard.putBoolean("SHOOTER USE IDLE RPM", true);
+
     setPIDteleop();
   }
 
@@ -113,6 +115,11 @@ public class ShooterSubsystem extends SubsystemBase {
         break;
 
       case IDLE: 
+        //can turn off idle rpm from dashboard ks
+        if( !SmartDashboard.getBoolean("SHOOTER USE IDLE RPM", true) ){
+          m_mode = ShooterMode.STOP;
+          break;
+        }
         //our max motor output slowing down is 5% power this means slowing our flywheel is super slow 
         //instead if the flywheel is spinning super fast, cut power to lower its velocity faster 
         //this should mean we avoid the case where we wait for the shooter to slow down  
