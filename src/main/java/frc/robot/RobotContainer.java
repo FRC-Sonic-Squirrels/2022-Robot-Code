@@ -74,7 +74,6 @@ public class RobotContainer {
 
   public Command climbRumbleCommand = new ControllerClimbMaxHeightRumble(m_climbController, m_elevator);
 
-  public double m_limelightOffset = 0;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -169,7 +168,7 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
             m_limelight),
-        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot, () -> m_limelightOffset).andThen(new ControllerRumbleCommand(m_controller, 0.2))));
+        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot).andThen(new ControllerRumbleCommand(m_controller, 0.2))));
 
     // Back button resets field centric, forward is the current heading
     new Button(m_controller::getBackButton)
@@ -291,12 +290,7 @@ public class RobotContainer {
     // new Button(m_climbController::getXButton)
     //   .whileHeld(new InstantCommand( () -> m_arm.setArmPercentOutput(m_climbController.getRightY()), m_arm));
 
-    new Button(m_climbController::getBackButton)
-      .whenPressed(new InstantCommand(() -> m_limelightOffset -= Units.inchesToMeters(5)));
-
-    new Button(m_climbController::getStartButton)
-      .whenPressed(new InstantCommand(() -> m_limelightOffset += Units.inchesToMeters(5)));
-
+    
     // "Send It"  - pull up on bar with elevator NOW. Used when robot get stuck on last step of
     // autoclimb. 
     new Button(m_climbController::getXButton)

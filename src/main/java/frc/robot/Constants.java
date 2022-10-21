@@ -184,6 +184,9 @@ public final class Constants {
     public static final double IDLE = 1000;
     public static final int BUMPER_SHOT_RPM = 3000;
     public static final int HOOD_ANGLE = 15;
+
+    public static final String ADJUSTABLE_OFFSET_RPM_STRING = "ADJUSTABLE RPM OFFSET";
+    public static final String ADJUSTABLE_OFFSET_HOOD_ANGLE_STRING = "ADJUSTABLE HOOD ANGLE OFFSET";
   }
   // according to game manual field is 27 ft. (~823 cm) by 54 ft. (~1646 cm)
   public static class HubCentricConstants{

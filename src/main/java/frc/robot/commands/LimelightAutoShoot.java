@@ -8,6 +8,7 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.HoodSubsystem;
@@ -30,18 +31,15 @@ public class LimelightAutoShoot extends CommandBase {
   private double finalDistance = 0.0;
   private double adjustmentDistanceInches = 10;
 
-  private DoubleSupplier m_offsetSupplier;
-
   /** Creates a new VisionTurnToHub. */
   public LimelightAutoShoot(LimelightSubsystem limelight, CargoSubsystem cargoSubsystem,
-      ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem, Robot robot, DoubleSupplier offsetSupplierMeters) {
+      ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem, Robot robot) {
     this.limelight = limelight;
     this.cargoSubsystem = cargoSubsystem;
     this.shooterSubsystem = shooterSubsystem;
     this.hoodSubsystem = hoodSubsystem;
     this.m_robot = robot;
 
-    m_offsetSupplier = offsetSupplierMeters;
     time = 0;
 
     addRequirements(cargoSubsystem, shooterSubsystem, hoodSubsystem);
@@ -61,11 +59,10 @@ public class LimelightAutoShoot extends CommandBase {
   public void execute() {
     if (limelight.seesTarget()) {
 
-      target_distance_meters = limelight.getDistanceMeters() + m_offsetSupplier.getAsDouble();
+      target_distance_meters = limelight.getDistanceMeters();
 
-      SmartDashboard.putNumber("LL shoot command distance", Units.metersToInches(target_distance_meters));
+      // SmartDashboard.putNumber("LL shoot command distance", Units.metersToInches(target_distance_meters));
 
-      
       if (finalDistance > 0.0 && Math.abs(target_distance_meters - finalDistance) >= Units.inchesToMeters(adjustmentDistanceInches) && m_gotValues) {
         m_gotValues = false;
       }
@@ -73,9 +70,11 @@ public class LimelightAutoShoot extends CommandBase {
 
       if (!m_gotValues && limelight.onTarget()) {
         target_rpm =
-            shooterSubsystem.getRPMforDistanceFeet(Units.metersToFeet(target_distance_meters));
+            shooterSubsystem.getRPMforDistanceFeet(Units.metersToFeet(target_distance_meters))
+            + SmartDashboard.getNumber(Constants.ShooterConstants.ADJUSTABLE_OFFSET_RPM_STRING, 0.0);
         hoodAngleDegrees =
-            hoodSubsystem.getAngleForDistanceFeet(Units.metersToFeet(target_distance_meters));
+            hoodSubsystem.getAngleForDistanceFeet(Units.metersToFeet(target_distance_meters))
+            + SmartDashboard.getNumber(Constants.ShooterConstants.ADJUSTABLE_OFFSET_HOOD_ANGLE_STRING, 0.0);
         shooterSubsystem.setFlywheelRPM(target_rpm);
         hoodSubsystem.setAngleDegrees(hoodAngleDegrees);
 
