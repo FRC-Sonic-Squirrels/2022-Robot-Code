@@ -115,7 +115,7 @@ public class ShooterSubsystem extends SubsystemBase {
         break;
 
       case IDLE: 
-        //can turn off idle rpm from dashboard ks
+        //can turn off idle rpm from dashboard
         if( !SmartDashboard.getBoolean("SHOOTER USE IDLE RPM", true) ){
           m_mode = ShooterMode.STOP;
           break;
