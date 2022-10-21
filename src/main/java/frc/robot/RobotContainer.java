@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.ArmManualControlCommand;
 import frc.robot.commands.ControllerClimbMaxHeightRumble;
@@ -232,6 +233,8 @@ public class RobotContainer {
             () -> ( m_cargo.cargoInUpperBelts() && m_cargo.cargoInLowerBelts() )
           )
         )
+        .raceWith(new WaitUntilCommand(() -> (m_cargo.cargoInUpperBelts() && m_cargo.cargoInLowerBelts()))) 
+        //race with might cause weirdness with the toggle, dont think it will but might 
     );
 
   
