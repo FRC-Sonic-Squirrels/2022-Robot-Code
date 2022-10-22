@@ -103,8 +103,6 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("SHOOTER USE IDLE RPM", true);
 
     setPIDteleop();
-
-    SmartDashboard.putBoolean("USE IDLE RPM", true);
   }
 
   @Override
