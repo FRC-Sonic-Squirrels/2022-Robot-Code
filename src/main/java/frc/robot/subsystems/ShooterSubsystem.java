@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.team2930.lib.util.linearInterpolator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -20,9 +21,13 @@ import frc.robot.Robot;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-  enum ShooterMode {
-    STATIC, DYNAMIC
+  public enum ShooterMode {
+    STOP, IDLE, SHOOTING 
   };
+
+  private ShooterMode m_mode = ShooterMode.STOP;
+
+  private double m_idleRpm = Constants.ShooterConstants.IDLE;
 
   private Robot m_robot;
 
@@ -58,8 +63,13 @@ public class ShooterSubsystem extends SubsystemBase {
   private double m_rate_RPMperSecond = 10000000;
   private SlewRateLimiter m_rateLimiter = new SlewRateLimiter(m_rate_RPMperSecond);
 
+  // private PowerDistribution m_revPDH; 
+
+  // private double tpowerPort5 = 0;
+  // private double tpowerPort6 = 0;
+
   /** Creates a new ShooterSubsystem. */
-  public ShooterSubsystem(Robot robot) {
+  public ShooterSubsystem(Robot robot, PowerDistribution revPhd) {
     m_robot = robot;
 
     flywheel_lead.configFactoryDefault();
@@ -96,22 +106,73 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // MotorUtils.setCtreStatusSlow(flywheel_follow);
 
+    SmartDashboard.putBoolean("SHOOTER USE IDLE RPM", true);
+
     setPIDteleop();
-  }
 
-  public void stop() {
-    m_desiredRPM = 0;
-    flywheel_lead.set(ControlMode.PercentOutput, 0);
-  }
-
-  public void idle(){
-    m_desiredRPM = Constants.ShooterConstants.IDLE;
+    //m_revPDH = revPhd;
   }
 
   @Override
   public void periodic() {
+    // this was debug for testing how much power the flywheel draws at idle
+    // double power5 = m_revPDH.getCurrent(5) * flywheel_lead.getMotorOutputVoltage();
+    // double power6 = m_revPDH.getCurrent(6) * flywheel_follow.getMotorOutputVoltage();
+
+    // SmartDashboard.putNumber("flywheel power 5", power5);
+    // SmartDashboard.putNumber("flywheel power 6", power6);
+
+    // tpowerPort5 = tpowerPort5 + power5;
+    // tpowerPort6 = tpowerPort6 + power6;
+
+    // SmartDashboard.putNumber("total flywheel power 5", tpowerPort5);
+    // SmartDashboard.putNumber("total flywheel power 6",  tpowerPort6);
+
+    // SmartDashboard.putNumber("total flywheel both", tpowerPort5 + tpowerPort6);
 
     double setPoint = 0;
+    switch (m_mode) {
+      case STOP:
+        flywheel_lead.set(ControlMode.PercentOutput, 0);
+        m_desiredRPM = 0; //need to update this because its used for determining isAtSpeed
+        break;
+
+      case IDLE: 
+        //can turn off idle rpm from dashboard
+        if( !SmartDashboard.getBoolean("SHOOTER USE IDLE RPM", false) ){
+          m_mode = ShooterMode.STOP;
+          break;
+        }
+        //our max motor output slowing down is 5% power this means slowing our flywheel is super slow 
+        //instead if the flywheel is spinning super fast, cut power to lower its velocity faster 
+        //this should mean we avoid the case where we wait for the shooter to slow down  
+
+        //no abs bc value if current rpm is within 50 but less than idle rpm get it up to idle rpm 
+        if( (m_currentRPM - m_idleRpm > 50) && (m_currentRPM > m_idleRpm) ) {
+          flywheel_lead.set(ControlMode.PercentOutput, 0);
+        } else {
+          flywheel_lead.set(ControlMode.Velocity, m_idleRpm * RPMtoTicks);
+        }
+
+        m_desiredRPM = m_idleRpm; //need to update this because its used for determining isAtSpeed
+        break;
+
+      case SHOOTING: 
+        setPoint = m_rateLimiter.calculate(m_desiredRPM);
+        if (m_desiredRPM < setPoint) {
+          // we don't rate reduce slowing the robot
+          setPoint = m_desiredRPM;
+        }
+
+        flywheel_lead.set(ControlMode.Velocity, setPoint * RPMtoTicks);
+        break;
+
+      default:
+        flywheel_lead.set(ControlMode.PercentOutput, 0);
+        break;
+    }
+
+    // double setPoint = 0;
     m_currentRPM = m_encoder.getIntegratedSensorVelocity() / RPMtoTicks;
     m_error = m_currentRPM - m_desiredRPM;
 
@@ -121,19 +182,19 @@ public class ShooterSubsystem extends SubsystemBase {
       m_atSpeed = false;
     }
 
-    setPoint = m_rateLimiter.calculate(m_desiredRPM);
-    if (m_desiredRPM < setPoint) {
-      // we don't rate reduce slowing the robot
-      setPoint = m_desiredRPM;
-    }
+    // setPoint = m_rateLimiter.calculate(m_desiredRPM);
+    // if (m_desiredRPM < setPoint) {
+    //   // we don't rate reduce slowing the robot
+    //   setPoint = m_desiredRPM;
+    // }
 
-    if (m_desiredRPM == 0) {
-      // special case, turn off power to flywheel
-      flywheel_lead.set(ControlMode.PercentOutput, 0);
-    }
-    else {
-      flywheel_lead.set(ControlMode.Velocity, setPoint * RPMtoTicks);
-    }
+    // if (m_desiredRPM == 0) {
+    //   // special case, turn off power to flywheel
+    //   flywheel_lead.set(ControlMode.PercentOutput, 0);
+    // }
+    // else {
+    //   flywheel_lead.set(ControlMode.Velocity, setPoint * RPMtoTicks);
+    // }
 
     SmartDashboard.putNumber("Shooter RPM set point", setPoint);
     SmartDashboard.putNumber("Shooter RPM error", m_error);
@@ -141,15 +202,32 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Shooter m_CurrentRPM", m_currentRPM);
     SmartDashboard.putNumber("Shooter m_desiredRPM", m_desiredRPM);
     SmartDashboard.putNumber("Shooter m_error", m_error);
+
+    SmartDashboard.putNumber("flywheel output percent", flywheel_lead.getMotorOutputPercent());
+    SmartDashboard.putNumber("flywheel output voltage", flywheel_lead.getMotorOutputVoltage());
+    SmartDashboard.putString("flywheel MODE", m_mode.name());
     // SmartDashboard.putNumber("Shooter m_max_RPM_error", m_max_RPM_error);
     // SmartDashboard.putBoolean("Shooter auton PID", autonPIDset);
     // SmartDashboard.putNumber("Shooter m_rate_RPMperSecond", m_rate_RPMperSecond);
 
   }
 
+  public ShooterMode getMode(){
+    return m_mode;
+  }
+
   public void setFlywheelRPM(double rpm) {
     m_desiredRPM = rpm;
+    m_mode = ShooterMode.SHOOTING;
     flywheel_lead.setIntegralAccumulator(0.0);
+  }
+
+  public void stop() {
+    m_mode = ShooterMode.STOP;
+  }
+
+  public void idle(){
+    m_mode = ShooterMode.IDLE;
   }
 
   public double getCurrentRPM() {
