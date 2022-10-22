@@ -100,6 +100,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // MotorUtils.setCtreStatusSlow(flywheel_follow);
 
+    SmartDashboard.putBoolean("SHOOTER USE IDLE RPM", true);
+
     setPIDteleop();
 
     SmartDashboard.putBoolean("USE IDLE RPM", true);
@@ -115,19 +117,23 @@ public class ShooterSubsystem extends SubsystemBase {
         break;
 
       case IDLE: 
-        // if the difference in current rpm vs idle is significant set percent 0 
-        // so it slows down faster if we shoot from further away in theory means 
-        // we wait less when we shoot from far and then close 
-        if(!SmartDashboard.getBoolean("USE IDLE RPM", true)) {
+        //can turn off idle rpm from dashboard
+        if( !SmartDashboard.getBoolean("SHOOTER USE IDLE RPM", true) ){
           m_mode = ShooterMode.STOP;
           break;
         }
-        if(Math.abs(m_currentRPM - m_idleRpm) > 25 ) {
+        //our max motor output slowing down is 5% power this means slowing our flywheel is super slow 
+        //instead if the flywheel is spinning super fast, cut power to lower its velocity faster 
+        //this should mean we avoid the case where we wait for the shooter to slow down  
+
+        //no abs bc value if current rpm is within 50 but less than idle rpm get it up to idle rpm 
+        if( (m_currentRPM - m_idleRpm > 50) && (m_currentRPM > m_idleRpm) ) {
           flywheel_lead.set(ControlMode.PercentOutput, 0);
         } else {
           flywheel_lead.set(ControlMode.Velocity, m_idleRpm * RPMtoTicks);
-          m_desiredRPM = m_idleRpm; //need to update this because its used for determining isAtSpeed
         }
+
+        m_desiredRPM = m_idleRpm; //need to update this because its used for determining isAtSpeed
         break;
 
       case SHOOTING: 
