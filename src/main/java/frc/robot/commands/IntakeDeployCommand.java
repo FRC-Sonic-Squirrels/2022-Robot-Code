@@ -22,7 +22,7 @@ public class IntakeDeployCommand extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     m_intake = intakeSubsystem;
     m_cargo = cargoSubsystem;
-    addRequirements(m_intake);
+    addRequirements(m_intake, m_cargo);
   }
 
   // Called when the command is initially scheduled.
