@@ -83,7 +83,7 @@ public class RobotContainer {
     m_robot = robot;
 
     m_cargo = new CargoSubsystem();
-    m_shooter = new ShooterSubsystem(m_robot);
+    m_shooter = new ShooterSubsystem(m_robot, m_robot.revPDH);
     m_intake = new IntakeSubsystem();
     drivetrain = new Drivetrain();
     m_elevator = new ElevatorSubsystem();

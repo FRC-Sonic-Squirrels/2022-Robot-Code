@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.team2930.lib.util.linearInterpolator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -20,7 +21,7 @@ import frc.robot.Robot;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-  enum ShooterMode {
+  public enum ShooterMode {
     STOP, IDLE, SHOOTING 
   };
 
@@ -62,8 +63,13 @@ public class ShooterSubsystem extends SubsystemBase {
   private double m_rate_RPMperSecond = 10000000;
   private SlewRateLimiter m_rateLimiter = new SlewRateLimiter(m_rate_RPMperSecond);
 
+  // private PowerDistribution m_revPDH; 
+
+  // private double tpowerPort5 = 0;
+  // private double tpowerPort6 = 0;
+
   /** Creates a new ShooterSubsystem. */
-  public ShooterSubsystem(Robot robot) {
+  public ShooterSubsystem(Robot robot, PowerDistribution revPhd) {
     m_robot = robot;
 
     flywheel_lead.configFactoryDefault();
@@ -103,10 +109,27 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("SHOOTER USE IDLE RPM", true);
 
     setPIDteleop();
+
+    //m_revPDH = revPhd;
   }
 
   @Override
   public void periodic() {
+    // this was debug for testing how much power the flywheel draws at idle
+    // double power5 = m_revPDH.getCurrent(5) * flywheel_lead.getMotorOutputVoltage();
+    // double power6 = m_revPDH.getCurrent(6) * flywheel_follow.getMotorOutputVoltage();
+
+    // SmartDashboard.putNumber("flywheel power 5", power5);
+    // SmartDashboard.putNumber("flywheel power 6", power6);
+
+    // tpowerPort5 = tpowerPort5 + power5;
+    // tpowerPort6 = tpowerPort6 + power6;
+
+    // SmartDashboard.putNumber("total flywheel power 5", tpowerPort5);
+    // SmartDashboard.putNumber("total flywheel power 6",  tpowerPort6);
+
+    // SmartDashboard.putNumber("total flywheel both", tpowerPort5 + tpowerPort6);
+
     double setPoint = 0;
     switch (m_mode) {
       case STOP:
@@ -116,7 +139,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
       case IDLE: 
         //can turn off idle rpm from dashboard
-        if( !SmartDashboard.getBoolean("SHOOTER USE IDLE RPM", true) ){
+        if( !SmartDashboard.getBoolean("SHOOTER USE IDLE RPM", false) ){
           m_mode = ShooterMode.STOP;
           break;
         }
@@ -187,6 +210,10 @@ public class ShooterSubsystem extends SubsystemBase {
     // SmartDashboard.putBoolean("Shooter auton PID", autonPIDset);
     // SmartDashboard.putNumber("Shooter m_rate_RPMperSecond", m_rate_RPMperSecond);
 
+  }
+
+  public ShooterMode getMode(){
+    return m_mode;
   }
 
   public void setFlywheelRPM(double rpm) {
