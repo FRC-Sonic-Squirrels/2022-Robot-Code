@@ -181,7 +181,7 @@ public final class Constants {
 
   public static class ShooterConstants {
     public static final double m_activated = 2000;
-    public static final double IDLE = 1500;
+    public static final double IDLE = 500;
     public static final int BUMPER_SHOT_RPM = 3000;
     public static final int HOOD_ANGLE = 15;
   }
