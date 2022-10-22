@@ -442,7 +442,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
         // shoot first two preloads
         new ParallelRaceGroup(
-            new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot, () -> 0),
+            new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot),
         // eventually switch to using a raw value
          new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0,
          m_limelight)
@@ -464,7 +464,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
                 PPSwerveControlCommand(path2, true))),
 
         new ParallelRaceGroup(
-            new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot, () -> 0),
+            new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot),
         // eventually switch to using a raw value
         new DriveFieldCentricAimCommand(m_drivetrain, () -> 0.0, () -> 0.0, () -> 0.0,
         m_limelight)
