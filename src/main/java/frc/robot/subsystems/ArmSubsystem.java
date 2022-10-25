@@ -45,13 +45,13 @@ public class ArmSubsystem extends SubsystemBase {
   // and the motor and gearbox are treated as a black box.
 
   private SparkMaxPIDController m_armPID;
-  private double kP = 0.003;
+  private double kP = 3.5;
   private double kI = 0.0;
   private double kD = 0.0;
   private double kIz = 0.005;
-  private double kFF = 0.013;
-  private double kMaxOutput = 0.8;
-  private double kMinOutput = -0.8;
+  private double kFF = 0.0;
+  private double kMaxOutput = 0.4;
+  private double kMinOutput = -0.4;
 
   private double maxAngleDegree = 23.6;
   private double minAngleDegree = -20.5;
@@ -76,6 +76,11 @@ public class ArmSubsystem extends SubsystemBase {
     // Arm will start on a hard stop, part way back with a limit switch
     zeroEncoder();
     m_targetAngle = zeroedEncoderAngle;
+
+    // SmartDashboard.putNumber("ARM PK ADJUST ", kP);
+    // SmartDashboard.putNumber("ARM ff ADJUST ", kFF);
+    // SmartDashboard.putNumber("ARM pd ADJUST ", kD);
+    // SmartDashboard.putNumber("ARM power ADJUST ", kMaxOutput);
   }
 
   private void initializeMotors() {
@@ -171,7 +176,7 @@ public class ArmSubsystem extends SubsystemBase {
     double encoderValue = angleToEncoderRotations(angleDegrees);
     //m_armPID.setReference(encoderValue, ControlType.kPosition);
 
-    m_armPID.setReference(encoderValue, ControlType.kSmartMotion);
+    m_armPID.setReference(encoderValue, ControlType.kPosition);
   }
 
   /**
@@ -223,6 +228,10 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
+    // double adjustpk = SmartDashboard.getNumber("ARM PK ADJUST ", 0.0);
+    // double adjustff = SmartDashboard.getNumber("ARM ff ADJUST ", 0.0);
+    // double adjustkd = SmartDashboard.getNumber("ARM pd ADJUST ", 0.0);
+    // double adjustkoutput = SmartDashboard.getNumber("ARM output ADJUST ", 0.0);
     if(m_robot.isDisabled()){
       double leadPidkP = m_armLeadMotor.getPIDController().getP();
       SmartDashboard.putString("ARM last error lead", m_armLeadMotor.getLastError().toString());
@@ -237,6 +246,12 @@ public class ArmSubsystem extends SubsystemBase {
       
     }
 
+    // if(m_armPID.getP() != adjustpk || m_armPID.getFF() != adjustff || m_armPID.getD() != adjustkd || m_armPID.getOutputMax() != adjustkoutput){
+    //   m_armPID.setP(adjustpk);
+    //   m_armPID.setFF(adjustff);
+    //   m_armPID.setD(adjustkd);
+    //   m_armPID.setOutputRange(-adjustkoutput, adjustkoutput);
+    // }
     SmartDashboard.putNumber("Arm Angle deg", getArmAngle());
     //SmartDashboard.putNumber("Arm Vel (deg per sec)", m_armLeadMotor.getEncoder().getVelocity()*rpm2degreesPerSecond);
     SmartDashboard.putNumber("Arm SetPoint", m_targetAngle);
