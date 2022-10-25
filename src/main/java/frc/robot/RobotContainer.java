@@ -284,7 +284,7 @@ public class RobotContainer {
 
     new Button(m_climbController::getRightBumper)
       .whenPressed(
-        new COOPER(m_elevator, m_arm, m_limelight, drivetrain, m_intake)
+        new COOPER(m_elevator, m_arm, m_limelight, drivetrain, m_intake, m_shooter)
           .withInterrupt(() -> m_climbController.getBButtonPressed())
       );
 

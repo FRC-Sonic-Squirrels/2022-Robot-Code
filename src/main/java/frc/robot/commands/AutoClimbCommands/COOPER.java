@@ -15,6 +15,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 /**
  * Automated climb program named after the former operator/person who climbed manually during the 2022 competition season, Cooper.
@@ -28,7 +29,7 @@ import frc.robot.subsystems.LimelightSubsystem;
  * R - Remotely 
  */
 public class COOPER extends SequentialCommandGroup {
-  public COOPER(ElevatorSubsystem elevator, ArmSubsystem arm, LimelightSubsystem limelight, Drivetrain drivetrain, IntakeSubsystem  intake) {
+  public COOPER(ElevatorSubsystem elevator, ArmSubsystem arm, LimelightSubsystem limelight, Drivetrain drivetrain, IntakeSubsystem  intake, ShooterSubsystem shooter) {
     addCommands(
       // make sure arms are back and out of the way before climbing to Mid
       new ArmSetAngle(arm, Constants.ArmConstants.CLIMBING_BACK_ANGLE)
@@ -36,6 +37,8 @@ public class COOPER extends SequentialCommandGroup {
 
       // turn off limelight LEDs to save the drive team's eyes
       new InstantCommand(() -> limelight.turnOffAllLEDS()),
+
+      new InstantCommand(() -> shooter.stop(), shooter),
 
       // Lift robot onto Mid bar. Elevator down, set to below zero hight to compensate
       // for string stretch under load. Limit switch prevents us from actually breaking 
