@@ -14,8 +14,8 @@ import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 import frc.robot.Constants.canId;
+import frc.robot.Robot;
 
 // Helpful link for converting between CTRE and Rev
 // https://docs.revrobotics.com/sparkmax/software-resources/migrating-ctre-to-rev
