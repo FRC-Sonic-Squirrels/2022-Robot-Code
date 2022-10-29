@@ -59,7 +59,7 @@ public class ShootWithSetRPMAndHoodAngle extends CommandBase {
     m_time = 0;
     m_cargoSubsystem.setIdleMode();
     if (!m_robot.isAutonomous()) {
-      m_shooterSubsystem.stop();
+      m_shooterSubsystem.idle();
       m_hoodSubsystem.setMinAngle();
     }
   }
