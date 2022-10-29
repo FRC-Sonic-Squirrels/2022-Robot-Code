@@ -140,8 +140,8 @@ public class ArmSubsystem extends SubsystemBase {
    * Hold - hold the arm in place using positional control
    */
   public void hold() {
-    //m_armPID.setReference(getEncoderValue(), ControlType.kPosition);
-    m_armPID.setReference(getEncoderValue(), ControlType.kSmartMotion);
+    m_armPID.setReference(getEncoderValue(), ControlType.kPosition);
+    //m_armPID.setReference(getEncoderValue(), ControlType.kSmartMotion);
   }
   
   /**
