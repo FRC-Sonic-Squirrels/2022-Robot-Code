@@ -232,19 +232,19 @@ public class ArmSubsystem extends SubsystemBase {
     // double adjustff = SmartDashboard.getNumber("ARM ff ADJUST ", 0.0);
     // double adjustkd = SmartDashboard.getNumber("ARM pd ADJUST ", 0.0);
     // double adjustkoutput = SmartDashboard.getNumber("ARM output ADJUST ", 0.0);
-    if(m_robot.isDisabled()){
-      double leadPidkP = m_armLeadMotor.getPIDController().getP();
-      SmartDashboard.putString("ARM last error lead", m_armLeadMotor.getLastError().toString());
-      SmartDashboard.putNumber("ARM kp value", leadPidkP);
+    // if(m_robot.isDisabled()){
+    //   double leadPidkP = m_armLeadMotor.getPIDController().getP();
+    //   SmartDashboard.putString("ARM last error lead", m_armLeadMotor.getLastError().toString());
+    //   SmartDashboard.putNumber("ARM kp value", leadPidkP);
 
-      if(Math.abs(leadPidkP - kP) < 0.000000001){
-        m_numberOfTimesReinitialized++;
-        initializeMotors();
+    //   if(Math.abs(leadPidkP - kP) < 0.000000001){
+    //     m_numberOfTimesReinitialized++;
+    //     initializeMotors();
 
-        SmartDashboard.putNumber("ARM number of reinitialize", m_numberOfTimesReinitialized);
-      }
+    //     SmartDashboard.putNumber("ARM number of reinitialize", m_numberOfTimesReinitialized);
+    //   }
       
-    }
+    // }
 
     // if(m_armPID.getP() != adjustpk || m_armPID.getFF() != adjustff || m_armPID.getD() != adjustkd || m_armPID.getOutputMax() != adjustkoutput){
     //   m_armPID.setP(adjustpk);
