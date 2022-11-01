@@ -13,6 +13,8 @@ public class IntakeDeployCommand extends CommandBase {
   IntakeSubsystem m_intake;
   CargoSubsystem m_cargo;
 
+  double time = 0.0;
+
   /**
    * Constructor for new IntakeDeployCommand to lower intake, run rollers, and run indexer.
    * @param intakeSubsystem
@@ -44,12 +46,27 @@ public class IntakeDeployCommand extends CommandBase {
   public void end(boolean interrupted) {
     m_intake.retractIntake();
     m_intake.setStopMode();
-    m_cargo.setIdleMode();  
+    m_cargo.setIdleMode(); 
+    
+    time = 0.0;
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if ((m_cargo.cargoInUpperBelts()) && (m_cargo.cargoInLowerBelts())) {
+      if (time == 0) {
+        time = System.currentTimeMillis();
+      } else if (System.currentTimeMillis() - time >= 250) {
+        return true;
+      }
+    }
+    else {
+      // reset timer if we see a cargo in the indexer
+      time = 0;
+    }
+
+    // the command will be manually executed and ended by holding a button in teleop
     return false;
   }
 }
