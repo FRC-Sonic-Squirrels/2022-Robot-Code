@@ -14,8 +14,8 @@ import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 import frc.robot.Constants.canId;
+import frc.robot.Robot;
 
 // Helpful link for converting between CTRE and Rev
 // https://docs.revrobotics.com/sparkmax/software-resources/migrating-ctre-to-rev
@@ -140,8 +140,8 @@ public class ArmSubsystem extends SubsystemBase {
    * Hold - hold the arm in place using positional control
    */
   public void hold() {
-    //m_armPID.setReference(getEncoderValue(), ControlType.kPosition);
-    m_armPID.setReference(getEncoderValue(), ControlType.kSmartMotion);
+    m_armPID.setReference(getEncoderValue(), ControlType.kPosition);
+    //m_armPID.setReference(getEncoderValue(), ControlType.kSmartMotion);
   }
   
   /**
@@ -232,19 +232,19 @@ public class ArmSubsystem extends SubsystemBase {
     // double adjustff = SmartDashboard.getNumber("ARM ff ADJUST ", 0.0);
     // double adjustkd = SmartDashboard.getNumber("ARM pd ADJUST ", 0.0);
     // double adjustkoutput = SmartDashboard.getNumber("ARM output ADJUST ", 0.0);
-    if(m_robot.isDisabled()){
-      double leadPidkP = m_armLeadMotor.getPIDController().getP();
-      SmartDashboard.putString("ARM last error lead", m_armLeadMotor.getLastError().toString());
-      SmartDashboard.putNumber("ARM kp value", leadPidkP);
+    // if(m_robot.isDisabled()){
+    //   double leadPidkP = m_armLeadMotor.getPIDController().getP();
+    //   SmartDashboard.putString("ARM last error lead", m_armLeadMotor.getLastError().toString());
+    //   SmartDashboard.putNumber("ARM kp value", leadPidkP);
 
-      if(Math.abs(leadPidkP - kP) < 0.000000001){
-        m_numberOfTimesReinitialized++;
-        initializeMotors();
+    //   if(Math.abs(leadPidkP - kP) < 0.000000001){
+    //     m_numberOfTimesReinitialized++;
+    //     initializeMotors();
 
-        SmartDashboard.putNumber("ARM number of reinitialize", m_numberOfTimesReinitialized);
-      }
+    //     SmartDashboard.putNumber("ARM number of reinitialize", m_numberOfTimesReinitialized);
+    //   }
       
-    }
+    // }
 
     // if(m_armPID.getP() != adjustpk || m_armPID.getFF() != adjustff || m_armPID.getD() != adjustkd || m_armPID.getOutputMax() != adjustkoutput){
     //   m_armPID.setP(adjustpk);

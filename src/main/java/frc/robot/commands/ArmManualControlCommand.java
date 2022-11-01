@@ -44,8 +44,8 @@ public class ArmManualControlCommand extends CommandBase {
 
   @Override
   public void execute() {
-    double leftTrigger = controller.getLeftTriggerAxis();
-    double rightTrigger = controller.getRightTriggerAxis();
+    // double leftTrigger = controller.getLeftTriggerAxis();
+    // double rightTrigger = controller.getRightTriggerAxis();
     double pov = controller.getPOV();
 
     if (pov == 0) {
@@ -61,14 +61,14 @@ public class ArmManualControlCommand extends CommandBase {
       arm.setArmAngle(Constants.ArmConstants.CLIMBING_BACK_ANGLE);
       holding = true;
     }
-    else if(leftTrigger > 0.1){
-      arm.setArmPercentOutput(- leftTrigger * gain);
-      holding = false;
-    }
-    else if(rightTrigger > 0.1){
-      arm.setArmPercentOutput(rightTrigger * gain);
-      holding = false;
-    }
+    // else if(leftTrigger > 0.1){
+    //   arm.setArmPercentOutput(- leftTrigger * gain);
+    //   holding = false;
+    // }
+    // else if(rightTrigger > 0.1){
+    //   arm.setArmPercentOutput(rightTrigger * gain);
+    //   holding = false;
+    // }
     else if (!holding){
       arm.hold();
       holding = true;
