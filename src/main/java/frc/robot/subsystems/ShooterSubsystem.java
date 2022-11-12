@@ -82,11 +82,14 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable{
   @Log
   private double m_setPoint = 0;
 
-  //@Log
+  @Log
   private ShooterMode m_mode = ShooterMode.STOP;
 
   //Need this because Oblog needs to be "attached" to a variable to log it 
   //this variable is needed to log line 233: SmartDashboard.putNumber("flywheel output percent", flywheel_lead.getMotorOutputPercent());
+  //i.e doing 
+  //@Log
+  //flywheel_lead.getMotorOutPrecent(); doesn't work 
   @Log
   private double m_log_motorPercentOutput = 0;
 
@@ -96,8 +99,6 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable{
   // private double auton_configD = 0.0;
   // private double auton_configF = 0.06;
   // private double auton_configIZ = 100;
-
-
 
   // private PowerDistribution m_revPDH; 
 
