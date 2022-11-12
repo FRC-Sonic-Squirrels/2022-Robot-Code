@@ -26,16 +26,23 @@ import frc.robot.Robot;
 
 public class ShooterSubsystem extends SubsystemBase implements Loggable{
 
-  public enum ShooterMode implements Sendable {
-    STOP, IDLE, SHOOTING;
+  //experimenting with Oblog look at the comment on m_mode to understand this better 
+  // public enum ShooterMode implements Sendable {
+  //   STOP, IDLE, SHOOTING;
 
-    @Override
-    public void initSendable(SendableBuilder builder) {
+  //   @Override
+  //   public void initSendable(SendableBuilder builder) {
       
-      builder.addStringProperty("mode", this::name, null);
+  //     builder.addStringProperty("mode", this::name, null);
       
-    } 
+  //   } 
+  // };
+
+  public enum ShooterMode  {
+    STOP, IDLE, SHOOTING;
   };
+
+  
 
   //non logged objects 
   private double m_idleRpm = Constants.ShooterConstants.IDLE;
@@ -82,7 +89,15 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable{
   @Log
   private double m_setPoint = 0;
 
-  @Log
+  //we use methodName="name" here because we want to log the name of m_mode 
+  //However oblog cannot log Enums so we tell it to log the result of m_mode.name()
+  //enum.name returns the name of the enum so it logs it as a string 
+  //
+  //what I tried before was having the ShooterMode enum implement Sendable 
+  //which works however creates a subfolder which is kind of annoying 
+  //this way we only log what we need which is the string 
+  //Look at the commented ShooterMode enum to see what I was doing before 
+  @Log(methodName="name")
   private ShooterMode m_mode = ShooterMode.STOP;
 
   //Need this because Oblog needs to be "attached" to a variable to log it 
