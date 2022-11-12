@@ -47,11 +47,18 @@ wpi.java.debugJni = false
 // Set this to true to enable desktop support.
 def includeDesktopSupport = true
 
+repositories {
+  maven { url 'https://jitpack.io' }
+}
+
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 4.
 dependencies {
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
+
+    //latest version can be found at https://github.com/Oblarg/Oblog/releases
+    implementation "com.github.Oblarg:Oblog:4.0.9"
 
     roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
     roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)
@@ -68,6 +75,8 @@ dependencies {
     simulationRelease wpi.sim.enableRelease()
 
     testImplementation 'junit:junit:4.12'
+
+    
 }
 
 // Simulation configuration (e.g. environment variables).
