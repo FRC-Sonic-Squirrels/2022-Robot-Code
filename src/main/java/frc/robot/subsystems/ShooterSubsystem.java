@@ -12,21 +12,32 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.SensorVelocityMeasPeriod;
 import com.team2930.lib.util.linearInterpolator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIVOR_canId;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Config;
+import io.github.oblarg.oblog.annotations.Log;
 import frc.robot.Robot;
 
-public class ShooterSubsystem extends SubsystemBase {
+public class ShooterSubsystem extends SubsystemBase implements Loggable{
 
-  public enum ShooterMode {
-    STOP, IDLE, SHOOTING 
+  public enum ShooterMode implements Sendable {
+    STOP, IDLE, SHOOTING;
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+      
+      builder.addStringProperty("mode", this::name, null);
+      
+    } 
   };
 
-  private ShooterMode m_mode = ShooterMode.STOP;
-
+  //non logged objects 
   private double m_idleRpm = Constants.ShooterConstants.IDLE;
 
   private Robot m_robot;
@@ -34,15 +45,17 @@ public class ShooterSubsystem extends SubsystemBase {
   private WPI_TalonFX flywheel_lead= new WPI_TalonFX(CANIVOR_canId.CANID16_flywheel_lead, CANIVOR_canId.name);
   private WPI_TalonFX flywheel_follow = new WPI_TalonFX(CANIVOR_canId.CANID17_flywheel_follow, CANIVOR_canId.name);
   private TalonFXSensorCollection m_encoder;
-  private double m_desiredRPM = 0;
-  private boolean m_atSpeed = false;
+  
   private linearInterpolator RPMinterpolator;
-  private double m_currentRPM = 0;
-  private double m_error = 0;
+
   private double m_max_RPM_error = 30;
   private final double RPMtoTicks = 2048 / 600;
 
   private boolean autonPIDset = false;
+
+  // lower number here, slows the rate of change and decreases the power spike
+  private double m_rate_RPMperSecond = 10000000;
+  private SlewRateLimiter m_rateLimiter = new SlewRateLimiter(m_rate_RPMperSecond);
 
   private double teleop_configP = 0.2;
   private double teleop_configI = 0.0003;
@@ -52,6 +65,31 @@ public class ShooterSubsystem extends SubsystemBase {
   private double maxForwardOutput = 1.0;
   private double maxReverseOutput = -0.05;
 
+  
+  //logged objects 
+  @Log
+  private boolean m_atSpeed = false;
+
+  @Log
+  private double m_desiredRPM = 0;
+
+  @Log
+  private double m_currentRPM = 0;
+
+  @Log
+  private double m_error = 0;
+
+  @Log
+  private double m_setPoint = 0;
+
+  //@Log
+  private ShooterMode m_mode = ShooterMode.STOP;
+
+  //Need this because Oblog needs to be "attached" to a variable to log it 
+  //this variable is needed to log line 233: SmartDashboard.putNumber("flywheel output percent", flywheel_lead.getMotorOutputPercent());
+  @Log
+  private double m_log_motorPercentOutput = 0;
+
   // NOTE: this was a hack to fix weirdness during autonomous
   // private double auton_configP = 0.25;
   // private double auton_configI = 0.002;
@@ -59,9 +97,7 @@ public class ShooterSubsystem extends SubsystemBase {
   // private double auton_configF = 0.06;
   // private double auton_configIZ = 100;
 
-  // lower number here, slows the rate of change and decreases the power spike
-  private double m_rate_RPMperSecond = 10000000;
-  private SlewRateLimiter m_rateLimiter = new SlewRateLimiter(m_rate_RPMperSecond);
+
 
   // private PowerDistribution m_revPDH; 
 
@@ -130,7 +166,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // SmartDashboard.putNumber("total flywheel both", tpowerPort5 + tpowerPort6);
 
-    double setPoint = 0;
+    
     switch (m_mode) {
       case STOP:
         flywheel_lead.set(ControlMode.PercentOutput, 0);
@@ -158,13 +194,13 @@ public class ShooterSubsystem extends SubsystemBase {
         break;
 
       case SHOOTING: 
-        setPoint = m_rateLimiter.calculate(m_desiredRPM);
-        if (m_desiredRPM < setPoint) {
+        m_setPoint = m_rateLimiter.calculate(m_desiredRPM);
+        if (m_desiredRPM < m_setPoint) {
           // we don't rate reduce slowing the robot
-          setPoint = m_desiredRPM;
+          m_setPoint = m_desiredRPM;
         }
 
-        flywheel_lead.set(ControlMode.Velocity, setPoint * RPMtoTicks);
+        flywheel_lead.set(ControlMode.Velocity, m_setPoint * RPMtoTicks);
         break;
 
       default:
@@ -196,19 +232,22 @@ public class ShooterSubsystem extends SubsystemBase {
     //   flywheel_lead.set(ControlMode.Velocity, setPoint * RPMtoTicks);
     // }
 
-    SmartDashboard.putNumber("Shooter RPM set point", setPoint);
-    SmartDashboard.putNumber("Shooter RPM error", m_error);
-    SmartDashboard.putBoolean("Shooter isAtSpeed", m_atSpeed);
-    SmartDashboard.putNumber("Shooter m_CurrentRPM", m_currentRPM);
-    SmartDashboard.putNumber("Shooter m_desiredRPM", m_desiredRPM);
-    SmartDashboard.putNumber("Shooter m_error", m_error);
+    // SmartDashboard.putNumber("Shooter RPM set point", m_setPoint);
+    // SmartDashboard.putNumber("Shooter RPM error", m_error);
+    // SmartDashboard.putBoolean("Shooter isAtSpeed", m_atSpeed);
+    // SmartDashboard.putNumber("Shooter m_CurrentRPM", m_currentRPM);
+    // SmartDashboard.putNumber("Shooter m_desiredRPM", m_desiredRPM);
+    // SmartDashboard.putNumber("Shooter m_error", m_error);
 
-    SmartDashboard.putNumber("flywheel output percent", flywheel_lead.getMotorOutputPercent());
-    SmartDashboard.putNumber("flywheel output voltage", flywheel_lead.getMotorOutputVoltage());
-    SmartDashboard.putString("flywheel MODE", m_mode.name());
+    // SmartDashboard.putNumber("flywheel output percent", flywheel_lead.getMotorOutputPercent());
+
+    // SmartDashboard.putNumber("flywheel output voltage", flywheel_lead.getMotorOutputVoltage());
+    // SmartDashboard.putString("flywheel MODE", m_mode.name());
     // SmartDashboard.putNumber("Shooter m_max_RPM_error", m_max_RPM_error);
     // SmartDashboard.putBoolean("Shooter auton PID", autonPIDset);
     // SmartDashboard.putNumber("Shooter m_rate_RPMperSecond", m_rate_RPMperSecond);
+
+    m_log_motorPercentOutput = flywheel_lead.getMotorOutputPercent();
 
   }
 
