@@ -22,6 +22,7 @@ import frc.robot.Constants.CANIVOR_canId;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
+import io.github.oblarg.oblog.annotations.Config.ToggleSwitch;
 import frc.robot.Robot;
 
 public class ShooterSubsystem extends SubsystemBase implements Loggable{
@@ -88,6 +89,9 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable{
 
   @Log
   private double m_setPoint = 0;
+
+  @Log 
+  private boolean m_useIdleRpm = true;
 
   //we use methodName="name" here because we want to log the name of m_mode 
   //However oblog cannot log Enums so we tell it to log the result of m_mode.name()
@@ -158,8 +162,6 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable{
 
     // MotorUtils.setCtreStatusSlow(flywheel_follow);
 
-    SmartDashboard.putBoolean("SHOOTER USE IDLE RPM", true);
-
     setPIDteleop();
 
     //m_revPDH = revPhd;
@@ -191,7 +193,7 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable{
 
       case IDLE: 
         //can turn off idle rpm from dashboard
-        if( !SmartDashboard.getBoolean("SHOOTER USE IDLE RPM", false) ){
+        if(!m_useIdleRpm){
           m_mode = ShooterMode.STOP;
           break;
         }
@@ -299,6 +301,11 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable{
 
   public double getRPMforDistanceFeet(double distanceFeet) {
     return RPMinterpolator.getInterpolatedValue(distanceFeet * 12.0);
+  }
+
+  @ToggleSwitch(defaultValue = true)
+  private void setIdleRpm(boolean value){
+    m_useIdleRpm = value;
   }
 
   private void setPIDteleop() {
