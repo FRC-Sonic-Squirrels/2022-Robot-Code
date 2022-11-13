@@ -96,3 +96,15 @@ jar {
 deployArtifact.jarTask = jar
 wpi.java.configureExecutableTasks(jar)
 wpi.java.configureTestTasks(test)
+
+
+//used to get the names when using @config on multiparameter methods 
+//https://oblog-docs.readthedocs.io/en/latest/configuration.html#multi-parameter-setters
+compileJava {
+    options.compilerArgs << '-parameters'
+}
+
+//debug to check if the -parameters flag was being added 
+// tasks.withType(JavaCompile) {
+//     println '**********Compiler args****: ' + options.compilerArgs
+// }

@@ -16,10 +16,13 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CANIVOR_canId;
 import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.ShuffleboardContainerWrapper;
+import io.github.oblarg.oblog.SimpleWidgetWrapper;
 import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 import io.github.oblarg.oblog.annotations.Config.ToggleSwitch;
@@ -183,7 +186,6 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable{
     // SmartDashboard.putNumber("total flywheel power 6",  tpowerPort6);
 
     // SmartDashboard.putNumber("total flywheel both", tpowerPort5 + tpowerPort6);
-
     
     switch (m_mode) {
       case STOP:
@@ -306,6 +308,20 @@ public class ShooterSubsystem extends SubsystemBase implements Loggable{
   @ToggleSwitch(defaultValue = true)
   private void setIdleRpm(boolean value){
     m_useIdleRpm = value;
+  }
+
+  @Config
+  private void debugPidValues(double ff,
+                              double p, 
+                              double i, 
+                              double d, 
+                              double iZ, 
+                              int slotIdx){
+    flywheel_lead.config_kF(slotIdx, teleop_configF);
+    flywheel_lead.config_kP(slotIdx, teleop_configP);
+    flywheel_lead.config_kI(slotIdx, teleop_configI);
+    flywheel_lead.config_kD(slotIdx, teleop_configD);
+    flywheel_lead.config_IntegralZone(slotIdx, teleop_configIZ);
   }
 
   private void setPIDteleop() {
