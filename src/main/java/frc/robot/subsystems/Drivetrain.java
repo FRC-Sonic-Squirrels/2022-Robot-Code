@@ -486,7 +486,7 @@ public class Drivetrain extends SubsystemBase {
     if (loopsSinceLastUpdate > 5) {
       // If we've not updated Swerve Module States in 5 loops, we must be disabled or something
       // has gone wrong and there's no default drive command. Tell modules to stay still.
-      // This is SUPER IMPORANT, as this allows the swerve-lib code time to let the CANcoders
+      // This is SUPER IMPORTANT, as this allows the swerve-lib code time to let the CANcoders
       // settle and get an accurate reading.
       int loopCount = loopsSinceLastUpdate;
       m_desiredStates = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0.0, 0.0, 0.0));
@@ -513,7 +513,7 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("accel Y", (ba[1] / 16384.0) * 10);
         SmartDashboard.putNumber("accel Z", (ba[2] / 16384.0) * 10);
       } else {
-        System.out.println("FAILED accell");
+        System.out.println("FAILED accel");
       }
 
       if (m_pigeon.getGravityVector(vector) == ErrorCode.OK) {
