@@ -519,16 +519,31 @@ public class SwerveTrajectoryAutonomousCommandFactory {
   public static Command PPSwerveControlCommand(PathPlannerTrajectory trajectory,
       boolean stopAtEnd) {
 
+    // var thetaController =
+    //     new ProfiledPIDController(AutoConstants.kPThetaController, AutoConstants.kIThetaController,
+    //         AutoConstants.kDThetaController, AutoConstants.kThetaControllerConstraints);
+    // thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    // Command swerveControllerCommand =
+    //     new PPSwerveControllerCommand(trajectory, m_drivetrain::getPose, m_drivetrain.kinematics(),
+    //         new PIDController(AutoConstants.kP, AutoConstants.kI, AutoConstants.kD),
+    //         new PIDController(AutoConstants.kP, AutoConstants.kI, AutoConstants.kD),
+    //         thetaController, m_drivetrain::setModuleStates, m_drivetrain);
+
+    //2023 path planner doesnt take profiled PIDController for thetaController 
     var thetaController =
-        new ProfiledPIDController(AutoConstants.kPThetaController, AutoConstants.kIThetaController,
-            AutoConstants.kDThetaController, AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+        new PIDController(AutoConstants.kPThetaController, AutoConstants.kIThetaController, AutoConstants.kDThetaController);
 
     Command swerveControllerCommand =
-        new PPSwerveControllerCommand(trajectory, m_drivetrain::getPose, m_drivetrain.kinematics(),
+        new PPSwerveControllerCommand(
+            trajectory, 
+            m_drivetrain::getPose, 
+            m_drivetrain.kinematics(),
             new PIDController(AutoConstants.kP, AutoConstants.kI, AutoConstants.kD),
             new PIDController(AutoConstants.kP, AutoConstants.kI, AutoConstants.kD),
-            thetaController, m_drivetrain::setModuleStates, m_drivetrain);
+            thetaController, 
+            m_drivetrain::setModuleStates, 
+            m_drivetrain);
 
     if (stopAtEnd) {
       // Stop at the end. A good safe default, but not desireable if running two paths back to back

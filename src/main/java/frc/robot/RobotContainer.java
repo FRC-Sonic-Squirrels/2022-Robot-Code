@@ -206,7 +206,7 @@ public class RobotContainer {
 
     // fender shot
     new Button(m_controller::getLeftBumper)
-    .whenPressed(new ShootWithSetRPMAndHoodAngle(2750, 15, m_cargo, m_shooter, m_hood, m_robot), true);
+    .whenPressed(new ShootWithSetRPMAndHoodAngle(2750, 15, m_cargo, m_shooter, m_hood, m_robot));
 
 
     // launch pad shot
@@ -215,7 +215,7 @@ public class RobotContainer {
               
     //deploy intake
     new Button(() -> (m_controller.getRightTriggerAxis() > 0.05))
-            .toggleWhenActive(new IntakeDeployCommand(m_intake, m_cargo), true);
+            .toggleWhenActive(new IntakeDeployCommand(m_intake, m_cargo));
 
     //reverse intake
     new Button(() -> (m_controller.getLeftTriggerAxis() > 0.05))

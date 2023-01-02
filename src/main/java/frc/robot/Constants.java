@@ -11,7 +11,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.drive.Vector2d;
+//import edu.wpi.first.wpilibj.drive.Vector2d;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -190,14 +190,14 @@ public final class Constants {
   }
   // according to game manual field is 27 ft. (~823 cm) by 54 ft. (~1646 cm)
   public static class HubCentricConstants{
-    public static final Vector2d HUB_CENTER = new Vector2d(8.23, 4.11);
+    //public static final Vector2d HUB_CENTER = new Vector2d(8.23, 4.11);
     public static final Pose2d HUB_CENTER_POSE2D = new Pose2d(8.23, 4.11, new Rotation2d());
     public static final double FORWARD_MULTIPLIER = 0.5;
     public static final double SIDEWAYS_MULTIPLIER = 0.3;
   }
 
-  public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
-      new Pose2d(HubCentricConstants.HUB_CENTER.x - 1,HubCentricConstants.HUB_CENTER.y , new Rotation2d(0));
+  // public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
+  //     new Pose2d(HubCentricConstants.HUB_CENTER.x - 1,HubCentricConstants.HUB_CENTER.y , new Rotation2d(0));
   
   public static class VisionConstants{
     public static final double CAMERA_HEIGHT_INCHES = 42.0;

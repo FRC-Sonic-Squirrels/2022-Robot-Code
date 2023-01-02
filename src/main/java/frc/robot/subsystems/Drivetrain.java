@@ -18,12 +18,14 @@ import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -218,13 +220,17 @@ public class Drivetrain extends SubsystemBase {
         canId.CANID23_BACK_RIGHT_MODULE_STEER_ENCODER, 
         BACK_RIGHT_MODULE_STEER_OFFSET);
 
-    m_odometry = new SwerveDriveOdometry(m_kinematics, getIMURotation());
+    //putting this above odometry for 2023 because 2023 odometry wants modulePositions, make sure modulePositions are 0
+    m_desiredStates = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0.0, 0.0, 0.0));
+        setModuleStates(m_desiredStates);
+
+    // m_odometry = new SwerveDriveOdometry(m_kinematics, getIMURotation());
+    m_odometry = new SwerveDriveOdometry(m_kinematics, getIMURotation(), getWPILIBSwerveModulePosition());
 
     // just in case the field position isn't set in teleopInit or autonInit
-    m_odometry.resetPosition(new Pose2d(0.0, 0.0, new Rotation2d(0.0)), getIMURotation());
+    // m_odometry.resetPosition(new Pose2d(0.0, 0.0, new Rotation2d(0.0)), getIMURotation());
+    m_odometry.resetPosition(getIMURotation(), getWPILIBSwerveModulePosition(), getPose());
 
-    m_desiredStates = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0.0, 0.0, 0.0));
-    setModuleStates(m_desiredStates);
 
     // TODO: enabling this uses too much CPU in auton
     SmartDashboard.putData("Field", m_field);
@@ -237,9 +243,17 @@ public class Drivetrain extends SubsystemBase {
   public void zeroGyroscope() {
     setGyroscopeHeadingDegrees(0.0);
 
+    // m_odometry.resetPosition(
+    //     new Pose2d(m_odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(0.0)),
+    //     Rotation2d.fromDegrees(0.0));
+
     m_odometry.resetPosition(
-        new Pose2d(m_odometry.getPoseMeters().getTranslation(), Rotation2d.fromDegrees(0.0)),
-        Rotation2d.fromDegrees(0.0));
+      getIMURotation(), 
+      getWPILIBSwerveModulePosition(), 
+      new Pose2d(
+        m_odometry.getPoseMeters().getTranslation(), new Rotation2d()
+        )
+    );
   }
 
   public void setGyroscopeHeadingDegrees(double deg) {
@@ -250,8 +264,9 @@ public class Drivetrain extends SubsystemBase {
   public void resetFieldCentric() {
     Pose2d currentPose = getPose();
 
-    m_odometry.resetPosition(new Pose2d(currentPose.getX(), currentPose.getY(), new Rotation2d(0)),
-        getIMURotation());
+    // m_odometry.resetPosition(new Pose2d(currentPose.getX(), currentPose.getY(), new Rotation2d(0)),
+    //     getIMURotation());
+    m_odometry.resetPosition(getIMURotation(), getWPILIBSwerveModulePosition(), new Pose2d(currentPose.getTranslation(), new Rotation2d()));
   }
 
   public void setGyroscopeHeadingRadians(double rad) {
@@ -268,7 +283,8 @@ public class Drivetrain extends SubsystemBase {
 
     isOdometrySet = true;
 
-    m_odometry.resetPosition(pose, rotation);
+    // m_odometry.resetPosition(pose, rotation);
+    m_odometry.resetPosition(getIMURotation(), getWPILIBSwerveModulePosition(), pose);
   }
 
   public boolean isOdometrySet() {
@@ -402,7 +418,8 @@ public class Drivetrain extends SubsystemBase {
    * @param pose The pose to which to set the odometry.
    */
   public void resetOdometry(Pose2d pose) {
-    m_odometry.resetPosition(pose, getIMURotation());
+    // m_odometry.resetPosition(pose, getIMURotation());
+    m_odometry.resetPosition(getIMURotation(), getWPILIBSwerveModulePosition(), pose);
     isOdometrySet = true;
   }
 
@@ -443,6 +460,18 @@ public class Drivetrain extends SubsystemBase {
     return m_actualStates;
   }
 
+  public SwerveModulePosition[] getWPILIBSwerveModulePosition() {
+    SwerveModuleState[] sdsModuleStates = getSwerveModuleState();
+    
+    SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
+    
+    for (int i = 0; i < sdsModuleStates.length; i++) {
+      swerveModulePositions[i] = new SwerveModulePosition(sdsModuleStates[i].speedMetersPerSecond, sdsModuleStates[i].angle);
+    }
+
+    return swerveModulePositions;
+  }
+
   @Override
   public void periodic() {
     var velocityArray = new double[3];
@@ -468,16 +497,18 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("deltaTime", deltaTime);
     SmartDashboard.putNumber("accelX", m_accelX);
 
+    // m_odometry.update(getIMURotation(),
+    //     new SwerveModuleState(m_frontLeftModule.getDriveVelocity(),
+    //         new Rotation2d(m_frontLeftModule.getSteerAngle())),
+    //     new SwerveModuleState(m_frontRightModule.getDriveVelocity(),
+    //         new Rotation2d(m_frontRightModule.getSteerAngle())),
+    //     new SwerveModuleState(m_backLeftModule.getDriveVelocity(),
+    //         new Rotation2d(m_backLeftModule.getSteerAngle())),
+    //     new SwerveModuleState(m_backRightModule.getDriveVelocity(),
+    //         new Rotation2d(m_backRightModule.getSteerAngle())));
 
-    m_odometry.update(getIMURotation(),
-        new SwerveModuleState(m_frontLeftModule.getDriveVelocity(),
-            new Rotation2d(m_frontLeftModule.getSteerAngle())),
-        new SwerveModuleState(m_frontRightModule.getDriveVelocity(),
-            new Rotation2d(m_frontRightModule.getSteerAngle())),
-        new SwerveModuleState(m_backLeftModule.getDriveVelocity(),
-            new Rotation2d(m_backLeftModule.getSteerAngle())),
-        new SwerveModuleState(m_backRightModule.getDriveVelocity(),
-            new Rotation2d(m_backRightModule.getSteerAngle())));
+    m_odometry.update(getIMURotation(), getWPILIBSwerveModulePosition());
+    
 
     // Update pose in field simulation
     m_field.setRobotPose(m_odometry.getPoseMeters());
