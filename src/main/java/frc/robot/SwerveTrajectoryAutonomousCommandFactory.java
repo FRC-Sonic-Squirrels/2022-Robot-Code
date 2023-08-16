@@ -13,7 +13,10 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
@@ -508,6 +511,54 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     return swerveControllerCommand;
   }
 
+
+
+
+
+  //------------ 2023 charged up autos ------------
+
+  public Command scoreCube(){
+    return new InstantCommand();
+  }
+
+  public Command smoothSideScoreTaxi(){
+    PathPlannerTrajectory path1 = PathPlanner.loadPath("", 1.0, 0.5);
+
+
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> m_drivetrain.resetOdometry(getStartPoseFor2023Paths(path1, DriverStation.getAlliance())), m_drivetrain),
+
+        scoreCube(),
+        
+        PPSwerveControlCommand(path1, true, true)
+    );
+
+}
+
+  public static Command PPSwerveControlCommand(PathPlannerTrajectory traj, boolean stopAtEnd, boolean useAllianceColor){
+    var thetaController =
+        new PIDController(AutoConstants.kPThetaController, AutoConstants.kIThetaController, AutoConstants.kDThetaController);
+
+    Command swerveControllerCommand =
+        new PPSwerveControllerCommand(
+            traj, 
+            m_drivetrain::getPose, 
+            m_drivetrain.kinematics(),
+            new PIDController(AutoConstants.kP, AutoConstants.kI, AutoConstants.kD),
+            new PIDController(AutoConstants.kP, AutoConstants.kI, AutoConstants.kD),
+            thetaController, 
+            m_drivetrain::setModuleStates, 
+            useAllianceColor,
+            m_drivetrain);
+
+    if (stopAtEnd) {
+      // Stop at the end. A good safe default, but not desireable if running two paths back to back
+      swerveControllerCommand =
+          swerveControllerCommand.andThen(() -> m_drivetrain.drive(new ChassisSpeeds(0, 0, 0)));
+    }
+    return swerveControllerCommand;
+  }
+
   /**
    * Create a swerve trajectory follow command. If stopAtEnd is set to true, robot will come to full
    * stop when done.
@@ -560,8 +611,14 @@ public class SwerveTrajectoryAutonomousCommandFactory {
  * @param path to get the starting pose of 
  * @return the pose2d to reset the odometry to
  */
-  public Pose2d getStartPoseForPath(PathPlannerTrajectory path){
+  public static Pose2d getStartPoseForPath(PathPlannerTrajectory path){
       return new Pose2d(path.getInitialPose().getTranslation(), path.getInitialState().holonomicRotation);
+  }
+
+  public static Pose2d getStartPoseFor2023Paths(PathPlannerTrajectory path, Alliance alliance){
+    var transformedPath = PathPlannerTrajectory.transformTrajectoryForAlliance(path, alliance);
+
+    return getStartPoseForPath(transformedPath);
   }
 
 }
