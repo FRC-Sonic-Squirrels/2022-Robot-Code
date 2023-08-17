@@ -206,7 +206,7 @@ public class RobotContainer {
 
     // fender shot
     new Button(m_controller::getLeftBumper)
-    .whenPressed(new ShootWithSetRPMAndHoodAngle(1500, 15, m_cargo, m_shooter, m_hood, m_robot));
+    .whenPressed(new ShootWithSetRPMAndHoodAngle(5000, 15, m_cargo, m_shooter, m_hood, m_robot));
 
 
     // launch pad shot
