@@ -96,7 +96,7 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheel_follow.setInverted(true);
 
     // Build the linear Interpolator
-    RPMinterpolator = new linearInterpolator(Constants.flywheelRpmTable);
+    // RPMinterpolator = new linearInterpolator(Constants.flywheelRpmTable);
     
     // Be more responsive to changes in the RPM
     // https://docs.ctre-phoenix.com/en/stable/ch14_MCSensor.html#velocity-measurement-filter

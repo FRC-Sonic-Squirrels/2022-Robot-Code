@@ -57,8 +57,6 @@ public final class Constants {
     
     public static final int CANID8 = 8;
     public static final int CANID18_INTAKE = 18;
-    public static final int CANID19_ARM_LEAD_MOTOR = 19;
-    public static final int CANID20_ARM_FOLLOW_MOTOR = 20;
   }
 
   public static final class CANIVOR_canId {
@@ -71,9 +69,6 @@ public final class Constants {
 
     public static final int CANID5_LOWER_BELTS = 5;
     public static final int CANID6_UPPER_BELTS = 6;
-    public static final int CANID7_HOOD = 7;
-    public static final int CANID9_ELEVATOR_LEAD_TALON = 9;
-    public static final int CANID10_ELEVATOR_FOLLOW_TALON = 10;
     public static final int CANID15_pigeon_imu = 15;
     public static final int CANID16_flywheel_lead = 16;
     public static final int CANID17_flywheel_follow = 17;
@@ -162,23 +157,6 @@ public final class Constants {
             Drivetrain.MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
   }
 
-  public static class ElevatorConstants{
-    public static final double elevatorSpeedMultiplier = 1.0;
-    public static final double ELEVATOR_MAX_HEIGHT = 22; //TODO: this value is 25.5 in the elevator subsystem 
-  }
-  
-  public static class ArmConstants{
-    public static final double m_maxEncoderValue = 2000;
-    public static final double m_minEncoderValue = -2000;
-
-    public static final double CLIMBING_BACK_ANGLE = -18.0;
-    public static final double CLIMBING_HANG_ANGLE = -6.0;
-    public static final double CLIMBING_MIDDLE_ANGLE = -1.5;  // if angle is any lower elevator will scrape on bar
-    
-    public static final double CLIMBING_FORWARD_ANGLE = 22;
-    public static final double CLIMBING_NEXT_BAR_ANGLE = 15.6;
-  }
-
   public static class ShooterConstants {
     public static final double m_activated = 2000;
     public static final double IDLE = 500;
@@ -186,7 +164,6 @@ public final class Constants {
     public static final int HOOD_ANGLE = 15;
 
     public static final String ADJUSTABLE_OFFSET_RPM_STRING = "ADJUSTABLE RPM OFFSET";
-    public static final String ADJUSTABLE_OFFSET_HOOD_ANGLE_STRING = "ADJUSTABLE HOOD ANGLE OFFSET";
   }
   // according to game manual field is 27 ft. (~823 cm) by 54 ft. (~1646 cm)
   public static class HubCentricConstants{
@@ -196,131 +173,12 @@ public final class Constants {
     public static final double SIDEWAYS_MULTIPLIER = 0.3;
   }
 
-  // public static final Pose2d ROBOT_1M_LEFT_OF_HUB =
-  //     new Pose2d(HubCentricConstants.HUB_CENTER.x - 1,HubCentricConstants.HUB_CENTER.y , new Rotation2d(0));
-  
-  public static class VisionConstants{
-    public static final double CAMERA_HEIGHT_INCHES = 42.0;
-    public static final double TARGET_HEIGHT_INCHES = 104.0;
-    public static final double CAMERA_PITCH_DEGREES = 34.0;
-
-    //TODO: final distance between camera and the center of robot
-    public static final Transform2d CAMERA_TO_ROBOT = new Transform2d(new Translation2d(0.5, 0.2), new Rotation2d());
-
-  }
-
-  public static class LimelightConstants{
-    public static final double LIMELIGHT_HEIGHT_INCHES = 29.962;
-    public static final double HIGH_HUB_HEIGHT_INCHES = 104.0;
-    public static final double LIMELIGHT_PITCH_DEGREES = 45.0;
-    public static final double HIGH_HUB_RADIUS_INCHES = 26.6875;
-
-    public static final double TARGET_TOLERANCE_DEGREES = 2.0;
-
-    public static final Transform2d LIMELIGHT_TO_ROBOT = new Transform2d(new Translation2d(-7.5, 0), new Rotation2d(180));
-  }
-
-  public static class VisionPipelineIndex {
-    // TODO: find out what values the red and blue pipelines need to be
-    public static final int RED_PIPELINE = 1;
-    public static final int BLUE_PIPELINE = 2;
-  }
   public static class FieldConstants{
-    public static Translation2d BLUE_CARGO_1 = new Translation2d( Units.inchesToMeters(42), Units.inchesToMeters(44.4));
-    public static Translation2d BLUE_CARGO_2 = new Translation2d( Units.inchesToMeters(198), Units.inchesToMeters(72));
-    public static Translation2d BLUE_CARGO_3 = new Translation2d( Units.inchesToMeters(297.6), Units.inchesToMeters(7.2));
-    public static Translation2d BLUE_CARGO_4 = new Translation2d( Units.inchesToMeters(412.8), Units.inchesToMeters(36));
-    public static Translation2d BLUE_CARGO_5 = new Translation2d( Units.inchesToMeters(472.8), Units.inchesToMeters(198));
-    public static Translation2d BLUE_CARGO_6 = new Translation2d( Units.inchesToMeters(290.4), Units.inchesToMeters(312));
-    public static Translation2d BLUE_CARGO_7 = new Translation2d( Units.inchesToMeters(196.8), Units.inchesToMeters(246));
-    public static Translation2d RED_CARGO_1 = new Translation2d( Units.inchesToMeters(605), Units.inchesToMeters(280));
-    public static Translation2d RED_CARGO_2 = new Translation2d( Units.inchesToMeters(456), Units.inchesToMeters(252));
-    public static Translation2d RED_CARGO_3 = new Translation2d( Units.inchesToMeters(350), Units.inchesToMeters(314));
-    public static Translation2d RED_CARGO_4 = new Translation2d( Units.inchesToMeters(240), Units.inchesToMeters(290));
-    public static Translation2d RED_CARGO_5 = new Translation2d( Units.inchesToMeters(176), Units.inchesToMeters(126));
-    public static Translation2d RED_CARGO_6 = new Translation2d( Units.inchesToMeters(357), Units.inchesToMeters(12));
-    public static Translation2d RED_CARGO_7 = new Translation2d( Units.inchesToMeters(456), Units.inchesToMeters(251));
-    public static Translation2d HUB_CENTER = new Translation2d( Units.inchesToMeters(328), Units.inchesToMeters(162));
-    public static Translation2d BLUE_LOW = new Translation2d( Units.inchesToMeters(130), Units.inchesToMeters(264));
-    public static Translation2d BLUE_MID = new Translation2d( Units.inchesToMeters(88), Units.inchesToMeters(266));
-    public static Translation2d BLUE_HIGH = new Translation2d( Units.inchesToMeters(62), Units.inchesToMeters(264));
-    public static Translation2d BLUE_TRANSVERSAL = new Translation2d( Units.inchesToMeters(38), Units.inchesToMeters(264));
-    public static Translation2d BLUE_PAD_1 = new Translation2d( Units.inchesToMeters(130), Units.inchesToMeters(216));
-    public static Translation2d BLUE_PAD_2 = new Translation2d( Units.inchesToMeters(130), Units.inchesToMeters(312));
-    public static Translation2d RED_LOW = new Translation2d( Units.inchesToMeters(520), Units.inchesToMeters(58));//change
-    public static Translation2d RED_MID = new Translation2d( Units.inchesToMeters(562), Units.inchesToMeters(58));//change
-    public static Translation2d RED_HIGH = new Translation2d( Units.inchesToMeters(586), Units.inchesToMeters(58));//change
-    public static Translation2d RED_TRANSVERSAL = new Translation2d( Units.inchesToMeters(607), Units.inchesToMeters(58));//change
-    public static Translation2d RED_PAD_1 = new Translation2d( Units.inchesToMeters(518), Units.inchesToMeters(108));
-    public static Translation2d RED_PAD_2 = new Translation2d( Units.inchesToMeters(518), Units.inchesToMeters(12));
 
-    public static Translation2d INFRONT_RED_CARGO_4 = new Translation2d( Units.inchesToMeters(240), Units.inchesToMeters(300));
-    public static Translation2d BEHIND_RED_CARGO_4 = new Translation2d( Units.inchesToMeters(210), Units.inchesToMeters(290));
 
   } 
 
   public static class StartPoseConstants {
-    public static Pose2d ORIGIN          = new Pose2d(0.0, 0.0, new Rotation2d(0));
-    
-    public static Pose2d BLUE_BOTTOM    = 
-        new Pose2d( Units.feetToMeters(26.8), Units.feetToMeters(5.64),   new Rotation2d(0.05 + 3*Math.PI/2) );
-    public static Pose2d BLUE_MID_BOTTOM= 
-        new Pose2d( Units.feetToMeters(21.87), Units.feetToMeters(7.52),  new Rotation2d(-0.75 + 3*Math.PI/2) );
-    public static Pose2d BLUE_MID_TOP   = 
-        new Pose2d( Units.feetToMeters(19.18), Units.feetToMeters(13.72), new Rotation2d(0.05 + Math.PI) );
-    public static Pose2d BLUE_TOP       = 
-        new Pose2d( Units.feetToMeters(21.01), Units.feetToMeters(18.48), new Rotation2d(0.75 + Math.PI/2) );
-
-    //public static Pose2d RED_TOP        = new Pose2d( Units.feetToMeters(27.2), Units.feetToMeters(21.35),  new Rotation2d(0.05+Math.PI) );
-    //public static Pose2d RED_MID_TOP    = new Pose2d( Units.feetToMeters(32.13), Units.feetToMeters(19.48), new Rotation2d(-0.75+Math.PI) );
-    //public static Pose2d RED_MID_BOTTOM = new Pose2d( Units.feetToMeters(34.82), Units.feetToMeters(13.28), new Rotation2d(3*Math.PI/2+0.05+Math.PI) );
-    //public static Pose2d RED_BOTTOM     = new Pose2d( Units.feetToMeters(32.99), Units.feetToMeters(8.52),  new Rotation2d(Math.PI+0.75+Math.PI) );
-
-    public static Pose2d BLUE_DEF_BOTTOM= 
-        new Pose2d( Units.feetToMeters(25.4), Units.feetToMeters(9.45), new Rotation2d(Math.PI - 0.35));
-    public static Pose2d BLUE_DEF_TOP   = 
-        new Pose2d( Units.feetToMeters(22.9), Units.feetToMeters(15),   new Rotation2d(Math.toRadians(160)));
-    //public static Pose2d RED_DEF_TOP    = new Pose2d( Units.feetToMeters(28.6), Units.feetToMeters(17.55),new Rotation2d(-0.35));
-    //public static Pose2d RED_DEF_BOTTOM = new Pose2d( Units.feetToMeters(31.1), Units.feetToMeters(12),   new Rotation2d(3*Math.PI/2-0.35));
-  
-    public static Pose2d FIVE_BALL_START = new Pose2d(
-      Units.feetToMeters(24.95), Units.feetToMeters(5.85), new Rotation2d(3*Math.PI/2));
-  }
-
-  public static final double hoodAngleDegreesTable[][] = {
-    {52,  15}, // fender shot
-    {66,  15}, // no limelight, mid tarmac
-    {75,  20},
-    {82,  20},
-    {92,  23},
-    {97,  24.5},
-    {108, 29}, // on corner of tarmac
-    {119, 30},
-    {128, 30}, // Money shot!
-    {136, 31},
-    {142, 32},
-    {155, 32},
-    {180, 32},
-    {202, 32},//{194, 33}, // Launch pad
-    {242, 33}  // long shot, no limelight
-  };
-
-  public static final double flywheelRpmTable[][] = {
-    {52,  2800}, // fender shot
-    {66,  2800}, // no limelight, mid tarmac
-    {75,  2800},
-    {82,  2800},
-    {92,  2800},
-    {97,  2800},
-    {108, 2800}, // on corner of tarmac
-    {119, 2900},
-    {128, 3000}, // Money shot!
-    {136, 3100}, // TODO: test and change to 3000?
-    {142, 3000},
-    {155, 3200},
-    {180, 3500},
-    {202, 4000},
-    //{194, 3600}, // Launch pad
-    {242, 5000}  // long shot, no limelight
-  };
+    public static Pose2d ORIGIN = new Pose2d(0.0, 0.0, new Rotation2d(0));
+    }
 }

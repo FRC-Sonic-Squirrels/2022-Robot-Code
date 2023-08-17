@@ -423,6 +423,36 @@ public class Drivetrain extends SubsystemBase {
     isOdometrySet = true;
   }
 
+  public void setXStance() {
+    
+    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0.0, 0.0, 0.0), new Translation2d(0, 0));
+    states[0].angle = new Rotation2d(Math.PI / 2 - Math.atan(Constants.DRIVETRAIN_TRACKWIDTH_METERS / Constants.DRIVETRAIN_WHEELBASE_METERS));
+    states[1].angle = new Rotation2d(Math.PI / 2 + Math.atan(Constants.DRIVETRAIN_TRACKWIDTH_METERS / Constants.DRIVETRAIN_WHEELBASE_METERS));
+    states[2].angle = new Rotation2d(Math.PI / 2 + Math.atan(Constants.DRIVETRAIN_TRACKWIDTH_METERS / Constants.DRIVETRAIN_WHEELBASE_METERS));
+    states[3].angle =
+        new Rotation2d(3.0 / 2.0 * Math.PI - Math.atan(Constants.DRIVETRAIN_TRACKWIDTH_METERS / Constants.DRIVETRAIN_WHEELBASE_METERS));
+    setModuleStates(states);
+  }
+
+  /**
+   * Stops the motion of the robot. Since the motors are in break mode, the robot will stop soon
+   * after this method is invoked.
+   */
+  public void stop() {
+    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(new ChassisSpeeds(0.0, 0.0, 0.0), new Translation2d(0, 0));
+    setModuleStates(states);
+  }
+
+  public void drive(double xVelocity, double yVelocity, double rotationalVelocity) {
+
+        SwerveModuleState[] swerveModuleStates =
+            m_kinematics.toSwerveModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
+              xVelocity, yVelocity, rotationalVelocity, getRotation()), new Translation2d(0, 0));
+        SwerveDriveKinematics.desaturateWheelSpeeds(
+            swerveModuleStates, MAX_VELOCITY_METERS_PER_SECOND);
+        setModuleStates(swerveModuleStates);
+  }
+
   /**
    * set desired swerve module states from chassisSpeed
    * 

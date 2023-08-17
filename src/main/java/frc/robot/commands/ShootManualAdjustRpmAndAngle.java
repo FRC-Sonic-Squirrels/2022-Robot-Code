@@ -8,38 +8,31 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.CargoSubsystem;
-import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class ShootManualAdjustRpmAndAngle extends CommandBase {
   private CargoSubsystem m_cargoSubsystem;
   private ShooterSubsystem m_shooterSubsystem;
-  private HoodSubsystem m_hoodSubsystem;
   private long m_time;
   private DoubleSupplier m_rpm;
-  private DoubleSupplier m_hoodAngle;
   private boolean shooting = false;
   private Robot m_robot;
 
-  public ShootManualAdjustRpmAndAngle(DoubleSupplier flyWheelRPM, DoubleSupplier hoodAngleSupplier, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem, HoodSubsystem hoodSubsystem, Robot robot) {
+  public ShootManualAdjustRpmAndAngle(DoubleSupplier flyWheelRPM, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem,Robot robot) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
-    m_hoodSubsystem = hoodSubsystem;
     m_rpm = flyWheelRPM;
-    m_hoodAngle = hoodAngleSupplier;
     m_time = 0;
     m_robot = robot;
 
-    addRequirements(cargoSubsystem, shooterSubsystem, hoodSubsystem);
+    addRequirements(cargoSubsystem, shooterSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {    
     m_shooterSubsystem.setFlywheelRPM(m_rpm.getAsDouble());
-
-    m_hoodSubsystem.setAngleDegrees(m_hoodAngle.getAsDouble());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -47,7 +40,7 @@ public class ShootManualAdjustRpmAndAngle extends CommandBase {
   public void execute() {
     // wait until flywheel is fully revved
     // once it is, set indexer in shooting mode
-    if (!shooting && m_shooterSubsystem.isAtDesiredRPM() && m_hoodSubsystem.isAtAngle()) {
+    if (!shooting && m_shooterSubsystem.isAtDesiredRPM()) {
       shooting = true;
       m_cargoSubsystem.setShootMode();
     }
@@ -60,7 +53,6 @@ public class ShootManualAdjustRpmAndAngle extends CommandBase {
     m_time = 0;
     m_shooterSubsystem.stop();
     m_cargoSubsystem.setIdleMode();
-    m_hoodSubsystem.setMinAngle();
   }
 
   // Returns true when the command should end.
