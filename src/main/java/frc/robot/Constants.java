@@ -160,18 +160,13 @@ public final class Constants {
   public static class ShooterConstants {
     public static final double m_activated = 2000;
     public static final double IDLE = 500;
-    public static final int BUMPER_SHOT_RPM = 3000;
-    public static final int HOOD_ANGLE = 15;
+
+    public static final double MID_NODE_RPM = 4000;
+    public static final double HIGH_NODE_RPM = 5000;
 
     public static final String ADJUSTABLE_OFFSET_RPM_STRING = "ADJUSTABLE RPM OFFSET";
   }
   // according to game manual field is 27 ft. (~823 cm) by 54 ft. (~1646 cm)
-  public static class HubCentricConstants{
-    //public static final Vector2d HUB_CENTER = new Vector2d(8.23, 4.11);
-    public static final Pose2d HUB_CENTER_POSE2D = new Pose2d(8.23, 4.11, new Rotation2d());
-    public static final double FORWARD_MULTIPLIER = 0.5;
-    public static final double SIDEWAYS_MULTIPLIER = 0.3;
-  }
 
   public static class FieldConstants{
 

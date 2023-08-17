@@ -8,15 +8,19 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ControllerRumbleCommand;
 import frc.robot.commands.DriveFieldCentricCommand;
 import frc.robot.commands.DriveRobotCentricCommand;
+import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
 import frc.robot.commands.ShootWithSetRPM;
@@ -43,17 +47,14 @@ public class RobotContainer {
 
   // Controllers
   public final XboxController m_controller = new XboxController(0);
-  //public final XboxController m_operatorController = new XboxController(1);
-  // public final XboxController m_climbController = new XboxController(2);
+  public final XboxController m_operatorController = new XboxController(1);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
-  
+
   public DriverStation.Alliance m_alliance = DriverStation.getAlliance();
 
-  public double m_shootingRpm = Constants.ShooterConstants.BUMPER_SHOT_RPM;
-  public double m_hoodAngle = Constants.ShooterConstants.HOOD_ANGLE;
-
-  // public Command climbRumbleCommand = new ControllerClimbMaxHeightRumble(m_climbController, m_elevator);
+  // public Command climbRumbleCommand = new ControllerClimbMaxHeightRumble(m_climbController,
+  // m_elevator);
 
 
   /**
@@ -67,29 +68,44 @@ public class RobotContainer {
     m_shooter = new ShooterSubsystem(m_robot, m_robot.revPDH);
     m_intake = new IntakeSubsystem();
     drivetrain = new Drivetrain();
-    
+
     SmartDashboard.putData("Auto Mode", chooser);
 
     // add the new auton trajectories to the auton trajectory chooser
     SwerveTrajectoryAutonomousCommandFactory auton =
-        new SwerveTrajectoryAutonomousCommandFactory(drivetrain, m_shooter, m_cargo, m_intake, m_robot, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
+        new SwerveTrajectoryAutonomousCommandFactory(drivetrain, m_shooter, m_cargo, m_intake,
+            m_robot, Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
 
 
     chooser.addOption("nothing", new InstantCommand());
+
+    chooser.addOption("hp2piece", auton.hp2piece());
+
+    chooser.addOption("hp2pieceEngage", auton.hp2pieceEngage());
+
+    chooser.addOption("hp3piece", auton.hp3piece());
+
+    chooser.addOption("wall2piece", auton.wall2piece());
+
+    chooser.addOption("wall2pieceEngage", auton.wall2pieceEngage());
+
+    chooser.addOption("wall3piece", auton.wall3piece());
+
+    chooser.addOption("middle1pieceEngage", auton.middle1pieceEngage());
 
 
     // default auton is to do nothing, for SAFETY
     chooser.setDefaultOption("nothing", new InstantCommand());
 
-    drivetrain.setDefaultCommand(new DriveFieldCentricCommand(
-      drivetrain, 
-      () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-      () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
-      () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+    drivetrain.setDefaultCommand(new DriveFieldCentricCommand(drivetrain,
+        () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> -modifyAxis(m_controller.getRightX())
+            * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
     // m_elevator.setDefaultCommand(new ElevatorControlCommand(m_elevator, m_climbController,
-    //   Constants.ElevatorConstants.elevatorSpeedMultiplier));
-    
+    // Constants.ElevatorConstants.elevatorSpeedMultiplier));
+
     // m_arm.setDefaultCommand(new ArmManualControlCommand(m_arm, m_climbController, 0.3));
 
     configureButtonBindings();
@@ -97,58 +113,72 @@ public class RobotContainer {
 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   * instantiating a {@link GenericHID} or one of its subclasses
+   * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
+   * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
 
   private void configureButtonBindings() {
 
-    //************************ DRIVER CONTROLS [START] ******************************* 
+    // ************************ DRIVER CONTROLS [START] *******************************
 
     // Back button resets field centric, forward is the current heading
-    new Button(m_controller::getBackButton)
-            // No requirements because we don't need to interrupt anything
-            .whenPressed(drivetrain::resetFieldCentric);
+    new Trigger(m_controller::getBackButton)
+        // No requirements because we don't need to interrupt anything
+        .onTrue(new InstantCommand(drivetrain::resetFieldCentric));
+
+    // robot centric
+    new Trigger(m_controller::getYButton).onTrue(new DriveRobotCentricCommand(drivetrain,
+        () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND
+            * 0.8,
+        () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND
+            * 0.8,
+        () -> -modifyAxis(m_controller.getRightX())
+            * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+
+    // field centric
+    new Trigger(m_controller::getBButton).onTrue(new DriveFieldCentricCommand(drivetrain,
+        () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> -modifyAxis(m_controller.getRightX())
+            * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+
+    // rotate 0 degrees
+    new Trigger(m_controller::getAButton).whileTrue(new DriveWithSetRotationCommand(drivetrain,
+        () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> -1, 0));
+
+    // rotate to hp wall
+    new Trigger(m_controller::getXButton).whileTrue(new DriveWithSetRotationCommand(drivetrain,
+    () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    () -> -1, Math.toRadians(DriverStation.getAlliance() == Alliance.Blue ? 90 : -90)));
+
+    // deploy intake
+    new Trigger(() -> (m_controller.getRightTriggerAxis() > 0.05))
+        .whileTrue(new IntakeDeployCommand(m_intake, m_cargo));
+
+    // reverse intake
+    new Trigger(() -> (m_controller.getLeftTriggerAxis() > 0.05))
+        .whileTrue(new IntakeReverseCommand(m_intake, m_cargo));
 
 
-
-    new Button(m_controller::getBButton)
-            .whenPressed(new DriveRobotCentricCommand(drivetrain,
-            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8, 
-            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 0.8,
-            () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
-
-    new Button(m_controller::getAButton)
-            .whenPressed(new DriveFieldCentricCommand(drivetrain,
-            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
-            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
-
-    // high node
-    new Button(m_controller::getRightBumper)
-    .whenPressed(new ShootWithSetRPM(5000, m_cargo, m_shooter, m_robot));
-
-    // mid node
-    new Button(m_controller::getLeftBumper)
-    .whenPressed(new ShootWithSetRPM(4000, m_cargo, m_shooter, m_robot));
-              
-    //deploy intake
-    new Button(() -> (m_controller.getRightTriggerAxis() > 0.05))
-            .whileHeld(new IntakeDeployCommand(m_intake, m_cargo));
-
-    //reverse intake
-    new Button(() -> (m_controller.getLeftTriggerAxis() > 0.05))
-            .whileHeld(new IntakeReverseCommand(m_intake, m_cargo));
-
-
-    //************************ DRIVER CONTROLS [END] ******************************* 
+    // ************************ DRIVER CONTROLS [END] *******************************
 
     // **************** OPERATOR CONTROLS [START] ********************************
 
+    // high node
+    new Trigger(m_operatorController::getYButton).onTrue(
+        new ShootWithSetRPM(Constants.ShooterConstants.HIGH_NODE_RPM, m_cargo, m_shooter, m_robot));
+
+    // mid node
+    new Trigger(m_operatorController::getXButton).onTrue(
+        new ShootWithSetRPM(Constants.ShooterConstants.MID_NODE_RPM, m_cargo, m_shooter, m_robot));
+
     // **************** OPERATOR CONTROLS [END] ********************************
   }
-  
+
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) > deadband) {
       if (value > 0.0) {
@@ -162,7 +192,7 @@ public class RobotContainer {
   }
 
 
-  //TODO: check if deadband value needs to be changed  
+  // TODO: check if deadband value needs to be changed
   public static double modifyAxis(double value) {
     // Deadband
     value = deadband(value, 0.1);
@@ -175,18 +205,11 @@ public class RobotContainer {
 
   // method that checks if either joystick is active (used to interrupt the dodge commands)
   public Boolean joystickMoving() {
-    if(modifyAxis(m_controller.getLeftY()) > 0.0 || modifyAxis(m_controller.getLeftX()) > 0.0){
+    if (modifyAxis(m_controller.getLeftY()) > 0.0 || modifyAxis(m_controller.getLeftX()) > 0.0) {
       return true;
-    } 
+    }
     return false;
   }
-
-  public void updateManualShooterSettings() {
-    SmartDashboard.putNumber("A MANUAL SHOOTING RPM", m_shootingRpm);
-    SmartDashboard.putNumber("A MANUAL SHOOTING HOOD ANGLE", m_hoodAngle);
-  }
-
 }
-
 
 
