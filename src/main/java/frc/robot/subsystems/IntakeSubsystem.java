@@ -39,7 +39,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private static int kTimeoutMs = 30;
   private Mode mode = Mode.STOP;
 
-  private double m_forwardRpmValue = 3000;
+  private double m_forwardRpmValue = 1000;
   private double m_reverseRpmValue = -1000;
 
   private SupplyCurrentLimitConfiguration currentLimit =

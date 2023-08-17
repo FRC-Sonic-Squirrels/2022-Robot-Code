@@ -59,7 +59,7 @@ public class RobotContainer {
   // Controllers
   public final XboxController m_controller = new XboxController(0);
   //public final XboxController m_operatorController = new XboxController(1);
-  public final XboxController m_climbController = new XboxController(2);
+  // public final XboxController m_climbController = new XboxController(2);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
   
@@ -68,7 +68,7 @@ public class RobotContainer {
   public double m_shootingRpm = Constants.ShooterConstants.BUMPER_SHOT_RPM;
   public double m_hoodAngle = Constants.ShooterConstants.HOOD_ANGLE;
 
-  public Command climbRumbleCommand = new ControllerClimbMaxHeightRumble(m_climbController, m_elevator);
+  // public Command climbRumbleCommand = new ControllerClimbMaxHeightRumble(m_climbController, m_elevator);
 
 
   /**
@@ -107,25 +107,25 @@ public class RobotContainer {
 
 
     // Competition Autonomous
-    Command rightSide5Ball = auton.rightSideFiveBall();
-    Command left2plus1 = auton.leftSide2plus1();
+    // Command rightSide5Ball = auton.rightSideFiveBall();
+    // Command left2plus1 = auton.leftSide2plus1();
 
     // Chezy Autonomous 
     // Command left_3plus_1 = auton.chezyLeft3plus1();
     // Command left_3plus_2 = auton.chezyLeft3Plus2();
-    Command center_2ball_wait = auton.chezyCenter2ballComplementary();
-    Command center_2ball_in_and_out = auton.chezyCenter2ballComplementaryDriveInAndOut();
-    Command center_4ball = auton.chezyCenter4ballComplementary();
+    // Command center_2ball_wait = auton.chezyCenter2ballComplementary();
+    // Command center_2ball_in_and_out = auton.chezyCenter2ballComplementaryDriveInAndOut();
+    // Command center_4ball = auton.chezyCenter4ballComplementary();
     // Command right_4ball = auton.chezyRightSide4Ball();
 
     // Command human_player_prac = auton.humanPlayerPracticeAuto();
 
-    chooser.addOption("left side 2 plus 1", left2plus1);
-    chooser.addOption("center 1 ball wait", center_2ball_wait);
-    chooser.addOption("center 1 ball in and out", center_2ball_in_and_out);
-    chooser.addOption("center 3 ball", center_4ball);
+    // chooser.addOption("left side 2 plus 1", left2plus1);
+    // chooser.addOption("center 1 ball wait", center_2ball_wait);
+    // chooser.addOption("center 1 ball in and out", center_2ball_in_and_out);
+    // chooser.addOption("center 3 ball", center_4ball);
     // chooser.addOption("right 4 ball", right_4ball);
-    chooser.addOption("right side 5 ball", rightSide5Ball);
+    // chooser.addOption("right side 5 ball", rightSide5Ball);
 
     //chooser.addOption("human player", human_player_prac);
 
@@ -138,10 +138,10 @@ public class RobotContainer {
       () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND, 
       () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
-    m_elevator.setDefaultCommand(new ElevatorControlCommand(m_elevator, m_climbController,
-      Constants.ElevatorConstants.elevatorSpeedMultiplier));
+    // m_elevator.setDefaultCommand(new ElevatorControlCommand(m_elevator, m_climbController,
+    //   Constants.ElevatorConstants.elevatorSpeedMultiplier));
     
-    m_arm.setDefaultCommand(new ArmManualControlCommand(m_arm, m_climbController, 0.3));
+    // m_arm.setDefaultCommand(new ArmManualControlCommand(m_arm, m_climbController, 0.3));
 
     configureButtonBindings();
   }
@@ -157,14 +157,14 @@ public class RobotContainer {
 
     //************************ DRIVER CONTROLS [START] ******************************* 
 
-    new Button(m_controller::getRightBumper)
-      .whenPressed(new ParallelRaceGroup(
-        new DriveFieldCentricAimCommand(drivetrain, 
-            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
-            m_limelight),
-        new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot).andThen(new ControllerRumbleCommand(m_controller, 0.2))));
+    // new Button(m_controller::getRightBumper)
+    //   .whenPressed(new ParallelRaceGroup(
+    //     new DriveFieldCentricAimCommand(drivetrain, 
+    //         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+    //         m_limelight),
+    //     new LimelightAutoShoot(m_limelight, m_cargo, m_shooter, m_hood, m_robot).andThen(new ControllerRumbleCommand(m_controller, 0.2))));
 
     // Back button resets field centric, forward is the current heading
     new Button(m_controller::getBackButton)
@@ -172,16 +172,16 @@ public class RobotContainer {
             .whenPressed(drivetrain::resetFieldCentric);
 
     // start button toggles the LimeLight LEDs
-    new Button(m_controller::getStartButton)
-            .whenPressed(new InstantCommand(() -> m_limelight.toggleLEDs()));
+    // new Button(m_controller::getStartButton)
+    //         .whenPressed(new InstantCommand(() -> m_limelight.toggleLEDs()));
 
   
-    new Button(m_controller::getYButton)
-        .whenPressed(new DriveFieldCentricAimCommand(drivetrain,
-            () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
-            m_limelight));
+    // new Button(m_controller::getYButton)
+    //     .whenPressed(new DriveFieldCentricAimCommand(drivetrain,
+    //         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //         () -> -modifyAxis(m_controller.getRightX()) * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+    //         m_limelight));
 
     //-------------Screen centric ----------------
     // new Button(m_controller::getXButton)
@@ -206,7 +206,7 @@ public class RobotContainer {
 
     // fender shot
     new Button(m_controller::getLeftBumper)
-    .whenPressed(new ShootWithSetRPMAndHoodAngle(2750, 15, m_cargo, m_shooter, m_hood, m_robot));
+    .whenPressed(new ShootWithSetRPMAndHoodAngle(1500, 15, m_cargo, m_shooter, m_hood, m_robot));
 
 
     // launch pad shot
@@ -277,11 +277,11 @@ public class RobotContainer {
     // new Button(m_climbController::getBackButton)
     //   .whileHeld(new InstantCommand(() -> m_arm.zeroEncoder(), m_arm));
 
-    new Button(m_climbController::getRightBumper)
-      .whenPressed(
-        new COOPER(m_elevator, m_arm, m_limelight, drivetrain, m_intake, m_shooter)
-          .withInterrupt(() -> m_climbController.getBButtonPressed())
-      );
+    // new Button(m_climbController::getRightBumper)
+    //   .whenPressed(
+    //     new COOPER(m_elevator, m_arm, m_limelight, drivetrain, m_intake, m_shooter)
+    //       .withInterrupt(() -> m_climbController.getBButtonPressed())
+    //   );
 
     // new Button(m_climbController::getXButton)
     //   .whileHeld(new InstantCommand( () -> m_arm.setArmPercentOutput(m_climbController.getRightY()), m_arm));
@@ -289,8 +289,8 @@ public class RobotContainer {
     
     // "Send It"  - pull up on bar with elevator NOW. Used when robot get stuck on last step of
     // autoclimb. 
-    new Button(m_climbController::getXButton)
-      .whenPressed(new MotionMagicControl(m_elevator, 9, 0.05, 0.25, 28));
+    // new Button(m_climbController::getXButton)
+    //   .whenPressed(new MotionMagicControl(m_elevator, 9, 0.05, 0.25, 28));
 
   
     
