@@ -47,7 +47,7 @@ public class RobotContainer {
 
   // Controllers
   public final XboxController m_controller = new XboxController(0);
-  public final XboxController m_operatorController = new XboxController(1);
+  // public final XboxController m_operatorController = new XboxController(1);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
 
@@ -128,13 +128,13 @@ public class RobotContainer {
         .onTrue(new InstantCommand(drivetrain::resetFieldCentric));
 
     // robot centric
-    new Trigger(m_controller::getYButton).onTrue(new DriveRobotCentricCommand(drivetrain,
-        () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND
-            * 0.8,
-        () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND
-            * 0.8,
-        () -> -modifyAxis(m_controller.getRightX())
-            * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+    // new Trigger(m_controller::getYButton).onTrue(new DriveRobotCentricCommand(drivetrain,
+    //     () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND
+    //         * 0.8,
+    //     () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND
+    //         * 0.8,
+    //     () -> -modifyAxis(m_controller.getRightX())
+    //         * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
     // field centric
     new Trigger(m_controller::getBButton).onTrue(new DriveFieldCentricCommand(drivetrain,
@@ -143,17 +143,17 @@ public class RobotContainer {
         () -> -modifyAxis(m_controller.getRightX())
             * Drivetrain.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
-    // rotate 0 degrees
-    new Trigger(m_controller::getAButton).whileTrue(new DriveWithSetRotationCommand(drivetrain,
-        () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-        () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-        () -> -1, 0));
+    // // rotate 0 degrees
+    // new Trigger(m_controller::getAButton).whileTrue(new DriveWithSetRotationCommand(drivetrain,
+    //     () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //     () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    //     () -> -1, 0));
 
-    // rotate to hp wall
-    new Trigger(m_controller::getXButton).whileTrue(new DriveWithSetRotationCommand(drivetrain,
-    () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-    () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
-    () -> -1, Math.toRadians(DriverStation.getAlliance() == Alliance.Blue ? 90 : -90)));
+    // // rotate to hp wall
+    // new Trigger(m_controller::getXButton).whileTrue(new DriveWithSetRotationCommand(drivetrain,
+    // () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    // () -> -modifyAxis(m_controller.getLeftX()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND,
+    // () -> -1, Math.toRadians(DriverStation.getAlliance() == Alliance.Blue ? 90 : -90)));
 
     // deploy intake
     new Trigger(() -> (m_controller.getRightTriggerAxis() > 0.05))
@@ -163,18 +163,22 @@ public class RobotContainer {
     new Trigger(() -> (m_controller.getLeftTriggerAxis() > 0.05))
         .whileTrue(new IntakeReverseCommand(m_intake, m_cargo));
 
+new Trigger(m_controller::getRightBumper).onTrue(
+        new ShootWithSetRPM(1500, m_cargo, m_shooter, m_robot));
+
+
 
     // ************************ DRIVER CONTROLS [END] *******************************
 
     // **************** OPERATOR CONTROLS [START] ********************************
 
     // high node
-    new Trigger(m_operatorController::getYButton).onTrue(
-        new ShootWithSetRPM(Constants.ShooterConstants.HIGH_NODE_RPM, m_cargo, m_shooter, m_robot));
+    // new Trigger(m_operatorController::getYButton).onTrue(
+    //     new ShootWithSetRPM(Constants.ShooterConstants.HIGH_NODE_RPM, m_cargo, m_shooter, m_robot));
 
-    // mid node
-    new Trigger(m_operatorController::getXButton).onTrue(
-        new ShootWithSetRPM(Constants.ShooterConstants.MID_NODE_RPM, m_cargo, m_shooter, m_robot));
+    // // mid node
+    // new Trigger(m_operatorController::getXButton).onTrue(
+    //     new ShootWithSetRPM(Constants.ShooterConstants.MID_NODE_RPM, m_cargo, m_shooter, m_robot));
 
     // **************** OPERATOR CONTROLS [END] ********************************
   }

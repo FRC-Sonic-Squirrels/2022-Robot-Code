@@ -130,8 +130,8 @@ public final class Constants {
   public static final int DRIVETRAIN_PIGEON_ID = 15;
 
   public static class DriveFieldCentricConstant {
-    public static final double TRANSLATION_MULTIPLIER = 0.8; 
-    public static final double ROTATION_MULTIPLIER = 0.7; 
+    public static final double TRANSLATION_MULTIPLIER = 0.4; 
+    public static final double ROTATION_MULTIPLIER = 0.3; 
   }
 
   public static final class AutoConstants {
