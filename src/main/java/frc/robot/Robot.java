@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
 
   public final PowerDistribution revPDH = new PowerDistribution();
 
-  private UsbCamera camera;
+  // private UsbCamera camera;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -56,9 +56,9 @@ public class Robot extends TimedRobot {
 
     if (isReal()) {
       // Creates UsbCamera and sets resolution
-      camera = CameraServer.startAutomaticCapture();
-      camera.setResolution(160, 120);
-      camera.setFPS(30);
+      // camera = CameraServer.startAutomaticCapture();
+      // camera.setResolution(160, 120);
+      // camera.setFPS(30);
     }
 
     //Adjustable offsets for LimelightAutoShoot 
