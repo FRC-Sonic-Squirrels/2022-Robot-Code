@@ -128,7 +128,7 @@ public class Drivetrain extends SubsystemBase {
   private boolean isOdometrySet = false;
 
   // enable/disable putting all the Gro data on smartdashboard
-  private boolean smartdashboardGyroData = false;
+  private boolean smartdashboardGyroData = true;
 
   // TODO: are we still using these?
   private double m_lastTime =0.0;
