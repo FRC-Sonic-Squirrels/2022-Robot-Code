@@ -81,15 +81,15 @@ public class RobotContainer {
 
     chooser.addOption("hp2piece", auton.hp2piece());
 
-    chooser.addOption("hp2pieceEngage", auton.hp2pieceEngage());
+    // chooser.addOption("hp2pieceEngage", auton.hp2pieceEngage());
 
-    chooser.addOption("hp3piece", auton.hp3piece());
+    // chooser.addOption("hp3piece", auton.hp3piece());
 
     chooser.addOption("wall2piece", auton.wall2piece());
 
-    chooser.addOption("wall2pieceEngage", auton.wall2pieceEngage());
+    // chooser.addOption("wall2pieceEngage", auton.wall2pieceEngage());
 
-    chooser.addOption("wall3piece", auton.wall3piece());
+    // chooser.addOption("wall3piece", auton.wall3piece());
 
     chooser.addOption("middle1pieceEngage", auton.middle1pieceEngage());
 
@@ -169,11 +169,11 @@ public class RobotContainer {
     // **************** OPERATOR CONTROLS [START] ********************************
 
     // high node
-    new Trigger(m_operatorController::getYButton).onTrue(
+    new Trigger(m_operatorController::getYButton).whileTrue(
         new ShootWithSetRPM(Constants.ShooterConstants.HIGH_NODE_RPM, m_cargo, m_shooter, m_robot));
 
     // mid node
-    new Trigger(m_operatorController::getXButton).onTrue(
+    new Trigger(m_operatorController::getXButton).whileTrue(
         new ShootWithSetRPM(Constants.ShooterConstants.MID_NODE_RPM, m_cargo, m_shooter, m_robot));
 
     // **************** OPERATOR CONTROLS [END] ********************************
