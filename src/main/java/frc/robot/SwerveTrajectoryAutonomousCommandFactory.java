@@ -192,25 +192,25 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         );
     }
 
-    public Command hp2pieceEngage() {
-        PathPlannerTrajectory hp2pieceEngage = PathPlanner.loadPath("hp2pieceEngage",
-                Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
+//     public Command hp2pieceEngage() {
+//         PathPlannerTrajectory hp2pieceEngage = PathPlanner.loadPath("hp2pieceEngage",
+//                 Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
 
-        return new SequentialCommandGroup(hp2piece(),
-                PPSwerveControlCommand(hp2pieceEngage, true, true), driveAutoEngage(false)
+//         return new SequentialCommandGroup(hp2piece(),
+//                 PPSwerveControlCommand(hp2pieceEngage, true, true), driveAutoEngage(false)
 
-        );
-    }
+//         );
+//     }
 
-    public Command hp3piece() {
-        PathPlannerTrajectory hp3piece = PathPlanner.loadPath("hp3piece",
-                Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
+//     public Command hp3piece() {
+//         PathPlannerTrajectory hp3piece = PathPlanner.loadPath("hp3piece",
+//                 Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
 
-        return new SequentialCommandGroup(hp2piece(),
-        new FollowPathWithEvents(PPSwerveControlCommand(hp3piece, true, true),
-        hp3piece.getMarkers(), getEventMap())
-        );
-    }
+//         return new SequentialCommandGroup(hp2piece(),
+//         new FollowPathWithEvents(PPSwerveControlCommand(hp3piece, true, true),
+//         hp3piece.getMarkers(), getEventMap())
+//         );
+//     }
 
     public Command wall2piece() {
         PathPlannerTrajectory wall2piece = PathPlanner.loadPath("wall2piece",
@@ -229,30 +229,32 @@ public class SwerveTrajectoryAutonomousCommandFactory {
                 getEventMap().get("scoreMid"));
     }
 
-    public Command wall2pieceEngage() {
-        PathPlannerTrajectory wall2pieceEngage = PathPlanner.loadPath("wall2pieceEngage",
-                Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
+//     public Command wall2pieceEngage() {
+//         PathPlannerTrajectory wall2pieceEngage = PathPlanner.loadPath("wall2pieceEngage",
+//                 Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
 
-        return new SequentialCommandGroup(hp2piece(),
-                PPSwerveControlCommand(wall2pieceEngage, true, true), driveAutoEngage(false));
-    }
+//         return new SequentialCommandGroup(hp2piece(),
+//                 PPSwerveControlCommand(wall2pieceEngage, true, true), driveAutoEngage(false));
+//     }
 
-    public Command wall3piece() {
-        PathPlannerTrajectory wall3piece = PathPlanner.loadPath("wall3piece",
-                Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
+//     public Command wall3piece() {
+//         PathPlannerTrajectory wall3piece = PathPlanner.loadPath("wall3piece",
+//                 Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
 
-        return new SequentialCommandGroup(wall2piece(),
-        new FollowPathWithEvents(PPSwerveControlCommand(wall3piece, true, true),
-        wall3piece.getMarkers(), getEventMap())
-        );
-    }
+//         return new SequentialCommandGroup(wall2piece(),
+//         new FollowPathWithEvents(PPSwerveControlCommand(wall3piece, true, true),
+//         wall3piece.getMarkers(), getEventMap())
+//         );
+//     }
 
     public Command middle1pieceEngage() {
-        return new SequentialCommandGroup(new InstantCommand(() -> m_drivetrain
-                .resetOdometry(DriverStation.getAlliance() == DriverStation.Alliance.Blue
-                        ? new Pose2d(1.90, 2.77, new Rotation2d(0))
-                        : new Pose2d(14.64, 2.77, new Rotation2d(180)))),
-                        getEventMap().get("scoreHigh"),
+        return new SequentialCommandGroup(
+
+                        new InstantCommand(() -> m_drivetrain.resetOdometry(new Pose2d(0,0, Rotation2d.fromDegrees(180))), m_drivetrain),
+
+
+                        new IntakeReverseCommand(m_intake, m_cargo).withTimeout(1),
+                        // getEventMap().get("scoreHigh"),
 
                         Commands.runEnd(
                             () -> m_drivetrain.drive(2.0, 0.0, 0.0),
