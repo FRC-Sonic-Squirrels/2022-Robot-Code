@@ -130,16 +130,16 @@ public class CargoSubsystem extends SubsystemBase {
       setLowerBeltPercentOutput(m_lowerOutput);
     } else if (mode == Mode.SHOOT) {
       if (!cargoInUpperBelts()) {
-        setUpperBeltPercentOutput(0.9);
-        setLowerBeltPercentOutput(0.6);
+        setUpperBeltPercentOutput(1);
+        setLowerBeltPercentOutput(1);
         mode = Mode.SHOOT_STEP2;
       } else {
         setUpperBeltPercentOutput(-0.5);
         setLowerBeltPercentOutput(-0.2);
       }
     } else if (mode == Mode.SHOOT_STEP2) {
-      setUpperBeltPercentOutput(0.9);
-      setLowerBeltPercentOutput(0.6);
+      setUpperBeltPercentOutput(1);
+      setLowerBeltPercentOutput(1);
     } else if(mode == Mode.SHOOT_PREP){
       if(!cargoInUpperBelts()){
         setStopMode();
