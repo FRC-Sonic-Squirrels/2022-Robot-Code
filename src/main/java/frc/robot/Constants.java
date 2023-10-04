@@ -161,8 +161,8 @@ public final class Constants {
     public static final double m_activated = 2000;
     public static final double IDLE = 500;
 
-    public static final double MID_NODE_RPM = 4000;
-    public static final double HIGH_NODE_RPM = 5000;
+    public static final double MID_NODE_RPM = 1500;
+    public static final double HIGH_NODE_RPM = 2000;
 
     public static final String ADJUSTABLE_OFFSET_RPM_STRING = "ADJUSTABLE RPM OFFSET";
   }
