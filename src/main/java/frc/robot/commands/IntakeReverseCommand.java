@@ -21,8 +21,9 @@ public class IntakeReverseCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_intake.deployIntake();
-    m_intake.setReverseMode();
+    m_intake.setStopMode();
+    // m_intake.deployIntake();
+    // m_intake.setReverseMode();
     m_cargo.setReverseMode();
   }
 
@@ -33,8 +34,8 @@ public class IntakeReverseCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_intake.setStopMode();
-    m_intake.retractIntake();
+    // m_intake.setStopMode();
+    // m_intake.retractIntake();
     m_cargo.setStopMode();
   }
 
