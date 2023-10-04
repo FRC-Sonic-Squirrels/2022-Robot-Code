@@ -40,7 +40,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private Mode mode = Mode.STOP;
 
   private double m_forwardRpmValue = 1000;
-  private double m_reverseRpmValue = -1000;
+  private double m_reverseRpmValue = -500;
 
   private SupplyCurrentLimitConfiguration currentLimit =
     new SupplyCurrentLimitConfiguration(true, 20, 25, 0.1);
