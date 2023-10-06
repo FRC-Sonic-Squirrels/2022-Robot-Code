@@ -83,6 +83,8 @@ public class RobotContainer {
 
     chooser.addOption("leftTaxi", auton.leftTaxi());
 
+    chooser.addOption("sideTaxi", auton.sideTaxi());
+
     chooser.addOption("hp2piece", auton.hp2piece());
 
     // chooser.addOption("hp2pieceEngage", auton.hp2pieceEngage());
