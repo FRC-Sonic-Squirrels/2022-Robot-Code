@@ -302,6 +302,15 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         );
     }
 
+    public Command sideTaxi(){
+        PathPlannerTrajectory leftTaxi = PathPlanner.loadPath("sideTaxi",
+                Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
+        return new SequentialCommandGroup(
+                getEventMap().get("scoreLow"),
+                PPSwerveControlCommand(leftTaxi, true, false)
+        );
+    }
+
     public static Command PPSwerveControlCommand(PathPlannerTrajectory traj, boolean stopAtEnd,
             boolean useAllianceColor) {
         var thetaController = new PIDController(AutoConstants.kPThetaController,
