@@ -155,6 +155,13 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     private HashMap<String, Command> getEventMap() {
         HashMap<String, Command> eventMap = new HashMap<>();
 
+        eventMap.put("scoreLow", new SequentialCommandGroup(new InstantCommand(()->{
+                m_intake.setStopMode();
+                m_cargo.setReverseMode();
+        }).withTimeout(2),
+        new InstantCommand(()->{
+                m_cargo.setStopMode();}
+        )));
         eventMap.put("scoreHigh", new ShootWithSetRPM(Constants.ShooterConstants.HIGH_NODE_RPM, m_cargo, m_shooter, m_robot));
         eventMap.put("scoreMid", new ShootWithSetRPM(Constants.ShooterConstants.MID_NODE_RPM, m_cargo, m_shooter, m_robot));
 
@@ -275,6 +282,24 @@ public class SwerveTrajectoryAutonomousCommandFactory {
                     new AutoEngage(m_drivetrain, true)
                         .handleInterrupt(() -> m_drivetrain.setXStance())
                         );
+    }
+
+    public Command rightTaxi(){
+        PathPlannerTrajectory rightTaxi = PathPlanner.loadPath("rightTaxi",
+                Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
+        return new SequentialCommandGroup(
+                getEventMap().get("scoreLow"),
+                new FollowPathWithEvents(PPSwerveControlCommand(rightTaxi, true, false), rightTaxi.getMarkers(), getEventMap())
+        );
+    }
+
+    public Command leftTaxi(){
+        PathPlannerTrajectory leftTaxi = PathPlanner.loadPath("leftTaxi",
+                Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
+        return new SequentialCommandGroup(
+                getEventMap().get("scoreLow"),
+                new FollowPathWithEvents(PPSwerveControlCommand(leftTaxi, true, false), leftTaxi.getMarkers(), getEventMap())
+        );
     }
 
     public static Command PPSwerveControlCommand(PathPlannerTrajectory traj, boolean stopAtEnd,
