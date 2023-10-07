@@ -22,7 +22,7 @@ public class AutoEngage extends CommandBase {
   private double drivePower;
   private boolean flip;
 
-  private double kP = 0.05;
+  private double kP = 0.007;
   private double balancedThresholdDegrees = 3.0;
   // private TunableNumber timeRequiredBalanced =
   //     new TunableNumber("AutoEngage/timeRequiredBalanced", 1);
@@ -73,7 +73,7 @@ public class AutoEngage extends CommandBase {
               drivePower);
     }
 
-      drivetrain.drive(drivePower, 0, 0);
+      
 
     // Starts the timer when we are within the specified threshold of being 'flat' (gyroscope pitch
     // of 0 degrees)
@@ -83,9 +83,11 @@ public class AutoEngage extends CommandBase {
       timeEngaged.reset();
     }
 
-    if (timeEngaged.get() >= 0.5) {
+    if (timeEngaged.get() >= 0.3) {
       drivetrain.setXStance();
+      drivetrain.drive(0, 0, 0);
     } else {
+      drivetrain.drive(drivePower, 0, 0);
       // drivetrain.disableXstance();
     }
   }
@@ -93,7 +95,7 @@ public class AutoEngage extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // drivetrain.setXStance();
+    drivetrain.setXStance();
     // the wheels stay at their last known rotation, even if this command ends the wheels will point
     // x stance until driver gives input. We want to disable x stance so that the driver can regain
     // control in teleop

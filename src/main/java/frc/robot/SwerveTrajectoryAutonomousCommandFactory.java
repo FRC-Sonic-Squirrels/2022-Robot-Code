@@ -263,23 +263,25 @@ public class SwerveTrajectoryAutonomousCommandFactory {
                         new IntakeReverseCommand(m_intake, m_cargo).withTimeout(1),
                         // getEventMap().get("scoreHigh"),
 
-                        Commands.runEnd(
-                            () -> m_drivetrain.drive(2.0, 0.0, 0.0),
-                            () -> m_drivetrain.stop(),
-                            m_drivetrain)
-                        .until(() -> Math.abs(m_drivetrain.getGyroscopePitch()) < -15)
+                        // Commands.runEnd(
+                            new DriveWithSetRotationCommand(m_drivetrain, () -> 2.0, () ->0.0, ()-> -1, Math.PI)
+                        //     () -> m_drivetrain.stop(),
+                        //     m_drivetrain)
+                        .until(() -> Math.abs(m_drivetrain.getGyroscopePitch()) > 15)
                         .withTimeout(2),
-                        Commands.runEnd(
-                            () -> m_drivetrain.drive(2.0, 0.0, 0.0),
-                            () -> m_drivetrain.stop(),
-                            m_drivetrain)
+                        // Commands.runEnd(
+                        //     () -> m_drivetrain.drive(2.0, 0.0, 0.0),
+                        //     () -> m_drivetrain.stop(),
+                        //     m_drivetrain)
+                        new DriveWithSetRotationCommand(m_drivetrain, () -> 1.5, () ->0.0, ()-> -1, Math.PI)
                         .until(
-                            new Trigger(() -> Math.abs(m_drivetrain.getGyroscopePitch()) > -3).debounce(0.45))
-                        .withTimeout(2.25),
-                        Commands.run(() -> m_drivetrain.drive(-2.0, 0.0, 0.0), m_drivetrain)
-                        .until(() -> Math.abs(m_drivetrain.getGyroscopePitch()) < -15)
+                            new Trigger(() -> Math.abs(m_drivetrain.getGyroscopePitch()) < 3).debounce(0.45))
+                        .withTimeout(2.2),
+
+                        new DriveWithSetRotationCommand(m_drivetrain, () -> -2.0, () ->0.0, ()-> -1, Math.PI)
+                        .until(() -> Math.abs(m_drivetrain.getGyroscopePitch()) > 15)
                         .withTimeout(2.0),
-                    new AutoEngage(m_drivetrain, true)
+                    new AutoEngage(m_drivetrain, false)
                         .handleInterrupt(() -> m_drivetrain.setXStance())
                         );
     }

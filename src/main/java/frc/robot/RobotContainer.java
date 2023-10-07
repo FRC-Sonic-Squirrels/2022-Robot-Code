@@ -79,19 +79,19 @@ public class RobotContainer {
 
     chooser.addOption("nothing", new InstantCommand());
 
-    chooser.addOption("rightTaxi", auton.rightTaxi());
+    // chooser.addOption("rightTaxi", auton.rightTaxi());
 
-    chooser.addOption("leftTaxi", auton.leftTaxi());
+    // chooser.addOption("leftTaxi", auton.leftTaxi());
 
     chooser.addOption("sideTaxi", auton.sideTaxi());
 
-    chooser.addOption("hp2piece", auton.hp2piece());
+    // chooser.addOption("hp2piece", auton.hp2piece());
 
     // chooser.addOption("hp2pieceEngage", auton.hp2pieceEngage());
 
     // chooser.addOption("hp3piece", auton.hp3piece());
 
-    chooser.addOption("wall2piece", auton.wall2piece());
+    // chooser.addOption("wall2piece", auton.wall2piece());
 
     // chooser.addOption("wall2pieceEngage", auton.wall2pieceEngage());
 
