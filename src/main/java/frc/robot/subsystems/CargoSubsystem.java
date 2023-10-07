@@ -129,36 +129,38 @@ public class CargoSubsystem extends SubsystemBase {
       setUpperBeltPercentOutput(m_upperOutput);
       setLowerBeltPercentOutput(m_lowerOutput);
     } else if (mode == Mode.SHOOT) {
-      if (!cargoInUpperBelts()) {
-        setUpperBeltPercentOutput(1);
-        setLowerBeltPercentOutput(1);
-        mode = Mode.SHOOT_STEP2;
-      } else {
-        setUpperBeltPercentOutput(-0.5);
-        setLowerBeltPercentOutput(-0.2);
-      }
+      // if (!cargoInUpperBelts()) {
+      //   setUpperBeltPercentOutput(1);
+      //   setLowerBeltPercentOutput(1);
+      //   mode = Mode.SHOOT_STEP2;
+      // } else {
+      //   setUpperBeltPercentOutput(-0.5);
+      //   setLowerBeltPercentOutput(-0.2);
+      // }
+      setUpperBeltPercentOutput(1);
+      setLowerBeltPercentOutput(1);
     } else if (mode == Mode.SHOOT_STEP2) {
       setUpperBeltPercentOutput(1);
       setLowerBeltPercentOutput(1);
     } else if(mode == Mode.SHOOT_PREP){
-      if(!cargoInUpperBelts()){
-        setStopMode();
+      // if(!cargoInUpperBelts()){
+      //   setStopMode();
         setUpperBeltPercentOutput(0);
         setLowerBeltPercentOutput(0);
-      } else {
-        setUpperBeltPercentOutput(-0.5);
-        setLowerBeltPercentOutput(-0.2);
-      }
+      // } else {
+      //   setUpperBeltPercentOutput(-0.5);
+      //   setLowerBeltPercentOutput(-0.2);
+      // }
     } else if(mode == Mode.IDLE){
       setUpperBeltPercentOutput(0);
-      if(m_idleTime == 0){
-        m_idleTime = System.currentTimeMillis();
-      } else if(System.currentTimeMillis() - m_idleTime > 300){
-        setShootPrepMode();
-        m_idleTime = 0;
+      // if(m_idleTime == 0){
+      //   m_idleTime = System.currentTimeMillis();
+      // } else if(System.currentTimeMillis() - m_idleTime > 300){
+      //   // setShootPrepMode();
+      //   m_idleTime = 0;
         setLowerBeltPercentOutput(0);
-      }
-      setLowerBeltPercentOutput(0.9);
+      // }
+      // setLowerBeltPercentOutput(0.9);
     }else if (mode == Mode.REVERSE) {
       setUpperBeltPercentOutput(-m_lowerOutput);
       setLowerBeltPercentOutput(-m_upperOutput);

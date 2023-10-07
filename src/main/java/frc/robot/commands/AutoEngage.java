@@ -22,8 +22,8 @@ public class AutoEngage extends CommandBase {
   private double drivePower;
   private boolean flip;
 
-  private double kP = 0.007;
-  private double balancedThresholdDegrees = 3.0;
+  private double kP = 0.01;
+  private double balancedThresholdDegrees = 4.5;
   // private TunableNumber timeRequiredBalanced =
   //     new TunableNumber("AutoEngage/timeRequiredBalanced", 1);
   private double maxPowerPercent = 1;

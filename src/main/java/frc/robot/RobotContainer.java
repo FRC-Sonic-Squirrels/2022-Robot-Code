@@ -47,7 +47,7 @@ public class RobotContainer {
 
   // Controllers
   public final XboxController m_controller = new XboxController(0);
-  public final XboxController m_operatorController = new XboxController(1);
+  // public final XboxController m_operatorController = new XboxController(1);
 
   public final SendableChooser<Command> chooser = new SendableChooser<>();
 
@@ -84,6 +84,8 @@ public class RobotContainer {
     // chooser.addOption("leftTaxi", auton.leftTaxi());
 
     chooser.addOption("sideTaxi", auton.sideTaxi());
+
+    chooser.addOption("scoreHigh", auton.scoreHigh());
 
     // chooser.addOption("hp2piece", auton.hp2piece());
 
@@ -169,18 +171,20 @@ public class RobotContainer {
     new Trigger(() -> (m_controller.getLeftTriggerAxis() > 0.05))
         .whileTrue(new IntakeReverseCommand(m_intake, m_cargo));
 
+    // high node
+    new Trigger(m_controller::getRightBumper).whileTrue(
+      new ShootWithSetRPM(Constants.ShooterConstants.HIGH_NODE_RPM, m_cargo, m_shooter, m_robot));
+
+    // mid node
+    new Trigger(m_controller::getLeftBumper).whileTrue(
+        new ShootWithSetRPM(Constants.ShooterConstants.MID_NODE_RPM, m_cargo, m_shooter, m_robot));
+
 
     // ************************ DRIVER CONTROLS [END] *******************************
 
     // **************** OPERATOR CONTROLS [START] ********************************
 
-    // high node
-    new Trigger(m_operatorController::getYButton).whileTrue(
-        new ShootWithSetRPM(Constants.ShooterConstants.HIGH_NODE_RPM, m_cargo, m_shooter, m_robot));
-
-    // mid node
-    new Trigger(m_operatorController::getXButton).whileTrue(
-        new ShootWithSetRPM(Constants.ShooterConstants.MID_NODE_RPM, m_cargo, m_shooter, m_robot));
+    
 
     // **************** OPERATOR CONTROLS [END] ********************************
   }

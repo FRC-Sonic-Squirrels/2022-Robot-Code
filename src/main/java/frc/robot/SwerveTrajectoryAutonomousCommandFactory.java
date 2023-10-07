@@ -179,6 +179,10 @@ public class SwerveTrajectoryAutonomousCommandFactory {
         return eventMap;
     }
 
+    public Command scoreHigh() {
+        return new ShootWithSetRPM(Constants.ShooterConstants.HIGH_NODE_RPM, m_cargo, m_shooter, m_robot);
+    }
+
     public Command hp2piece() {
         PathPlannerTrajectory hp2piece = PathPlanner.loadPath("hp2piece",
                 Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);

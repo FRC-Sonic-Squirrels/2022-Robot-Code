@@ -106,7 +106,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // MotorUtils.setCtreStatusSlow(flywheel_follow);
 
-    SmartDashboard.putBoolean("SHOOTER USE IDLE RPM", true);
+    SmartDashboard.putBoolean("SHOOTER USE IDLE RPM", false);
 
     setPIDteleop();
 
