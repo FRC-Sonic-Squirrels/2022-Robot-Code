@@ -106,16 +106,22 @@ public class CargoSubsystem extends SubsystemBase {
     if (mode == Mode.STOP) {
       stopIndexer();
     } else if (mode == Mode.INTAKE) {
-      if (cargoInUpperBelts()) {
-        stopUpperBelts();
-        if (cargoInLowerBelts()) {
-          stopLowerBelts();
-        } else {
-          setLowerBeltPercentOutput(0.9);
-        }
+      // if (cargoInUpperBelts()) {
+      //   stopUpperBelts();
+      //   if (cargoInLowerBelts()) {
+      //     stopLowerBelts();
+      //   } else {
+      //     setLowerBeltPercentOutput(0.9);
+      //   }
+      // } else {
+      //   setLowerBeltPercentOutput(0.9);
+      //   setUpperBeltPercentOutput(0.5);
+      // }
+
+      if (cargoInLowerBelts()) {
+        stopLowerBelts();
       } else {
         setLowerBeltPercentOutput(0.9);
-        setUpperBeltPercentOutput(0.5);
       }
 
     } else if (mode == Mode.LOWERONLY) {
