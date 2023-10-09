@@ -120,32 +120,32 @@ public class SwerveTrajectoryAutonomousCommandFactory {
 
     // ------------ 2023 charged up autos ------------
 
-    public Command driveAutoEngage(boolean flip) {
-        return new SequentialCommandGroup(
-                Commands.print("----------------------------DRIVE AUTO ENGAGE ALLIANCE: "
-                        + DriverStation.getAlliance() + "-----------"),
-                // !!!!!!NEGATIVE NUMBER FOR X VELOCITY BECAUSE JOYSTICK VALUE
-                new ConditionalCommand(
-                        new DriveWithSetRotationCommand(m_drivetrain, () -> (1.2), () -> 0,
-                                () -> -1, Math.toRadians(180)).until(
-                                        () -> Math.abs(m_drivetrain.getGyroscopePitch()) >= 13.5)
-                                        .withTimeout(0.95),
-                        new DriveWithSetRotationCommand(m_drivetrain, () -> (-1.2), () -> 0,
-                                () -> -1, Math.toRadians(180)).until(
-                                        () -> Math.abs(m_drivetrain.getGyroscopePitch()) >= 13.5)
-                                        .withTimeout(0.95),
-                        () -> flip),
-                new ConditionalCommand(
-                        new DriveWithSetRotationCommand(m_drivetrain, () -> (1.5), () -> 0,
-                                () -> -1, Math.toRadians(180)).withTimeout(0.25), // 0.175
-                        new DriveWithSetRotationCommand(m_drivetrain, () -> (-1.5), () -> 0,
-                                () -> -1, Math.toRadians(180)).withTimeout(0.25), // 0.175,
-                        () -> flip),
-                new ConditionalCommand(new AutoEngage(m_drivetrain, true),
-                        new AutoEngage(m_drivetrain, false),
-                        () -> DriverStation.getAlliance() == Alliance.Red)
-                                .handleInterrupt(() -> m_drivetrain.setXStance()));
-    }
+//     public Command driveAutoEngage(boolean flip) {
+//         return new SequentialCommandGroup(
+//                 Commands.print("----------------------------DRIVE AUTO ENGAGE ALLIANCE: "
+//                         + DriverStation.getAlliance() + "-----------"),
+//                 // !!!!!!NEGATIVE NUMBER FOR X VELOCITY BECAUSE JOYSTICK VALUE
+//                 new ConditionalCommand(
+//                         new DriveWithSetRotationCommand(m_drivetrain, () -> (1.2), () -> 0,
+//                                 () -> -1, Math.toRadians(180)).until(
+//                                         () -> Math.abs(m_drivetrain.getGyroscopePitch()) >= 13.5)
+//                                         .withTimeout(0.95),
+//                         new DriveWithSetRotationCommand(m_drivetrain, () -> (-1.2), () -> 0,
+//                                 () -> -1, Math.toRadians(180)).until(
+//                                         () -> Math.abs(m_drivetrain.getGyroscopePitch()) >= 13.5)
+//                                         .withTimeout(0.95),
+//                         () -> flip),
+//                 new ConditionalCommand(
+//                         new DriveWithSetRotationCommand(m_drivetrain, () -> (1.5), () -> 0,
+//                                 () -> -1, Math.toRadians(180)).withTimeout(0.25), // 0.175
+//                         new DriveWithSetRotationCommand(m_drivetrain, () -> (-1.5), () -> 0,
+//                                 () -> -1, Math.toRadians(180)).withTimeout(0.25), // 0.175,
+//                         () -> flip),
+//                 new ConditionalCommand(new AutoEngage(m_drivetrain, true),
+//                         new AutoEngage(m_drivetrain, false),
+//                         () -> DriverStation.getAlliance() == Alliance.Red)
+//                                 .handleInterrupt(() -> m_drivetrain.setXStance()));
+//     }
 
     /**
      * eventMap() - generate a fresh PathPlanner EventMap
