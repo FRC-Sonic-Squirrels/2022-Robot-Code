@@ -23,6 +23,7 @@ import frc.robot.commands.DriveRobotCentricCommand;
 import frc.robot.commands.DriveWithSetRotationCommand;
 import frc.robot.commands.IntakeDeployCommand;
 import frc.robot.commands.IntakeReverseCommand;
+import frc.robot.commands.ShootManualAdjustRpm;
 import frc.robot.commands.ShootWithSetRPM;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.Drivetrain;
@@ -173,11 +174,11 @@ public class RobotContainer {
 
     // high node
     new Trigger(m_controller::getRightBumper).whileTrue(
-      new ShootWithSetRPM(Constants.ShooterConstants.HIGH_NODE_RPM, m_cargo, m_shooter, m_robot));
+      new ShootManualAdjustRpm(() -> SmartDashboard.getNumber("high node RPM", Constants.ShooterConstants.HIGH_NODE_RPM), m_cargo, m_shooter, m_robot));
 
     // mid node
     new Trigger(m_controller::getLeftBumper).whileTrue(
-        new ShootWithSetRPM(Constants.ShooterConstants.MID_NODE_RPM, m_cargo, m_shooter, m_robot));
+        new ShootManualAdjustRpm(() -> SmartDashboard.getNumber("mid node RPM", Constants.ShooterConstants.MID_NODE_RPM), m_cargo, m_shooter, m_robot));
 
 
     // ************************ DRIVER CONTROLS [END] *******************************

@@ -10,7 +10,7 @@ import frc.robot.Robot;
 import frc.robot.subsystems.CargoSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class ShootManualAdjustRpmAndAngle extends CommandBase {
+public class ShootManualAdjustRpm extends CommandBase {
   private CargoSubsystem m_cargoSubsystem;
   private ShooterSubsystem m_shooterSubsystem;
   private long m_time;
@@ -18,7 +18,7 @@ public class ShootManualAdjustRpmAndAngle extends CommandBase {
   private boolean shooting = false;
   private Robot m_robot;
 
-  public ShootManualAdjustRpmAndAngle(DoubleSupplier flyWheelRPM, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem,Robot robot) {
+  public ShootManualAdjustRpm(DoubleSupplier flyWheelRPM, CargoSubsystem cargoSubsystem, ShooterSubsystem shooterSubsystem,Robot robot) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_cargoSubsystem = cargoSubsystem;
     m_shooterSubsystem = shooterSubsystem;
