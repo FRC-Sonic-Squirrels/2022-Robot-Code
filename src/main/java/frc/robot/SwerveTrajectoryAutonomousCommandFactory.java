@@ -294,6 +294,38 @@ public class SwerveTrajectoryAutonomousCommandFactory {
                         );
     }
 
+    public Command highMiddle1pieceEngage() {
+        return new SequentialCommandGroup(
+
+                        new InstantCommand(() -> m_drivetrain.resetOdometry(new Pose2d(0,0, Rotation2d.fromDegrees(0))), m_drivetrain),
+
+
+                        new ShootWithSetRPM(Constants.ShooterConstants.HIGH_NODE_RPM, m_cargo, m_shooter, m_robot).withTimeout(5),
+                        // getEventMap().get("scoreHigh"),
+
+                        // Commands.runEnd(
+                            new DriveWithSetRotationCommand(m_drivetrain, () -> -2.0, () ->0.0, ()-> -1, 0)
+                        //     () -> m_drivetrain.stop(),
+                        //     m_drivetrain)
+                        .until(() -> Math.abs(m_drivetrain.getGyroscopePitch()) < -15)
+                        .withTimeout(2),
+                        // Commands.runEnd(
+                        //     () -> m_drivetrain.drive(2.0, 0.0, 0.0),
+                        //     () -> m_drivetrain.stop(),
+                        //     m_drivetrain)
+                        new DriveWithSetRotationCommand(m_drivetrain, () -> -1.5, () ->0.0, ()-> -1, 0)
+                        .until(
+                            new Trigger(() -> Math.abs(m_drivetrain.getGyroscopePitch()) > -3).debounce(0.45))
+                        .withTimeout(2.2),
+
+                        new DriveWithSetRotationCommand(m_drivetrain, () -> 2.0, () ->0.0, ()-> -1, 0)
+                        .until(() -> Math.abs(m_drivetrain.getGyroscopePitch()) < -15)
+                        .withTimeout(2.0),
+                    new AutoEngage(m_drivetrain, true)
+                        .handleInterrupt(() -> m_drivetrain.setXStance())
+                        );
+    }
+
     public Command rightTaxi(){
         PathPlannerTrajectory rightTaxi = PathPlanner.loadPath("rightTaxi",
                 Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
