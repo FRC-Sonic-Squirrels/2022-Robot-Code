@@ -180,7 +180,11 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     }
 
     public Command scoreHigh() {
-        return new ShootWithSetRPM(Constants.ShooterConstants.HIGH_NODE_RPM, m_cargo, m_shooter, m_robot);
+        return new ShootWithSetRPM(Constants.ShooterConstants.HIGH_NODE_RPM, m_cargo, m_shooter, m_robot).withTimeout(5);
+    }
+
+    public Command scoreLow() {
+        return new IntakeReverseCommand(m_intake, m_cargo).withTimeout(1);
     }
 
     public Command hp2piece() {
@@ -309,11 +313,10 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     }
 
     public Command sideTaxi(){
-        PathPlannerTrajectory leftTaxi = PathPlanner.loadPath("sideTaxi",
-                Constants.AutoConstants.maxVelocity, Constants.AutoConstants.maxAcceleration);
         return new SequentialCommandGroup(
-                getEventMap().get("scoreLow"),
-                PPSwerveControlCommand(leftTaxi, true, false)
+                new InstantCommand(() -> m_drivetrain.resetOdometry(new Pose2d(0,0, Rotation2d.fromDegrees(180))), m_drivetrain),
+                new IntakeReverseCommand(m_intake, m_cargo).withTimeout(1),
+                new DriveWithSetRotationCommand(m_drivetrain, () -> 1.0, () ->0.0, ()-> -1, Math.PI).withTimeout(3.4)
         );
     }
 

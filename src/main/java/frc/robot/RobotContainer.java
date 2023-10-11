@@ -5,6 +5,8 @@
 package frc.robot;
 
 
+import java.util.function.BooleanSupplier;
+import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -12,6 +14,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -57,7 +60,6 @@ public class RobotContainer {
   // public Command climbRumbleCommand = new ControllerClimbMaxHeightRumble(m_climbController,
   // m_elevator);
 
-
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -71,6 +73,10 @@ public class RobotContainer {
     drivetrain = new Drivetrain();
 
     SmartDashboard.putData("Auto Mode", chooser);
+
+    //Tunable RPMs
+    SmartDashboard.putNumber("high node RPM", Constants.ShooterConstants.HIGH_NODE_RPM);
+    SmartDashboard.putNumber("mid node RPM", Constants.ShooterConstants.MID_NODE_RPM);
 
     // add the new auton trajectories to the auton trajectory chooser
     SwerveTrajectoryAutonomousCommandFactory auton =
@@ -87,6 +93,8 @@ public class RobotContainer {
     chooser.addOption("sideTaxi", auton.sideTaxi());
 
     chooser.addOption("scoreHigh", auton.scoreHigh());
+
+    chooser.addOption("Score Low", auton.scoreLow());
 
     // chooser.addOption("hp2piece", auton.hp2piece());
 
@@ -136,6 +144,9 @@ public class RobotContainer {
         // No requirements because we don't need to interrupt anything
         .onTrue(new InstantCommand(drivetrain::resetFieldCentric));
 
+    new Trigger(m_controller::getStartButton)
+      .onTrue(Commands.runOnce(() -> drivetrain.setXStance(), drivetrain));
+
     // robot centric
     new Trigger(m_controller::getYButton).onTrue(new DriveRobotCentricCommand(drivetrain,
         () -> -modifyAxis(m_controller.getLeftY()) * Drivetrain.MAX_VELOCITY_METERS_PER_SECOND
@@ -172,9 +183,9 @@ public class RobotContainer {
     new Trigger(() -> (m_controller.getLeftTriggerAxis() > 0.05))
         .whileTrue(new IntakeReverseCommand(m_intake, m_cargo));
 
-    // high node
+    // mid node
     new Trigger(m_controller::getRightBumper).whileTrue(
-      new ShootManualAdjustRpm(() -> SmartDashboard.getNumber("high node RPM", Constants.ShooterConstants.HIGH_NODE_RPM), m_cargo, m_shooter, m_robot));
+        new ShootManualAdjustRpm(() -> SmartDashboard.getNumber("high node RPM", Constants.ShooterConstants.HIGH_NODE_RPM), m_cargo, m_shooter, m_robot));
 
     // mid node
     new Trigger(m_controller::getLeftBumper).whileTrue(
