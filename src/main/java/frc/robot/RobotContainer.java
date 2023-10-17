@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -108,7 +109,9 @@ public class RobotContainer {
 
     // chooser.addOption("wall3piece", auton.wall3piece());
 
-    chooser.addOption("middle1pieceEngage", auton.middle1pieceEngage());
+    chooser.addOption("[LOW]middle1pieceEngage", auton.middle1pieceEngage());
+
+    chooser.addOption("[HIGH]middle1pieceEngage", auton.highMiddle1pieceEngage());
 
 
     // default auton is to do nothing, for SAFETY
@@ -179,6 +182,14 @@ public class RobotContainer {
     new Trigger(() -> (m_controller.getRightTriggerAxis() > 0.05))
         .whileTrue(new IntakeDeployCommand(m_intake, m_cargo));
 
+    // rumble
+    new Trigger(() -> m_cargo.cargoInLowerBelts()).onTrue(
+    new SequentialCommandGroup(
+    Commands.runOnce( () ->  m_controller.setRumble(RumbleType.kBothRumble, 0.3)),
+    Commands.waitSeconds(0.5),
+    Commands.runOnce( () ->  m_controller.setRumble(RumbleType.kBothRumble, 0))
+    ));
+
     // reverse intake
     new Trigger(() -> (m_controller.getLeftTriggerAxis() > 0.05))
         .whileTrue(new IntakeReverseCommand(m_intake, m_cargo));
@@ -190,7 +201,6 @@ public class RobotContainer {
     // mid node
     new Trigger(m_controller::getLeftBumper).whileTrue(
         new ShootManualAdjustRpm(() -> SmartDashboard.getNumber("mid node RPM", Constants.ShooterConstants.MID_NODE_RPM), m_cargo, m_shooter, m_robot));
-
 
     // ************************ DRIVER CONTROLS [END] *******************************
 

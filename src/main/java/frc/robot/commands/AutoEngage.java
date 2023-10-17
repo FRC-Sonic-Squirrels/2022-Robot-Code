@@ -22,7 +22,7 @@ public class AutoEngage extends CommandBase {
   private double drivePower;
   private boolean flip;
 
-  private double kP = 0.01;
+  private double kP;
   private double balancedThresholdDegrees = 4.5;
   // private TunableNumber timeRequiredBalanced =
   //     new TunableNumber("AutoEngage/timeRequiredBalanced", 1);
@@ -30,10 +30,11 @@ public class AutoEngage extends CommandBase {
 
   private DoubleSupplier y_supplier;
   /** Creates a new AutoEngage. */
-  public AutoEngage(Drivetrain drivetrain, Boolean flip) {
+  public AutoEngage(Drivetrain drivetrain, double kP, boolean flip) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.drivetrain = drivetrain;
     this.flip = flip;
+    this.kP = kP;
     // y_supplier = yAxisSup;
     addRequirements(drivetrain);
   }
@@ -107,6 +108,6 @@ public class AutoEngage extends CommandBase {
   @Override
   public boolean isFinished() {
     // return (timeEngaged.get()>timeRequiredBalanced.get());
-    return false;
+    return Math.abs(error) <= 3;
   }
 }

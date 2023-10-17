@@ -74,12 +74,14 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
+    SmartDashboard.putBoolean("deployed", m_isDeployed);
     //testingRpmValues();
     
     if(mode == Mode.STOP){
       setIntakePercentOutput(0);
     } else if(mode == Mode.FORWARD){
-      setIntakeMotorRPM(m_forwardRpmValue);
+      // setIntakeMotorRPM(m_forwardRpmValue);
+      setIntakePercentOutput(0.2);
     } else if(mode == Mode.REVERSE){
       setIntakeMotorRPM(m_reverseRpmValue);
     }

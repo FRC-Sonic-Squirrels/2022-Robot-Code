@@ -52,9 +52,7 @@ public class ShootWithSetRPM extends CommandBase {
     shooting = false;
     m_time = 0;
     m_cargoSubsystem.setIdleMode();
-    if (!m_robot.isAutonomous()) {
-      m_shooterSubsystem.idle();
-    }
+    m_shooterSubsystem.stop();
   }
 
   // Returns true when the command should end.

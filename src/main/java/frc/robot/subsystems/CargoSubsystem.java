@@ -103,6 +103,7 @@ public class CargoSubsystem extends SubsystemBase {
 
     // updateTestingValues();
 
+    SmartDashboard.putBoolean("lower_beamBreak", cargoInLowerBelts());
     if (mode == Mode.STOP) {
       stopIndexer();
     } else if (mode == Mode.INTAKE) {
