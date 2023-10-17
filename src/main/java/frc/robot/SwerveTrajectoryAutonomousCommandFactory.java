@@ -104,7 +104,7 @@ public class SwerveTrajectoryAutonomousCommandFactory {
     // ------------ 2023 charged up autos ------------
 
     public Command scoreHigh() {
-        return new ShootWithSetRPM(Constants.ShooterConstants.HIGH_NODE_RPM, m_cargo, m_shooter, m_robot).withTimeout(5);
+        return new ShootWithSetRPM(Constants.ShooterConstants.HIGH_NODE_RPM, m_cargo, m_shooter, m_robot).withTimeout(2);
     }
 
     public Command scoreLow() {
